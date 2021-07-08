@@ -1,12 +1,6 @@
 // Simple demo for node and CommonJS loading
 
-import {
-  Logger,
-  LoggerNodeHandler,
-  LoggerFileHandler,
-  LogLevel,
-  setupEnv,
-} from "zeed"
+import { Logger, LoggerNodeHandler, LoggerFileHandler, LogLevel } from "zeed"
 
 Logger.setHandlers([
   LoggerFileHandler("zerva.log", {
@@ -24,17 +18,13 @@ Logger.setHandlers([
 
 import { serve, http, register, on } from "zerva"
 
-const log = Logger("demo")
-
-setupEnv()
-
 function counter() {
   register("counter", ["http"])
   let counter = 1
   on("httpInit", ({ get }) => {
     get(
       "/",
-      () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
+      () => `xxxCounter ${counter++}.<br><br>Reload page to increase counter.`
     )
   })
   return {
@@ -43,12 +33,8 @@ function counter() {
 }
 
 serve(() => {
-  log("Setup zerva")
-  log.info("DEMO_SECRET =", process.env.DEMO_SECRET)
-
   http({
     port: 8080,
   })
-
   counter()
 })

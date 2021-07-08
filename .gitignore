@@ -4,3 +4,4 @@ pnpm*
 dist
 tmp
 *.log
+.out*

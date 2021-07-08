@@ -52,3 +52,17 @@ function counter() {
 As you can see we can also return some custom data or functions from our module, like `getCounter` in our case.
 
 That's basically it!
+
+## Command line convenience
+
+For convenience, you can use the `zerva` command line tool. It is based on [estrella](https://github.com/rsms/estrella) and translates your Typescript code on the fly without further configuration. It also watches for changes and restarts the server immediately. 
+
+In your `package.json` you might want to add these lines:
+
+```json
+"scripts": {
+  "start": "zerva index.ts"
+},
+```
+
+

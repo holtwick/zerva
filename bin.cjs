@@ -15,7 +15,7 @@ build({
   // target: "es2015",
 
   entry,
-  outfile: entry + "-bin.js",
+  outfile: resolve(".out.js"), // entry + "-bin.js",
   outfileMode: "+x",
   platform: "node",
   sourcemap: true,
