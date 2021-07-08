@@ -11,11 +11,11 @@ const { build } = require("estrella")
 
 // Started from command line
 build({
-  // bundle: true,
   // target: "es2015",
 
+  bundle: true,
   entry,
-  outfile: resolve(".out.js"), // entry + "-bin.js",
+  outfile: resolve(".out.cjs"), // entry + "-bin.js",
   outfileMode: "+x",
   platform: "node",
   sourcemap: true,
