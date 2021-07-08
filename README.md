@@ -2,6 +2,19 @@
 
 **Very compact event driven web service infrastructure.**
 
+## Get started
+
+Set up your first project like this (you may also use yarn or pnpm):
+
+```sh
+npm init zerva <your-project-name>
+cd <your-project-name>
+npm i
+npm start
+```
+
+## How it works
+
 It all starts with the `context` which is the common ground for any **module** we use or create. It serves as a hub/bus for emitting and listening on **events**. 
 
 Usually you would start to build a server like this:
@@ -52,6 +65,7 @@ function counter() {
 As you can see we can also return some custom data or functions from our module, like `getCounter` in our case.
 
 That's basically it!
+
 
 ## Command line convenience
 
