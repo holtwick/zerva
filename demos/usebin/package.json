@@ -8,11 +8,11 @@
     "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "zerva index.ts"
   },
   "dependencies": {
     "zeed": "^0.3.10",
-    "zerva": "file:.."
+    "zerva": "file:../.."
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
