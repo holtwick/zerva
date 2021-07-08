@@ -1,0 +1,19 @@
+{
+  "name": "zerva-demo",
+  "version": "1.0.0",
+  "description": "Just a simple test",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "zeed": "^0.3.10",
+    "zerva": "file:.."
+  },
+  "author": "Dirk Holtwick",
+  "license": "MIT"
+}
