@@ -1,0 +1,59 @@
+{
+  "name": "zerva",
+  "version": "0.1.1",
+  "description": "Simple event driven server",
+  "main": "index.js",
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "author": {
+    "name": "Dirk Holtwick",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "type": "module",
+  "typings": "dist/esm/index.all.d.ts",
+  "exports": {
+    "./ts": "./src/index.ts",
+    "./dist/": "./dist/",
+    ".": {
+      "node": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    }
+  },
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "scripts": {
+    "start": "npm run watch",
+    "build": "npm run clean && npm run build:esm",
+    "build:esm": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "watch": "tsc -w -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "test": "jest src"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "zeed": "^0.3.10"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.1",
+    "@types/cors": "^2.8.11",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "jest-ts-webcompat-resolver": "^1.0.0",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.5"
+  }
+}
