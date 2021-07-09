@@ -4,16 +4,9 @@ const log = Logger(`zerva:context`)
 
 // Others would probably call it "hub" or "bus"...
 
-// export interface ZConnectInfo {
-//   type: "http" | "https" | "socket"
-// }
-
-// export interface ZContextEvents {
-//   connect(info: ZConnectInfo): void
-//   close(): void
-//   didAllInit(): void
-//   didAllSetup(): void
-// }
+export interface ZContextEvents {
+  close(): void
+}
 
 export class ZContext extends Emitter<ZContextEvents> {
   // config: any
