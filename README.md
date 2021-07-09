@@ -85,3 +85,8 @@ In your `package.json` you might want to add these lines:
   "start": "zerva index.ts"
 },
 ```
+
+## Related
+
+- [zerva-minimal-demo](https://github.com/holtwick/zerva-minimal-demo) - Super basic example
+- [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
