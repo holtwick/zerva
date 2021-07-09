@@ -22,13 +22,13 @@ Logger.setHandlers([
   }),
 ])
 
-import { serve, http, register, on } from "zerva"
+import { serve, useHttp, register, on } from "zerva"
 
 const log = Logger("demo")
 
 setupEnv()
 
-function counter() {
+function useCounter() {
   register("counter", ["http"])
   let counter = 1
   on("httpInit", ({ get }) => {
@@ -42,13 +42,13 @@ function counter() {
   }
 }
 
-serve(() => {
-  log("Setup zerva")
-  log.info("DEMO_SECRET =", process.env.DEMO_SECRET)
+log("Setup zerva")
+log.info("DEMO_SECRET =", process.env.DEMO_SECRET)
 
-  http({
-    port: 8080,
-  })
-
-  counter()
+useHttp({
+  port: 8080,
 })
+
+useCounter()
+
+serve()

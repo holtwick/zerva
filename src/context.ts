@@ -4,19 +4,19 @@ const log = Logger(`zerva:context`)
 
 // Others would probably call it "hub" or "bus"...
 
-export interface ZConnectInfo {
-  type: "http" | "https" | "socket"
-}
+// export interface ZConnectInfo {
+//   type: "http" | "https" | "socket"
+// }
 
-export interface ZContextEvents {
-  connect(info: ZConnectInfo): void
-  close(): void
-  didAllInit(): void
-  didAllSetup(): void
-}
+// export interface ZContextEvents {
+//   connect(info: ZConnectInfo): void
+//   close(): void
+//   didAllInit(): void
+//   didAllSetup(): void
+// }
 
 export class ZContext extends Emitter<ZContextEvents> {
-  config: any
+  // config: any
   modules: string[] = []
 }
 
@@ -62,7 +62,7 @@ export function register(moduleName: string, dependencies: string[] = []) {
 }
 
 /** Could be a nice counter part to `register`, which gets helpers and checks dependency: const { get } = use('http') */
-export function use(name: string): any {} // todo
+// export function use(name: string): any {} // todo
 
 /** Set a different global context */
 export function withContext(newContext: ZContext, handler: () => void) {

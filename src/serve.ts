@@ -15,9 +15,11 @@ declare module "./context" {
  *
  * @param fn Call your modules in here to add them to the context
  */
-export async function serve(fn: () => void) {
-  log.info("launch")
-  fn()
+export async function serve(fn?: () => void) {
+  if (fn) {
+    log.info("launch")
+    fn()
+  }
   log.info("init")
   await emit("serveInit")
   log.info("start")
