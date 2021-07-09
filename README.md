@@ -15,11 +15,11 @@ npm start
 
 ## How it works
 
-It all starts with the `context` which is the common ground for any **module** we use or create. It serves as a hub/bus for emitting and listening on **events**. 
+It all starts with the `context` which is the common ground for any **module** we use or create. It serves as a hub/bus for emitting and listening on **events**.
 
 Usually you would start to build a server like this:
 
-```ts 
+```ts
 import { useHttp, serve } from "zerva"
 
 useHttp(
@@ -31,7 +31,7 @@ serve()
 
 `serve` itself is a **module** that i.e. it is a function working on **context**. It takes a function to call other modules and provides a common lifecycle by emitting `serveInit` and `serveStart`. These are the entry points for other services.
 
-`useHttp` for example will set up an [express]() server and start it on `serveStart`. It will emit `httpInit` before it starts and `httpRunning` when it is ready. 
+`useHttp` for example will set up an [express]() server and start it on `serveStart`. It will emit `httpInit` before it starts and `httpRunning` when it is ready.
 
 > By convention, we add `use` to module initializer to be able to identify them at first glance.
 
@@ -40,8 +40,8 @@ You can write your own module which can use `httpInit` to add some listeners:
 ```ts
 function useCounter() {
   let counter = 0
-  on('httpInit', ({get}) => {
-    get('/counter', () => `Counter ${counter++}`)
+  on("httpInit", ({ get }) => {
+    get("/counter", () => `Counter ${counter++}`)
   })
 }
 ```
@@ -63,7 +63,7 @@ function useCounter() {
       "/",
       () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
     )
-  })  
+  })
   return {
     getCounter: () => counter,
   }
@@ -76,7 +76,7 @@ That's basically it!
 
 ## Command line convenience
 
-For convenience, you can use the `zerva` command line tool. It is based on [estrella](https://github.com/rsms/estrella) and translates your Typescript code on the fly without further configuration. It also watches for changes and restarts the server immediately. 
+For convenience, you can use the `zerva` command line tool. It is based on [estrella](https://github.com/rsms/estrella) and translates your Typescript code on the fly without further configuration. It also watches for changes and restarts the server immediately.
 
 In your `package.json` you might want to add these lines:
 
@@ -86,4 +86,7 @@ In your `package.json` you might want to add these lines:
 },
 ```
 
+## Related
 
+- [zerva-minimal-demo](https://github.com/holtwick/zerva-minimal-demo) - Super basic example
+- [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
