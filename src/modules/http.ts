@@ -37,7 +37,7 @@ interface httpConfig {
   sslKey?: string
 }
 
-export function http(config: httpConfig): {
+export function useHttp(config: httpConfig): {
   app: express.Express
   get: (path: string, handler: httpGetHandler) => void
 } {
