@@ -1,6 +1,6 @@
 {
   "name": "zerva",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "🌱 Simple event driven server",
   "main": "index.js",
   "bin": {
