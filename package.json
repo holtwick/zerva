@@ -55,13 +55,14 @@
     "estrella": "^1.4.1",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
+    "node-notifier": "^10.0.0",
     "zeed": "^0.3.10"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.11",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/jest": "^26.0.24",
-    "@types/node": "^16.0.1",
+    "@types/node": "^16.3.1",
     "jest": "^27.0.6",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "ts-jest": "^27.0.3",
