@@ -86,7 +86,13 @@ In your `package.json` you might want to add these lines:
 },
 ```
 
+## GitHub Templates 
+
+To get started, you can use these GitHub Templates:
+
+- [Create your own Zerva module](https://github.com/holtwick/zerva-module-template/generate)
+- [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate) 
+
 ## Related
 
-- [zerva-minimal-demo](https://github.com/holtwick/zerva-minimal-demo) - Super basic example
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
