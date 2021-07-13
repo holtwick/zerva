@@ -1,6 +1,6 @@
 {
   "name": "zerva",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "🌱 Simple event driven server",
   "main": "index.js",
   "bin": {
@@ -49,6 +49,9 @@
     "global": "pnpm -g ln"
   },
   "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.3.1",
     "chokidar": "^3.5.2",
     "cors": "^2.8.5",
     "esbuild": "^0.12.15",
@@ -59,10 +62,7 @@
     "zeed": "^0.3.10"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.13",
     "@types/jest": "^26.0.24",
-    "@types/node": "^16.3.1",
     "jest": "^27.0.6",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "ts-jest": "^27.0.3",
