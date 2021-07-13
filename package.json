@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "type": "module",
-  "typings": "dist/esm/index.all.d.ts",
+  "typings": "dist/esm/index.d.ts",
   "exports": {
     "./ts": "./src/index.ts",
     "./dist/": "./dist/",
