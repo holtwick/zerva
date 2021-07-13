@@ -8,6 +8,9 @@ import {
   valueToInteger,
 } from "zeed"
 
+import { on, serve, useHttp } from "zerva"
+import { useCounter } from "./module"
+
 Logger.setHandlers([
   LoggerFileHandler("zerva.log", {
     level: LogLevel.debug,
@@ -24,23 +27,14 @@ Logger.setHandlers([
 
 const log = Logger("app")
 
-import { serve, useHttp, register, on } from "zerva"
-
-function useCounter() {
-  log.info("use counter")
-  register("counter", ["http"])
-  let counter = 1
-  on("httpInit", ({ get }) => {
-    get(
-      "/",
-      () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
-    )
-  })
-}
-
 useHttp({
   port: valueToInteger(process.env.PORT, 8080),
 })
+
+on("counterIncrement", (counter) => {
+  log.info("counter inc", counter)
+})
+
 useCounter()
 
 serve()

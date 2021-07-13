@@ -17,7 +17,7 @@ export type httpGetHandler = (info: {
   req: unknown
 }) => Promise<any> | any
 
-declare module "../context" {
+declare global {
   interface ZContextEvents {
     setupHTTP(http: any, app: any): void
     httpInit(info: { http: any; app: any; get: any }): void

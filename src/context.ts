@@ -4,8 +4,10 @@ const log = Logger(`zerva:context`)
 
 // Others would probably call it "hub" or "bus"...
 
-export interface ZContextEvents {
-  close(): void
+declare global {
+  interface ZContextEvents {
+    close(): void
+  }
 }
 
 export class ZContext extends Emitter<ZContextEvents> {
