@@ -2,12 +2,12 @@
 
 import cors from "cors"
 import helmet from "helmet"
-import fs from "fs"
 import { Logger, promisify } from "zeed"
 import { on, emit, register } from "../context.js"
 import express from "express"
-import httpsModule from "https"
-import httpModule from "http"
+import fs from "node:fs"
+import httpsModule from "node:https"
+import httpModule from "node:http"
 
 const name = "http"
 const log = Logger(`zerva:${name}`)
