@@ -13,15 +13,51 @@ export class ZContext extends Emitter<ZContextEvents> {
   modules: string[] = []
 }
 
-/** The global context */
-export var context = new ZContext()
+// Global logger to guarantee all submodules use the same logger instance
+
+var context = new ZContext()
+
+interface LoggerGlobal {
+  _zervaGlobalContext?: ZContext
+}
+
+function getGlobal(): LoggerGlobal {
+  if (typeof self !== "undefined") return self as LoggerGlobal
+  if (typeof window !== "undefined") return window as LoggerGlobal
+  if (typeof global !== "undefined") return global as LoggerGlobal
+  if (typeof globalThis !== "undefined") return globalThis as LoggerGlobal
+  throw new Error("unable to locate global object")
+}
+
+let setContext = (newContext: ZContext): void => {
+  context = newContext
+}
+
+let getContext = (): ZContext => context
+
+try {
+  let _global = getGlobal()
+  if (_global != null) {
+    if (_global?._zervaGlobalContext == null) {
+      _global._zervaGlobalContext = context
+    } else {
+      context = _global._zervaGlobalContext
+    }
+    setContext = (newContext: ZContext) => {
+      _global._zervaGlobalContext = context
+    }
+    getContext = (): ZContext => _global._zervaGlobalContext as ZContext
+  }
+} catch (e) {
+  log.warn("Unable to register Zerva Context globally")
+}
 
 /** Emit via the current global context */
 export async function emit<U extends keyof ZContextEvents>(
   event: U,
   ...args: Parameters<ZContextEvents[U]>
 ): Promise<boolean> {
-  return await context.emit(event, ...args)
+  return await getContext().emit(event, ...args)
 }
 
 /** Listener that binds to the current global context */
@@ -31,7 +67,7 @@ export function on<U extends keyof ZContextEvents>(
 ): {
   cleanup: () => void
 } {
-  return context.on(event, listener)
+  return getContext().on(event, listener)
 }
 
 /** Register module by name and check for modules it depends on */
@@ -42,7 +78,7 @@ export function register(moduleName: string, dependencies: string[] = []) {
     }`
   )
   for (const dep of dependencies) {
-    if (!context.modules.some((m) => m === dep)) {
+    if (!getContext().modules.some((m) => m === dep)) {
       log.error(
         `module ${moduleName} depends on ${dependencies}. ${dep} was not found.`
       )
@@ -51,7 +87,7 @@ export function register(moduleName: string, dependencies: string[] = []) {
       )
     }
   }
-  context.modules.push(moduleName)
+  getContext().modules.push(moduleName)
 }
 
 /** Could be a nice counter part to `register`, which gets helpers and checks dependency: const { get } = use('http') */
@@ -59,9 +95,8 @@ export function register(moduleName: string, dependencies: string[] = []) {
 
 /** Set a different global context */
 export function withContext(newContext: ZContext, handler: () => void) {
-  // todo
-  let previousContext = context
-  context = newContext
+  let previousContext = getContext()
+  setContext(newContext)
   handler()
-  context = previousContext
+  setContext(previousContext)
 }
