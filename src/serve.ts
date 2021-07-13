@@ -3,7 +3,7 @@ import { Logger } from "zeed"
 
 const log = Logger(`zerva:serve`)
 
-declare module "./context" {
+declare global {
   interface ZContextEvents {
     serveInit(): void
     serveStart(): void
