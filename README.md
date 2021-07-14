@@ -86,12 +86,12 @@ In your `package.json` you might want to add these lines:
 },
 ```
 
-## GitHub Templates 
+## GitHub Templates
 
 To get started, you can use these GitHub Templates:
 
 - [Create your own Zerva module](https://github.com/holtwick/zerva-module-template/generate)
-- [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate) 
+- [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate)
 
 ## Related
 

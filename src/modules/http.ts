@@ -5,9 +5,9 @@ import helmet from "helmet"
 import { Logger, promisify } from "zeed"
 import { on, emit, register } from "../context.js"
 import express from "express"
-import fs from "node:fs"
-import httpsModule from "node:https"
-import httpModule from "node:http"
+import fs from "fs"
+import httpsModule from "https"
+import httpModule from "http"
 
 const name = "http"
 const log = Logger(`zerva:${name}`)
