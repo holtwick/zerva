@@ -7,6 +7,7 @@ declare global {
   interface ZContextEvents {
     serveInit(): void
     serveStart(): void
+    serveStop(): void
   }
 }
 

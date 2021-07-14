@@ -92,6 +92,8 @@ export function useHttp(config: httpConfig): {
     // app.use("/", express.static("public"))
   })
 
+  on("serveStop", async () => new Promise((resolve) => server.close(resolve)))
+
   on("serveStart", () => {
     log("serveStart")
     server.listen({ host, port }, () => {
