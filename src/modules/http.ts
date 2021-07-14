@@ -27,6 +27,7 @@ declare global {
       family: string
       address: string
     }): void
+    httpStop(): void
   }
 }
 
@@ -92,7 +93,10 @@ export function useHttp(config: httpConfig): {
     // app.use("/", express.static("public"))
   })
 
-  on("serveStop", async () => new Promise((resolve) => server.close(resolve)))
+  on("serveStop", async () => {
+    await emit("httpStop")
+    return new Promise((resolve) => server.close(resolve))
+  })
 
   on("serveStart", () => {
     log("serveStart")
