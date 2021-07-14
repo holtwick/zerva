@@ -2,10 +2,10 @@
 
 import cors from "cors"
 import helmet from "helmet"
-import fs from "fs"
 import { Logger, promisify } from "zeed"
 import { on, emit, register } from "../context.js"
 import express from "express"
+import fs from "fs"
 import httpsModule from "https"
 import httpModule from "http"
 
