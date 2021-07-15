@@ -72,30 +72,44 @@ export function on<U extends keyof ZContextEvents>(
   return getContext().on(event, listener)
 }
 
-/** Register module by name and check for modules it depends on */
+/**
+ * Check existance of registered module.
+ *
+ * @param module Name of module
+ * @param strict Log error if check fails
+ * @returns `true` if `module` has been registered before
+ */
+export function hasModule(module: string, strict: boolean = false): boolean {
+  const has = getContext().modules.includes(module.toLowerCase())
+  if (strict && !has) {
+    log.error(`module '${module}' is missing`)
+  }
+  return has
+}
+
+/**
+ * Register module by name and check for modules it depends on
+ *
+ * @param moduleName Module name to register
+ * @param dependencies List of modules names that have to be registered before in this context
+ */
 export function register(moduleName: string, dependencies: string[] = []) {
+  moduleName = moduleName.toLowerCase()
   log(
     `register ${moduleName} ${
       dependencies.length ? `with dependencies=${dependencies}` : ""
     }`
   )
-  for (const dep of dependencies) {
-    if (!getContext().modules.some((m) => m === dep)) {
-      log.error(
-        `module ${moduleName} depends on ${dependencies}. ${dep} was not found.`
-      )
-      throw new Error(
-        `module ${moduleName} depends on ${dependencies}. ${dep} was not found.`
-      )
-    }
-  }
+  dependencies.forEach((module) => hasModule(module, true))
   getContext().modules.push(moduleName)
 }
 
-/** Could be a nice counter part to `register`, which gets helpers and checks dependency: const { get } = use('http') */
-// export function use(name: string): any {} // todo
-
-/** Set a different global context */
+/**
+ * Set a different global context. Restores previous context after execution.
+ *
+ * @param newContext New context
+ * @param handler Executed with `newContext` set as global context
+ */
 export function withContext(newContext: ZContext, handler: () => void) {
   let previousContext = getContext()
   setContext(newContext)
