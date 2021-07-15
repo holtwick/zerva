@@ -1,6 +1,6 @@
 {
   "name": "zerva",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "🌱 Simple event driven server",
   "bin": {
     "zerva": "bin.cjs"
@@ -59,7 +59,7 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "node-notifier": "^10.0.0",
-    "zeed": "^0.4.2"
+    "zeed": "^0.4.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

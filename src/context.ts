@@ -78,6 +78,13 @@ export function on<U extends keyof ZContextEvents>(
   return getContext().on(event, listener)
 }
 
+export function arrayFlatten<T>(list: (T | T[])[]): T[] {
+  return list.reduce(
+    (a: any, b: any) => a.concat(Array.isArray(b) ? arrayFlatten(b) : b),
+    []
+  ) as T[]
+}
+
 /**
  * Check existance of registered module.
  *
@@ -96,7 +103,10 @@ export function hasModule(module: string, strict: boolean = false): boolean {
 /**
  * Check existance of registered modules, log error if missing.
  */
-export function requireModules(modules: string[]): boolean {
+export function requireModules(
+  ...requiredModules: (string | string[])[]
+): boolean {
+  const modules = arrayFlatten(requiredModules)
   return !modules.map((module) => hasModule(module, true)).some((ok) => !ok)
 }
 
@@ -108,12 +118,15 @@ export function requireModules(modules: string[]): boolean {
  */
 export function register(
   moduleName: string,
-  dependencies: string[] = []
+  ...dependencies: (string | string[])[]
 ): boolean {
   moduleName = moduleName.toLowerCase()
+
+  let modules = arrayFlatten(dependencies)
+
   log(
     `register ${moduleName} ${
-      dependencies.length ? `with dependencies=${dependencies}` : ""
+      modules.length ? `with dependencies=${modules}` : ""
     }`
   )
 
@@ -123,7 +136,7 @@ export function register(
 
   getContext().modules.push(moduleName)
 
-  return requireModules(dependencies)
+  return requireModules(modules)
 }
 
 /**

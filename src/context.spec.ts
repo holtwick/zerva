@@ -33,10 +33,10 @@ describe("context", () => {
   it("should register", () => {
     setContext()
     register("a")
-    register("b", ["a"])
+    register("b", "a")
     expect(hasModule("c")).toBe(false)
     expect(hasModule("a")).toBe(true)
-    requireModules(["a"])
+    requireModules("a")
     // requireModules(["x"])
   })
 

@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit } from "./context.js"
+import { emit, on } from "./context.js"
 import { Logger } from "zeed"
 
 const log = Logger(`zerva:serve`)
@@ -11,6 +11,24 @@ declare global {
     serveStart(): void
     serveStop(): void
   }
+}
+
+// Shortcuts
+
+export function onInit(handler: () => void) {
+  on("serveInit", handler)
+}
+
+export function onStart(handler: () => void) {
+  on("serveStart", handler)
+}
+
+export function onStop(handler: () => void) {
+  on("serveStop", handler)
+}
+
+export async function serveStop() {
+  await emit("serveStop")
 }
 
 /**
