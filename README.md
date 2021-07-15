@@ -93,6 +93,11 @@ To get started, you can use these GitHub Templates:
 - [Create your own Zerva module](https://github.com/holtwick/zerva-module-template/generate)
 - [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate)
 
+## Modules
+
+- [Zerva Socket.io](https://github.com/holtwick/zerva-socketio)
+- [Zerva Vite Plugin](https://github.com/holtwick/zerva-vite-plugin)
+
 ## Related
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
