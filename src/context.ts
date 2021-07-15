@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Emitter, Logger, LogLevel, uname } from "zeed"
+import { Emitter, Logger, LogLevel, uname, arrayFlatten } from "zeed"
 
 const log = Logger(`zerva:context`)
 log.level = LogLevel.warn
@@ -76,13 +76,6 @@ export function on<U extends keyof ZContextEvents>(
   cleanup: () => void
 } {
   return getContext().on(event, listener)
-}
-
-export function arrayFlatten<T>(list: (T | T[])[]): T[] {
-  return list.reduce(
-    (a: any, b: any) => a.concat(Array.isArray(b) ? arrayFlatten(b) : b),
-    []
-  ) as T[]
 }
 
 /**
