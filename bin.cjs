@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
+
 if (process.argv.length < 3) {
   console.info(`Usage: zerva <your-zerva.ts>`)
   process.exit(-1)
