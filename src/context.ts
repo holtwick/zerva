@@ -1,15 +1,26 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Emitter, Logger, LogLevel, uname, arrayFlatten } from "zeed"
+import {
+  Emitter,
+  Logger,
+  LogLevel,
+  uname,
+  arrayFlatten,
+  getGlobalContext,
+} from "zeed"
 
 const log = Logger(`zerva:context`)
-log.level = LogLevel.warn
+// log.level = LogLevel.warn
 
 // Others would probably call it "hub" or "bus"...
 
 declare global {
   interface ZContextEvents {
     close(): void
+  }
+
+  interface ZeedGlobalContext {
+    zerva?: ZContext
   }
 }
 
@@ -23,18 +34,6 @@ export class ZContext extends Emitter<ZContextEvents> {
 
 var context = new ZContext()
 
-interface LoggerGlobal {
-  _zervaGlobalContext?: ZContext
-}
-
-function getGlobal(): LoggerGlobal {
-  if (typeof self !== "undefined") return self as LoggerGlobal
-  if (typeof window !== "undefined") return window as LoggerGlobal
-  if (typeof global !== "undefined") return global as LoggerGlobal
-  if (typeof globalThis !== "undefined") return globalThis as LoggerGlobal
-  throw new Error("unable to locate global object")
-}
-
 export let setContext = (newContext?: ZContext): void => {
   context = newContext || new ZContext()
 }
@@ -42,20 +41,18 @@ export let setContext = (newContext?: ZContext): void => {
 export let getContext = (): ZContext => context
 
 try {
-  let _global = getGlobal()
-  if (_global != null) {
-    if (_global?._zervaGlobalContext == null) {
-      _global._zervaGlobalContext = context
-    } else {
-      context = _global._zervaGlobalContext
-    }
-    setContext = (newContext?: ZContext) => {
-      let context = newContext || new ZContext()
-      log("set context", context.name)
-      _global._zervaGlobalContext = context
-    }
-    getContext = (): ZContext => _global._zervaGlobalContext as ZContext
+  let _global = getGlobalContext()
+  if (_global?.zerva == null) {
+    _global.zerva = context
+  } else {
+    context = _global.zerva
   }
+  setContext = (newContext?: ZContext) => {
+    let context = newContext || new ZContext()
+    log("set context", context.name)
+    _global.zerva = context
+  }
+  getContext = (): ZContext => _global.zerva as ZContext
 } catch (e) {
   log.warn("Unable to register Zerva Context globally")
 }
@@ -65,6 +62,7 @@ export async function emit<U extends keyof ZContextEvents>(
   event: U,
   ...args: Parameters<ZContextEvents[U]>
 ): Promise<boolean> {
+  log("emit", event, ...args)
   return await getContext().emit(event, ...args)
 }
 
@@ -87,6 +85,7 @@ export function on<U extends keyof ZContextEvents>(
  */
 export function hasModule(module: string, strict: boolean = false): boolean {
   const has = getContext().modules.includes(module.toLowerCase())
+  log(`hasModule ${module} => ${has} (strict=${strict})`)
   if (strict && !has) {
     log.error(`module '${module}' is missing`)
   }
@@ -143,6 +142,7 @@ export function withContext(
   newContext: ZContext | undefined,
   handler: (context?: ZContext) => void
 ) {
+  log("withContext")
   let previousContext = getContext()
   setContext(newContext)
   handler(newContext)
