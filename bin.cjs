@@ -2,13 +2,35 @@
 
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-if (process.argv.length < 3) {
-  console.info(`Usage: zerva <your-zerva.ts>`)
-  process.exit(-1)
-}
+// if (process.argv.length < 3) {
+//   console.info(`Usage: zerva <your-zerva.ts>`)
+//   process.exit(-1)
+// }
 
 const { resolve } = require("path")
-const entry = resolve(process.argv[2])
+
+let entry
+let outfile = resolve(".out.cjs")
+let buildMode = false
+
+const cmd = process.argv?.[2]?.trim()?.toLocaleLowerCase()
+console.log("cmd", cmd)
+
+if (cmd === "build") {
+  entry = process.argv[3]
+  outfile = resolve("dist/main.cjs")
+  buildMode = true
+} else {
+  entry = process.argv[2]
+}
+
+if (entry) {
+  entry = resolve(entry)
+} else {
+  entry = resolve("src/main.ts")
+}
+
+// Cleanup to args to not confuse estrella
 process.argv.splice(2, process.argv.length - 2)
 
 const { build } = require("estrella")
@@ -21,15 +43,15 @@ build({
   // target: "es2015",
   bundle: true,
   entry,
-  outfile: resolve(".out.cjs"), // entry + "-bin.js",
+  outfile, // entry + "-bin.js",
   outfileMode: "+x",
   platform: "node",
   sourcemap: true,
   loader: {
     ".json": "json",
   },
-  run: true,
-  watch: true,
+  run: !buildMode,
+  watch: !buildMode,
   // external: [
   //   "notifier",
   //   "mediasoup",
