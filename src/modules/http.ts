@@ -12,15 +12,19 @@ import httpModule from "http"
 const name = "http"
 const log = Logger(`zerva:${name}`)
 
-export type httpGetHandler = (info: {
-  res: unknown
-  req: unknown
-}) => Promise<any> | any
+export type httpGetHandler =
+  | ((info: { res: unknown; req: unknown }) => Promise<any> | any)
+  | any
 
 declare global {
   interface ZContextEvents {
     setupHTTP(http: any, app: any): void
-    httpInit(info: { http: any; app: any; get: any }): void
+    httpInit(info: {
+      http: any
+      app?: any
+      get: (path: string, handler: httpGetHandler) => void
+      addStatic: (path: string, fsPath: string) => void
+    }): void
     httpRunning(info: {
       http: any
       port: number
@@ -41,6 +45,7 @@ interface httpConfig {
 export function useHttp(config: httpConfig): {
   app: express.Express
   get: (path: string, handler: httpGetHandler) => void
+  addStatic?: (path: string, fsPath: string) => void
 } {
   register(name, [])
 
@@ -79,17 +84,25 @@ export function useHttp(config: httpConfig): {
     log(`register get ${path}`)
     app.get(path, async (req: any, res: any) => {
       log(`get ${path}`)
-      let result = await promisify(handler({ res, req }))
-      if (result != null) {
-        res.send(result)
+      if (typeof handler === "function") {
+        let result = await promisify(handler({ res, req }))
+        if (result != null) {
+          res.send(result)
+        }
+      } else {
+        res.send(handler)
       }
     })
+  }
+
+  function addStatic(path: string, fsPath: string): void {
+    app.use(path, express.static(fsPath))
   }
 
   on("serveInit", async () => {
     log("serveInit")
     await emit("setupHTTP", server, app)
-    await emit("httpInit", { app, http: server, get })
+    await emit("httpInit", { app, http: server, get, addStatic })
     // app.use("/", express.static("public"))
   })
 
@@ -107,5 +120,5 @@ export function useHttp(config: httpConfig): {
     })
   })
 
-  return { app, get }
+  return { app, get, addStatic }
 }
