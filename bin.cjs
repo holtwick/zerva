@@ -21,6 +21,9 @@ if (cmd === "build") {
   outfile = resolve("dist/main.cjs")
   buildMode = true
 } else {
+  // Provide meaningful error messages using sourcemaps
+  process.env.NODE_OPTIONS = "--enable-source-maps"
+
   entry = process.argv[2]
 }
 
