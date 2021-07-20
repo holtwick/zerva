@@ -8,13 +8,13 @@
 // }
 
 const { resolve } = require("path")
+const { existsSync } = require("fs")
 
 let entry
 let outfile = resolve(".out.cjs")
 let buildMode = false
 
-const cmd = process.argv?.[2]?.trim()?.toLocaleLowerCase()
-console.log("cmd", cmd)
+const cmd = process.argv?.[2]?.trim()?.toLocaleLowerCase() || ""
 
 if (cmd === "build") {
   entry = process.argv[3]
@@ -28,6 +28,14 @@ if (entry) {
   entry = resolve(entry)
 } else {
   entry = resolve("src/main.ts")
+  if (!existsSync(entry)) {
+    entry = resolve("src/main.js")
+  }
+}
+
+if (!existsSync(entry)) {
+  console.error(`Cannot find entry file: ${entry}`)
+  process.exit(1)
 }
 
 // Cleanup to args to not confuse estrella
@@ -37,6 +45,7 @@ const { build } = require("estrella")
 
 // import pkg from "./package.json"
 const notifier = require("node-notifier")
+const { exists } = require("fs")
 
 // Started from command line
 build({
@@ -66,7 +75,10 @@ build({
   onEnd(config, result) {
     if (config.watch) {
       if (result.errors.length > 0) {
-        console.error(`Build failed with ${result.errors.length} errors`)
+        console.error(`Build failed with ${result.errors.length} errors\n`)
+        result.errors.forEach((err, i) =>
+          console.info(`Error #${i + 1}:`, err.text)
+        )
         let icon = resolve(__dirname, "icon.png")
         //
         // https://github.com/mikaelbr/node-notifier
