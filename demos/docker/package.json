@@ -10,7 +10,9 @@
   "scripts": {
     "start": "zerva",
     "build": "zerva build",
-    "serve": "node dist/main.cjs"
+    "serve": "node dist/main.cjs",
+    "docker:build": "docker build -t zerva .",
+    "docker:run": "docker run -dp 8080:8080 zerva"
   },
   "dependencies": {
     "zeed": "^0.5.8",
