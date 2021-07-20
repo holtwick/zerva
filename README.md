@@ -76,13 +76,15 @@ That's basically it!
 
 ## Command line convenience
 
-For convenience, you can use the `zerva` command line tool. It is based on [estrella](https://github.com/rsms/estrella) and translates your Typescript code on the fly without further configuration. It also watches for changes and restarts the server immediately.
+For convenience, you can use the `zerva` command line tool. It is based on [estrella](https://github.com/rsms/estrella) and translates your Typescript code on the fly without further configuration. It also watches for changes and restarts the server immediately. To build add `build` as first argument. The last argument can point to the entry file (Javascript or Typescript), otherwise `src/main.ts` will be used.
 
 In your `package.json` you might want to add these lines:
 
 ```json
 "scripts": {
-  "start": "zerva index.ts"
+  "start": "zerva",
+  "build": "zerva build",
+  "serve": "node dist/main.cjs"
 },
 ```
 
