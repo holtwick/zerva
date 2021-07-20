@@ -1,0 +1,23 @@
+{
+  "name": "zerva-demo",
+  "version": "1.0.0",
+  "description": "Just a simple test",
+  "type": "module",
+  "main": "src/main.ts",
+  "engines": {
+    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "scripts": {
+    "start": "zerva",
+    "build": "zerva build",
+    "serve": "node dist/main.cjs",
+    "docker:build": "docker build -t zerva .",
+    "docker:run": "docker run -dp 8080:8080 zerva"
+  },
+  "dependencies": {
+    "zeed": "^0.5.8",
+    "zerva": "^0.4.4"
+  },
+  "author": "Dirk Holtwick",
+  "license": "MIT"
+}
