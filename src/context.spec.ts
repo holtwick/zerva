@@ -1,16 +1,13 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import {
-  on,
-  emit,
-  register,
-  hasModule,
-  requireModules,
-  withContext,
-  ZContext,
-  getContext,
-  setContext,
   createContext,
+  emit,
+  hasModule,
+  on,
+  register,
+  requireModules,
+  setContext,
 } from "./context"
 
 declare global {
