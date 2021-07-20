@@ -11,7 +11,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "zeed": "^0.4.4",
+    "zeed": "^0.5.7",
     "zerva": "file:../.."
   },
   "author": "Dirk Holtwick",
