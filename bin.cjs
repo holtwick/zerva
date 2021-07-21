@@ -51,7 +51,7 @@ const notifier = require("node-notifier")
 
 // Started from command line
 build({
-  target: "es2015",
+  target: "es2017",
   bundle: true,
   entry,
   outfile, // entry + "-bin.js",
