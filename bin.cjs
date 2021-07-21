@@ -48,17 +48,16 @@ const { build } = require("estrella")
 
 // import pkg from "./package.json"
 const notifier = require("node-notifier")
-const { exists } = require("fs")
 
 // Started from command line
 build({
-  // target: "es2015",
+  target: "es2015",
   bundle: true,
   entry,
   outfile, // entry + "-bin.js",
   outfileMode: "+x",
   platform: "node",
-  sourcemap: true,
+  sourcemap: "inline",
   loader: {
     ".json": "json",
   },
