@@ -58,7 +58,7 @@ useEmail({ transport })
 on("httpInit", ({ get }) => {
   get("email", async () => {
     emit("emailSend", {
-      to: "dirk.holtwick@gmail.com",
+      to: valueToString(process.env.EMAIL_TO, "example@example.com"),
       // subject: "Test mail from docker",
     })
     return "did send email"
