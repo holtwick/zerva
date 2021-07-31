@@ -15,8 +15,8 @@
     "docker:run": "docker run -dp 8080:8080 zerva"
   },
   "dependencies": {
-    "zeed": "^0.5.8",
-    "zerva": "^0.4.4"
+    "zeed": "^0.5.10",
+    "zerva": "^0.4.8"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
