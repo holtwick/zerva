@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   preset: "ts-jest/presets/default-esm",
   testEnvironment: "node",
   globals: {
@@ -6,5 +6,6 @@ export default {
       useESM: true,
     },
   },
+  testPathIgnorePatterns: ["/node_modules/", "/demos/"],
   resolver: "jest-ts-webcompat-resolver",
 }
