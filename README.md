@@ -98,6 +98,7 @@ To get started, you can use these GitHub Templates:
 ## Modules
 
 - [Zerva Socket.io](https://github.com/holtwick/zerva-socketio)
+- [Zerva Email](https://github.com/holtwick/zerva-email)
 - [Zerva Vite Plugin](https://github.com/holtwick/zerva-vite-plugin)
 
 ## Related
