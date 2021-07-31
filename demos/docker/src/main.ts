@@ -51,7 +51,7 @@ const transport = {
   },
 }
 
-log.info("email transport", JSON.stringify(transport, null, 2))
+// log.info("email transport", JSON.stringify(transport, null, 2))
 
 useEmail({ transport })
 
