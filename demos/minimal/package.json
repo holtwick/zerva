@@ -2,6 +2,7 @@
   "name": "zerva-demo",
   "version": "1.0.0",
   "description": "Just a simple test",
+  "private": true,
   "type": "module",
   "main": "index.js",
   "engines": {
