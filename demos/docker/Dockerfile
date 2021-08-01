@@ -2,5 +2,6 @@ FROM node:16-alpine
 WORKDIR /app
 COPY . .
 RUN yarn install --production
-CMD ["yarn", "start"]
+RUN yarn build
+CMD ["yarn", "serve"]
 EXPOSE 8080
