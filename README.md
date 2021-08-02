@@ -88,6 +88,10 @@ In your `package.json` you might want to add these lines:
 },
 ```
 
+## Docker
+
+Zerva integrates perfectly with Docker. Learn more at [demos/docker](demos/docker).
+
 ## GitHub Templates
 
 To get started, you can use these GitHub Templates:
