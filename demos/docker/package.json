@@ -6,18 +6,19 @@
   "type": "module",
   "main": "src/main.ts",
   "engines": {
-    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "start": "zerva",
     "build": "zerva build",
     "serve": "node dist/main.cjs",
+    "dev": "zerva",
     "docker:build": "docker build -t zerva .",
     "docker:run": "docker run -dp 8080:8080 zerva"
   },
   "dependencies": {
     "zeed": "^0.5.10",
-    "zerva": "^0.4.8",
+    "zerva": "^0.4.10",
     "zerva-email": "^0.1.2"
   },
   "author": "Dirk Holtwick",
