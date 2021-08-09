@@ -24,9 +24,9 @@ describe("http", () => {
     useHttp({ port })
 
     on("httpInit", ({ get, addStatic }) => {
-      get("/", "Hello World")
+      get("/hello", "Hello World")
       get("/json", { itIs: "json", v: 1 })
-      addStatic("/static", __dirname)
+      addStatic("/", __dirname)
     })
 
     await serve()
@@ -37,12 +37,12 @@ describe("http", () => {
   })
 
   it("should connect typed", async () => {
-    expect(await (await fetch(`${url}`)).text()).toEqual("Hello World")
+    expect(await (await fetch(`${url}/hello`)).text()).toEqual("Hello World")
     expect(await (await fetch(`${url}/json`)).json()).toEqual({
       itIs: "json",
       v: 1,
     })
-    expect(await (await fetch(`${url}/static/index.ts`)).text())
+    expect(await (await fetch(`${url}/index.ts`)).text())
       .toMatchInlineSnapshot(`
 "// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
