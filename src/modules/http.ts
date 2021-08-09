@@ -96,6 +96,7 @@ export function useHttp(config: httpConfig): {
   }
 
   function addStatic(path: string, fsPath: string): void {
+    log(`add static ${path} => ${fsPath}`)
     app.use(path, express.static(fsPath))
   }
 
