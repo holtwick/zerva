@@ -90,7 +90,7 @@ In your `package.json` you might want to add these lines:
 
 ## Docker
 
-Zerva integrates perfectly with Docker. Learn more at [demos/docker](demos/docker).
+Zerva integrates perfectly with Docker. Learn more at [demos/docker](https://github.com/holtwick/zerva/demos/docker).
 
 ## GitHub Templates
 
