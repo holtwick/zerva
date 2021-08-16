@@ -16,7 +16,7 @@ Logger.setHandlers([
     level: LogLevel.debug,
   }),
   LoggerNodeHandler({
-    level: LogLevel.info,
+    // level: LogLevel.info,
     filter: "*",
     colors: true,
     padding: 16,
@@ -36,5 +36,9 @@ on("counterIncrement", (counter) => {
 })
 
 useCounter()
+
+on("httpInit", ({ addStatic }) => {
+  addStatic("/public", "public")
+})
 
 serve()
