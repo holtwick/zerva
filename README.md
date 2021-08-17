@@ -1,10 +1,10 @@
 # 🌱 Zerva
 
-**Very compact event driven web service infrastructure.**
+**Minimal event driven web service infrastructure.**
 
 ## Get started
 
-Set up your first project like this (you may also use yarn or pnpm):
+Set up your first project like this (you may also use `yarn` or `pnpm`):
 
 ```sh
 npm init zerva <your-project-name>
