@@ -3,7 +3,7 @@ name: "npm publish && test"
 on:
   push:
     tags:
-      - "*.*.*"
+      - "*"
   workflow_dispatch:
 
 jobs:
