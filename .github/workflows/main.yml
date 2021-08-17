@@ -1,15 +1,19 @@
-name: Node.js Package
+name: "npm publish && test"
+
 on:
   push:
     tags:
-      - "*"
+      - "*.*.*"
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -17,6 +21,6 @@ jobs:
           node-version: "14.13.1"
           registry-url: "https://registry.npmjs.org"
       - run: npm install
-      - run: npm publish
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
