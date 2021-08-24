@@ -104,7 +104,6 @@ export function useHttp(config: httpConfig): {
     log("serveInit")
     await emit("setupHTTP", server, app)
     await emit("httpInit", { app, http: server, get, addStatic })
-    // app.use("/", express.static("public"))
   })
 
   on("serveStop", async () => {

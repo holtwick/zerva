@@ -14,7 +14,7 @@
     "serve": "node dist/main.cjs"
   },
   "dependencies": {
-    "zeed": "^0.5.7",
+    "zeed": "^0.6.9",
     "zerva": "file:../.."
   },
   "author": "Dirk Holtwick",
