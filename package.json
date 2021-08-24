@@ -1,6 +1,6 @@
 {
   "name": "zerva",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "description": "🌱 Simple event driven server",
   "bin": {
     "zerva": "bin.cjs"
