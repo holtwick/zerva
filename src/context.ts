@@ -10,7 +10,7 @@ import {
 } from "zeed"
 
 const log = Logger(`zerva:context`)
-// log.level = LogLevel.warn
+log.level = LogLevel.warn
 
 // Others would probably call it "hub" or "bus"...
 
