@@ -59,7 +59,7 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "node-notifier": "^10.0.0",
-    "zeed": "^0.6.21"
+    "zeed": "^0.6.22"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
