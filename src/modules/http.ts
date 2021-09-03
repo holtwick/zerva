@@ -52,7 +52,11 @@ export function useHttp(config: httpConfig): {
   const { sslKey, sslCrt, port = 4444, host } = config
 
   const app = express()
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    })
+  )
   app.use(cors())
   // app.options("*", cors())
 
