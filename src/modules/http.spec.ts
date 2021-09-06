@@ -42,9 +42,8 @@ describe("http", () => {
       itIs: "json",
       v: 1,
     })
-    expect(
-await (await fetch(`${url}/index.ts`)).text()).
-toMatchInlineSnapshot(`
+    expect(await (await fetch(`${url}/index.ts`)).text())
+      .toMatchInlineSnapshot(`
 "// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 export * from \\"./http.js\\"
