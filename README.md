@@ -101,9 +101,10 @@ To get started, you can use these GitHub Templates:
 
 ## Modules
 
-- [Zerva Socket.io](https://github.com/holtwick/zerva-socketio)
-- [Zerva Email](https://github.com/holtwick/zerva-email)
-- [Zerva Vite Plugin](https://github.com/holtwick/zerva-vite-plugin)
+- [zerva-websocket](https://github.com/holtwick/zerva-websocket)
+- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
+- [zerva-email](https://github.com/holtwick/zerva-email)
+- [zerva-vite-plugin](https://github.com/holtwick/zerva-vite-plugin)
 
 ## Related
 
