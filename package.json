@@ -51,7 +51,7 @@
   "dependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
-    "@types/node": "^16.10.1",
+    "@types/node": "^16.10.2",
     "chokidar": "^3.5.2",
     "cors": "^2.8.5",
     "esbuild": "^0.13.3",
@@ -59,12 +59,12 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "node-notifier": "^10.0.0",
-    "zeed": "^0.7.24"
+    "zeed": "^0.7.32"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@types/node-fetch": "^2.5.12",
-    "jest": "^27.2.3",
+    "jest": "^27.2.4",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "node-fetch": "^2.6.5",
     "ts-jest": "^27.0.5",

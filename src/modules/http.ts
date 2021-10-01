@@ -13,7 +13,7 @@ const name = "http"
 const log = Logger(`zerva:${name}`)
 
 export type httpGetHandler =
-  | ((info: { res: unknown; req: unknown }) => Promise<any> | any)
+  | ((info: { res: any; req: any }) => Promise<any> | any)
   | any
 
 declare global {
