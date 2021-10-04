@@ -90,8 +90,21 @@ export function useHttp(config: httpConfig): {
       log(`get ${path}`)
       if (typeof handler === "function") {
         let result = await promisify(handler({ res, req }))
-        if (result != null) {
-          res.send(result)
+
+        // `undefined` did handle themselves
+        if (result == null) return
+
+        if (typeof result === "number") {
+          res.sendStatus(result) // error code
+        } else if (typeof result === "string") {
+          if (result.startsWith("<")) {
+            res.send(result) // html
+          } else {
+            res.set("Content-Type", "text/plain")
+            res.send(result)
+          }
+        } else {
+          res.send(result) // json etc.
         }
       } else {
         res.send(handler)
