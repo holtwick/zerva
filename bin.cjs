@@ -63,7 +63,7 @@ build({
   },
   run: !buildMode,
   watch: !buildMode,
-  tslint: false,
+  tslint: !buildMode,
   // external: [
   //   "notifier",
   //   "mediasoup",
