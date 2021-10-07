@@ -1,9 +1,9 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import "cross-fetch/polyfill"
 import { Logger, LoggerNodeHandler, LogLevel } from "zeed"
-import { emit, serve, useHttp } from "../index.js"
-import fetch from "node-fetch"
-import { on } from "../context.js"
+import { on } from "../context"
+import { emit, serve, useHttp } from "../index"
 
 Logger.setHandlers([
   LoggerNodeHandler({
@@ -46,8 +46,8 @@ describe("http", () => {
       .toMatchInlineSnapshot(`
 "// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-export * from \\"./http.js\\"
-export * from \\"./exit.js\\"
+export * from \\"./http\\"
+export * from \\"./exit\\"
 "
 `)
   })
