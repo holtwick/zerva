@@ -13,13 +13,16 @@ const name = "http"
 const log = Logger(`zerva:${name}`)
 
 export type httpGetHandler =
-  | ((info: { res: any; req: any }) => Promise<any> | any)
+  | ((info: {
+      res: express.Response
+      req: express.Request
+    }) => Promise<any> | any)
   | any
 
 export type httpHandlerModes = "get" | "post"
 
 export type httpInterface = {
-  app: express.Express
+  app?: express.Express
   http: any
   get: (path: string, handler: httpGetHandler) => void
   post: (path: string, handler: httpGetHandler) => void
@@ -91,7 +94,7 @@ export function useHttp(config: httpConfig): httpInterface {
       path = `/${path}`
     }
     log(`register get ${path}`)
-    app[mode](path, async (req: any, res: any) => {
+    app[mode](path, async (req: express.Request, res: express.Response) => {
       log(`get ${path}`)
       if (typeof handler === "function") {
         let result = await promisify(handler({ res, req }))

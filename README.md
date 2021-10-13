@@ -4,14 +4,7 @@
 
 ## Get started
 
-Set up your first project like this (you may also use `yarn` or `pnpm`):
-
-```sh
-npm init zerva <your-project-name>
-cd <your-project-name>
-npm i
-npm start
-```
+Set up your first project using this [template](https://github.com/holtwick/zerva-project-template/generate).
 
 ## How it works
 
