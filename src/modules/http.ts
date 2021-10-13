@@ -16,15 +16,20 @@ export type httpGetHandler =
   | ((info: { res: any; req: any }) => Promise<any> | any)
   | any
 
+export type httpHandlerModes = "get" | "post"
+
+export type httpInterface = {
+  app: express.Express
+  http: any
+  get: (path: string, handler: httpGetHandler) => void
+  post: (path: string, handler: httpGetHandler) => void
+  addStatic: (path: string, fsPath: string) => void
+}
+
 declare global {
   interface ZContextEvents {
     setupHTTP(http: any, app: any): void
-    httpInit(info: {
-      http: any
-      app?: any
-      get: (path: string, handler: httpGetHandler) => void
-      addStatic: (path: string, fsPath: string) => void
-    }): void
+    httpInit(info: httpInterface): void
     httpRunning(info: {
       http: any
       port: number
@@ -42,11 +47,7 @@ interface httpConfig {
   sslKey?: string
 }
 
-export function useHttp(config: httpConfig): {
-  app: express.Express
-  get: (path: string, handler: httpGetHandler) => void
-  addStatic?: (path: string, fsPath: string) => void
-} {
+export function useHttp(config: httpConfig): httpInterface {
   register(name, [])
 
   const { sslKey, sslCrt, port = 4444, host } = config
@@ -81,12 +82,16 @@ export function useHttp(config: httpConfig): {
     log.error("starting web server failed:", err.message)
   })
 
-  function get(path: string, handler: httpGetHandler): void {
+  function smartRequestHandler(
+    mode: httpHandlerModes,
+    path: string,
+    handler: httpGetHandler
+  ): void {
     if (!path.startsWith("/")) {
       path = `/${path}`
     }
     log(`register get ${path}`)
-    app.get(path, async (req: any, res: any) => {
+    app[mode](path, async (req: any, res: any) => {
       log(`get ${path}`)
       if (typeof handler === "function") {
         let result = await promisify(handler({ res, req }))
@@ -117,10 +122,24 @@ export function useHttp(config: httpConfig): {
     app.use(path, express.static(fsPath))
   }
 
+  function get(path: string, handler: httpGetHandler) {
+    return smartRequestHandler("get", path, handler)
+  }
+
+  function post(path: string, handler: httpGetHandler) {
+    return smartRequestHandler("post", path, handler)
+  }
+
   on("serveInit", async () => {
     log("serveInit")
     await emit("setupHTTP", server, app)
-    await emit("httpInit", { app, http: server, get, addStatic })
+    await emit("httpInit", {
+      app,
+      http: server,
+      get,
+      post,
+      addStatic,
+    })
   })
 
   on("serveStop", async () => {
@@ -137,5 +156,11 @@ export function useHttp(config: httpConfig): {
     })
   })
 
-  return { app, get, addStatic }
+  return {
+    app,
+    http: server,
+    get,
+    post,
+    addStatic,
+  }
 }
