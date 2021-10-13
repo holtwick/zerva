@@ -14,8 +14,8 @@ const log = Logger(`zerva:${name}`)
 
 export type httpGetHandler =
   | ((info: {
-      res: express.Response
-      req: express.Request
+      res: any // express.Response
+      req: any // express.Request
     }) => Promise<any> | any)
   | any
 
@@ -94,30 +94,36 @@ export function useHttp(config: httpConfig): httpInterface {
       path = `/${path}`
     }
     log(`register get ${path}`)
-    app[mode](path, async (req: express.Request, res: express.Response) => {
-      log(`get ${path}`)
-      if (typeof handler === "function") {
-        let result = await promisify(handler({ res, req }))
+    app[mode](
+      path,
+      async (
+        req: any, // express.Request
+        res: any // express.Response
+      ) => {
+        log(`get ${path}`)
+        if (typeof handler === "function") {
+          let result = await promisify(handler({ res, req }))
 
-        // `undefined` did handle themselves
-        if (result == null) return
+          // `undefined` did handle themselves
+          if (result == null) return
 
-        if (typeof result === "number") {
-          res.sendStatus(result) // error code
-        } else if (typeof result === "string") {
-          if (result.startsWith("<")) {
-            res.send(result) // html
+          if (typeof result === "number") {
+            res.sendStatus(result) // error code
+          } else if (typeof result === "string") {
+            if (result.startsWith("<")) {
+              res.send(result) // html
+            } else {
+              res.set("Content-Type", "text/plain")
+              res.send(result)
+            }
           } else {
-            res.set("Content-Type", "text/plain")
-            res.send(result)
+            res.send(result) // json etc.
           }
         } else {
-          res.send(result) // json etc.
+          res.send(handler)
         }
-      } else {
-        res.send(handler)
       }
-    })
+    )
   }
 
   function addStatic(path: string, fsPath: string): void {
