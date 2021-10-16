@@ -27,12 +27,25 @@ if (cmd === "build") {
   entry = process.argv[2]
 }
 
+const entryCandidates = [
+  "zerva.ts",
+  "zerva.js",
+  "main.ts",
+  "main.js",
+  "src/zerva.ts",
+  "src/zerva.js",
+  "src/main.ts",
+  "src/main.js",
+]
+
 if (entry) {
   entry = resolve(entry)
 } else {
-  entry = resolve("src/main.ts")
-  if (!existsSync(entry)) {
-    entry = resolve("src/main.js")
+  for (const entryCandidate of entryCandidates) {
+    if (existsSync(resolve(entryCandidate))) {
+      entry = entryCandidate
+      break
+    }
   }
 }
 
