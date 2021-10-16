@@ -92,13 +92,29 @@ To get started, you can use these GitHub Templates:
 - [Create your own Zerva module](https://github.com/holtwick/zerva-module-template/generate)
 - [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate)
 
-## Modules
+## External Modules
 
 - [zerva-websocket](https://github.com/holtwick/zerva-websocket)
 - [zerva-socketio](https://github.com/holtwick/zerva-socketio)
 - [zerva-email](https://github.com/holtwick/zerva-email)
 - [zerva-vite-plugin](https://github.com/holtwick/zerva-vite-plugin)
 
-## Related
+## Internal Modules
+
+### useHttp
+
+Setup an Express web server.
+
+Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) and [zerva-socketio](https://github.com/holtwick/zerva-socketio) for demos.
+
+`httpRunning` is emitted after the web server is listening.
+
+On `httpStop` you can do some optional cleanup for your web server.
+
+### useExit
+
+Catch various exit scenarios and try to emit `serverStop` if possible, for example catch `CTRL-C`.
+
+## Related Projects
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server

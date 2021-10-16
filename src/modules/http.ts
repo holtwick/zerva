@@ -2,28 +2,27 @@
 
 import cors from "cors"
 import helmet from "helmet"
-import { Logger, promisify } from "zeed"
+import { Logger, promisify, isLocalHost } from "zeed"
 import { on, emit, register } from "../context"
 import express from "express"
 import fs from "fs"
 import httpsModule from "https"
 import httpModule from "http"
+import type { Server } from "http"
+import type { Response, Request, Express } from "express"
 
 const name = "http"
 const log = Logger(`zerva:${name}`)
 
 export type httpGetHandler =
-  | ((info: {
-      res: any // express.Response
-      req: any // express.Request
-    }) => Promise<any> | any)
+  | ((info: { res: Response; req: Request }) => Promise<any> | any)
   | any
 
 export type httpHandlerModes = "get" | "post"
 
 export type httpInterface = {
-  app?: express.Express
-  http: any
+  app?: Express
+  http: Server
   get: (path: string, handler: httpGetHandler) => void
   post: (path: string, handler: httpGetHandler) => void
   addStatic: (path: string, fsPath: string) => void
@@ -31,7 +30,7 @@ export type httpInterface = {
 
 declare global {
   interface ZContextEvents {
-    setupHTTP(http: any, app: any): void
+    // setupHTTP(http: any, app: any): void
     httpInit(info: httpInterface): void
     httpRunning(info: {
       http: any
@@ -64,8 +63,10 @@ export function useHttp(config: httpConfig): httpInterface {
   app.use(cors())
   // app.options("*", cors())
 
+  const isSSL = sslKey && sslCrt
   let server: any
-  if (sslKey && sslCrt) {
+
+  if (isSSL) {
     if (!fs.existsSync(sslKey) || !fs.existsSync(sslCrt)) {
       log.error("SSL files are not found. check your config.js file")
       process.exit(0)
@@ -141,7 +142,7 @@ export function useHttp(config: httpConfig): httpInterface {
 
   on("serveInit", async () => {
     log("serveInit")
-    await emit("setupHTTP", server, app)
+    // await emit("setupHTTP", server, app)
     await emit("httpInit", {
       app,
       http: server,
@@ -160,7 +161,10 @@ export function useHttp(config: httpConfig): httpInterface {
     log("serveStart")
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address()
-      log.info(`listening on ${address}:${port} (${family})`)
+      const host = isLocalHost(address) ? "localhost" : address
+      log.info(
+        `listening on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`
+      )
       emit("httpRunning", { port, family, address, http: server })
     })
   })
