@@ -15,7 +15,7 @@ export function useCounter() {
   on("httpInit", ({ get }) => {
     get("/", async () => {
       await emit("counterIncrement", ++counter)
-      return `Counter ${counter}.<br><br>Reload page to increase counter.`
+      return `<div>Counter ${counter}.<br><br>Reload page to increase counter.</div>`
     })
   })
 }

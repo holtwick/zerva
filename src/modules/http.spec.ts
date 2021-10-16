@@ -10,7 +10,7 @@ Logger.setHandlers([
     level: LogLevel.info,
     filter: "*",
     colors: true,
-    padding: 16,
+    padding: 32,
     nameBrackets: false,
     levelHelper: false,
   }),
