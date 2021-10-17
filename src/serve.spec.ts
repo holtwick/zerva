@@ -6,6 +6,8 @@ describe("serve", () => {
   it("should pass all phases", async () => {
     setContext()
 
+    let initCount = 0
+
     let obj = {
       init: false,
       start: false,
@@ -14,7 +16,15 @@ describe("serve", () => {
 
     onInit(() => {
       obj.init = true
+      initCount += 1
     })
+
+    // Check if multiple calls work
+    onInit(() => {
+      obj.init = true
+      initCount += 1
+    })
+
     onStart(() => {
       obj.start = true
     })
@@ -34,6 +44,7 @@ Object {
 
     await serveStop()
 
+    expect(initCount).toBe(2)
     expect(obj).toMatchInlineSnapshot(`
 Object {
   "init": true,
