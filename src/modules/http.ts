@@ -14,11 +14,13 @@ import type { Response, Request, Express } from "express"
 const name = "http"
 const log = Logger(`zerva:${name}`)
 
+export type { Response, Request, Express }
+
+export type httpHandlerModes = "get" | "post"
+
 export type httpGetHandler =
   | ((info: { res: Response; req: Request }) => Promise<any> | any)
   | any
-
-export type httpHandlerModes = "get" | "post"
 
 export type httpInterface = {
   app?: Express
@@ -30,7 +32,6 @@ export type httpInterface = {
 
 declare global {
   interface ZContextEvents {
-    // setupHTTP(http: any, app: any): void
     httpInit(info: httpInterface): void
     httpRunning(info: {
       http: any
@@ -42,7 +43,7 @@ declare global {
   }
 }
 
-interface httpConfig {
+export interface httpConfig {
   host?: string
   port?: number
   sslCrt?: string
@@ -95,36 +96,32 @@ export function useHttp(config: httpConfig): httpInterface {
       path = `/${path}`
     }
     log(`register get ${path}`)
-    app[mode](
-      path,
-      async (
-        req: any, // express.Request
-        res: any // express.Response
-      ) => {
-        log(`get ${path}`)
-        if (typeof handler === "function") {
-          let result = await promisify(handler({ res, req }))
+    app[mode](path, async (req: Request, res: Response) => {
+      log(`get ${path}`)
+      if (typeof handler === "function") {
+        let result = await promisify(handler({ res, req }))
 
-          // `undefined` did handle themselves
-          if (result == null) return
+        // `undefined` did handle themselves
+        if (result == null) return
 
-          if (typeof result === "number") {
-            res.sendStatus(result) // error code
-          } else if (typeof result === "string") {
-            if (result.startsWith("<")) {
-              res.send(result) // html
-            } else {
-              res.set("Content-Type", "text/plain")
-              res.send(result)
-            }
+        if (typeof result === "number") {
+          res.sendStatus(result) // error code
+        } else if (typeof result === "string") {
+          if (result.startsWith("<")) {
+            res.set("Content-Type", "text/html; charset=utf-8")
+            res.send(result) // html
           } else {
-            res.send(result) // json etc.
+            res.set("Content-Type", "text/plain; charset=utf-8")
+            res.send(result)
           }
         } else {
-          res.send(handler)
+          // res.set("Content-Type", "application/json; charset=utf-8")
+          res.send(result) // json etc.
         }
+      } else {
+        res.send(handler)
       }
-    )
+    })
   }
 
   function addStatic(path: string, fsPath: string): void {
@@ -142,7 +139,6 @@ export function useHttp(config: httpConfig): httpInterface {
 
   on("serveInit", async () => {
     log("serveInit")
-    // await emit("setupHTTP", server, app)
     await emit("httpInit", {
       app,
       http: server,

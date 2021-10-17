@@ -1,4 +1,4 @@
-import { emit, Logger, on, register } from "zerva"
+import { emit, Logger, on, register, cloneObject } from "zerva"
 
 const log = Logger("counter")
 
@@ -16,6 +16,19 @@ export function useCounter() {
     get("/", async () => {
       await emit("counterIncrement", ++counter)
       return `<div>Counter ${counter}.<br><br>Reload page to increase counter.</div>`
+    })
+    get("/demo.json", async ({ req }) => {
+      await emit("counterIncrement", ++counter)
+      return {
+        headers: cloneObject(req.headers),
+        url: req.url,
+        ip: req.ip,
+        query: req.query,
+      }
+    })
+    get("/demo.txt", async () => {
+      await emit("counterIncrement", ++counter)
+      return `Counter ${counter}`
     })
   })
 }
