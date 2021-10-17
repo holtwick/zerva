@@ -98,6 +98,7 @@ To get started, you can use these GitHub Templates:
 - [zerva-socketio](https://github.com/holtwick/zerva-socketio)
 - [zerva-email](https://github.com/holtwick/zerva-email)
 - [zerva-vite-plugin](https://github.com/holtwick/zerva-vite-plugin)
+- [zerva-umami](https://github.com/holtwick/zerva-umami)
 
 ## Internal Modules
 
