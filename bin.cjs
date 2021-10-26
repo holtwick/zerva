@@ -61,26 +61,82 @@ if (!existsSync(entry)) {
 // Cleanup to args to not confuse estrella
 process.argv.splice(2, process.argv.length - 2)
 
-const { build } = require("estrella")
+const { build } = require("esbuild")
 
 // import pkg from "./package.json"
 const notifier = require("node-notifier")
+const { spawn } = require("child_process")
+
+let p
+let pWait
+
+async function stopNode() {
+  if (p) {
+    console.log("Stopping app...\n")
+    new Promise((resolve) => (pWait = resolve))
+    p.kill("SIGTERM")
+    // p.kill("SIGKILL")
+    p = undefined
+  }
+}
+
+async function startNode() {
+  await stopNode()
+  p = spawn(process.execPath, [outfile], {
+    cwd: process.cwd(),
+    stdio: "inherit",
+  })
+  console.info("Starting app")
+  p.on("error", (err) => {
+    console.error("Node process error:", err)
+  })
+  p.on("close", (code) => {
+    // console.info("Node process close with code:", code)
+    if (pWait) {
+      pWait()
+      pWait = undefined
+    }
+  })
+  // p.on("exit", () => {
+  //   console.info("Node process exit.")
+  // })
+}
 
 // Started from command line
-build({
+const result = build({
   // target: "es2017",
   bundle: true,
-  entry,
-  outfile, // entry + "-bin.js",
-  outfileMode: "+x",
+  entryPoints: [entry],
+  outfile,
   platform: "node",
   sourcemap: "inline",
   loader: {
     ".json": "json",
   },
-  run: !buildMode,
-  watch: !buildMode,
-  tslint: !buildMode,
+  minify: buildMode,
+  // run: !buildMode,
+  watch: buildMode
+    ? false
+    : {
+        onRebuild(error, result) {
+          if (error) {
+            stopNode()
+            // console.error(`Build failed with error:`, error)
+            let icon = resolve(__dirname, "icon.png")
+            // https://github.com/mikaelbr/node-notifier
+            notifier.notify({
+              title: "Zerva Build Error",
+              message: String(error),
+              icon,
+              sound: true,
+            })
+          } else {
+            console.info("Build succeeded.")
+            startNode()
+          }
+        },
+      },
+  // tslint: !buildMode,
   // external: [
   //   "notifier",
   //   "mediasoup",
@@ -92,23 +148,14 @@ build({
   //   // ...Object.keys(pkg.devDependencies ?? {}),
   //   // ...Object.keys(pkg.peerDependencies ?? {}),
   // ],
-  onEnd(config, result) {
-    if (config.watch) {
-      if (result.errors.length > 0) {
-        console.error(`Build failed with ${result.errors.length} errors\n`)
-        result.errors.forEach((err, i) =>
-          console.info(`Error #${i + 1}:`, err.text)
-        )
-        let icon = resolve(__dirname, "icon.png")
-        //
-        // https://github.com/mikaelbr/node-notifier
-        notifier.notify({
-          title: "Build Error",
-          message: `Build failed with ${result.errors.length} errors`,
-          icon,
-          sound: true,
-        })
-      }
-    }
-  },
 })
+
+result
+  .then((res) => {
+    if (!buildMode) {
+      startNode()
+    } else {
+      console.info(`Build to ${outfile}`)
+    }
+  })
+  .catch((err) => {})
