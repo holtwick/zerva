@@ -34,7 +34,8 @@ function useCounter() {
   on("httpInit", ({ get }) => {
     get(
       "/",
-      () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
+      () =>
+        `<div>Counter ${counter++}.<br><br>Reload page to increase counter. </div>`
     )
   })
   return {
