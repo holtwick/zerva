@@ -33,6 +33,7 @@ export type httpInterface = {
 declare global {
   interface ZContextEvents {
     httpInit(info: httpInterface): void
+    httpWillStart(info: httpInterface): void
     httpRunning(info: {
       http: any
       port: number
@@ -153,8 +154,15 @@ export function useHttp(config: httpConfig): httpInterface {
     return new Promise((resolve) => server.close(resolve))
   })
 
-  on("serveStart", () => {
+  on("serveStart", async () => {
     log("serveStart")
+    await emit("httpWillStart", {
+      app,
+      http: server,
+      get,
+      post,
+      addStatic,
+    })
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address()
       const host = isLocalHost(address) ? "localhost" : address

@@ -1,28 +1,21 @@
 // Simple demo for node and CommonJS loading
 
-import {
-  Logger,
-  LoggerNodeHandler,
-  LoggerFileHandler,
-  LogLevel,
-  setupEnv,
-} from "zeed"
+import { Logger, setupEnv } from "zeed"
+import { on, register, serve, useHttp } from "zerva"
 
-Logger.setHandlers([
-  LoggerFileHandler("zerva.log", {
-    level: LogLevel.debug,
-  }),
-  LoggerNodeHandler({
-    level: LogLevel.info,
-    filter: "*",
-    colors: true,
-    padding: 16,
-    nameBrackets: false,
-    levelHelper: false,
-  }),
-])
-
-import { serve, useHttp, register, on } from "zerva"
+// Logger.setHandlers([
+//   LoggerFileHandler("zerva.log", {
+//     level: LogLevel.debug,
+//   }),
+//   LoggerNodeHandler({
+//     level: LogLevel.info,
+//     filter: "*",
+//     colors: true,
+//     padding: 16,
+//     nameBrackets: false,
+//     levelHelper: false,
+//   }),
+// ])
 
 const log = Logger("demo")
 

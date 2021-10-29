@@ -137,17 +137,15 @@ const result = build({
         },
       },
   // tslint: !buildMode,
-  // external: [
-  //   "notifier",
-  //   "mediasoup",
-  //   "express",
-  //   "ws",
-  //   "engine.io",
-  //   "chokidar",
-  //   // ...Object.keys(pkg.dependencies),
-  //   // ...Object.keys(pkg.devDependencies ?? {}),
-  //   // ...Object.keys(pkg.peerDependencies ?? {}),
-  // ],
+  external: [
+    "notifier",
+    "express",
+    "esbuild",
+    "vite",
+    // ...Object.keys(pkg.dependencies),
+    // ...Object.keys(pkg.devDependencies ?? {}),
+    // ...Object.keys(pkg.peerDependencies ?? {}),
+  ],
 })
 
 result

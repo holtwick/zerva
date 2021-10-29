@@ -9,7 +9,7 @@
     "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "ZEED=* node index.js"
   },
   "dependencies": {
     "zeed": "^0.5.7",
