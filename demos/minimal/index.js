@@ -3,20 +3,6 @@
 import { Logger, setupEnv } from "zeed"
 import { on, register, serve, useHttp } from "zerva"
 
-// Logger.setHandlers([
-//   LoggerFileHandler("zerva.log", {
-//     level: LogLevel.debug,
-//   }),
-//   LoggerNodeHandler({
-//     level: LogLevel.info,
-//     filter: "*",
-//     colors: true,
-//     padding: 16,
-//     nameBrackets: false,
-//     levelHelper: false,
-//   }),
-// ])
-
 const log = Logger("demo")
 
 setupEnv()
