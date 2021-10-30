@@ -168,10 +168,10 @@ const result = build({
   // tslint: !buildMode,
   external: [
     "notifier",
-    "express",
     "esbuild",
     "vite",
-    ...Object.keys(pkg.dependencies),
+    // "express",
+    // ...Object.keys(pkg.dependencies),
     // ...Object.keys(pkg.devDependencies ?? {}),
     // ...Object.keys(pkg.peerDependencies ?? {}),
   ],
