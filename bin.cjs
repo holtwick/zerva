@@ -18,11 +18,13 @@ let outfile = resolve(".out.cjs")
 let buildMode = false
 
 const cmd = process.argv?.[2]?.trim()?.toLocaleLowerCase() || ""
+let minimal = false
 
-if (cmd === "build") {
+if (cmd === "build" || cmd === "minimal") {
   entry = process.argv[3]
   outfile = resolve("dist/main.cjs")
   buildMode = true
+  minimal = cmd === "minimal"
 } else {
   // Provide meaningful error messages using sourcemaps
   process.env.NODE_OPTIONS = "--enable-source-maps"
@@ -136,7 +138,7 @@ const result = build({
   entryPoints: [entry],
   outfile,
   platform: "node",
-  sourcemap: "inline",
+  sourcemap: minimal ? undefined : "inline",
   loader: {
     ".json": "json",
   },

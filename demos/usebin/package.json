@@ -11,6 +11,7 @@
   "scripts": {
     "start": "LEVEL=* ZEED=* zerva",
     "build": "zerva build",
+    "minimal": "zerva minimal",
     "serve": "node dist/main.cjs"
   },
   "dependencies": {
