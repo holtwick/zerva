@@ -11,7 +11,7 @@ const { resolve } = require("path")
 const { existsSync } = require("fs")
 const { build } = require("esbuild")
 const { spawn } = require("child_process")
-const { version } = require("./package.json")
+const pkg = require("./package.json")
 
 let entry
 let outfile = resolve(".out.cjs")
@@ -96,7 +96,7 @@ async function startNode() {
     env: {
       ...process.env,
       ZERVA_MODE: "development",
-      ZERVA_VERSION: version,
+      ZERVA_VERSION: pkg.version,
     },
   })
   console.info("Starting app")
@@ -144,10 +144,10 @@ const result = build({
     // ZERVA_MODE: buildMode ? "production" : "development",
     ZERVA_DEVELOPMENT: !buildMode,
     ZERVA_PRODUCTION: buildMode,
-    ZERVA_VERSION: `"${version}"`,
+    ZERVA_VERSION: `"${pkg.version}"`,
     "process.env.ZERVA_DEVELOPMENT": !buildMode,
     "process.env.ZERVA_PRODUCTION": buildMode,
-    "process.env.ZERVA_VERSION": `"${version}"`,
+    "process.env.ZERVA_VERSION": `"${pkg.version}"`,
   },
   minify: buildMode,
   watch: buildMode
