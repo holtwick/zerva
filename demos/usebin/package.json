@@ -9,12 +9,11 @@
     "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "start": "LEVEL=i zerva",
+    "start": "LEVEL=* ZEED=* zerva",
     "build": "zerva build",
     "serve": "node dist/main.cjs"
   },
   "dependencies": {
-    "zeed": "^0.7.48",
     "zerva": "file:../.."
   },
   "author": "Dirk Holtwick",
