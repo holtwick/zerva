@@ -133,6 +133,9 @@ Valid defines are:
 - `ZERVA_DEVELOPMENT` is `true` when started as `zerva`
 - `ZERVA_PRODUCTION` is `true` when started as `zerva build`
 
+For better compatibility the defines can also be accessed as `process.env.ZERVA_DEVELOPMENT` and `process.env.ZERVA_PRODUCTION`.
+
 ## Related Projects
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
+- [zeed-dom](https://github.com/holtwick/zeed-dom) - Lightweight offline DOM

@@ -145,6 +145,9 @@ const result = build({
     ZERVA_DEVELOPMENT: !buildMode,
     ZERVA_PRODUCTION: buildMode,
     ZERVA_VERSION: `"${version}"`,
+    "process.env.ZERVA_DEVELOPMENT": !buildMode,
+    "process.env.ZERVA_PRODUCTION": buildMode,
+    "process.env.ZERVA_VERSION": `"${version}"`,
   },
   minify: buildMode,
   watch: buildMode
