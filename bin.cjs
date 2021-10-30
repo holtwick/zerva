@@ -169,7 +169,7 @@ const result = build({
     "express",
     "esbuild",
     "vite",
-    // ...Object.keys(pkg.dependencies),
+    ...Object.keys(pkg.dependencies),
     // ...Object.keys(pkg.devDependencies ?? {}),
     // ...Object.keys(pkg.peerDependencies ?? {}),
   ],
