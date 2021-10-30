@@ -1,31 +1,12 @@
 // Simple demo for node and CommonJS loading
 
-import {
-  Logger,
-  LoggerNodeHandler,
-  LoggerFileHandler,
-  LogLevel,
-  valueToInteger,
-} from "zeed"
-
-import { on, serve, useHttp } from "zerva"
+import { on, serve, useHttp, Logger, valueToInteger } from "zerva"
 import { useCounter } from "./module"
 
-Logger.setHandlers([
-  LoggerFileHandler("zerva.log", {
-    level: LogLevel.debug,
-  }),
-  LoggerNodeHandler({
-    // level: LogLevel.info,
-    filter: "*",
-    colors: true,
-    padding: 16,
-    nameBrackets: false,
-    levelHelper: false,
-  }),
-])
-
 const log = Logger("app")
+
+// console.log(process.env, ZERVA_VERSION)
+log.info("Start...")
 
 useHttp({
   port: valueToInteger(process.env.PORT, 8080),

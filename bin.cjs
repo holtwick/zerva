@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
+// (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
 // if (process.argv.length < 3) {
 //   console.info(`Usage: zerva <your-zerva.ts>`)
@@ -9,6 +9,9 @@
 
 const { resolve } = require("path")
 const { existsSync } = require("fs")
+const { build } = require("esbuild")
+const { spawn } = require("child_process")
+const { version } = require("./package.json")
 
 let entry
 let outfile = resolve(".out.cjs")
@@ -23,13 +26,14 @@ if (cmd === "build") {
 } else {
   // Provide meaningful error messages using sourcemaps
   process.env.NODE_OPTIONS = "--enable-source-maps"
-
   entry = process.argv[2]
 }
 
 const entryCandidates = [
   "zerva.ts",
   "zerva.js",
+  "service.ts",
+  "service.js",
   "main.ts",
   "main.js",
   "zerva/main.ts",
@@ -38,8 +42,18 @@ const entryCandidates = [
   "service/main.js",
   "src/zerva.ts",
   "src/zerva.js",
+  "src/service.ts",
+  "src/service.js",
   "src/main.ts",
   "src/main.js",
+  "index.ts",
+  "index.js",
+  "zerva/index.ts",
+  "zerva/index.js",
+  "service/index.ts",
+  "service/index.js",
+  "src/index.ts",
+  "src/index.js",
 ]
 
 if (entry) {
@@ -61,45 +75,58 @@ if (!existsSync(entry)) {
 // Cleanup to args to not confuse estrella
 process.argv.splice(2, process.argv.length - 2)
 
-const { build } = require("esbuild")
-
-// import pkg from "./package.json"
-const notifier = require("node-notifier")
-const { spawn } = require("child_process")
-
-let p
-let pWait
+let zervaNodeProcess
+let zervaNodeProcessDidEndPromise
 
 async function stopNode() {
-  if (p) {
+  if (zervaNodeProcess) {
     console.log("Stopping app...\n")
-    new Promise((resolve) => (pWait = resolve))
-    p.kill("SIGTERM")
+    new Promise((resolve) => (zervaNodeProcessDidEndPromise = resolve))
+    zervaNodeProcess.kill("SIGTERM")
     // p.kill("SIGKILL")
-    p = undefined
+    zervaNodeProcess = undefined
   }
 }
 
 async function startNode() {
   await stopNode()
-  p = spawn(process.execPath, [outfile], {
+  zervaNodeProcess = spawn(process.execPath, [outfile], {
     cwd: process.cwd(),
     stdio: "inherit",
+    env: {
+      ...process.env,
+      ZERVA_MODE: "development",
+      ZERVA_VERSION: version,
+    },
   })
   console.info("Starting app")
-  p.on("error", (err) => {
+  zervaNodeProcess.on("error", (err) => {
     console.error("Node process error:", err)
   })
-  p.on("close", (code) => {
+  zervaNodeProcess.on("close", (code) => {
     // console.info("Node process close with code:", code)
-    if (pWait) {
-      pWait()
-      pWait = undefined
+    if (zervaNodeProcessDidEndPromise) {
+      zervaNodeProcessDidEndPromise()
+      zervaNodeProcessDidEndPromise = undefined
     }
   })
   // p.on("exit", () => {
   //   console.info("Node process exit.")
   // })
+}
+
+function notifyError(error) {
+  if (!buildMode) {
+    // https://github.com/mikaelbr/node-notifier
+    const notifier = require("node-notifier")
+    if (notifier)
+      notifier.notify({
+        title: "Zerva Build Error",
+        message: String(error),
+        icon: resolve(__dirname, "icon.png"),
+        sound: true,
+      })
+  }
 }
 
 // Started from command line
@@ -113,25 +140,22 @@ const result = build({
   loader: {
     ".json": "json",
   },
+  define: {
+    // ZERVA_MODE: buildMode ? "production" : "development",
+    ZERVA_DEVELOPMENT: !buildMode,
+    ZERVA_PRODUCTION: buildMode,
+    ZERVA_VERSION: `"${version}"`,
+  },
   minify: buildMode,
-  // run: !buildMode,
   watch: buildMode
     ? false
     : {
         onRebuild(error, result) {
           if (error) {
             stopNode()
-            // console.error(`Build failed with error:`, error)
-            let icon = resolve(__dirname, "icon.png")
-            // https://github.com/mikaelbr/node-notifier
-            notifier.notify({
-              title: "Zerva Build Error",
-              message: String(error),
-              icon,
-              sound: true,
-            })
+            notifyError(error)
           } else {
-            console.info("Build succeeded.")
+            console.info("Rebuild succeeded.")
             startNode()
           }
         },
@@ -153,7 +177,9 @@ result
     if (!buildMode) {
       startNode()
     } else {
-      console.info(`Build to ${outfile}`)
+      console.info(`Build to ${outfile} succeeded.`)
     }
   })
-  .catch((err) => {})
+  .catch((error) => {
+    notifyError(error)
+  })

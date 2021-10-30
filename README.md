@@ -116,6 +116,23 @@ On `httpStop` you can do some optional cleanup for your web server.
 
 Catch various exit scenarios and try to emit `serverStop` if possible, for example catch `CTRL-C`.
 
+## Advanced Topics
+
+### Conditional building
+
+Zerva uses [esbuild]() to create both the development server code and the production code. You can take advantage of conditional building using [defines](https://esbuild.github.io/api/#define). This can be used to have code that avoids certain imports or otherwise unneed stuff in production mode. I.e. in your code you can do stuff like this:
+
+```ts
+if (ZERVA_DEVELEPMENT) {
+  /* do something */
+}
+```
+
+Valid defines are:
+
+- `ZERVA_DEVELOPMENT` is `true` when started as `zerva`
+- `ZERVA_PRODUCTION` is `true` when started as `zerva build`
+
 ## Related Projects
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
