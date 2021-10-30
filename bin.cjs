@@ -11,18 +11,20 @@ const { resolve } = require("path")
 const { existsSync } = require("fs")
 const { build } = require("esbuild")
 const { spawn } = require("child_process")
-const { version } = require("./package.json")
+const pkg = require("./package.json")
 
 let entry
 let outfile = resolve(".out.cjs")
 let buildMode = false
 
 const cmd = process.argv?.[2]?.trim()?.toLocaleLowerCase() || ""
+let minimal = false
 
-if (cmd === "build") {
+if (cmd === "build" || cmd === "minimal") {
   entry = process.argv[3]
   outfile = resolve("dist/main.cjs")
   buildMode = true
+  minimal = cmd === "minimal"
 } else {
   // Provide meaningful error messages using sourcemaps
   process.env.NODE_OPTIONS = "--enable-source-maps"
@@ -96,7 +98,7 @@ async function startNode() {
     env: {
       ...process.env,
       ZERVA_MODE: "development",
-      ZERVA_VERSION: version,
+      ZERVA_VERSION: pkg.version,
     },
   })
   console.info("Starting app")
@@ -136,7 +138,7 @@ const result = build({
   entryPoints: [entry],
   outfile,
   platform: "node",
-  sourcemap: "inline",
+  sourcemap: minimal ? undefined : "inline",
   loader: {
     ".json": "json",
   },
@@ -144,10 +146,10 @@ const result = build({
     // ZERVA_MODE: buildMode ? "production" : "development",
     ZERVA_DEVELOPMENT: !buildMode,
     ZERVA_PRODUCTION: buildMode,
-    ZERVA_VERSION: `"${version}"`,
+    ZERVA_VERSION: `"${pkg.version}"`,
     "process.env.ZERVA_DEVELOPMENT": !buildMode,
     "process.env.ZERVA_PRODUCTION": buildMode,
-    "process.env.ZERVA_VERSION": `"${version}"`,
+    "process.env.ZERVA_VERSION": `"${pkg.version}"`,
   },
   minify: buildMode,
   watch: buildMode
@@ -169,7 +171,7 @@ const result = build({
     "express",
     "esbuild",
     "vite",
-    // ...Object.keys(pkg.dependencies),
+    ...Object.keys(pkg.dependencies),
     // ...Object.keys(pkg.devDependencies ?? {}),
     // ...Object.keys(pkg.peerDependencies ?? {}),
   ],
