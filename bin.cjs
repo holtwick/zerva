@@ -131,6 +131,8 @@ function notifyError(error) {
   }
 }
 
+console.info(`Building from entry file ${entry}`)
+
 // Started from command line
 const result = build({
   // target: "es2017",
