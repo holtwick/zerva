@@ -31,12 +31,22 @@ export async function serveStop() {
   await emit("serveStop")
 }
 
+// Security net
+
+const checkServeTimeout = setTimeout(() => {
+  console.info(
+    "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
+  )
+}, 5000)
+
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
  *
  * @param fn Call your modules in here to add them to the context
  */
 export async function serve(fn?: () => void) {
+  clearTimeout(checkServeTimeout)
+
   if (fn) {
     log.info("launch")
     fn()
