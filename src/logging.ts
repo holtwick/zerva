@@ -1,10 +1,4 @@
-import {
-  Logger,
-  LoggerFileHandler,
-  LoggerNodeHandler,
-  LogLevel,
-  toPath,
-} from "zeed"
+import { Logger, LoggerFileHandler, LoggerNodeHandler, toPath } from "zeed"
 
 let handlers = [
   LoggerNodeHandler({
@@ -15,11 +9,7 @@ let handlers = [
 ]
 
 if (process.env.LOG) {
-  handlers.unshift(
-    LoggerFileHandler(toPath(process.env.LOG), {
-      level: LogLevel.all,
-    })
-  )
+  handlers.unshift(LoggerFileHandler(toPath(process.env.LOG)))
 }
 
 Logger.setHandlers(handlers)
