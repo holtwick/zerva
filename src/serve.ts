@@ -11,9 +11,6 @@ declare global {
     serveStart(): void
     serveStop(): void
   }
-  interface ZeedGlobalContext {
-    checkServeTimeout: any
-  }
 }
 
 // Shortcuts
@@ -34,17 +31,6 @@ export async function serveStop() {
   await emit("serveStop")
 }
 
-// Security net
-
-if (!getGlobalContext().checkServeTimeout) {
-  getGlobalContext().checkServeTimeout = setTimeout(() => {
-    console.info(
-      "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
-    )
-  }, 5000)
-  log("start waiting 5s until serve() is called")
-}
-
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
  *
@@ -52,11 +38,6 @@ if (!getGlobalContext().checkServeTimeout) {
  */
 export async function serve(fn?: () => void) {
   log("serve")
-
-  if (getGlobalContext().checkServeTimeout) {
-    clearTimeout(getGlobalContext().checkServeTimeout)
-    getGlobalContext().checkServeTimeout = undefined
-  }
 
   if (fn) {
     log.info("launch")
