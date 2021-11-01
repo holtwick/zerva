@@ -1,7 +1,7 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { emit, on } from "./context"
-import { Logger } from "zeed"
+import { getGlobalContext, Logger } from "zeed"
 
 const log = Logger(`zerva:serve`)
 
@@ -10,6 +10,9 @@ declare global {
     serveInit(): void
     serveStart(): void
     serveStop(): void
+  }
+  interface ZeedGlobalContext {
+    checkServeTimeout: any
   }
 }
 
@@ -33,12 +36,14 @@ export async function serveStop() {
 
 // Security net
 
-// const checkServeTimeout = setTimeout(() => {
-//   console.info(
-//     "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
-//   )
-// }, 5000)
-// log("start waiting 5s until serve() is called", checkServeTimeout)
+if (!getGlobalContext().checkServeTimeout) {
+  getGlobalContext().checkServeTimeout = setTimeout(() => {
+    console.info(
+      "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
+    )
+  }, 5000)
+  log("start waiting 5s until serve() is called")
+}
 
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
@@ -47,7 +52,11 @@ export async function serveStop() {
  */
 export async function serve(fn?: () => void) {
   log("serve")
-  // clearTimeout(checkServeTimeout)
+
+  if (getGlobalContext().checkServeTimeout) {
+    clearTimeout(getGlobalContext().checkServeTimeout)
+    getGlobalContext().checkServeTimeout = undefined
+  }
 
   if (fn) {
     log.info("launch")
