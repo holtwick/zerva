@@ -33,11 +33,12 @@ export async function serveStop() {
 
 // Security net
 
-const checkServeTimeout = setTimeout(() => {
-  console.info(
-    "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
-  )
-}, 5000)
+// const checkServeTimeout = setTimeout(() => {
+//   console.info(
+//     "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
+//   )
+// }, 5000)
+// log("start waiting 5s until serve() is called", checkServeTimeout)
 
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
@@ -45,7 +46,8 @@ const checkServeTimeout = setTimeout(() => {
  * @param fn Call your modules in here to add them to the context
  */
 export async function serve(fn?: () => void) {
-  clearTimeout(checkServeTimeout)
+  log("serve")
+  // clearTimeout(checkServeTimeout)
 
   if (fn) {
     log.info("launch")
