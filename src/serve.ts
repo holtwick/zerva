@@ -1,7 +1,7 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { Logger } from "zeed"
 import { emit, on } from "./context"
-import { getGlobalContext, Logger } from "zeed"
 
 const log = Logger(`zerva:serve`)
 
