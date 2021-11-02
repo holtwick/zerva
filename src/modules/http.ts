@@ -56,6 +56,10 @@ export function useHttp(config: httpConfig): httpInterface {
 
   const { sslKey, sslCrt, port = 4444, host } = config
 
+  process.on("uncaughtException", (err) =>
+    log.error("node js process error", err)
+  )
+
   // Safety net, probably better suited in `register`?
   let checkServeTimeout = setTimeout(() => {
     console.info(
@@ -98,6 +102,10 @@ export function useHttp(config: httpConfig): httpInterface {
 
   server.on("error", (err: Error) => {
     log.error("starting web server failed:", err.message)
+  })
+
+  server.on("clientError", (err: Error) => {
+    log.error("client request error, err")
   })
 
   function smartRequestHandler(
