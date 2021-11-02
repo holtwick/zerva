@@ -135,6 +135,11 @@ Valid defines are:
 
 For better compatibility the defines can also be accessed as `process.env.ZERVA_DEVELOPMENT` and `process.env.ZERVA_PRODUCTION`.
 
+## Minimal Requirements
+
+- Node: 14.13.1
+- JS target: es2020
+
 ## Related Projects
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
