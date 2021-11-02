@@ -135,7 +135,7 @@ console.info(`Building from entry file ${entry}`)
 
 // Started from command line
 const result = build({
-  // target: "es2017",
+  target: "es2020",
   bundle: true,
   entryPoints: [entry],
   outfile,
