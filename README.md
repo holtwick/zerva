@@ -140,6 +140,8 @@ For better compatibility the defines can also be accessed as `process.env.ZERVA_
 - Node: 14.13.1
 - JS target: es2020
 
+See [tsconfig/bases](https://github.com/tsconfig/bases) to learn details about the configuration considerations.
+
 ## Related Projects
 
 - [zeed](https://github.com/holtwick/zeed) - Helper lib providing the logging for server
