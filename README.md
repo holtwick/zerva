@@ -95,18 +95,18 @@ To get started, you can use these GitHub Templates:
 ## External Modules
 
 - [zerva-websocket](https://github.com/holtwick/zerva-websocket)
-- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
+- [zerva-vite](https://github.com/holtwick/zerva-vite)
 - [zerva-email](https://github.com/holtwick/zerva-email)
-- [zerva-vite-plugin](https://github.com/holtwick/zerva-vite-plugin)
 - [zerva-umami](https://github.com/holtwick/zerva-umami)
+- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
 
 ## Internal Modules
 
 ### useHttp
 
-Setup an Express web server.
+Sets up an Express web server.
 
-Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) and [zerva-socketio](https://github.com/holtwick/zerva-socketio) for demos.
+Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) for demos.
 
 `httpRunning` is emitted after the web server is listening.
 
@@ -120,7 +120,7 @@ Catch various exit scenarios and try to emit `serverStop` if possible, for examp
 
 ### Conditional building
 
-Zerva uses [esbuild]() to create both the development server code and the production code. You can take advantage of conditional building using [defines](https://esbuild.github.io/api/#define). This can be used to have code that avoids certain imports or otherwise unneed stuff in production mode. I.e. in your code you can do stuff like this:
+Zerva uses [esbuild](https://esbuild.github.io) to create both the development server code and the production code. You can take advantage of conditional building using [defines](https://esbuild.github.io/api/#define). This can be used to have code that avoids certain imports or otherwise unneed stuff in production mode. I.e. in your code you can do stuff like this:
 
 ```ts
 if (ZERVA_DEVELEPMENT) {
