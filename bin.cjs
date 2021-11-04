@@ -140,7 +140,7 @@ const result = build({
   entryPoints: [entry],
   outfile,
   platform: "node",
-  sourcemap: minimal ? undefined : "inline",
+  sourcemap: minimal ? undefined : true, //"inline",
   loader: {
     ".json": "json",
   },
