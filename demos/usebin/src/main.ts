@@ -6,6 +6,7 @@ import { useCounter } from "./module"
 const log = Logger("app")
 
 // console.log(process.env, ZERVA_VERSION)
+// log.info(loggerStackTraceDebug)
 log.info("Start...")
 
 useHttp({
