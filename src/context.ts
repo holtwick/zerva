@@ -7,6 +7,7 @@ import {
   uname,
   arrayFlatten,
   getGlobalContext,
+  DisposerFunction,
 } from "zeed"
 
 const log = Logger(`zerva:context`)
@@ -70,9 +71,7 @@ export async function emit<U extends keyof ZContextEvents>(
 export function on<U extends keyof ZContextEvents>(
   event: U,
   listener: ZContextEvents[U]
-): {
-  cleanup: () => void
-} {
+): DisposerFunction {
   return getContext().on(event, listener)
 }
 
