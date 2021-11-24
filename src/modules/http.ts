@@ -1,15 +1,16 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import bodyParser from "body-parser"
 import cors from "cors"
-import helmet from "helmet"
-import { Logger, promisify, isLocalHost } from "zeed"
-import { on, emit, register } from "../context"
+import type { Express, Request, Response } from "express"
 import express from "express"
 import fs from "fs"
-import httpsModule from "https"
-import httpModule from "http"
+import helmet from "helmet"
 import type { Server } from "http"
-import type { Response, Request, Express } from "express"
+import httpModule from "http"
+import httpsModule from "https"
+import { isLocalHost, Logger, promisify } from "zeed"
+import { emit, on, register } from "../context"
 
 const name = "http"
 const log = Logger(`zerva:${name}`)
@@ -79,7 +80,8 @@ export function useHttp(config: httpConfig): httpInterface {
     })
   )
   app.use(cors())
-  // app.options("*", cors())
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded())
 
   const isSSL = sslKey && sslCrt
   let server: any
