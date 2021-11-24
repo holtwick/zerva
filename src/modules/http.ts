@@ -1,6 +1,5 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import bodyParser from "body-parser"
 import cors from "cors"
 import type { Express, Request, Response } from "express"
 import express from "express"
@@ -80,8 +79,8 @@ export function useHttp(config: httpConfig): httpInterface {
     })
   )
   app.use(cors())
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded())
+  app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
 
   const isSSL = sslKey && sslCrt
   let server: any
