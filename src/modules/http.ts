@@ -23,7 +23,7 @@ export type httpGetHandler =
   | any
 
 export type httpInterface = {
-  app?: Express
+  app: Express
   http: Server
   get: (path: string, handler: httpGetHandler) => void
   post: (path: string, handler: httpGetHandler) => void
