@@ -50,56 +50,5 @@ describe("http", () => {
     export * from \\"./exit\\"
     "
     `)
-    //     expect((await fetch(`${url}/json`)).headers).toMatchInlineSnapshot(`
-    // Headers {
-    //   Symbol(map): Object {
-    //     "access-control-allow-origin": Array [
-    //       "*",
-    //     ],
-    //     "connection": Array [
-    //       "close",
-    //     ],
-    //     "content-length": Array [
-    //       "21",
-    //     ],
-    //     "content-type": Array [
-    //       "application/json; charset=utf-8",
-    //     ],
-    //     "date": Array [
-    //       "Sun, 17 Oct 2021 16:03:17 GMT",
-    //     ],
-    //     "etag": Array [
-    //       "W/\\"15-NPecLBGp9LrhKRjBkTXrX5trmSw\\"",
-    //     ],
-    //     "expect-ct": Array [
-    //       "max-age=0",
-    //     ],
-    //     "referrer-policy": Array [
-    //       "no-referrer",
-    //     ],
-    //     "strict-transport-security": Array [
-    //       "max-age=15552000; includeSubDomains",
-    //     ],
-    //     "x-content-type-options": Array [
-    //       "nosniff",
-    //     ],
-    //     "x-dns-prefetch-control": Array [
-    //       "off",
-    //     ],
-    //     "x-download-options": Array [
-    //       "noopen",
-    //     ],
-    //     "x-frame-options": Array [
-    //       "SAMEORIGIN",
-    //     ],
-    //     "x-permitted-cross-domain-policies": Array [
-    //       "none",
-    //     ],
-    //     "x-xss-protection": Array [
-    //       "0",
-    //     ],
-    //   },
-    // }
-    // `)
   })
 })
