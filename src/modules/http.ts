@@ -16,7 +16,7 @@ const log = Logger(`zerva:${name}`)
 
 export type { Response, Request, Express }
 
-export type httpHandlerModes = "get" | "post"
+export type httpHandlerModes = "get" | "post" | "put" | "delete"
 
 export type httpGetHandler =
   | ((info: { res: Response; req: Request }) => Promise<any> | any)
@@ -27,6 +27,8 @@ export type httpInterface = {
   http: Server
   get: (path: string, handler: httpGetHandler) => void
   post: (path: string, handler: httpGetHandler) => void
+  put: (path: string, handler: httpGetHandler) => void
+  delete: (path: string, handler: httpGetHandler) => void
   addStatic: (path: string, fsPath: string) => void
 }
 
@@ -159,6 +161,14 @@ export function useHttp(config: httpConfig): httpInterface {
     return smartRequestHandler("post", path, handler)
   }
 
+  function put(path: string, handler: httpGetHandler) {
+    return smartRequestHandler("put", path, handler)
+  }
+
+  function del(path: string, handler: httpGetHandler) {
+    return smartRequestHandler("delete", path, handler)
+  }
+
   on("serveInit", async () => {
     log("serveInit")
     await emit("httpInit", {
@@ -166,6 +176,8 @@ export function useHttp(config: httpConfig): httpInterface {
       http: server,
       get,
       post,
+      put,
+      delete: del,
       addStatic,
     })
   })
@@ -182,6 +194,8 @@ export function useHttp(config: httpConfig): httpInterface {
       http: server,
       get,
       post,
+      put,
+      delete: del,
       addStatic,
     })
     server.listen({ host, port }, () => {
@@ -199,6 +213,8 @@ export function useHttp(config: httpConfig): httpInterface {
     http: server,
     get,
     post,
+    put,
+    delete: del,
     addStatic,
   }
 }
