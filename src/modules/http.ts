@@ -8,6 +8,7 @@ import helmet from "helmet"
 import type { Server } from "http"
 import httpModule from "http"
 import httpsModule from "https"
+import { AddressInfo } from "net"
 import { isLocalHost, Logger, promisify } from "zeed"
 import { emit, on, register } from "../context"
 
@@ -18,9 +19,13 @@ export type { Response, Request, Express }
 
 export type httpHandlerModes = "get" | "post" | "put" | "delete"
 
+export type httpResultPrimaryTypes = string | number | undefined | null | object
 export type httpGetHandler =
-  | ((info: { res: Response; req: Request }) => Promise<any> | any)
-  | any
+  | httpResultPrimaryTypes
+  | ((info: {
+      res: Response
+      req: Request
+    }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
 
 export type httpInterface = {
   app: Express
@@ -37,7 +42,7 @@ declare global {
     httpInit(info: httpInterface): void
     httpWillStart(info: httpInterface): void
     httpRunning(info: {
-      http: any
+      http: Server
       port: number
       family: string
       address: string
@@ -85,7 +90,7 @@ export function useHttp(config: httpConfig): httpInterface {
   app.use(express.urlencoded({ extended: true }))
 
   const isSSL = sslKey && sslCrt
-  let server: any
+  let server: Server
 
   if (isSSL) {
     if (!fs.existsSync(sslKey) || !fs.existsSync(sslCrt)) {
@@ -184,7 +189,7 @@ export function useHttp(config: httpConfig): httpInterface {
 
   on("serveStop", async () => {
     await emit("httpStop")
-    return new Promise((resolve) => server.close(resolve))
+    return new Promise((resolve) => server.close(resolve as any))
   })
 
   on("serveStart", async () => {
@@ -199,7 +204,7 @@ export function useHttp(config: httpConfig): httpInterface {
       addStatic,
     })
     server.listen({ host, port }, () => {
-      const { port, family, address } = server.address()
+      const { port, family, address } = server.address() as AddressInfo
       const host = isLocalHost(address) ? "localhost" : address
       log.info(
         `listening on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`

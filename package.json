@@ -45,7 +45,7 @@
     "clean": "rm -rf dist",
     "watch": "npm run build:tsup -- --watch",
     "prepublishOnly": "npm test && npm run build",
-    "test": "jest src",
+    "test": "ZEED=* jest src",
     "global": "pnpm -g ln"
   },
   "dependencies": {
