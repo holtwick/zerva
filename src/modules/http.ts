@@ -34,7 +34,9 @@ export type httpInterface = {
   post: (path: string, handler: httpGetHandler) => void
   put: (path: string, handler: httpGetHandler) => void
   delete: (path: string, handler: httpGetHandler) => void
+  /** @deprecated */
   addStatic: (path: string, fsPath: string) => void
+  static: (path: string, fsPath: string) => void
 }
 
 declare global {
@@ -184,6 +186,7 @@ export function useHttp(config: httpConfig): httpInterface {
       put,
       delete: del,
       addStatic,
+      static: addStatic,
     })
   })
 
@@ -202,6 +205,7 @@ export function useHttp(config: httpConfig): httpInterface {
       put,
       delete: del,
       addStatic,
+      static: addStatic,
     })
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
@@ -221,5 +225,6 @@ export function useHttp(config: httpConfig): httpInterface {
     put,
     delete: del,
     addStatic,
+    static: addStatic,
   }
 }

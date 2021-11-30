@@ -1,6 +1,6 @@
 // Simple demo for node and CommonJS loading
 
-import { on, serve, useHttp, Logger, valueToInteger } from "zerva"
+import { on, serve, useHttp, Logger, valueToInteger, useQrCode } from "zerva"
 import { useCounter } from "./module"
 
 const log = Logger("app")
@@ -8,6 +8,8 @@ const log = Logger("app")
 // console.log(process.env, ZERVA_VERSION)
 // log.info(loggerStackTraceDebug)
 log.info("Start...")
+
+useQrCode()
 
 useHttp({
   port: valueToInteger(process.env.PORT, 8080),
