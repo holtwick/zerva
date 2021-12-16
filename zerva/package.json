@@ -1,5 +1,5 @@
 {
-  "name": "zerva",
+  "name": "@zerva/core",
   "version": "0.5.3",
   "description": "🌱 Simple event driven server",
   "bin": {
