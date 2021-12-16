@@ -1,7 +1,7 @@
 // Simple demo for node and CommonJS loading
 
 import { Logger, setupEnv } from "zeed"
-import { on, register, serve, useHttp } from "zerva"
+import { on, register, serve, useHttp } from "@zerva/core"
 
 const log = Logger("demo")
 

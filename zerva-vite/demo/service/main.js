@@ -1,4 +1,4 @@
-import { serve, useHttp } from "zerva"
+import { serve, useHttp } from "@zerva/core"
 import { useVite } from "zerva-vite"
 
 useHttp({

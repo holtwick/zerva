@@ -1,6 +1,6 @@
 import { useMessageHub } from "zeed"
 import { Logger, useInterval } from "zeed"
-import { on, serve, useHttp } from "zerva"
+import { on, serve, useHttp } from "@zerva/core"
 import { useVite } from "zerva-vite"
 import { useWebSocket } from "zerva-websocket"
 import { Messages } from "./src/protocol"

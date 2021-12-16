@@ -9,7 +9,7 @@ import {
   valueToInteger,
   valueToString,
 } from "zeed"
-import { emit, on, serve, useHttp } from "zerva"
+import { emit, on, serve, useHttp } from "@zerva/core"
 import { useEmail } from "zerva-email"
 import { useCounter } from "./module"
 

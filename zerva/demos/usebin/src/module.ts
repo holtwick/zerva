@@ -1,4 +1,4 @@
-import { emit, Logger, on, register, cloneObject } from "zerva"
+import { emit, Logger, on, register, cloneObject } from "@zerva/core"
 
 const log = Logger("counter")
 

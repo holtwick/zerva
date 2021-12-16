@@ -2,7 +2,7 @@
 
 import { existsSync } from "fs"
 import { resolve } from "path"
-import { on, register, Logger, toPath } from "zerva"
+import { on, register, Logger, toPath } from "@zerva/core"
 import { createServer } from "vite"
 
 const name = "vite"
