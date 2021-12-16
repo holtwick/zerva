@@ -7,5 +7,4 @@ module.exports = {
     },
   },
   testPathIgnorePatterns: ["/node_modules/", "/demos/"],
-  resolver: "jest-ts-webcompat-resolver",
 }
