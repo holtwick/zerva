@@ -1,10 +1,11 @@
 {
-  "name": "zerva-monorepo",
+  "name": "@zerva/monorepo",
   "private": true,
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
+    "wup": "pnpm up -i -r --latest",
     "preinstall": "npx only-allow pnpm",
     "format": "prettier --write ."
   },
