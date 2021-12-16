@@ -1,0 +1,23 @@
+{
+  "name": "zerva-monorepo",
+  "private": true,
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "format": "prettier --write ."
+  },
+  "_gitHooks": {
+    "pre-commit": "lint-staged --concurrent false",
+    "commit-msg": "node scripts/verifyCommit.cjs"
+  },
+  "packageManager": "pnpm@6.23.0",
+  "pnpm": {
+    "overrides": {}
+  },
+  "devDependencies": {
+    "only-allow": "^1.0.0",
+    "prettier": "^2.5.1"
+  }
+}

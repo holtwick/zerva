@@ -1,0 +1,60 @@
+{
+  "name": "zerva-vite",
+  "version": "0.2.7",
+  "description": "🌱 Zerva and Vite",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "author": {
+    "name": "Dirk Holtwick",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "node": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.13.1"
+  },
+  "scripts": {
+    "start": "npm run watch",
+    "build": "npm run clean && npm run build:tsup",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
+    "clean": "rm -rf dist",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "watch": "npm run build:tsup -- --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "vite": "^2.6.14",
+    "zeed": "^0.7.76",
+    "zerva": "^0.4.62"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.10",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
+    "tsup": "^5.9.2",
+    "typescript": "^4.5.2"
+  }
+}
