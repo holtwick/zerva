@@ -1,0 +1,14 @@
+{
+  "name": "zerva-docker",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "LEVEL=a zerva",
+    "build": "zerva build",
+    "serve": "node dist/main.cjs",
+    "upload": "npm run build && rsync -rvz --exclude-from=.rsyncignore * my-docker-server:zerva-docker"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
