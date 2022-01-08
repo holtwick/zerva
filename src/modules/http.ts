@@ -88,6 +88,7 @@ export function useHttp(config: httpConfig): httpInterface {
     })
   )
   app.use(cors())
+  app.use(express.raw({ limit: "1gb" }))
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
