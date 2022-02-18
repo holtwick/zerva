@@ -1,6 +1,6 @@
 {
   "name": "zerva",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "🌱 Simple event driven server",
   "license": "MIT",
   "bin": {
