@@ -12,7 +12,7 @@ services:
       - NODE_MODE:production
       - LOG:/app/data/zerva.log
       - ZEED:*
-    
+
 networks:
   default:
     external:
