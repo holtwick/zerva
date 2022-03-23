@@ -1,0 +1,11 @@
++ package.json
++ .dockerignore
++ Dockerfile
++ docker-compose.yml
++ dist
++ dist/**
++ data
++ data/**
++ www
++ www/**
+- *

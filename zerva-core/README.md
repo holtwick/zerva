@@ -13,7 +13,7 @@ It all starts with the `context` which is the common ground for any **module** w
 Usually you would start to build a server like this:
 
 ```ts
-import { useHttp, serve } from "zerva"
+import { useHttp, serve } from "@zerva/core"
 
 useHttp(
   port: 8080

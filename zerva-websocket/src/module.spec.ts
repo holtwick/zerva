@@ -9,7 +9,7 @@ import {
   useMessageHub,
   uuid,
 } from "zeed"
-import { emit, on, serve, useHttp } from "zerva"
+import { emit, on, serve, useHttp } from "@zerva/core"
 import { openWebSocketChannel, WebsocketChannel } from "./channel"
 import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./module"

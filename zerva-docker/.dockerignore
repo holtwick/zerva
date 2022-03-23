@@ -1,0 +1,14 @@
+node_modules
+pnpm*
+.pnpm*
+*.log
+.out*
+*.local
+.env
+.env.local
+Dockerfile-*
+*.md
+dist
+tmp
+data
+www
