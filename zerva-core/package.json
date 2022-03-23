@@ -2,6 +2,7 @@
   "name": "@zerva/core",
   "version": "0.6.8",
   "description": "🌱 Simple event driven server",
+  "license": "MIT",
   "funding": {
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
@@ -13,9 +14,9 @@
   ],
   "author": {
     "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
   "type": "module",
   "typings": "dist/index.d.ts",
   "exports": {

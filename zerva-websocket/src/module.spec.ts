@@ -1,5 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { emit, on, serve, useHttp } from "@zerva/core"
 import WebSocket from "ws"
 import {
   Logger,
@@ -9,7 +10,6 @@ import {
   useMessageHub,
   uuid,
 } from "zeed"
-import { emit, on, serve, useHttp } from "@zerva/core"
 import { openWebSocketChannel, WebsocketChannel } from "./channel"
 import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./module"

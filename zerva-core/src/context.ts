@@ -1,17 +1,15 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import {
-  Emitter,
-  Logger,
-  LogLevel,
-  uname,
   arrayFlatten,
-  getGlobalContext,
   DisposerFunction,
+  Emitter,
+  getGlobalContext,
+  Logger,
+  uname,
 } from "zeed"
 
 const log = Logger(`zerva:context`)
-log.level = LogLevel.warn
 
 // Others would probably call it "hub" or "bus"...
 
