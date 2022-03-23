@@ -1,7 +1,10 @@
 {
-  "name": "@zerva/core",
+  "name": "@zerva/bin",
   "version": "0.5.3",
-  "description": "🌱 Simple event driven server",
+  "description": "🌱 Zerva Command Line Tool",
+  "bin": {
+    "zerva": "bin.cjs"
+  },
   "funding": {
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
