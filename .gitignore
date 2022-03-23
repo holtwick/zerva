@@ -78,3 +78,5 @@ tmp
 *.local
 
 .npmrc
+
+pnpm-lock.yaml
