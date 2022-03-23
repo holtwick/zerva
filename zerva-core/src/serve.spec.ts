@@ -35,22 +35,22 @@ describe("serve", () => {
     await serve()
 
     expect(obj).toMatchInlineSnapshot(`
-Object {
-  "init": true,
-  "start": true,
-  "stop": false,
-}
-`)
+      {
+        "init": true,
+        "start": true,
+        "stop": false,
+      }
+    `)
 
     await serveStop()
 
     expect(initCount).toBe(2)
     expect(obj).toMatchInlineSnapshot(`
-Object {
-  "init": true,
-  "start": true,
-  "stop": true,
-}
-`)
+      {
+        "init": true,
+        "start": true,
+        "stop": true,
+      }
+    `)
   })
 })

@@ -1,9 +1,9 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { emit, on, onInit, register, requireModules } from "@zerva/core"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
-import { Channel, equalBinary, Logger, uname, Disposable } from "zeed"
-import { emit, on, onInit, register, requireModules } from "@zerva/core"
+import { Channel, Disposable, equalBinary, Logger, uname } from "zeed"
 import {
   pingMessage,
   pongMessage,

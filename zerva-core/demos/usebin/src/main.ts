@@ -1,12 +1,12 @@
 // Simple demo for node and CommonJS loading
 
 import {
+  Logger,
   on,
   serve,
   useHttp,
-  Logger,
-  valueToInteger,
   useQrCode,
+  valueToInteger,
 } from "@zerva/core"
 import { useCounter } from "./module"
 

@@ -88,8 +88,13 @@ export function useHttp(config: httpConfig): httpInterface {
     })
   )
   app.use(cors())
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+
+  // https://expressjs.com/en/api.html#express
+  const limit = "1gb"
+  app.use(express.raw({ limit })) // application/octet-stream -> Buffer
+  app.use(express.json({ limit })) // application/json -> object
+  app.use(express.text({ limit })) // text/plain -> string
+  app.use(express.urlencoded({ limit, extended: true })) // application/x-www-form-urlencoded
 
   const isSSL = sslKey && sslCrt
   let server: Server
