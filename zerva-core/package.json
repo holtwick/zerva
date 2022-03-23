@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "🌱 Simple event driven server",
   "license": "MIT",
   "funding": {
