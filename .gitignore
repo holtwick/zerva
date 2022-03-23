@@ -80,3 +80,6 @@ tmp
 .npmrc
 
 pnpm-lock.yaml
+
+_archive
+
