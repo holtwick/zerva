@@ -1,6 +1,6 @@
 {
   "name": "zerva-docker",
-  "version": "0.1.0",
+  "version": "0.6.4",
   "type": "module",
   "private": true,
   "scripts": {
