@@ -6,7 +6,7 @@
   },
   "scripts": {
     "wup": "pnpm up -i -r --latest",
-    "release": "bumpp package.json zerva-*/package.json --commit && pnpm -r publish --access public",
+    "release": "bumpp package.json zerva-*/package.json --commit && pnpm -r publish --access public && ./release.sh",
     "preinstall": "npx only-allow pnpm",
     "format": "prettier --write ."
   },
@@ -23,5 +23,5 @@
     "only-allow": "^1.1.0",
     "prettier": "^2.6.0"
   },
-  "version": "0.7.0"
+  "version": "0.7.1"
 }
