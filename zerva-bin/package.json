@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.6.8",
+  "version": "0.7.0",
   "description": "🌱 Zerva Command Line Tool",
   "bin": {
     "zerva": "bin.cjs"
