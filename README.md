@@ -43,7 +43,7 @@ As you can see a **module** is just a function connecting itself to the **contex
 
 > If you want to use multiple **contexts** just wrap the code using it into `withContext(context, () => { /* your code */ })`.
 
-On `httpInit` we make use of the http-modules specific `get` helper to answer to http-reuests on `/counter`.
+On `httpInit` we make use of the http-modules specific `get` helper to answer to http-requests on `/counter`.
 
 To make sure the `http` module is around as well in our context, it is good practice to register oneself and tell about dependencies using `register`:
 
@@ -94,11 +94,11 @@ To get started, you can use these GitHub Templates:
 
 ## External Modules
 
-- [zerva-websocket](https://github.com/holtwick/zerva-websocket)
-- [zerva-vite](https://github.com/holtwick/zerva-vite)
-- [zerva-email](https://github.com/holtwick/zerva-email)
-- [zerva-umami](https://github.com/holtwick/zerva-umami)
-- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
+- [zerva-websocket](./zerva-websocket)
+- [zerva-vite](./zerva-vite)
+- [zerva-email](./zerva-email)
+- [zerva-umami](./zerva-umami)
+- [zerva-socketio](./zerva-socketio)
 
 ## Internal Modules
 
