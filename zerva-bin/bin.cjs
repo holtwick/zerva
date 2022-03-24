@@ -177,7 +177,7 @@ const result = build({
   external: [
     "notifier",
     "esbuild",
-    "vite",
+    "vite", // ?
     // "express",
     // ...Object.keys(pkg.dependencies),
     // ...Object.keys(pkg.devDependencies ?? {}),

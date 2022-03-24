@@ -45,7 +45,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@zerva/core": "workspace:^0.5.3",
+    "@zerva/core": "workspace:*",
     "vite": "^2.8.6",
     "zeed": "^0.7.136"
   },

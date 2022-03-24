@@ -52,7 +52,7 @@
   "dependencies": {
     "@types/node": "^17.0.22",
     "@types/ws": "^8.5.3",
-    "@zerva/core": "workspace:^0.5.3",
+    "@zerva/core": "workspace:*",
     "ws": "^8.5.0",
     "zeed": "^0.7.136"
   },
