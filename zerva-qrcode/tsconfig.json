@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"],
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "dist/esm",

@@ -1,13 +1,14 @@
 // An awesome idea originally by
 // https://github.com/svitejs/vite-plugin-qrcode (MIT)
 
+import { on } from "@zerva/core"
 import type { Server } from "http"
 import { AddressInfo } from "net"
 import os from "os"
 import qr from "qrcode-terminal"
-import { on } from "../context"
-
 import { Logger } from "zeed"
+import "@zerva/http"
+
 const log = Logger("zerva:qrcode")
 
 function logQrcode(http: Server) {

@@ -1,6 +1,7 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve, useHttp } from "@zerva/core"
+import { emit, on, serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
 import {
   Logger,

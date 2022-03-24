@@ -3,8 +3,9 @@
 import { io } from "socket.io-client"
 import { ZSocketIOClientConnection, ZSocketIOConnection } from "./index"
 import { lazyListener, Logger, LoggerNodeHandler, LogLevel } from "zeed"
-import { useHttp, serve, emit } from "zerva"
+import { serve, emit } from "@zerva/core"
 import { useSocketIO } from "./module"
+import { useHttp } from "@zerva/http"
 
 Logger.setHandlers([
   LoggerNodeHandler({

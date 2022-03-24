@@ -3,4 +3,3 @@
 export * from "zeed"
 export * from "./context"
 export * from "./serve"
-export * from "./modules/index"

@@ -1,4 +1,4 @@
-import { serveStop } from "../serve"
+import { serveStop } from "@zerva/core"
 import { Logger } from "zeed"
 
 const log = Logger("zerva:exit")

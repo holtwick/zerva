@@ -9,14 +9,15 @@
     "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "start": "LEVEL=* ZEED=* zerva",
+    "start": "LEVEL=i ZEED=* zerva",
     "build": "zerva build",
     "minimal": "zerva minimal",
     "serve": "node --enable-source-maps dist/main.cjs"
   },
-  "dependencies": {
+  "devDependencies": {
     "@zerva/bin": "workspace:*",
-    "@zerva/core": "workspace:*"
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
