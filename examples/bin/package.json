@@ -1,5 +1,5 @@
 {
-  "name": "zerva-demo",
+  "name": "zerva-example-bin",
   "version": "1.0.0",
   "description": "Just a simple test",
   "private": true,
@@ -15,7 +15,8 @@
     "serve": "node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
-    "zerva": "file:../.."
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

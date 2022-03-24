@@ -1,5 +1,5 @@
 {
-  "name": "zerva-demo",
+  "name": "zerva-example-minimal",
   "version": "1.0.0",
   "description": "Just a simple test",
   "private": true,
@@ -12,7 +12,8 @@
     "start": "ZEED=* node index.js"
   },
   "dependencies": {
-    "zerva": "file:../.."
+    "@zerva/core": "workspace:*",
+    "zeed": "^0.7.136"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

@@ -1,0 +1,5 @@
+//registry.npmjs.org/:_authToken=${NPM_TOKEN}
+init-author-name=Dirk Holtwick
+tag-version-prefix=
+ignore-scripts=true
+prefer-workspace-packages=true
