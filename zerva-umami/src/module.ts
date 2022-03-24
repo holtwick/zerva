@@ -1,27 +1,27 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { on, register } from "@zerva/core"
 import { Logger } from "zeed"
+import { on, register } from "@zerva/core"
 import {
   setTrackCollectUrl,
   setTrackWebsiteId,
   trackEvent,
   trackPageView,
-} from "./track-plausible"
+} from "./track-umami"
 
 const name = "uammi"
 const log = Logger(`zerva:${name}`)
 
 interface Config {
-  apiEventUrl: string
+  collectUrl: string
   websiteId: string
 }
 
-export function usePlausible(config: Config) {
+export function useUmami(config: Config) {
   log.info(`use ${name}`)
   register(name)
 
-  setTrackCollectUrl(config.apiEventUrl)
+  setTrackCollectUrl(config.collectUrl)
   setTrackWebsiteId(config.websiteId)
 
   on("trackEvent", trackEvent)

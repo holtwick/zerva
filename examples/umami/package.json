@@ -16,7 +16,7 @@
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/plausible": "workspace:*"
+    "@zerva/umami": "workspace:*"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
