@@ -7,6 +7,7 @@ import { AddressInfo } from "net"
 import os from "os"
 import qr from "qrcode-terminal"
 import { Logger } from "zeed"
+import "@zerva/http"
 
 const log = Logger("zerva:qrcode")
 

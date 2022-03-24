@@ -1,5 +1,5 @@
 {
-  "name": "@zerva/express",
+  "name": "@zerva/http",
   "version": "0.7.17-beta.2",
   "description": "🌱 Zerva Express HTTP",
   "license": "MIT",

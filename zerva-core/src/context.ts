@@ -61,7 +61,7 @@ export async function emit<U extends keyof ZContextEvents>(
   event: U,
   ...args: Parameters<ZContextEvents[U]>
 ): Promise<boolean> {
-  log("emit", event, ...args)
+  log("emit", event, JSON.stringify(args.map((o) => typeof o)))
   return await getContext().emit(event, ...args)
 }
 
