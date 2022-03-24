@@ -1,6 +1,6 @@
 {
   "name": "@zerva/websocket",
-  "version": "0.7.17-beta.3",
+  "version": "0.7.17",
   "description": "🌱 Zerva websocket module",
   "funding": {
     "type": "GitHub Sponsors ❤",
