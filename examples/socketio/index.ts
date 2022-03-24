@@ -2,9 +2,10 @@
 
 // Simple demo for node and CommonJS loading
 
-import { Logger, valueToInteger } from "zeed"
-import { on, serve, useHttp } from "zerva"
+import { on, serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
 import { useSocketIO } from "@zerva/socketio"
+import { Logger, valueToInteger } from "zeed"
 
 const log = Logger("app")
 

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.7.17-beta.3",
+  "version": "0.7.20",
   "description": "🌱 Zerva socket.io module",
   "funding": {
     "type": "GitHub Sponsors ❤",

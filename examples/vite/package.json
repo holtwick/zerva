@@ -1,0 +1,26 @@
+{
+  "name": "vite-project",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "ZEED=* LEVEL=i zerva src/zerva/index.ts",
+    "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
+    "serve": "ZEED=* LEVEL=i node dist/main.cjs",
+    "clean": "rm -rf dist www",
+    "vite_dev": "vite",
+    "vite_build": "vite build",
+    "vite_serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.2.31"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.2.4",
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/vite": "workspace:*",
+    "typescript": "^4.6.2",
+    "vite": "^2.8.6",
+    "zeed": "^0.7.136"
+  }
+}

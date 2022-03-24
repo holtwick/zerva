@@ -8,7 +8,7 @@
     "update": "pnpm update -i -r --latest",
     "build": "pnpm build -r --filter=@zerva/*",
     "test": "pnpm test -r --filter=@zerva/*",
-    "release": "pnpm run bump && pnpm run publish && ./release.sh",
+    "release": "pnpm run bump && pnpm run build && pnpm run publish && ./release.sh",
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
     "preinstall": "npx only-allow pnpm",
@@ -28,5 +28,5 @@
     "only-allow": "^1.1.0",
     "prettier": "^2.6.0"
   },
-  "version": "0.7.17-beta.3"
+  "version": "0.7.20"
 }
