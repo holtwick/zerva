@@ -12,7 +12,8 @@
     "start": "ZEED=* node index.js"
   },
   "dependencies": {
-    "zerva": "file:../.."
+    "@zerva/core": "workspace:*",
+    "zeed": "^0.7.136"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

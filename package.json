@@ -5,7 +5,9 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "update": "pnpm up -i -r --latest",
+    "update": "pnpm update -i -r --latest",
+    "build": "pnpm build -r",
+    "test": "pnpm test -r",
     "release": "bumpp package.json zerva-*/package.json --commit && pnpm -r publish --access public && ./release.sh",
     "preinstall": "npx only-allow pnpm",
     "format": "prettier --write ."
