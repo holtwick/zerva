@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue"
 export default defineConfig({
   plugins: [vue()],
   build: {
-    outDir: "./service/www",
+    outDir: "./dist_www",
     sourcemap: true,
   },
 })

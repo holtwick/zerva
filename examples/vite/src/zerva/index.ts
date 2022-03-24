@@ -6,7 +6,7 @@ import { useCounter } from "./module"
 
 const log = Logger("service")
 
-const isProduction = process.env.ZERVA_PRODUCTION
+// const isProduction = process.env.ZERVA_PRODUCTION
 
 useHttp({
   port: 8080,
@@ -14,7 +14,7 @@ useHttp({
 
 useVite({
   root: toPath("."),
-  www: toPath("www"),
+  www: toPath("dist_www"),
 })
 
 useCounter()
