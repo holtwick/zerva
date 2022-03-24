@@ -9,10 +9,11 @@
     "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
-    "start": "ZEED=* node index.js"
+    "start": "LEVEL=i ZEED=* node index.js"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
     "zeed": "^0.7.136"
   },
   "author": "Dirk Holtwick",
