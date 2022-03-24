@@ -1,8 +1,9 @@
 // Simple demo for node and CommonJS loading
 
-import { Logger, setupEnv, suid, valueToInteger } from "zeed"
-import { emit, on, serve, useHttp } from "@zerva/core"
+import { emit, on, serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
 import { usePlausible } from "@zerva/plausible"
+import { Logger, setupEnv, suid, valueToInteger } from "zeed"
 
 setupEnv()
 

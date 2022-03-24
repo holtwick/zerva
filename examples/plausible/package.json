@@ -9,12 +9,14 @@
     "node": ">=14.13.1"
   },
   "scripts": {
-    "start": "ZEED=* zerva index.ts"
+    "start": "ZEED=* LEVEL=i zerva index.ts"
   },
   "dependencies": {
     "zeed": "^0.7.76",
-    "zerva": "^0.4.60",
-    "zerva-plausible": "file:.."
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/plausible": "workspace:*"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
