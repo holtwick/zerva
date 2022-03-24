@@ -14,7 +14,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "strict": true,
-    "types": ["node", "jest"],
+    "types": ["node"],
     "allowJs": true
   },
   "include": ["src/**/*", "index.ts"],
