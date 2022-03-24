@@ -43,7 +43,7 @@
     "clean": "rm -rf dist",
     "watch": "pnpm run build:tsup -- --watch",
     "prepublish": "pnpm test && pnpm run build",
-    "test": "ZEED=* vitest --global --run -r src",
+    "test": "echo todo",
     "global": "pnpm -g ln"
   },
   "dependencies": {

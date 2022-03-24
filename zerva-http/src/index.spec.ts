@@ -1,8 +1,8 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve, useHttp } from "@zerva/core"
+import { emit, on, serve } from "@zerva/core"
 import "cross-fetch/polyfill"
-import { httpInterface } from "."
+import { httpInterface, useHttp } from "."
 
 const port = 8888
 const url = `http://localhost:${port}`
@@ -44,14 +44,10 @@ describe("http", () => {
       itIs: "json",
       v: 1,
     })
-    expect(await (await fetch(`${url}/index.ts`)).text())
-      .toMatchInlineSnapshot(`
-    "// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-    
-    export * from \\"./exit\\"
-    export * from \\"./http\\"
-    export * from \\"./qrcode\\"
-    "
-    `)
+    expect(
+      await (await (await fetch(`${url}/index.ts`)).text()).split("\n")[0]
+    ).toEqual(
+      "// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved."
+    )
   })
 })
