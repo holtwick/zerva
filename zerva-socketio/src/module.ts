@@ -1,10 +1,11 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Logger } from "zeed"
-import { on, emit, register, onInit, requireModules } from "@zerva/core"
-import { Server, ServerOptions, Socket } from "socket.io"
-import { ZSocketIOConnection } from "./connection-node"
+import { emit, on, onInit, register, requireModules } from "@zerva/core"
+import "@zerva/http"
 import { detect } from "detect-browser"
+import { Server, ServerOptions, Socket } from "socket.io"
+import { Logger } from "zeed"
+import { ZSocketIOConnection } from "./connection-node"
 
 const name = "zerva:socketio"
 const log = Logger(name)

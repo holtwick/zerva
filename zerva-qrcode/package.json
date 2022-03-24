@@ -50,7 +50,7 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^17.0.22",
+    "@types/node": "^17.0.23",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "qrcode-terminal": "^0.12.0",
