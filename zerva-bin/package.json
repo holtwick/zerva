@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.7.13",
+  "version": "0.7.14",
   "description": "🌱 Zerva Command Line Tool",
   "bin": {
     "zerva": "bin.cjs"
@@ -24,9 +24,9 @@
     "node": ">=14.13.1"
   },
   "scripts": {
-    "start": "npm run watch",
+    "start": "pnpm run watch",
     "build": "chmod +x ./bin.cjs",
-    "prepublishOnly": "npm test && npm run build",
+    "prepublishOnly": "pnpm test && pnpm run build",
     "test": "echo todo",
     "global": "pnpm -g ln"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.7.13",
+  "version": "0.7.14",
   "description": "🌱 Simple event driven server",
   "license": "MIT",
   "funding": {
@@ -36,14 +36,14 @@
     "node": ">=14.13.1"
   },
   "scripts": {
-    "start": "npm run watch",
-    "build": "npm run clean && npm run build:tsup",
+    "start": "pnpm run watch",
+    "build": "pnpm run clean && pnpm run build:tsup",
     "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
     "clean": "rm -rf dist",
-    "watch": "npm run build:tsup -- --watch",
-    "prepublishOnly": "npm test && npm run build",
-    "test": "ZEED=* vitest --global -r src",
+    "watch": "pnpm run build:tsup -- --watch",
+    "prepublish": "pnpm test && pnpm run build",
+    "test": "ZEED=* vitest --global --run -r src",
     "global": "pnpm -g ln"
   },
   "dependencies": {
