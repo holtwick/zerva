@@ -10,7 +10,7 @@ import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
 import { isLocalHost, Logger, promisify } from "zeed"
-import { emit, on, register } from "../context"
+import { emit, on, register } from "@zerva/core"
 
 const name = "http"
 const log = Logger(`zerva:${name}`)

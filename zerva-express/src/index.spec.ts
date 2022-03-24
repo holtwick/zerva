@@ -1,9 +1,8 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { emit, on, serve, useHttp } from "@zerva/core"
 import "cross-fetch/polyfill"
-import { httpGetHandler, httpInterface } from "."
-import { on } from "../context"
-import { emit, serve, useHttp } from "../index"
+import { httpInterface } from "."
 
 const port = 8888
 const url = `http://localhost:${port}`
