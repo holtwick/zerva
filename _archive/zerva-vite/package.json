@@ -35,14 +35,14 @@
     "node": ">=14.13.1"
   },
   "scripts": {
-    "start": "npm run watch",
-    "build": "npm run clean && npm run build:tsup",
+    "start": "pnpm run watch",
+    "build": "pnpm run clean && pnpm run build:tsup",
     "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
     "clean": "rm -rf dist",
     "check": "tsc --noEmit -p tsconfig.json",
-    "watch": "npm run build:tsup -- --watch",
-    "prepublishOnly": "npm run build"
+    "watch": "pnpm run build:tsup -- --watch",
+    "prepublish": "pnpm run build"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
