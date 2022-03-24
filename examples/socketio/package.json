@@ -1,0 +1,21 @@
+{
+  "name": "zerva-example-socketio",
+  "version": "1.0.0",
+  "description": "Just a simple test",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "scripts": {
+    "start": "ZEED=* zerva"
+  },
+  "dependencies": {
+    "zeed": "^0.7.55",
+    "zerva": "^0.4.52",
+    "@zerva/socketio": "workspace:*"
+  },
+  "author": "Dirk Holtwick",
+  "license": "MIT"
+}
