@@ -1,33 +1,11 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import {
-  arrayFlatten,
-  DisposerFunction,
-  Emitter,
-  getGlobalContext,
-  Logger,
-  uname,
-} from "zeed"
+import { arrayFlatten, DisposerFunction, getGlobalContext, Logger } from "zeed"
+import { ZContext } from "./types"
 
 const log = Logger(`zerva:context`)
 
 // Others would probably call it "hub" or "bus"...
-
-declare global {
-  interface ZContextEvents {
-    close(): void
-  }
-
-  interface ZeedGlobalContext {
-    zerva?: ZContext
-  }
-}
-
-export class ZContext extends Emitter<ZContextEvents> {
-  name: string = uname("context")
-  modules: string[] = []
-  // config: any
-}
 
 // Global logger to guarantee all submodules use the same logger instance
 
@@ -55,6 +33,9 @@ try {
 } catch (e) {
   log.warn("Unable to register Zerva Context globally")
 }
+
+/** The global context as constant */
+export const zerva = context
 
 /** Emit via the current global context */
 export async function emit<U extends keyof ZContextEvents>(
