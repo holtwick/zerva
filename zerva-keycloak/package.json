@@ -1,6 +1,6 @@
 {
   "name": "@zerva/keycloak",
-  "version": "0.7.21",
+  "version": "0.7.22",
   "description": "🌱 Zerva useKeycloak",
   "license": "MIT",
   "funding": {
