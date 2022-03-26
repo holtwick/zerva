@@ -46,16 +46,15 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@zerva/core": "^0.7.21",
-    "@zerva/http": "^0.7.21",
-    "express": "^4.17.3",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
     "express-session": "^1.17.2",
     "keycloak-connect": "^17.0.1",
     "zeed": "^0.7.137"
   },
   "devDependencies": {
     "@types/express-session": "^1.17.4",
-    "@types/node": "^17.0.22",
+    "@types/node": "^17.0.23",
     "tsup": "^5.12.1"
   }
 }

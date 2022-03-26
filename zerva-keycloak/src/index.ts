@@ -18,16 +18,17 @@ declare global {
 interface ZervaKeycloakConfig {
   host?: string
   protocol?: string
-  routes?: IRouter | IRouter[]
+  routes?: IRouter[]
+  sessionStore?: session.Store
 }
 
 export function useKeycloak(config?: ZervaKeycloakConfig) {
   log.info(`use ${name}`)
   register(name, ["http"])
 
-  const { host, protocol, routes } = config ?? {}
+  const { host, protocol, routes = [] } = config ?? {}
 
-  const memoryStore = new session.MemoryStore()
+  const memoryStore = config?.sessionStore ?? new session.MemoryStore()
 
   const keycloak = new KeycloakConnect({
     store: memoryStore,
@@ -72,15 +73,12 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
     //   keycloak.protect()
     // )
 
-    emit("keycloakInit", { keycloak, app })
+    routes.forEach((route) => {
+      log.info("protect", route)
+      app.use(route, keycloak.protect())
+    })
 
-    if (routes) {
-      let routesList = Array.isArray(routes) ? routes : [routes]
-      app.use(keycloak.protect())
-      routesList.forEach((route) => {
-        app.use(route, keycloak.protect())
-      })
-    }
+    emit("keycloakInit", { keycloak, app })
 
     // app.use(keycloak.protect())
 
