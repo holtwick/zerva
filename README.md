@@ -94,27 +94,15 @@ To get started, you can use these GitHub Templates:
 
 ## External Modules
 
-- [zerva-websocket](./zerva-websocket)
-- [zerva-vite](./zerva-vite)
-- [zerva-email](./zerva-email)
-- [zerva-umami](./zerva-umami)
-- [zerva-socketio](./zerva-socketio)
-
-## Internal Modules
-
-### useHttp
-
-Sets up an Express web server.
-
-Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) for demos.
-
-`httpRunning` is emitted after the web server is listening.
-
-On `httpStop` you can do some optional cleanup for your web server.
-
-### useExit
-
-Catch various exit scenarios and try to emit `serverStop` if possible, for example catch `CTRL-C`.
+- [@zerva/bin](./zerva-bin) - CLI tool
+- [@zerva/core](./zerva-core) - The core of it all
+- [@zerva/vite](./zerva-vite) - Vite integration
+- [@zerva/plausible](./zerva-plausibe) - Visitors tracking using plausible.js
+- [@zerva/umami](./zerva-umami) - Visitors tracking using umami.js
+- [@zerva/websocket](./zerva-websocket) - Websockets
+- [@zerva/socketio](./zerva-socketio) - Websockets using socket.io
+- [@zerva/exit](./zerva-exit) - CTRL-C support
+- [@zerva/qrcode](./zerva-qrcode) - Show QR Code for external IP addresses to simplify mobile development
 
 ## Advanced Topics
 

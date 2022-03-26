@@ -1,4 +1,4 @@
-# 🌱 Zerva & Vite
+# 🌱 Zerva useVite
 
 **This is a side project of [Zerva](https://github.com/holtwick/zerva)**
 
@@ -10,8 +10,8 @@ Use it like this in your project:
 
 ```ts
 useVite({
-  root: "..",
-  www: "./www",
+  root: ".", // default: process.cwd()
+  www: "./dist_www", // default: ./dist_www
 })
 ```
 

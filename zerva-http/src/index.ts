@@ -60,10 +60,15 @@ export interface httpConfig {
   sslKey?: string
 }
 
-export function useHttp(config: httpConfig): httpInterface {
+export function useHttp(config?: httpConfig): httpInterface {
   register(name, [])
 
-  const { sslKey, sslCrt, port = 4444, host } = config
+  const {
+    sslKey,
+    sslCrt,
+    port = 8080,
+    host, // = process.env.NODE_MODE === "development" ? undefined : "0.0.0.0",
+  } = config ?? {}
 
   process.on("uncaughtException", (err) =>
     log.error("node js process error", err)

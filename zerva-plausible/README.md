@@ -1,5 +1,5 @@
-# 🌱 Zerva Plausible
+# 🌱 Zerva usePlausible
 
 **This is a side project of [Zerva](https://github.com/holtwick/zerva)**
 
-Tracking via [Plausible.is](https://plausible.is/).
+Tracking via [Plausible.io](https://plausible.io/).

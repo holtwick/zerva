@@ -1,0 +1,23 @@
+{
+  "name": "zerva-example-keycloak",
+  "version": "1.0.0",
+  "description": "Just a simple test",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.13.1"
+  },
+  "scripts": {
+    "start": "ZEED=* LEVEL=i zerva index.ts"
+  },
+  "dependencies": {
+    "zeed": "^0.7.76",
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/keycloak": "workspace:*"
+  },
+  "author": "Dirk Holtwick",
+  "license": "MIT"
+}
