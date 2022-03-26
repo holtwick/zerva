@@ -26,3 +26,7 @@ Valid defines are:
 - `ZERVA_PRODUCTION` is `true` when started as `zerva build`
 
 For better compatibility the defines can also be accessed as `process.env.ZERVA_DEVELOPMENT` and `process.env.ZERVA_PRODUCTION`.
+
+```
+npm install -D @zerva/bin @zerva/core @zerva/http 
+```

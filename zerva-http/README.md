@@ -8,4 +8,24 @@ Emits `httpInit` before the server starts. Use this to set up custom routes. The
 
 On `httpStop` you can do some optional cleanup for your web server.
 
+## Minimal Example
 
+Will serve on `http://localhost:8080`:
+
+```ts
+import { serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
+
+useHttp()
+serve()
+```
+
+## Config
+
+```ts
+interface Config {
+  host?: string 
+  port?: number // default: 8080
+  sslCrt?: string
+  sslKey?: string
+}

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "start": "ZEED=* LEVEL=i zerva src/zerva/index.ts",
-    "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "serve": "ZEED=* LEVEL=i node dist/main.cjs",
+    "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "clean": "rm -rf dist www",
     "vite_dev": "vite",
     "vite_build": "vite build",

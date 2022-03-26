@@ -1,24 +1,24 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { Logger, on, register, toPath } from "@zerva/core"
+import "@zerva/http"
 import { existsSync } from "fs"
 import { resolve } from "path"
-import { on, register, Logger, toPath } from "@zerva/core"
 import { createServer } from "vite"
-import "@zerva/http"
 
 const name = "vite"
 const log = Logger(`zerva:${name}`)
 
 interface Config {
-  root: string
+  root?: string
   www?: string
 }
 
-export function useVite(config: Config) {
+export function useVite(config?: Config) {
   log.info(`use ${name} ${process.env.ZERVA}`)
   register(name, ["http"])
 
-  const { root, www = "./www" } = config
+  const { root = process.cwd(), www = "./dist_www" } = config ?? {}
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
 
