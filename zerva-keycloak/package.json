@@ -1,0 +1,61 @@
+{
+  "name": "@zerva/keycloak",
+  "version": "0.7.21",
+  "description": "🌱 Zerva useKeycloak",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "node": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.13.1"
+  },
+  "scripts": {
+    "start": "pnpm run watch",
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
+    "clean": "rm -rf dist",
+    "watch": "pnpm run build:tsup -- --watch",
+    "prepublish": "pnpm test && pnpm run build",
+    "test": "echo todo"
+  },
+  "dependencies": {
+    "@zerva/core": "^0.7.21",
+    "@zerva/http": "^0.7.21",
+    "express": "^4.17.3",
+    "express-session": "^1.17.2",
+    "keycloak-connect": "^17.0.1",
+    "zeed": "^0.7.137"
+  },
+  "devDependencies": {
+    "@types/express-session": "^1.17.4",
+    "@types/node": "^17.0.22",
+    "tsup": "^5.12.1"
+  }
+}
