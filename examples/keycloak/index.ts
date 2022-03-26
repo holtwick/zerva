@@ -6,13 +6,48 @@ import { useKeycloak } from "@zerva/keycloak"
 
 useHttp()
 
-// useKeycloak({
-//   routes: ["/protected"],
-// })
+useKeycloak({
+  routes: ["/protected"],
+})
 
 on("httpInit", ({ get }) => {
-  get("/", `<div>Not protected. But <a href="/protected">this one is</a>.`)
-  get("/protected", `This should be protected`)
+  get(
+    "/",
+    `<p>
+      Not protected.
+    </p>
+    <p>
+      <a href="/protected">But this one is</a>.
+    </p>`
+  )
+
+  get("/protected", ({ req }) => {
+    //@ts-ignore
+    const content = req?.kauth?.grant?.access_token?.content
+    const info =
+      content != null
+        ? {
+            auth: true,
+            username: content.preferred_username,
+            email: content.email,
+            name: content.name,
+            // content,
+            // keys: Object.keys(content),
+            // roles: content.realm_access.roles,
+            // roles: content.resource_access.contenthub.roles,
+            // content,
+          }
+        : {
+            auth: false,
+          }
+    return `<p>
+        This should be protected:
+      </p>
+        <pre>${JSON.stringify(info, null, 2)}</pre>
+      <p>
+        <a href="/logout">Logout</a>
+      </p>`
+  })
 })
 
 serve()
