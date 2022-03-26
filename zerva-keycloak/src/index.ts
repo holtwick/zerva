@@ -83,3 +83,40 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
     })
   })
 }
+
+export function keycloakGetRoles(req: Request, resource: string = "master") {
+  return (
+    // @ts-ignore
+    req?.kauth?.grant?.access_token?.content?.resource_access?.[resource]
+      ?.roles ?? []
+  )
+}
+
+export function keycloakCheckRole(
+  req: Request,
+  role: string,
+  resource: string = "master"
+) {
+  return keycloakGetRoles(req, resource).includes(role)
+}
+
+export function keycloakGetUserName(req: Request, resource: string = "master") {
+  return (
+    // @ts-ignore
+    req?.kauth?.grant?.access_token?.content?.preferred_username ?? ""
+  )
+}
+
+export function keycloakGetEmail(req: Request, resource: string = "master") {
+  return (
+    // @ts-ignore
+    req?.kauth?.grant?.access_token?.content?.email ?? ""
+  )
+}
+
+export function keycloakGetName(req: Request, resource: string = "master") {
+  return (
+    // @ts-ignore
+    req?.kauth?.grant?.access_token?.content?.name ?? ""
+  )
+}
