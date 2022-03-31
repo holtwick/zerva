@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  replies:
+  zerva: # set your preferred name here
     build: .
     restart: always
     volumes:

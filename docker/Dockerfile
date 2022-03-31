@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:current-alpine
 COPY package.json /app/package.json
 RUN cd /app; npm install --production
 WORKDIR /app
