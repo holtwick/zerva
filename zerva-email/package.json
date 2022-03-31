@@ -1,7 +1,7 @@
 {
-  "name": "@zerva/umami",
+  "name": "@zerva/email",
   "version": "0.7.24",
-  "description": "🌱 Zerva module template",
+  "description": "🌱 Zerva send email service",
   "funding": {
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
@@ -37,22 +37,23 @@
   "scripts": {
     "start": "pnpm run watch",
     "build": "pnpm run clean && pnpm run build:tsup",
+    "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
-    "clean": "rm -rf dist",
     "check": "tsc --noEmit -p tsconfig.json",
-    "watch": "pnpm run build:tsup -- --watch",
-    "test": "echo todo",
-    "prepublishOnly": "pnpm run build"
+    "clean": "rm -rf dist",
+    "watch": "tsc -w -p tsconfig.json",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "test": "echo todo"
   },
   "dependencies": {
-    "@types/request-ip": "^0.0.37",
-    "cross-fetch": "^3.1.5",
-    "request-ip": "^2.1.3",
-    "zeed": "^0.7.136",
-    "@zerva/core": "*"
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "nodemailer": "^6.7.0",
+    "zeed": "^0.7.44"
   },
   "devDependencies": {
-    "@types/node": "^17.0.23",
-    "tsup": "^5.12.1"
+    "@types/nodemailer": "^6.4.4",
+    "@types/node": "^16.10.3",
+    "tsup": "^5.4.0"
   }
 }
