@@ -1,0 +1,59 @@
+{
+  "name": "@zerva/email",
+  "version": "0.1.4",
+  "description": "🌱 Zerva send email service",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "author": {
+    "name": "Dirk Holtwick",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "node": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.13.1"
+  },
+  "scripts": {
+    "start": "pnpm run watch",
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "watch": "tsc -w -p tsconfig.json",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "test": "echo todo"
+  },
+  "dependencies": {
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "nodemailer": "^6.7.0",
+    "zeed": "^0.7.44"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.4",
+    "@types/node": "^16.10.3",
+    "tsup": "^5.4.0"
+  }
+}
