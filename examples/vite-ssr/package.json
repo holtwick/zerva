@@ -11,18 +11,18 @@
     "serve": "ZEED=* node dist/main.cjs"
   },
   "dependencies": {
-    "@vueuse/head": "^0.7.2",
-    "vue": "^3.2.16",
-    "vue-router": "^4.0.12"
+    "@vueuse/head": "^0.7.6",
+    "vue": "^3.2.36",
+    "vue-router": "^4.0.15"
   },
   "devDependencies": {
-    "zeed-dom": "^0.9.17",
-    "@vitejs/plugin-vue": "^1.10.0",
+    "@vitejs/plugin-vue": "^2.3.3",
     "compression": "^1.7.4",
-    "serve-static": "^1.14.1",
-    "typescript": "^4.5.2",
-    "vite": "^2.6.14",
-    "vue-tsc": "^0.29.6",
-    "zerva": "^0.4.62"
+    "serve-static": "^1.15.0",
+    "typescript": "^4.7.2",
+    "vite": "^2.9.9",
+    "vue-tsc": "^0.34.16",
+    "zeed-dom": "^0.9.17",
+    "zerva": "^0.5.8"
   }
 }

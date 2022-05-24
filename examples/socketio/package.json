@@ -12,11 +12,11 @@
     "start": "LEVEL=i ZEED=* zerva"
   },
   "dependencies": {
-    "zeed": "^0.7.55",
-    "zerva": "^0.4.52",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/socketio": "workspace:*"
+    "@zerva/socketio": "workspace:*",
+    "zeed": "^0.7.148",
+    "zerva": "^0.5.8"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

@@ -12,9 +12,9 @@
     "start": "zerva index.ts"
   },
   "dependencies": {
-    "zeed": "^0.7.44",
     "@zerva/core": "workspace:*",
-    "@zerva/email": "workspace:*"
+    "@zerva/email": "workspace:*",
+    "zeed": "^0.7.148"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

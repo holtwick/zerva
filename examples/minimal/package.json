@@ -14,7 +14,7 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.7.136"
+    "zeed": "^0.7.148"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"

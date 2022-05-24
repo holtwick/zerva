@@ -5,19 +5,15 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "update": "pnpm update -i -r --latest",
-    "build": "pnpm build -r --filter=@zerva/*",
-    "test": "pnpm test -r --filter=@zerva/*",
+    "update": "pnpm -r update -i --latest",
+    "build": "pnpm -r --filter=@zerva/* build",
+    "test": "pnpm -r --filter=@zerva/* test",
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./release.sh",
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
     "preinstall": "npx only-allow pnpm",
     "prepublish": "npx only-allow pnpm",
     "format": "prettier --write ."
-  },
-  "_gitHooks": {
-    "pre-commit": "lint-staged --concurrent false",
-    "commit-msg": "node scripts/verifyCommit.cjs"
   },
   "packageManager": "pnpm@6.23.0",
   "pnpm": {
@@ -26,7 +22,8 @@
   "devDependencies": {
     "bumpp": "^7.1.1",
     "only-allow": "^1.1.0",
-    "prettier": "^2.6.0"
+    "prettier": "^2.6.2",
+    "vitest": "^0.12.9"
   },
-  "version": "0.7.26"
+  "version": "0.7.27"
 }
