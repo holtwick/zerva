@@ -128,12 +128,12 @@ function notifyError(error) {
     // https://github.com/mikaelbr/node-notifier
     const notifier = require("node-notifier")
     if (notifier)
-    notifier.notify({
-      title: "Zerva Build Error",
-      message: String(error),
-      icon: resolve(__dirname, "icon.png"),
-      sound: true,
-    })
+      notifier.notify({
+        title: "Zerva Build Error",
+        message: String(error),
+        icon: resolve(__dirname, "icon.png"),
+        sound: true,
+      })
   }
 }
 

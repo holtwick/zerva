@@ -6,7 +6,7 @@
   },
   "scripts": {
     "update": "pnpm update -i -r --latest",
-    "build": "pnpm build -r --filter=@zerva/*",
+    "build2": "pnpm build -r --filter=@zerva/*",
     "test": "pnpm test -r --filter=@zerva/*",
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./release.sh",
     "bump": "bumpp package.json zerva-*/package.json --commit",
@@ -14,10 +14,6 @@
     "preinstall": "npx only-allow pnpm",
     "prepublish": "npx only-allow pnpm",
     "format": "prettier --write ."
-  },
-  "_gitHooks": {
-    "pre-commit": "lint-staged --concurrent false",
-    "commit-msg": "node scripts/verifyCommit.cjs"
   },
   "packageManager": "pnpm@6.23.0",
   "pnpm": {

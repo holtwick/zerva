@@ -12,11 +12,11 @@
     "start": "ZEED=* LEVEL=i zerva index.ts"
   },
   "dependencies": {
-    "zeed": "^0.7.76",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/umami": "workspace:*"
+    "@zerva/umami": "workspace:*",
+    "zeed": "^0.7.148"
   },
   "author": "Dirk Holtwick",
   "license": "MIT"
