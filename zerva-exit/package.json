@@ -1,6 +1,6 @@
 {
   "name": "@zerva/exit",
-  "version": "0.7.28",
+  "version": "0.7.29",
   "description": "🌱 Zerva exit gracefully",
   "license": "MIT",
   "funding": {
