@@ -50,9 +50,5 @@
     "cross-fetch": "^3.1.5",
     "request-ip": "^2.1.3",
     "zeed": "^0.7.148"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.35",
-    "tsup": "^5.12.8"
   }
 }

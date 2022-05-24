@@ -50,14 +50,12 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^17.0.35",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "qrcode-terminal": "^0.12.0",
     "zeed": "^0.7.148"
   },
   "devDependencies": {
-    "@types/qrcode-terminal": "^0.12.0",
-    "tsup": "^5.12.8"
+    "@types/qrcode-terminal": "^0.12.0"
   }
 }

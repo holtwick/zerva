@@ -42,7 +42,7 @@
     "check": "tsc --noEmit -p tsconfig.json",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
-    "test": "jest src"
+    "test": "vitest -r src --globals"
   },
   "dependencies": {
     "@types/ws": "^8.5.3",
@@ -53,13 +53,5 @@
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
     "zeed": "^0.7.148"
-  },
-  "devDependencies": {
-    "@types/jest": "^27.5.1",
-    "@types/node": "^17.0.35",
-    "jest": "^28.1.0",
-    "ts-jest": "^28.0.3",
-    "tsup": "^5.12.8",
-    "typescript": "^4.7.2"
   }
 }

@@ -20,9 +20,13 @@
     "overrides": {}
   },
   "devDependencies": {
+    "@types/node": "^17.0.35",
     "bumpp": "^7.1.1",
+    "cross-fetch": "^3.1.5",
     "only-allow": "^1.1.0",
     "prettier": "^2.6.2",
+    "tsup": "^5.12.8",
+    "typescript": "^4.7.2",
     "vitest": "^0.12.9"
   },
   "version": "0.7.28"
