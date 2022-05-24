@@ -4,19 +4,21 @@
     "baseUrl": ".",
     "declaration": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "module": "ESNext",
     "moduleResolution": "Node",
-    "outDir": "dist/esm",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
     "target": "es2020",
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "vitest/globals"]
   },
-  "exclude": ["node_modules", "dist", "src/**/*.spec.ts"],
-  "include": ["src/**/*", "index.ts"]
+  "exclude": ["node_modules", "dist", "www"]
 }

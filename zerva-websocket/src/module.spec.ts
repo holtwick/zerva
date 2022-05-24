@@ -16,19 +16,6 @@ import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./module"
 import { webSocketPath } from "./types"
 
-Logger.setHandlers([
-  LoggerNodeHandler({
-    level: LogLevel.debug,
-    filter: "*",
-    colors: true,
-    fill: 32,
-    nameBrackets: false,
-    levelHelper: false,
-  }),
-])
-
-Logger.setLock(true)
-
 // @ts-ignore
 global.WebSocket = WebSocket
 
