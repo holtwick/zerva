@@ -1,6 +1,6 @@
 {
   "name": "@zerva/vite",
-  "version": "0.7.26",
+  "version": "0.7.29",
   "description": "🌱 Zerva and Vite",
   "funding": {
     "type": "GitHub Sponsors ❤",
@@ -49,10 +49,5 @@
     "@zerva/http": "workspace:*",
     "vite": "^2.9.9",
     "zeed": "^0.7.148"
-  },
-  "devDependencies": {
-    "@types/jest": "^27.5.1",
-    "@types/node": "^17.0.35",
-    "tsup": "^5.12.8"
   }
 }

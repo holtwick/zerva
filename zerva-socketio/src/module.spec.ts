@@ -1,22 +1,11 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { io } from "socket.io-client"
-import { ZSocketIOClientConnection, ZSocketIOConnection } from "./index"
-import { lazyListener, Logger, LoggerNodeHandler, LogLevel } from "zeed"
-import { serve, emit } from "@zerva/core"
-import { useSocketIO } from "./module"
+import { emit, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
-
-Logger.setHandlers([
-  LoggerNodeHandler({
-    level: LogLevel.debug,
-    filter: "*",
-    colors: true,
-    fill: 32,
-    nameBrackets: false,
-    levelHelper: false,
-  }),
-])
+import { io } from "socket.io-client"
+import { lazyListener } from "zeed"
+import { ZSocketIOClientConnection, ZSocketIOConnection } from "./index"
+import { useSocketIO } from "./module"
 
 const port = 8888
 const url = `ws://localhost:${port}`

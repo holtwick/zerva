@@ -1,6 +1,6 @@
 {
   "name": "@zerva/exit",
-  "version": "0.7.26",
+  "version": "0.7.29",
   "description": "🌱 Zerva exit gracefully",
   "license": "MIT",
   "funding": {
@@ -48,9 +48,5 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "zeed": "^0.7.148"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.35",
-    "tsup": "^5.12.8"
   }
 }

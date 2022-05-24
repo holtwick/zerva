@@ -12,11 +12,6 @@
     "zeed": "^0.7.148"
   },
   "description": "🌱 Zerva websocket module",
-  "devDependencies": {
-    "tsup": "^5.12.8",
-    "typescript": "^4.7.2",
-    "vitest": "^0.12.9"
-  },
   "engines": {
     "node": ">=14.13.1"
   },
@@ -61,5 +56,5 @@
   },
   "type": "module",
   "typings": "dist/index.d.ts",
-  "version": "0.7.26"
+  "version": "0.7.29"
 }
