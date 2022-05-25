@@ -1,6 +1,6 @@
 {
   "name": "@zerva/keycloak",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "🌱 Zerva useKeycloak",
   "keywords": [
     "server",
@@ -34,12 +34,12 @@
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
-    "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
+    "build:tsup": "tsup src/index.ts",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "echo 'NO TEST AVAILABLE'",
+    "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "pnpm run build:tsup -- --watch"
   },
   "dependencies": {

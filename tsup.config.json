@@ -1,0 +1,9 @@
+{
+  "minify": true,
+  "dts": true,
+  "sourcemap": true,
+  "format": [
+    "esm",
+    "cjs"
+  ]
+}

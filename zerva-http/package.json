@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "🌱 Zerva Express HTTP",
   "keywords": [
     "server",
@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
-    "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
+    "build:tsup": "tsup src/index.ts",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
