@@ -7,7 +7,7 @@ import { lazyListener } from "zeed"
 import { ZSocketIOClientConnection, ZSocketIOConnection } from "./index"
 import { useSocketIO } from "./module"
 
-const port = 8888
+const port = 8887
 const url = `ws://localhost:${port}`
 
 describe("Socket", () => {

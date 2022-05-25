@@ -6,8 +6,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
+    "jsx": "preserve",    
     "module": "ESNext",
     "moduleResolution": "Node",
     "paths": {
@@ -23,3 +22,5 @@
   "exclude": ["*/node_modules", "*/dist", "*/www"],
   "include": ["**/*.ts", "**/*.vue"]
 }
+
+// "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
