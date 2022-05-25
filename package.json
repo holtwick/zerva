@@ -5,7 +5,7 @@
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
     "bump": "bumpp package.json zerva-*/package.json --commit",
-    "fix": "node scripts/fix-package-json.js",
+    "fix": "node scripts/fix-package-json.js && pnpm sort",
     "format": "prettier --write .",
     "preinstall": "npx only-allow pnpm",
     "prepublish": "npx only-allow pnpm",

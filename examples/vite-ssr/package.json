@@ -1,6 +1,16 @@
 {
   "name": "vite-project",
   "version": "0.0.0",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "scripts": {
     "build": "npm run build:client && npm run build:server && npm run build:zerva",
     "build:client": "vite build --ssrManifest --outDir dist/client",

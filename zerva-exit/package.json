@@ -45,8 +45,5 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "zeed": "^0.7.148"
-  },
-  "engines": {
-    "node": ">=14.13.1"
   }
 }

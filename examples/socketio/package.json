@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "Just a simple test",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
   "license": "MIT",
-  "author": "Dirk Holtwick",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -16,8 +24,5 @@
     "@zerva/socketio": "workspace:*",
     "zeed": "^0.7.148",
     "zerva": "^0.5.8"
-  },
-  "engines": {
-    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
   }
 }

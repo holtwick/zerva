@@ -51,8 +51,5 @@
   },
   "devDependencies": {
     "@types/express-session": "^1.17.4"
-  },
-  "engines": {
-    "node": ">=14.13.1"
   }
 }

@@ -18,6 +18,7 @@
   "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
   "type": "module",
@@ -53,8 +54,5 @@
     "@zerva/http": "workspace:*",
     "ws": "^8.6.0",
     "zeed": "^0.7.148"
-  },
-  "engines": {
-    "node": ">=14.13.1"
   }
 }

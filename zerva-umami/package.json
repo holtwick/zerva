@@ -14,6 +14,7 @@
   "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
   "type": "module",
@@ -47,8 +48,5 @@
     "cross-fetch": "^3.1.5",
     "request-ip": "^2.1.3",
     "zeed": "^0.7.148"
-  },
-  "engines": {
-    "node": ">=14.13.1"
   }
 }

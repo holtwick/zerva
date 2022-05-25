@@ -18,6 +18,7 @@
   "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
   "type": "module",
@@ -54,8 +55,5 @@
   },
   "devDependencies": {
     "@types/qrcode-terminal": "^0.12.0"
-  },
-  "engines": {
-    "node": ">=14.13.1"
   }
 }
