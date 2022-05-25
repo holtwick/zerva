@@ -32,9 +32,6 @@
     "vue-tsc": "^0.34.16"
   },
   "packageManager": "pnpm@6.23.0",
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "pnpm": {
     "overrides": {}
   }
