@@ -1,13 +1,12 @@
 {
   "name": "zerva-example-keycloak",
   "version": "1.0.0",
-  "description": "Just a simple test",
   "private": true,
+  "description": "Just a simple test",
+  "license": "MIT",
+  "author": "Dirk Holtwick",
   "type": "module",
   "main": "index.js",
-  "engines": {
-    "node": ">=14.13.1"
-  },
   "scripts": {
     "start": "ZEED=* LEVEL=i zerva index.ts"
   },
@@ -18,6 +17,7 @@
     "@zerva/keycloak": "workspace:*",
     "zeed": "^0.7.148"
   },
-  "author": "Dirk Holtwick",
-  "license": "MIT"
+  "engines": {
+    "node": ">=14.13.1"
+  }
 }

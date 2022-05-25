@@ -2,23 +2,22 @@
   "name": "@zerva/core",
   "version": "0.7.29",
   "description": "🌱 Simple event driven server",
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
   "type": "module",
-  "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/index.js",
@@ -27,24 +26,22 @@
       "default": "./dist/index.js"
     }
   },
-  "module": "dist/index.js",
   "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=14.13.1"
-  },
   "scripts": {
-    "start": "pnpm run watch",
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
     "clean": "rm -rf dist",
-    "watch": "pnpm run build:tsup -- --watch",
+    "global": "pnpm -g ln",
     "prepublish": "pnpm test && pnpm run build",
+    "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "global": "pnpm -g ln"
+    "watch": "pnpm run build:tsup -- --watch"
   },
   "dependencies": {
     "zeed": "^0.7.148"
@@ -55,5 +52,8 @@
     "tsup": "^5.12.8",
     "typescript": "^4.7.2",
     "vitest": "^0.12.9"
+  },
+  "engines": {
+    "node": ">=14.13.1"
   }
 }

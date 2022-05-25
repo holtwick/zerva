@@ -2,22 +2,21 @@
   "name": "@zerva/socketio",
   "version": "0.7.29",
   "description": "🌱 Zerva socket.io module",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
   "type": "module",
-  "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/index.browser.js",
@@ -26,22 +25,20 @@
       "default": "./dist/index.js"
     }
   },
-  "module": "dist/index.js",
   "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=14.13.1"
-  },
   "scripts": {
-    "start": "pnpm run build",
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts src/index.browser.ts --dts --sourcemap --format esm,cjs",
     "check": "tsc --noEmit -p tsconfig.json",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
+    "start": "pnpm run build",
     "test": "vitest -r src --globals"
   },
   "dependencies": {
@@ -53,5 +50,8 @@
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
     "zeed": "^0.7.148"
+  },
+  "engines": {
+    "node": ">=14.13.1"
   }
 }

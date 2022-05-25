@@ -1,24 +1,24 @@
 {
   "name": "zerva-example-bin",
   "version": "1.0.0",
-  "description": "Just a simple test",
   "private": true,
+  "description": "Just a simple test",
+  "license": "MIT",
+  "author": "Dirk Holtwick",
   "type": "module",
   "main": "src/main.ts",
-  "engines": {
-    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
-  },
   "scripts": {
-    "start": "LEVEL=i ZEED=* zerva",
     "build": "zerva build",
     "minimal": "zerva minimal",
-    "serve": "node --enable-source-maps dist/main.cjs"
+    "serve": "node --enable-source-maps dist/main.cjs",
+    "start": "LEVEL=i ZEED=* zerva"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*"
   },
-  "author": "Dirk Holtwick",
-  "license": "MIT"
+  "engines": {
+    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+  }
 }

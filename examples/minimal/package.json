@@ -1,13 +1,12 @@
 {
   "name": "zerva-example-minimal",
   "version": "1.0.0",
-  "description": "Just a simple test",
   "private": true,
+  "description": "Just a simple test",
+  "license": "MIT",
+  "author": "Dirk Holtwick",
   "type": "module",
   "main": "index.js",
-  "engines": {
-    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
-  },
   "scripts": {
     "start": "LEVEL=i ZEED=* node index.js"
   },
@@ -16,6 +15,7 @@
     "@zerva/http": "workspace:*",
     "zeed": "^0.7.148"
   },
-  "author": "Dirk Holtwick",
-  "license": "MIT"
+  "engines": {
+    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
+  }
 }

@@ -2,37 +2,37 @@
   "name": "@zerva/bin",
   "version": "0.7.29",
   "description": "🌱 Zerva Command Line Tool",
-  "bin": {
-    "zerva": "bin.cjs"
-  },
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
   "type": "module",
-  "engines": {
-    "node": ">=14.13.1"
+  "bin": {
+    "zerva": "bin.cjs"
   },
   "scripts": {
-    "start": "pnpm run watch",
     "build": "chmod +x ./bin.cjs",
+    "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
-    "test": "echo todo",
-    "global": "pnpm -g ln"
+    "start": "pnpm run watch",
+    "test": "echo todo"
   },
   "dependencies": {
     "@types/node": "^17.0.35",
     "esbuild": "^0.14.39",
     "node-notifier": "^10.0.1"
+  },
+  "engines": {
+    "node": ">=14.13.1"
   }
 }
