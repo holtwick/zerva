@@ -25,6 +25,7 @@
     "build": "chmod +x ./bin.cjs",
     "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo todo"
   },

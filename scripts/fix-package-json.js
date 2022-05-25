@@ -13,6 +13,11 @@ for (let name of fg.sync("*/**/package.json")) {
   // Skip by name
   if (["@zerva/docker"].includes(package.name)) continue
 
+  if (package.name.startsWith("@zerva/")) {
+    package.scripts.reset =
+      "rm -rf node_modules pnpm-lock.yaml dist dist_www www"
+  }
+
   delete package.engines
 
   package = {

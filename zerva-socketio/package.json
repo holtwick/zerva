@@ -39,6 +39,7 @@
     "check": "tsc --noEmit -p tsconfig.json",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run build",
     "test": "vitest -r src --globals"
   },

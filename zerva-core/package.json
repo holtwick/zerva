@@ -39,6 +39,7 @@
     "clean": "rm -rf dist",
     "global": "pnpm -g ln",
     "prepublish": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
     "watch": "pnpm run build:tsup -- --watch"

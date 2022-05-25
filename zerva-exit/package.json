@@ -38,6 +38,7 @@
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
     "clean": "rm -rf dist",
     "prepublish": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo todo",
     "watch": "pnpm run build:tsup -- --watch"
