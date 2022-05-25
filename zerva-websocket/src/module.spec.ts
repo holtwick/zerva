@@ -14,7 +14,7 @@ global.WebSocket = WebSocket
 
 const log = Logger("test:module")
 
-const port = 8888
+const port = 8889
 const url = `ws://localhost:${port}${webSocketPath}`
 
 type WebsocketActions = {
