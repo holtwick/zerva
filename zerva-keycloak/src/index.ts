@@ -2,7 +2,7 @@ import { emit, on, register } from "@zerva/core"
 import { Express } from "@zerva/http"
 import session from "express-session"
 import KeycloakConnect, { Keycloak } from "keycloak-connect"
-import { Logger } from "zeed"
+import { Logger, uuid } from "zeed"
 
 const name = "keycloak"
 const log = Logger(`zerva:${name}`)
@@ -18,6 +18,7 @@ interface ZervaKeycloakConfig {
   protocol?: string
   logout?: string
   routes?: any[]
+  sessionSecret?: string
   sessionStore?: session.Store
 }
 
@@ -25,7 +26,13 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
   log.info(`use ${name}`)
   register(name, ["http"])
 
-  const { host, protocol, routes = [], logout = "/logout" } = config ?? {}
+  const {
+    host,
+    protocol,
+    routes = [],
+    logout = "/logout",
+    sessionSecret = uuid(),
+  } = config ?? {}
 
   const memoryStore = config?.sessionStore ?? new session.MemoryStore()
 
@@ -34,7 +41,7 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
   })
 
   const sessionMiddleware = session({
-    secret: "keycloak-secret",
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     store: memoryStore,

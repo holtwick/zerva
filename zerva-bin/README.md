@@ -1,6 +1,8 @@
 # 🌱 @zerva/bin
 
-**Sub-project of [Zerva](https://github.com/holtwick/zerva)**
+**This is a side project of [Zerva](https://github.com/holtwick/zerva)**
+
+> Command line tool to simplify work with Zerva. For debug and production.
 
 In your `package.json` you might want to add these lines:
 

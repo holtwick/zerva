@@ -2,7 +2,7 @@
 
 **This is a side project of [Zerva](https://github.com/holtwick/zerva)**
 
-Plain resilient WebSocket connections with Zerva.
+> Plain resilient WebSocket connections with Zerva.
 
 ## Get started
 

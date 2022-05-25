@@ -83,3 +83,5 @@ pnpm-lock.yaml
 package-lock.json
 
 dist_www
+
+*.rest
