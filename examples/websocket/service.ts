@@ -1,4 +1,5 @@
-import { on, serve, useHttp } from "@zerva/core"
+import { on, serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
 import { Logger, useInterval, useMessageHub } from "zeed"
 import { useVite } from "zerva-vite"
 import { useWebSocket } from "zerva-websocket"
@@ -23,43 +24,43 @@ on("webSocketConnect", ({ channel }) => {
     })
 
     return
-    counter++
-    channel.postMessage(
-      JSON.stringify({
-        from: "server",
-        hello: "world",
-        counter,
-      })
-    )
+    //   counter++
+    //   channel.postMessage(
+    //     JSON.stringify({
+    //       from: "server",
+    //       hello: "world",
+    //       counter,
+    //     })
+    //   )
 
-    let dispose = useInterval(() => {
-      counter++
-      channel.postMessage(
-        JSON.stringify({
-          from: "serverPing",
-          counter,
-        })
-      )
-    }, 5000)
+    //   let dispose = useInterval(() => {
+    //     counter++
+    //     channel.postMessage(
+    //       JSON.stringify({
+    //         from: "serverPing",
+    //         counter,
+    //       })
+    //     )
+    //   }, 5000)
 
-    channel.on("close", dispose)
-  } else {
-    useMessageHub({
-      channel,
-    }).listen<Messages>({
-      viteEcho(data) {
-        log.info("viteEcho from server", data)
-        ++counter
-        // return { fromServer: counter }
-      },
-    })
+    //   channel.on("close", dispose)
+    // } else {
+    //   useMessageHub({
+    //     channel,
+    //   }).listen<Messages>({
+    //     viteEcho(data) {
+    //       log.info("viteEcho from server", data)
+    //       ++counter
+    //       // return { fromServer: counter }
+    //     },
+    //   })
 
-    const msg = useMessageHub({
-      channel,
-    }).send<Messages>()
+    //   const msg = useMessageHub({
+    //     channel,
+    //   }).send<Messages>()
 
-    ++counter
-    msg.viteEcho({ pushCounter: counter })
+    //   ++counter
+    //   msg.viteEcho({ pushCounter: counter })
   }
 })
 

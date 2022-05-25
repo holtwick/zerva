@@ -1,35 +1,7 @@
 {
-  "author": {
-    "name": "Dirk Holtwick",
-    "url": "https://holtwick.de"
-  },
-  "dependencies": {
-    "@types/node": "^17.0.35",
-    "@types/ws": "^8.5.3",
-    "@zerva/core": "workspace:*",
-    "@zerva/http": "workspace:*",
-    "ws": "^8.6.0",
-    "zeed": "^0.7.148"
-  },
+  "name": "@zerva/websocket",
+  "version": "0.7.30",
   "description": "🌱 Zerva websocket module",
-  "engines": {
-    "node": ">=14.13.1"
-  },
-  "exports": {
-    ".": {
-      "browser": "./dist/index.browser.js",
-      "default": "./dist/index.js",
-      "node": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
@@ -39,22 +11,47 @@
     "zerva",
     "zeed"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
   "license": "MIT",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "name": "@zerva/websocket",
-  "scripts": {
-    "build": "pnpm run clean && pnpm run build:tsup",
-    "build:esm": "tsc -p tsconfig.json",
-    "build:tsup": "tsup src/index.ts src/index.browser.ts --dts --sourcemap --format esm,cjs",
-    "check": "tsc --noEmit -p tsconfig.json",
-    "clean": "rm -rf dist",
-    "prepublish": "pnpm test && pnpm run build",
-    "start": "pnpm run watch",
-    "test": "vitest -r src --globals",
-    "watch": "pnpm run build:tsup -- --watch"
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
   },
   "type": "module",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.browser.js",
+      "default": "./dist/index.js",
+      "node": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "version": "0.7.29"
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:tsup": "tsup src/index.ts src/index.browser.ts --dts --sourcemap --format esm,cjs",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "ZEED=* vitest --globals --run -r src",
+    "watch": "pnpm run build:tsup -- --watch"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.35",
+    "@types/ws": "^8.5.3",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "ws": "^8.6.0",
+    "zeed": "^0.7.148"
+  }
 }

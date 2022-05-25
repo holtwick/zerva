@@ -1,49 +1,46 @@
 {
   "name": "@zerva/exit",
-  "version": "0.7.29",
+  "version": "0.7.30",
   "description": "🌱 Zerva exit gracefully",
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
   "type": "module",
-  "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/index.js",
-      "require": "./dist/index.cjs",
+      "default": "./dist/index.js",
       "node": "./dist/index.js",
-      "default": "./dist/index.js"
+      "require": "./dist/index.cjs"
     }
   },
-  "module": "dist/index.js",
   "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=14.13.1"
-  },
   "scripts": {
-    "start": "pnpm run watch",
     "build": "pnpm run clean && pnpm run build:tsup",
-    "build:esm": "tsc -p tsconfig.json",
     "build:tsup": "tsup src/index.ts --dts --sourcemap --format esm,cjs",
     "clean": "rm -rf dist",
-    "watch": "pnpm run build:tsup -- --watch",
-    "prepublish": "pnpm test && pnpm run build",
-    "test": "echo todo"
+    "prepublishOnly": "pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "echo 'NO TEST AVAILABLE'",
+    "watch": "pnpm run build:tsup -- --watch"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",

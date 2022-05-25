@@ -1,17 +1,27 @@
 {
   "name": "zerva-example-websocket",
   "version": "0.2.4",
-  "type": "module",
-  "engines": {
-    "node": ">=14.13.1"
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
   },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
   "scripts": {
-    "start": "ZEED=* LEVEL=* zerva",
+    "build": "zerva build && vite build",
     "dev": "vite",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* LEVEL=* node dist/main.cjs",
-    "build": "zerva build && vite build"
+    "start": "ZEED=* LEVEL=* zerva"
   },
   "dependencies": {
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
     "cross-fetch": "^3.1.4",
     "vue": "^3.2.36",
     "zeed": "^0.7.148",
@@ -21,13 +31,10 @@
     "zerva-websocket": "file:.."
   },
   "devDependencies": {
-    "@types/jest": "^27.5.1",
     "@types/node": "^17.0.35",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/compiler-sfc": "^3.2.36",
-    "jest": "^28.1.0",
-    "ts-jest": "^28.0.3",
-    "tsup": "^5.12.8",
+    "tsup": "^5.12.9",
     "typescript": "^4.7.2",
     "vite": "^2.9.9",
     "vue-tsc": "^0.34.16"

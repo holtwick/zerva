@@ -1,17 +1,28 @@
 {
   "name": "test-ssr-vue",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "scripts": {
-    "dev": "node server",
     "build": "npm run build:client && npm run build:server",
-    "build:noExternal": "npm run build:client && npm run build:server:noExternal",
     "build:client": "vite build --ssrManifest --outDir dist/client",
+    "build:noExternal": "npm run build:client && npm run build:server:noExternal",
     "build:server": "vite build --ssr src/entry-server.js --outDir dist/server",
     "build:server:noExternal": "vite build --config vite.config.noexternal.js --ssr src/entry-server.js --outDir dist/server",
+    "debug": "node --inspect-brk server",
+    "dev": "node server",
     "generate": "vite build --ssrManifest --outDir dist/static && npm run build:server && node prerender",
-    "serve": "cross-env NODE_ENV=production node server",
-    "debug": "node --inspect-brk server"
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "cross-env NODE_ENV=production node server"
   },
   "dependencies": {
     "example-external-component": "file:example-external-component",

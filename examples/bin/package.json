@@ -1,24 +1,30 @@
 {
   "name": "zerva-example-bin",
   "version": "1.0.0",
-  "description": "Just a simple test",
   "private": true,
+  "description": "Just a simple test",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "type": "module",
   "main": "src/main.ts",
-  "engines": {
-    "node": ">12.20.0 || ^14.13.1 || >=16.0.0"
-  },
   "scripts": {
-    "start": "LEVEL=i ZEED=* zerva",
     "build": "zerva build",
     "minimal": "zerva minimal",
-    "serve": "node --enable-source-maps dist/main.cjs"
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "node --enable-source-maps dist/main.cjs",
+    "start": "LEVEL=i ZEED=* zerva"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*"
-  },
-  "author": "Dirk Holtwick",
-  "license": "MIT"
+  }
 }

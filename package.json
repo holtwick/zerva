@@ -1,33 +1,41 @@
 {
   "name": "@zerva/monorepo",
+  "version": "0.7.30",
   "private": true,
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "scripts": {
-    "update": "pnpm -r update -i --latest",
     "build": "pnpm -r --filter=@zerva/* build",
-    "test": "pnpm -r --filter=@zerva/* test",
-    "release": "pnpm run bump && pnpm run build && pnpm run publish && ./release.sh",
     "bump": "bumpp package.json zerva-*/package.json --commit",
-    "publish": "pnpm -r --filter=@zerva/* publish --access public",
+    "check": "vue-tsc --noEmit -p tsconfig.json",
+    "clean": "pnpm -r --filter=@zerva/* run clean",
+    "fix": "node scripts/fix-package-json.js && pnpm sort",
+    "format": "prettier --write .",
     "preinstall": "npx only-allow pnpm",
     "prepublish": "npx only-allow pnpm",
-    "format": "prettier --write ."
-  },
-  "packageManager": "pnpm@6.23.0",
-  "pnpm": {
-    "overrides": {}
+    "publish": "pnpm -r --filter=@zerva/* publish --access public",
+    "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
+    "reset": "pnpm -r --filter=@zerva/* run reset",
+    "sort": "sort-package-json \"package.json\" \"**/package.json\"",
+    "test": "pnpm -r --filter=@zerva/* test",
+    "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
     "bumpp": "^7.1.1",
     "cross-fetch": "^3.1.5",
+    "fast-glob": "^3.2.11",
     "only-allow": "^1.1.0",
     "prettier": "^2.6.2",
-    "tsup": "^5.12.8",
+    "sort-package-json": "^1.57.0",
+    "tsup": "^5.12.9",
     "typescript": "^4.7.2",
-    "vitest": "^0.12.9"
+    "vitest": "^0.12.9",
+    "vue-tsc": "^0.34.16"
   },
-  "version": "0.7.29"
+  "packageManager": "pnpm@6.23.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "pnpm": {
+    "overrides": {}
+  }
 }

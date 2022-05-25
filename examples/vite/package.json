@@ -1,13 +1,24 @@
 {
   "name": "vite-project",
   "version": "0.0.0",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "scripts": {
-    "start": "ZEED=* LEVEL=i zerva src/zerva/index.ts",
-    "serve": "ZEED=* LEVEL=i node dist/main.cjs",
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "clean": "rm -rf dist www",
-    "vite_dev": "vite",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "ZEED=* LEVEL=i node dist/main.cjs",
+    "start": "ZEED=* LEVEL=i zerva src/zerva/index.ts",
     "vite_build": "vite build",
+    "vite_dev": "vite",
     "vite_serve": "vite preview"
   },
   "dependencies": {

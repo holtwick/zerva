@@ -1,19 +1,31 @@
 {
   "name": "vite-project",
   "version": "0.0.0",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
   "scripts": {
-    "start": "ZEED=* zerva",
-    "prod": "ZEED=* NODE_MODE=production zerva",
     "build": "npm run build:client && npm run build:server && npm run build:zerva",
-    "build:zerva": "zerva build",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.ts --outDir dist/server",
-    "serve": "ZEED=* node dist/main.cjs"
+    "build:zerva": "zerva build",
+    "prod": "ZEED=* NODE_MODE=production zerva",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "ZEED=* node dist/main.cjs",
+    "start": "ZEED=* zerva"
   },
   "dependencies": {
     "@vueuse/head": "^0.7.6",
     "vue": "^3.2.36",
-    "vue-router": "^4.0.15"
+    "vue-router": "^4.0.15",
+    "zeed": "^0.7.148"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
