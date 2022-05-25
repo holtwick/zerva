@@ -46,8 +46,7 @@ for (let name of fg.sync("*/**/package.json")) {
     const hasTests = tests.length > 0
 
     console.log(
-      `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`,
-      tests
+      `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`
     )
 
     package = {
@@ -70,9 +69,9 @@ for (let name of fg.sync("*/**/package.json")) {
         files: ["dist"],
         scripts: {
           build: "pnpm run clean && pnpm run build:tsup",
-          "build:tsup": `tsup src/index.ts ${
-            hasBrowserCode ? "src/index.browser.ts " : ""
-          }--dts --sourcemap --format esm,cjs`,
+          "build:tsup": `tsup src/index.ts${
+            hasBrowserCode ? " src/index.browser.ts " : ""
+          }`,
           clean: "rm -rf dist",
           prepublishOnly: hasTests
             ? "pnpm test && pnpm run build"
