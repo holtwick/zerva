@@ -86,7 +86,7 @@ export async function track(opt: TrackEvent) {
 export async function trackEvent(
   req: any,
   name: string,
-  props?: Record<string, string>,
+  props?: any,
   url?: string
 ) {
   log.info(`event ${name}=${props}`)

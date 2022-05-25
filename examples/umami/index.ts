@@ -14,8 +14,8 @@ useHttp({
 })
 
 useUmami({
-  collectUrl: process.env.UMAMI_COLLECT_URL,
-  websiteId: process.env.UMAMI_WEBSITE_ID,
+  collectUrl: process.env.UMAMI_COLLECT_URL!,
+  websiteId: process.env.UMAMI_WEBSITE_ID!,
 })
 
 on("httpInit", ({ get }) => {

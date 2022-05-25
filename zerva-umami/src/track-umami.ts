@@ -89,7 +89,7 @@ export async function track(opt: TrackEvent | TrackPageview) {
 export async function trackEvent(
   req: any,
   event_type: string,
-  event_value: string,
+  event_value: any,
   url?: string
 ) {
   log.info(`event ${event_type}=${event_value}`)

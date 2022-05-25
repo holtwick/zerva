@@ -1,5 +1,6 @@
 const fg = require("fast-glob")
 const fs = require("fs")
+const { resolve } = require("path")
 
 for (let name of fg.sync("*/**/package.json")) {
   // Skit by path
@@ -28,6 +29,38 @@ for (let name of fg.sync("*/**/package.json")) {
       },
       license: "MIT",
     },
+  }
+
+  if (fs.existsSync(resolve(name, "src", "index.browser.ts"))) {
+    package = {
+      ...package,
+      ...{
+        type: "module",
+        exports: {
+          ".": {
+            browser: "./dist/index.browser.js",
+            default: "./dist/index.js",
+            node: "./dist/index.js",
+            require: "./dist/index.cjs",
+          },
+        },
+        main: "dist/index.cjs",
+        module: "dist/index.js",
+        typings: "dist/index.d.ts",
+        files: ["dist"],
+        scripts: {
+          build: "pnpm run clean && pnpm run build:tsup",
+          "build:tsup":
+            "tsup src/index.ts src/index.browser.ts --dts --sourcemap --format esm,cjs",
+          check: "tsc --noEmit -p tsconfig.json",
+          clean: "rm -rf dist",
+          prepublish: "pnpm test && pnpm run build",
+          start: "pnpm run watch",
+          test: "vitest -r src --globals",
+          watch: "pnpm run build:tsup -- --watch",
+        },
+      },
+    }
   }
 
   // if (name.startsWith("zerva-") && !name.startsWith("zerva-bin/")) {

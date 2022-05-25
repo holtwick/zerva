@@ -62,29 +62,28 @@ if (true) {
   //     })
   //   )
   // }, 5000)
-} else {
-  // conn.on("serverPong", (data) => log("serverPong", data))
 
-  // conn.emit("serverPing", { echo: uuid() }).then((r: any) => {
-  //   log("pong", r)
-  //   pong.value = r
-  // })
+  // } else {
+  //   // conn.on("serverPong", (data) => log("serverPong", data))
+  //   // conn.emit("serverPing", { echo: uuid() }).then((r: any) => {
+  //   //   log("pong", r)
+  //   //   pong.value = r
+  //   // })
+  //   // useMessageHub({ channel }).listen<Messages>({
+  //   //   viteEcho(data) {
+  //   //     log("received", data)
+  //   //     pushedFeedback.value = data
+  //   //     return data
+  //   //   },
+  //   // })
 
-  // useMessageHub({ channel }).listen<Messages>({
-  //   viteEcho(data) {
-  //     log("received", data)
-  //     pushedFeedback.value = data
-  //     return data
-  //   },
-  // })
-
-  const msg = useMessageHub({ channel }).send<Messages>()
-  channel.on("connect", () => {
-    ++counter
-    msg.viteEcho({ fromClient: counter }).then((data: any) => {
-      log("viteEcho direct", data)
-      directFeedback.value = data
-    })
-  })
+  //   const msg = useMessageHub({ channel }).send<Messages>()
+  //   channel.on("connect", () => {
+  //     ++counter
+  //     msg.viteEcho({ fromClient: counter }).then((data: any) => {
+  //       log("viteEcho direct", data)
+  //       directFeedback.value = data
+  //     })
+  //   })
 }
 </script>
