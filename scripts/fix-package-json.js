@@ -11,7 +11,7 @@ for (let name of fg.sync("*/**/package.json")) {
   let package = JSON.parse(content)
 
   // Skip by name
-  if (["@zerva/docker"].includes(package.name)) continue
+  if (["@zerva/docker", "@zerva/bin"].includes(package.name)) continue
 
   if (package.name.startsWith("@zerva/")) {
     package.scripts.reset =
@@ -36,14 +36,29 @@ for (let name of fg.sync("*/**/package.json")) {
     },
   }
 
-  if (fs.existsSync(resolve(name, "src", "index.browser.ts"))) {
+  if (fs.existsSync(resolve(name, "..", "src", "index.ts"))) {
+    const hasBrowserCode = fs.existsSync(
+      resolve(name, "..", "src", "index.browser.ts")
+    )
+
+    const pattern = resolve(name, "..", "**", "*.spec.*")
+    const tests = fg.sync(pattern).filter((p) => !p.includes("node_modules/"))
+    const hasTests = tests.length > 0
+
+    console.log(
+      `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`,
+      tests
+    )
+
     package = {
       ...package,
       ...{
         type: "module",
         exports: {
           ".": {
-            browser: "./dist/index.browser.js",
+            browser: hasBrowserCode
+              ? "./dist/index.browser.js"
+              : "./dist/index.js",
             default: "./dist/index.js",
             node: "./dist/index.js",
             require: "./dist/index.cjs",
@@ -55,18 +70,25 @@ for (let name of fg.sync("*/**/package.json")) {
         files: ["dist"],
         scripts: {
           build: "pnpm run clean && pnpm run build:tsup",
-          "build:tsup":
-            "tsup src/index.ts src/index.browser.ts --dts --sourcemap --format esm,cjs",
-          check: "tsc --noEmit -p tsconfig.json",
+          "build:tsup": `tsup src/index.ts ${
+            hasBrowserCode ? "src/index.browser.ts " : ""
+          }--dts --sourcemap --format esm,cjs`,
           clean: "rm -rf dist",
-          prepublish: "pnpm test && pnpm run build",
+          prepublishOnly: hasTests
+            ? "pnpm test && pnpm run build"
+            : "pnpm run build",
           start: "pnpm run watch",
-          test: "vitest -r src --globals",
+          test: hasTests
+            ? "ZEED=* vitest --globals --run -r src"
+            : "echo 'NO TESTS AVAILABLE'",
           watch: "pnpm run build:tsup -- --watch",
         },
       },
     }
   }
+
+  // Reset for all
+  package.scripts.reset = "rm -rf node_modules pnpm-lock.yaml dist dist_www www"
 
   // if (name.startsWith("zerva-") && !name.startsWith("zerva-bin/")) {
   // json = {

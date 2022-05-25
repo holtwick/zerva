@@ -17,6 +17,7 @@
     "build:server": "vite build --ssr src/entry-server.ts --outDir dist/server",
     "build:zerva": "zerva build",
     "prod": "ZEED=* NODE_MODE=production zerva",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* node dist/main.cjs",
     "start": "ZEED=* zerva"
   },

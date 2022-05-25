@@ -18,6 +18,7 @@
   "scripts": {
     "build": "zerva build",
     "minimal": "zerva minimal",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "node --enable-source-maps dist/main.cjs",
     "start": "LEVEL=i ZEED=* zerva"
   },

@@ -16,6 +16,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "LEVEL=i ZEED=* node index.js"
   },
   "dependencies": {
