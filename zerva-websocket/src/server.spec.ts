@@ -71,8 +71,6 @@ describe("module", () => {
     }))
 
   it("should connect using helper", async () => {
-    expect.assertions(1)
-
     const channel = await openWebSocketChannel(url)
     const bridge = useMessageHub({ channel }).send<WebsocketActions>()
 
@@ -80,9 +78,8 @@ describe("module", () => {
     let result = await bridge.echo({ id })
     log("result", result)
     expect(result).toEqual({ id })
-    channel.close()
 
-    await sleep(500)
+    channel.close()
   })
 
   it("should connect use smart connection", async () => {
