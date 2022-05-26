@@ -24,7 +24,7 @@
     "@zerva/http": "workspace:*",
     "cross-fetch": "^3.1.4",
     "vue": "^3.2.36",
-    "zeed": "^0.7.148",
+    "zeed": "^0.7.149",
     "zerva": "^0.5.8",
     "zerva-vite": "^0.2.4",
     "zerva-vite-plugin": "^0.4.5",
