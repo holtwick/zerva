@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "🌱 Zerva Express HTTP",
   "keywords": [
     "server",
@@ -47,7 +47,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
-    "zeed": "^0.7.148"
+    "zeed": "^0.7.149"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/umami",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -47,6 +47,6 @@
     "@zerva/core": "*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^2.1.3",
-    "zeed": "^0.7.148"
+    "zeed": "^0.7.149"
   }
 }

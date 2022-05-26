@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
@@ -43,7 +43,7 @@
     "watch": "pnpm run build:tsup -- --watch"
   },
   "dependencies": {
-    "zeed": "^0.7.148"
+    "zeed": "^0.7.149"
   },
   "devDependencies": {
     "@types/jest": "^27.5.1",

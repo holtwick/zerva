@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { Logger, useMessageHub } from "zeed"
-import { WebSocketConnection } from "zerva-websocket"
+import { WebSocketConnection } from "@zerva/websocket"
 import { Messages } from "./protocol"
 
 const log = Logger("app")
@@ -43,7 +43,7 @@ if (true) {
   channel.on("connect", () => {
     log("channel connect")
     connected.value = true
-    return
+    // return
     counter++
     channel.postMessage(
       JSON.stringify({

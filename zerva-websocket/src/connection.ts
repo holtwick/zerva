@@ -5,6 +5,8 @@ import {
   getTimestamp,
   isBrowser,
   Logger,
+  useDispose,
+  useEventListener,
 } from "zeed"
 import {
   getWebsocketUrlFromLocation,
@@ -51,6 +53,8 @@ export class WebSocketConnection extends Channel implements Disposable {
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()
 
+    let dispose = useDispose()
+
     let path = opt.path ?? webSocketPath
     if (!path.startsWith("/")) path = `/${path}`
 
@@ -59,11 +63,14 @@ export class WebSocketConnection extends Channel implements Disposable {
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
     if (isBrowser()) {
-      window.addEventListener("beforeunload", () => this.disconnect())
-      window.addEventListener("focus", () => this.ping())
+      dispose.add(useEventListener(window, "beforeunload", () => this.close()))
+      dispose.add(useEventListener(window, "focus", () => this.ping()))
     } else if (typeof process !== "undefined") {
-      process.on("exit", () => this.disconnect())
+      dispose.add(useEventListener(process, "exit", () => this.close()))
     }
+
+    dispose.add(() => this.disconnect())
+    this.dispose = dispose
 
     this._connect()
   }
@@ -106,12 +113,8 @@ export class WebSocketConnection extends Channel implements Disposable {
     }
   }
 
-  dispose() {
-    this.disconnect()
-  }
-
   close() {
-    this.disconnect()
+    this.dispose()
   }
 
   _connect() {

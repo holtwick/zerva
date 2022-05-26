@@ -1,12 +1,15 @@
 const fg = require("fast-glob")
 const fs = require("fs")
 const { resolve } = require("path")
+const sortPackageJson = require("sort-package-json")
 
-for (let name of fg.sync("*/**/package.json")) {
+for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
   // Skip by path
   if (name.includes("node_modules/")) continue
 
+  console.log("")
   console.log(name)
+
   let content = fs.readFileSync(name, "utf8")
   let package = JSON.parse(content)
 
@@ -42,7 +45,7 @@ for (let name of fg.sync("*/**/package.json")) {
     )
 
     const pattern = resolve(name, "..", "**", "*.spec.*")
-    const tests = fg.sync(pattern).filter((p) => !p.includes("node_modules/"))
+    const tests = fg.sync(["!**/node_modules", pattern])
     const hasTests = tests.length > 0
 
     console.log(
@@ -89,6 +92,7 @@ for (let name of fg.sync("*/**/package.json")) {
   // Reset for all
   package.scripts.reset = "rm -rf node_modules pnpm-lock.yaml dist dist_www www"
 
-  content = JSON.stringify(package, null, 2)
+  package = sortPackageJson(package)
+  content = JSON.stringify(package, null, 2) + "\n" // trailing \n also from pnpm etc.
   fs.writeFileSync(name, content, "utf8")
 }
