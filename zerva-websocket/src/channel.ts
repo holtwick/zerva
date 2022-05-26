@@ -1,4 +1,4 @@
-import { Channel, Logger } from "zeed"
+import { Channel, Logger, useDispose } from "zeed"
 import { getWebsocketUrlFromLocation } from "./types"
 
 const log = Logger("channel")
@@ -8,11 +8,18 @@ export class WebsocketChannel extends Channel {
 
   isConnected = true
 
+  private _dispose = useDispose()
+
+  private _emitMessage = (ev: MessageEvent) => {     
+    this.emit("message", ev)    
+}
+
   constructor(ws: WebSocket) {
     super()
     this.ws = ws
-    this.ws.addEventListener("message", (ev: MessageEvent) => {
-      this.emit("message", ev)
+    this.ws.addEventListener("message", this._emitMessage)
+    this._dispose.add(() => {
+      this.ws?.removeEventListener("message", this._emitMessage)      
     })
   }
 
@@ -21,7 +28,8 @@ export class WebsocketChannel extends Channel {
   }
 
   close() {
-    this.ws.close()
+    this._dispose()    
+    // this.ws.close()
   }
 }
 

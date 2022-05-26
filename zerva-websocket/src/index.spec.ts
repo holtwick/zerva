@@ -6,7 +6,7 @@ import WebSocket from "ws"
 import { Logger, sleep, useMessageHub, uuid } from "zeed"
 import { openWebSocketChannel, WebsocketChannel } from "./channel"
 import { WebSocketConnection } from "./connection"
-import { useWebSocket } from "./module"
+import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
 
 // @ts-ignore
@@ -65,7 +65,7 @@ describe("module", () => {
         log("result", result)
         expect(result).toEqual({ id })
         socket.close()
-        await sleep(500)
+        await sleep(200)
         done()
       })
     }))
@@ -82,7 +82,7 @@ describe("module", () => {
     expect(result).toEqual({ id })
     channel.close()
 
-    await sleep(500)
+    await sleep(200)
   })
 
   it("should connect use smart connection", async () => {
@@ -90,7 +90,7 @@ describe("module", () => {
 
     const channel = new WebSocketConnection(url)
     const bridge = useMessageHub({ channel }).send<WebsocketActions>()
-    // await sleep(500)
+    // await sleep(200)
 
     const id = uuid()
     let result = await bridge.echo({ id })
