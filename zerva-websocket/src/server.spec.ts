@@ -65,7 +65,7 @@ describe("module", () => {
         log("result", result)
         expect(result).toEqual({ id })
         socket.close()
-        await sleep(200)
+        await sleep(500)
         done()
       })
     }))
@@ -82,7 +82,7 @@ describe("module", () => {
     expect(result).toEqual({ id })
     channel.close()
 
-    await sleep(200)
+    await sleep(500)
   })
 
   it("should connect use smart connection", async () => {
@@ -90,7 +90,7 @@ describe("module", () => {
 
     const channel = new WebSocketConnection(url)
     const bridge = useMessageHub({ channel }).send<WebsocketActions>()
-    // await sleep(200)
+    // await sleep(500)
 
     const id = uuid()
     let result = await bridge.echo({ id })
