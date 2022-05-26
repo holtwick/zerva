@@ -25,18 +25,13 @@
     "cross-fetch": "^3.1.4",
     "vue": "^3.2.36",
     "zeed": "^0.7.149",
-    "zerva": "^0.5.8",
-    "zerva-vite": "^0.2.4",
-    "zerva-vite-plugin": "^0.4.5",
-    "zerva-websocket": "file:.."
+    "@zerva/vite": "workspace:*",
+    "@zerva/websocket": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^17.0.35",
+    "@zerva/bin": "workspace:*",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/compiler-sfc": "^3.2.36",
-    "tsup": "^6.0.1",
-    "typescript": "^4.7.2",
-    "vite": "^2.9.9",
-    "vue-tsc": "^0.34.16"
+    "vite": "^2.9.9"
   }
 }

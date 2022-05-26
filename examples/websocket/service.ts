@@ -1,8 +1,8 @@
 import { on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
-import { Logger, useInterval, useMessageHub } from "zeed"
-import { useVite } from "zerva-vite"
-import { useWebSocket } from "zerva-websocket"
+import { useVite } from "@zerva/vite"
+import { useWebSocket } from "@zerva/websocket"
+import { Logger, useInterval } from "zeed"
 import { Messages } from "./src/protocol"
 
 const log = Logger("service")
@@ -23,44 +23,41 @@ on("webSocketConnect", ({ channel }) => {
       log.info("message", JSON.parse(msg.data))
     })
 
-    return
-    //   counter++
-    //   channel.postMessage(
-    //     JSON.stringify({
-    //       from: "server",
-    //       hello: "world",
-    //       counter,
-    //     })
-    //   )
+    counter++
+    channel.postMessage(
+      JSON.stringify({
+        from: "server",
+        hello: "world",
+        counter,
+      })
+    )
 
-    //   let dispose = useInterval(() => {
-    //     counter++
-    //     channel.postMessage(
-    //       JSON.stringify({
-    //         from: "serverPing",
-    //         counter,
-    //       })
-    //     )
-    //   }, 5000)
+    let dispose = useInterval(() => {
+      counter++
+      channel.postMessage(
+        JSON.stringify({
+          from: "serverPing",
+          counter,
+        })
+      )
+    }, 5000)
 
-    //   channel.on("close", dispose)
-    // } else {
-    //   useMessageHub({
-    //     channel,
-    //   }).listen<Messages>({
-    //     viteEcho(data) {
-    //       log.info("viteEcho from server", data)
-    //       ++counter
-    //       // return { fromServer: counter }
-    //     },
-    //   })
-
-    //   const msg = useMessageHub({
-    //     channel,
-    //   }).send<Messages>()
-
-    //   ++counter
-    //   msg.viteEcho({ pushCounter: counter })
+    channel.on("close", dispose)
+  } else {
+    // useMessageHub({
+    //   channel,
+    // }).listen<Messages>({
+    //   viteEcho(data) {
+    //     log.info("viteEcho from server", data)
+    //     ++counter
+    //     // return { fromServer: counter }
+    //   },
+    // })
+    // const msg = useMessageHub({
+    //   channel,
+    // }).send<Messages>()
+    // ++counter
+    // msg.viteEcho({ pushCounter: counter })
   }
 })
 
@@ -75,3 +72,6 @@ on("httpInit", ({ get, addStatic }) => {
 })
 
 serve()
+function useMessageHub(arg0: any) {
+  throw new Error("Function not implemented.")
+}
