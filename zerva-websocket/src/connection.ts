@@ -1,5 +1,6 @@
 import {
   Channel,
+  createPromise,
   equalBinary,
   getTimestamp,
   isBrowser,
@@ -219,6 +220,13 @@ export class WebSocketConnection extends Channel {
     if (!this.isConnected && this.ws == null) {
       this._connect()
     }
+  }
+
+  async awaitConnect(): Promise<boolean> {
+    if (this.isConnected) return true
+    const [promise, resolve] = createPromise<boolean>()
+    this.once('connect', () =>  resolve(true))
+    return promise    
   }
 }
  
