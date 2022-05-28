@@ -3,7 +3,6 @@ import { useHttp } from "@zerva/http"
 import { useVite } from "@zerva/vite"
 import { useWebSocket } from "@zerva/websocket"
 import { Logger, useInterval } from "zeed"
-import { Messages } from "./src/protocol"
 
 const log = Logger("service")
 
@@ -72,6 +71,4 @@ on("httpInit", ({ get, addStatic }) => {
 })
 
 serve()
-function useMessageHub(arg0: any) {
-  throw new Error("Function not implemented.")
-}
+

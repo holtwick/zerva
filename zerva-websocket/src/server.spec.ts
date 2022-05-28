@@ -41,6 +41,8 @@ describe("module", () => {
     })
 
     await serve()
+
+    await sleep(1000)
   })
 
   afterAll(async () => {
@@ -52,7 +54,7 @@ describe("module", () => {
       expect.assertions(1)
 
       const socket = new WebSocket(url)
-      socket.binaryType = "arraybuffer"
+       socket.binaryType = "arraybuffer"
 
       // @ts-ignore
       const channel = new WebsocketChannel(socket)
@@ -64,6 +66,7 @@ describe("module", () => {
         let result = await bridge.echo({ id })
         log("result", result)
         expect(result).toEqual({ id })
+        // channel.close()
         socket.close()
         await sleep(500)
         done()

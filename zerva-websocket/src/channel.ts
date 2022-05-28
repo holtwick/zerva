@@ -1,6 +1,5 @@
-import { Channel, equalBinary, Logger, useDispose } from "zeed"
+import { Channel, Logger, useEventListener } from "zeed"
 import { WebSocketConnection } from "./connection"
-import { getWebsocketUrlFromLocation, pingMessage, pongMessage } from "./types"
 
 const log = Logger("channel")
 
@@ -8,34 +7,28 @@ export class WebsocketChannel extends Channel {
   private ws: WebSocket
 
   isConnected = true
-
-  private _dispose = useDispose()
-
-  private _emitMessage = (ev: MessageEvent) => {   
-    this.emit("message", ev)
-  }
-
+ 
   constructor(ws: WebSocket) {
     super()
     this.ws = ws
-    this.ws.addEventListener("message", this._emitMessage)
-    this._dispose.add(() => {
-      this.ws?.removeEventListener("message", this._emitMessage)
-      this.ws?.close()
-    })
+    this.dispose.add(useEventListener(this.ws, 'message', (ev: MessageEvent) => {   
+      log('emit message', ev.data)
+      this.emit("message", ev)
+    }))
+
+    this.dispose.add(useEventListener(this.ws, 'close', () => this.close()))
   }
 
   postMessage(data: any): void {
     this.ws.send(data)
   }
 
-  dispose() {
-    this._dispose()
-  }
-
   close() {
+    super.close()
     this.dispose()
+    this.ws.close()
   }
+ 
 }
 
 /** @deprecated Use `new WebSocketConnection(url)` */
