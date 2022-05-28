@@ -2,5 +2,4 @@
 
 export * from "./types"
 export * from "./server"
-export * from "./channel"
 export * from "./connection"

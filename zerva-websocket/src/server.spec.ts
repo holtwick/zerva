@@ -4,7 +4,6 @@ import { emit, on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
 import { Logger, sleep, useMessageHub, uuid } from "zeed"
-import { openWebSocketChannel, WebsocketChannel } from "./channel"
 import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
@@ -41,46 +40,49 @@ describe("module", () => {
     })
 
     await serve()
+
+    await sleep(1000)
   })
 
   afterAll(async () => {
     await emit("serveStop")
   })
 
-  it("should connect", () =>
-    new Promise((done) => {
-      expect.assertions(1)
+  // it("should connect", () =>
+  //   new Promise((done) => {
+  //     expect.assertions(1)
 
-      const socket = new WebSocket(url)
-      socket.binaryType = "arraybuffer"
+  //     const socket = new WebSocket(url)
+  //      socket.binaryType = "arraybuffer"
 
-      // @ts-ignore
-      const channel = new WebsocketChannel(socket)
+  //     // @ts-ignore
+  //     const channel = new WebsocketChannel(socket)
 
-      const bridge = useMessageHub({ channel }).send<WebsocketActions>()
+  //     const bridge = useMessageHub({ channel }).send<WebsocketActions>()
 
-      socket.addEventListener("open", async (event) => {
-        const id = uuid()
-        let result = await bridge.echo({ id })
-        log("result", result)
-        expect(result).toEqual({ id })
-        socket.close()
-        await sleep(500)
-        done()
-      })
-    }))
+  //     socket.addEventListener("open", async (event) => {
+  //       const id = uuid()
+  //       let result = await bridge.echo({ id })
+  //       log("result", result)
+  //       expect(result).toEqual({ id })
+  //       // channel.close()
+  //       socket.close()
+  //       await sleep(500)
+  //       done()
+  //     })
+  //   }))
 
-  it("should connect using helper", async () => {
-    const channel = await openWebSocketChannel(url)
-    const bridge = useMessageHub({ channel }).send<WebsocketActions>()
+    // it("should connect using helper", async () => {
+    //   const channel = await openWebSocketChannel(url)
+    //   const bridge = useMessageHub({ channel }).send<WebsocketActions>()
 
-    const id = uuid()
-    let result = await bridge.echo({ id })
-    log("result", result)
-    expect(result).toEqual({ id })
+    //   const id = uuid()
+    //   let result = await bridge.echo({ id })
+    //   log("result", result)
+    //   expect(result).toEqual({ id })
 
-    channel.close()
-  })
+    //   channel.close()
+    // })
 
   it("should connect use smart connection", async () => {
     expect.assertions(2)

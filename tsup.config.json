@@ -2,8 +2,5 @@
   "minify": true,
   "dts": true,
   "sourcemap": true,
-  "format": [
-    "esm",
-    "cjs"
-  ]
+  "format": ["esm", "cjs"]
 }

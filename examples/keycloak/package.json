@@ -24,6 +24,6 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/keycloak": "workspace:*",
-    "zeed": "^0.7.149"
+    "zeed": "^0.7.152"
   }
 }

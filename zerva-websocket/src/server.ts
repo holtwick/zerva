@@ -4,7 +4,7 @@ import { emit, on, onInit, register, requireModules } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
-import { Channel, Disposable, equalBinary, Logger, uname } from "zeed"
+import { Channel, equalBinary, Logger, uname } from "zeed"
 import {
   pingMessage,
   pongMessage,
@@ -21,7 +21,7 @@ interface ZWebSocketConfig {
   pingInterval?: number
 }
 
-export class WebsocketNodeConnection extends Channel implements Disposable {
+export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
   private heartbeatInterval: any
 
@@ -62,7 +62,7 @@ export class WebsocketNodeConnection extends Channel implements Disposable {
 
     ws.on("message", (data: ArrayBuffer, isBinary: boolean) => {
       try {
-        log("onmessage", typeof data) // , new Uint8Array(data), isBinary)
+        log("onmessage", new Uint8Array(data), isBinary)
 
         // Hardcoded message type to allow ping from client side, sends pong
         // This is different to the hearbeat and isAlive from before!
@@ -87,7 +87,7 @@ export class WebsocketNodeConnection extends Channel implements Disposable {
         this.isConnected = false
         this.emit("close")
         emit("webSocketDisconnect", {
-          channel: this,
+          channel: this as any,
           error,
         })
       }
@@ -100,12 +100,14 @@ export class WebsocketNodeConnection extends Channel implements Disposable {
         this.isConnected = false
         this.emit("close")
         emit("webSocketDisconnect", {
-          channel: this,
+          channel: this as any,
         })
       }
     })
 
-    emit("webSocketConnect", { channel: this })
+    emit("webSocketConnect", {
+      channel: this as any,
+    })
   }
 
   postMessage(data: any): void {
@@ -133,10 +135,6 @@ export class WebsocketNodeConnection extends Channel implements Disposable {
   close() {
     this.stopHeartBeat()
     this.ws.close()
-  }
-
-  dispose() {
-    this.close()
   }
 }
 
