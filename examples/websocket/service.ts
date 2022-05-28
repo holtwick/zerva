@@ -71,4 +71,3 @@ on("httpInit", ({ get, addStatic }) => {
 })
 
 serve()
-

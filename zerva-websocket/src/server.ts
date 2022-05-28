@@ -10,7 +10,7 @@ import {
   pongMessage,
   webSocketPath,
   wsReadyStateConnecting,
-  wsReadyStateOpen
+  wsReadyStateOpen,
 } from "./types"
 
 const moduleName = "websocket"
@@ -21,7 +21,7 @@ interface ZWebSocketConfig {
   pingInterval?: number
 }
 
-export class WebsocketNodeConnection extends Channel  {
+export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
   private heartbeatInterval: any
 
@@ -105,8 +105,8 @@ export class WebsocketNodeConnection extends Channel  {
       }
     })
 
-    emit("webSocketConnect", { 
-      channel: this as any 
+    emit("webSocketConnect", {
+      channel: this as any,
     })
   }
 
@@ -135,7 +135,7 @@ export class WebsocketNodeConnection extends Channel  {
   close() {
     this.stopHeartBeat()
     this.ws.close()
-  } 
+  }
 }
 
 export function useWebSocket(config: ZWebSocketConfig = {}) {

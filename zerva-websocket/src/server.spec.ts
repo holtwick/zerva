@@ -3,7 +3,7 @@
 import { emit, on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
-import { Logger, sleep, useMessageHub, uuid } from "zeed" 
+import { Logger, sleep, useMessageHub, uuid } from "zeed"
 import { WebSocketConnection, openWebSocketChannel } from "./connection"
 import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
