@@ -36,7 +36,7 @@ export interface WebSocketConnectionOptions {
 
 const PERFORM_RETRY = true
 
-export class WebSocketConnection extends Channel implements Disposable {
+export class WebSocketConnection extends Channel  {
   public ws?: WebSocket
   public url: string | URL
   public shouldConnect: boolean = true
@@ -53,7 +53,7 @@ export class WebSocketConnection extends Channel implements Disposable {
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()
 
-    let dispose = useDispose()
+    // let dispose = useDispose()
 
     let path = opt.path ?? webSocketPath
     if (!path.startsWith("/")) path = `/${path}`
@@ -63,14 +63,14 @@ export class WebSocketConnection extends Channel implements Disposable {
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
     if (isBrowser()) {
-      dispose.add(useEventListener(window, "beforeunload", () => this.close()))
-      dispose.add(useEventListener(window, "focus", () => this.ping()))
+      this.dispose.add(useEventListener(window, "beforeunload", () => this.close()))
+      this.dispose.add(useEventListener(window, "focus", () => this.ping()))
     } else if (typeof process !== "undefined") {
-      dispose.add(useEventListener(process, "exit", () => this.close()))
+      this.dispose.add(useEventListener(process, "exit", () => this.close()))
     }
 
-    dispose.add(() => this.disconnect())
-    this.dispose = dispose
+    this.dispose.add(() => this.disconnect())
+    // this.dispose = dispose
 
     this._connect()
   }
@@ -113,9 +113,9 @@ export class WebSocketConnection extends Channel implements Disposable {
     }
   }
 
-  close() {
-    this.dispose()
-  }
+  // close() {
+  //   this.dispose()
+  // }
 
   _connect() {
     const {
@@ -220,4 +220,29 @@ export class WebSocketConnection extends Channel implements Disposable {
       this._connect()
     }
   }
+}
+
+/** @deprecated Use `new WebSocketConnection(url)` */
+export async function openWebSocketChannel(
+  url?: string
+): Promise<WebSocketConnection> {
+  return new Promise((resolve) => {
+
+    const channel = new WebSocketConnection(url)
+    resolve(channel)
+
+    // const socket = new WebSocket(url ?? getWebsocketUrlFromLocation())
+    // socket.binaryType = "arraybuffer"
+
+    
+    // const channel = new WebsocketChannel(socket)
+
+    // const onOpen = (event: Event) => {
+    //   log("ONOPEN")
+    //   resolve(channel)
+    //   socket.removeEventListener("open", onOpen)
+    // }
+
+    // socket.addEventListener("open", onOpen)
+  })
 }

@@ -1,3 +1,2 @@
-export * from "./types"
-export * from "./channel"
+export * from "./types" 
 export * from "./connection"
