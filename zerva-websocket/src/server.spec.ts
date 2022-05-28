@@ -4,7 +4,7 @@ import { emit, on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
 import { Logger, sleep, useMessageHub, uuid } from "zeed"
-import { WebSocketConnection, openWebSocketChannel } from "./connection"
+import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
 
@@ -72,17 +72,17 @@ describe("module", () => {
   //     })
   //   }))
 
-  it("should connect using helper", async () => {
-    const channel = await openWebSocketChannel(url)
-    const bridge = useMessageHub({ channel }).send<WebsocketActions>()
+    // it("should connect using helper", async () => {
+    //   const channel = await openWebSocketChannel(url)
+    //   const bridge = useMessageHub({ channel }).send<WebsocketActions>()
 
-    const id = uuid()
-    let result = await bridge.echo({ id })
-    log("result", result)
-    expect(result).toEqual({ id })
+    //   const id = uuid()
+    //   let result = await bridge.echo({ id })
+    //   log("result", result)
+    //   expect(result).toEqual({ id })
 
-    channel.close()
-  })
+    //   channel.close()
+    // })
 
   it("should connect use smart connection", async () => {
     expect.assertions(2)

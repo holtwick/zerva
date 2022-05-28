@@ -221,26 +221,4 @@ export class WebSocketConnection extends Channel {
     }
   }
 }
-
-/** @deprecated Use `new WebSocketConnection(url)` */
-export async function openWebSocketChannel(
-  url?: string
-): Promise<WebSocketConnection> {
-  return new Promise((resolve) => {
-    const channel = new WebSocketConnection(url)
-    resolve(channel)
-
-    // const socket = new WebSocket(url ?? getWebsocketUrlFromLocation())
-    // socket.binaryType = "arraybuffer"
-
-    // const channel = new WebsocketChannel(socket)
-
-    // const onOpen = (event: Event) => {
-    //   log("ONOPEN")
-    //   resolve(channel)
-    //   socket.removeEventListener("open", onOpen)
-    // }
-
-    // socket.addEventListener("open", onOpen)
-  })
-}
+ 
