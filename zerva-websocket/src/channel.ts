@@ -1,5 +1,6 @@
-import { Channel, Logger, useDispose } from "zeed"
-import { getWebsocketUrlFromLocation } from "./types"
+import { Channel, equalBinary, Logger, useDispose } from "zeed"
+import { WebSocketConnection } from "./connection"
+import { getWebsocketUrlFromLocation, pingMessage, pongMessage } from "./types"
 
 const log = Logger("channel")
 
@@ -10,7 +11,7 @@ export class WebsocketChannel extends Channel {
 
   private _dispose = useDispose()
 
-  private _emitMessage = (ev: MessageEvent) => {
+  private _emitMessage = (ev: MessageEvent) => {   
     this.emit("message", ev)
   }
 
@@ -37,20 +38,27 @@ export class WebsocketChannel extends Channel {
   }
 }
 
+/** @deprecated Use `new WebSocketConnection(url)` */
 export async function openWebSocketChannel(
   url?: string
-): Promise<WebsocketChannel> {
+): Promise<WebSocketConnection> {
   return new Promise((resolve) => {
-    const socket = new WebSocket(url ?? getWebsocketUrlFromLocation())
-    socket.binaryType = "arraybuffer"
-    const channel = new WebsocketChannel(socket)
 
-    const onOpen = (event: Event) => {
-      log("ONOPEN")
-      resolve(channel)
-      socket.removeEventListener("open", onOpen)
-    }
+    const channel = new WebSocketConnection(url)
+    resolve(channel)
 
-    socket.addEventListener("open", onOpen)
+    // const socket = new WebSocket(url ?? getWebsocketUrlFromLocation())
+    // socket.binaryType = "arraybuffer"
+
+    
+    // const channel = new WebsocketChannel(socket)
+
+    // const onOpen = (event: Event) => {
+    //   log("ONOPEN")
+    //   resolve(channel)
+    //   socket.removeEventListener("open", onOpen)
+    // }
+
+    // socket.addEventListener("open", onOpen)
   })
 }

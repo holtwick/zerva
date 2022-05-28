@@ -62,7 +62,7 @@ export class WebsocketNodeConnection extends Channel implements Disposable {
 
     ws.on("message", (data: ArrayBuffer, isBinary: boolean) => {
       try {
-        log("onmessage", typeof data) // , new Uint8Array(data), isBinary)
+        log("onmessage", new Uint8Array(data), isBinary)
 
         // Hardcoded message type to allow ping from client side, sends pong
         // This is different to the hearbeat and isAlive from before!
