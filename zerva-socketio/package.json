@@ -50,6 +50,6 @@
     "engine.io": "^6.2.0",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
-    "zeed": "^0.7.152"
+    "zeed": "^0.7.156"
   }
 }

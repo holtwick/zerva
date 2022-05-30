@@ -21,6 +21,20 @@ interface ZWebSocketConfig {
   pingInterval?: number
 }
 
+function safeLength(data: any): number {
+  try {
+    return data?.length ?? data?.byteLength ?? data?.count ?? -1
+  } catch (err: any) {}
+  return -1
+}
+
+function safeType(data: any): string {
+  try {
+    return (data as any)?.constructor?.name ?? typeof data ?? "unknown"
+  } catch (err: any) {}
+  return "unknown"
+}
+
 export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
   private heartbeatInterval: any
@@ -62,7 +76,7 @@ export class WebsocketNodeConnection extends Channel {
 
     ws.on("message", (data: ArrayBuffer, isBinary: boolean) => {
       try {
-        log("onmessage", new Uint8Array(data), isBinary)
+        log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
 
         // Hardcoded message type to allow ping from client side, sends pong
         // This is different to the hearbeat and isAlive from before!
