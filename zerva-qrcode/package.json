@@ -1,6 +1,6 @@
 {
   "name": "@zerva/qrcode",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "description": "🌱 Zerva QRCode for better mobile testing",
   "keywords": [
     "server",
