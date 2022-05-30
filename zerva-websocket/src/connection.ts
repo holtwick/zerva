@@ -225,8 +225,7 @@ export class WebSocketConnection extends Channel {
   async awaitConnect(): Promise<boolean> {
     if (this.isConnected) return true
     const [promise, resolve] = createPromise<boolean>()
-    this.once('connect', () =>  resolve(true))
-    return promise    
+    this.once("connect", () => resolve(true))
+    return promise
   }
 }
- 

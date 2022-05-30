@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@types/node": "^17.0.36",
-    "esbuild": "^0.14.41",
+    "esbuild": "^0.14.42",
     "node-notifier": "^10.0.1"
   }
 }

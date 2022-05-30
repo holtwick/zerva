@@ -1,6 +1,6 @@
 {
   "name": "@zerva/email",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "description": "🌱 Zerva send email service",
   "keywords": [
     "server",
@@ -46,7 +46,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "nodemailer": "^6.7.5",
-    "zeed": "^0.7.152"
+    "zeed": "^0.7.156"
   },
   "devDependencies": {
     "@types/node": "^17.0.36",

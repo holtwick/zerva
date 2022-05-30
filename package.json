@@ -1,6 +1,6 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
@@ -27,8 +27,8 @@
     "sort-package-json": "^1.57.0",
     "tsup": "^6.0.1",
     "typescript": "^4.7.2",
-    "vitest": "^0.12.9",
-    "vue-tsc": "^0.34.16"
+    "vitest": "^0.13.0",
+    "vue-tsc": "^0.35.2"
   },
   "packageManager": "pnpm@6.23.0",
   "pnpm": {

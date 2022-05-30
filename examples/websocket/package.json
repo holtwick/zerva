@@ -26,7 +26,7 @@
     "@zerva/websocket": "workspace:*",
     "cross-fetch": "^3.1.4",
     "vue": "^3.2.36",
-    "zeed": "^0.7.152"
+    "zeed": "^0.7.156"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
