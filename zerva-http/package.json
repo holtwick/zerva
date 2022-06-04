@@ -47,7 +47,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
-    "zeed": "^0.7.156"
+    "zeed": "^0.7.160"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
