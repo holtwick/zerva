@@ -1,6 +1,6 @@
 {
   "name": "@zerva/qrcode",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "🌱 Zerva QRCode for better mobile testing",
   "keywords": [
     "server",
@@ -50,7 +50,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "qrcode-terminal": "^0.12.0",
-    "zeed": "^0.7.160"
+    "zeed": "^0.7.161"
   },
   "devDependencies": {
     "@types/qrcode-terminal": "^0.12.0"

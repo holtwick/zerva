@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "🌱 Zerva socket.io module",
   "keywords": [
     "server",
@@ -50,6 +50,6 @@
     "engine.io": "^6.2.0",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
-    "zeed": "^0.7.160"
+    "zeed": "^0.7.161"
   }
 }
