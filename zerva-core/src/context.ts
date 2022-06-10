@@ -46,7 +46,6 @@ export async function emit<U extends keyof ZContextEvents>(
   return await getContext().emit(event, ...args)
 }
 
-
 /** Listener that binds to the current global context */
 export function on<U extends keyof ZContextEvents>(
   first: Partial<ZContextEvents>
