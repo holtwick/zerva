@@ -40,13 +40,13 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo 'NO TESTS AVAILABLE'",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
     "@types/request-ip": "^0.0.37",
     "@zerva/core": "*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^2.2.0",
-    "zeed": "^0.7.161"
+    "zeed": "^0.7.162"
   }
 }

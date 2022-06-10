@@ -1,5 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { nextTick } from "process"
 import { Logger } from "zeed"
 import { emit, on } from "./context"
 
@@ -31,6 +32,8 @@ export async function serveStop() {
   await emit("serveStop")
 }
 
+let serverStarted = false
+
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
  *
@@ -38,6 +41,7 @@ export async function serveStop() {
  */
 export async function serve(fn?: () => void) {
   log("serve")
+  serverStarted = true
 
   if (fn) {
     log.info("launch")
@@ -49,3 +53,12 @@ export async function serve(fn?: () => void) {
   await emit("serveStart")
   log.info("serve")
 }
+
+function serverCheck() { 
+  if (serverStarted !== true) {
+    log.info('Zerva has not been started manually, will start now!')
+    serve()
+  }
+}
+
+process.on("beforeExit", serverCheck)

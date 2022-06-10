@@ -44,7 +44,7 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
     "@types/node": "^17.0.41",
@@ -52,7 +52,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.8.0",
-    "zeed": "^0.7.161"
+    "zeed": "^0.7.162"
   },
   "devDependencies": {
     "tsup": "^6.1.0",

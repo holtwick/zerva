@@ -75,15 +75,15 @@ export function useHttp(config?: httpConfig): httpInterface {
   )
 
   // Safety net, probably better suited in `register`?
-  let checkServeTimeout = setTimeout(() => {
-    console.info(
-      "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
-    )
-  }, 5000)
+  // let checkServeTimeout = setTimeout(() => {
+  //   console.info(
+  //     "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
+  //   )
+  // }, 5000)
 
-  on("serveInit", () => {
-    clearTimeout(checkServeTimeout)
-  })
+  // on("serveInit", () => {
+  //   clearTimeout(checkServeTimeout)
+  // })
 
   // The actual web server
   const app = express()

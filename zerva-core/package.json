@@ -40,10 +40,10 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.7.161"
+    "zeed": "^0.7.162"
   },
   "devDependencies": {
     "@types/jest": "^28.1.1",
