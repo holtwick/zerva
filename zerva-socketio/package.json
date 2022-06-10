@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "🌱 Zerva socket.io module",
   "keywords": [
     "server",
@@ -40,7 +40,7 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
     "@types/ws": "^8.5.3",
@@ -50,6 +50,6 @@
     "engine.io": "^6.2.0",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
-    "zeed": "^0.7.161"
+    "zeed": "^0.7.165"
   }
 }

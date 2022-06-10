@@ -5,6 +5,8 @@ import {
   getTimestamp,
   isBrowser,
   Logger,
+  LoggerInterface,
+  LogLevelAliasType,
   useEventListener,
 } from "zeed"
 import {
@@ -16,8 +18,6 @@ import {
   wsReadyStateOpen,
 } from "./types"
 
-const log = Logger("websocket")
-
 // See lib0 and y-websocket for initial implementation
 
 const default_reconnectTimeoutBase = 1200
@@ -26,7 +26,7 @@ const default_messageReconnectTimeout = 30000
 
 export interface WebSocketConnectionOptions {
   // buffer?: boolean
-  debug?: boolean
+  logLevel?: LogLevelAliasType
   path?: string
   reconnectTimeoutBase?: number
   maxReconnectTimeout?: number
@@ -47,18 +47,17 @@ export class WebSocketConnection extends Channel {
   private opt: WebSocketConnectionOptions
   private reconnectTimout: any
   private pingTimeout: any
-  private debug: boolean
+  private log: LoggerInterface
 
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()
 
-    // let dispose = useDispose()
+    this.log = Logger("websocket", opt.logLevel ?? false)
 
     let path = opt.path ?? webSocketPath
     if (!path.startsWith("/")) path = `/${path}`
 
     this.opt = opt
-    this.debug = opt.debug ?? false
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
     if (isBrowser()) {
@@ -71,7 +70,6 @@ export class WebSocketConnection extends Channel {
     }
 
     this.dispose.add(() => this.disconnect())
-    // this.dispose = dispose
 
     this._connect()
   }
@@ -88,10 +86,10 @@ export class WebSocketConnection extends Channel {
         this.ws.send(data)
         return
       } catch (e) {
-        log.warn(`send failed with error=${String(e)}`)
+        this.log.warn(`send failed with error=${String(e)}`)
       }
     } else {
-      log.warn(`connection state issue, readyState=${this.ws?.readyState}`)
+      this.log.warn(`connection state issue, readyState=${this.ws?.readyState}`)
     }
     this.ws?.close()
     this._connect()
@@ -99,12 +97,12 @@ export class WebSocketConnection extends Channel {
 
   // Send a ping. If it fails, try to reconnect immediately
   ping() {
-    log("ping ->")
+    this.log("ping ->")
     this.postMessage(pingMessage)
   }
 
   disconnect() {
-    log("disconnect")
+    this.log("disconnect")
     clearTimeout(this.pingTimeout)
     clearTimeout(this.reconnectTimout)
     this.shouldConnect = false
@@ -126,7 +124,7 @@ export class WebSocketConnection extends Channel {
     } = this.opt
 
     if (this.shouldConnect && this.ws == null) {
-      log("=> connect", this.url, this.unsuccessfulReconnects)
+      this.log("=> connect", this.url, this.unsuccessfulReconnects)
 
       const ws = new WebSocket(this.url)
 
@@ -136,14 +134,14 @@ export class WebSocketConnection extends Channel {
       this.isConnected = false
 
       ws.addEventListener("message", (event: any) => {
-        log("onmessage", typeof event)
+        this.log("onmessage", typeof event)
 
         this.lastMessageReceived = getTimestamp()
         const data = event.data as ArrayBuffer
         clearTimeout(this.pingTimeout)
 
         if (equalBinary(data, pongMessage)) {
-          log("-> pong")
+          this.log("-> pong")
           this.pingCount++
           if (messageReconnectTimeout > 0) {
             this.pingTimeout = setTimeout(
@@ -162,8 +160,8 @@ export class WebSocketConnection extends Channel {
         if (this.ws != null) {
           this.ws = undefined
 
-          if (error) log.warn(`onclose with error`)
-          else log("onclose")
+          if (error) this.log.warn(`onclose with error`)
+          else this.log("onclose")
 
           if (this.isConnected) {
             this.isConnected = false
@@ -176,7 +174,7 @@ export class WebSocketConnection extends Channel {
             // Start with no reconnect timeout and increase timeout by
             // log10(wsUnsuccessfulReconnects).
             // The idea is to increase reconnect timeout slowly and have no reconnect
-            // timeout at the beginning (log(1) = 0)
+            // timeout at the beginning (this.log(1) = 0)
             const reconnectDelay = Math.min(
               Math.log10(this.unsuccessfulReconnects + 1) *
                 reconnectTimeoutBase,
@@ -186,9 +184,9 @@ export class WebSocketConnection extends Channel {
               () => this._connect(),
               reconnectDelay
             )
-            log(`reconnect retry in ${reconnectDelay}ms`)
+            this.log(`reconnect retry in ${reconnectDelay}ms`)
           } else {
-            log.warn("no retry, only one!")
+            this.log.warn("no retry, only one!")
           }
         }
       }
@@ -196,13 +194,13 @@ export class WebSocketConnection extends Channel {
       ws.addEventListener("close", () => onclose())
       ws.addEventListener("error", (error: any) => onclose(error))
       ws.addEventListener("open", () => {
-        log("onopen")
+        this.log("onopen")
         if (this.ws === ws) {
           this.lastMessageReceived = getTimestamp()
           this.isConnected = true
           this.unsuccessfulReconnects = 0
           if (messageReconnectTimeout > 0) {
-            log(`schedule next ping in ${messageReconnectTimeout / 2}ms`)
+            this.log(`schedule next ping in ${messageReconnectTimeout / 2}ms`)
             this.pingTimeout = setTimeout(
               () => this.ping(),
               messageReconnectTimeout / 2
@@ -215,7 +213,7 @@ export class WebSocketConnection extends Channel {
   }
 
   connect() {
-    log("connect")
+    this.log("connect")
     this.shouldConnect = true
     if (!this.isConnected && this.ws == null) {
       this._connect()

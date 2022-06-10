@@ -4,7 +4,7 @@ import { emit, on, onInit, register, requireModules } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
-import { Channel, equalBinary, Logger, uname } from "zeed"
+import { Channel, equalBinary, Logger, LogLevelAliasType, uname } from "zeed"
 import {
   pingMessage,
   pongMessage,
@@ -14,11 +14,11 @@ import {
 } from "./types"
 
 const moduleName = "websocket"
-const log = Logger(moduleName)
 
 interface ZWebSocketConfig {
   path?: string
   pingInterval?: number
+  logLevel?: LogLevelAliasType
 }
 
 function safeLength(data: any): number {
@@ -52,7 +52,7 @@ export class WebsocketNodeConnection extends Channel {
     this.ws.binaryType = "arraybuffer"
 
     const id = uname(moduleName)
-    const log = Logger(`${id}:zerva-${moduleName}`)
+    const log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
     log.info("new connection", id)
 
     const { pingInterval = 30000 } = config
@@ -153,6 +153,8 @@ export class WebsocketNodeConnection extends Channel {
 }
 
 export function useWebSocket(config: ZWebSocketConfig = {}) {
+  const log = Logger(moduleName, config.logLevel ?? false)
+
   log("setup")
 
   register(moduleName)

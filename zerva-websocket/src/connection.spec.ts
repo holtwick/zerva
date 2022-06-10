@@ -3,10 +3,7 @@
 import { emit, on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
-import {
-  createPromise,
-  Logger, Uint8ArrayToString, waitOn
-} from "zeed"
+import { createPromise, Uint8ArrayToString, waitOn } from "zeed"
 import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
@@ -14,7 +11,7 @@ import { webSocketPath } from "./types"
 // @ts-ignore
 global.WebSocket = WebSocket
 
-const log = Logger("test:module")
+// const log = Logger("test:module")
 
 const port = 8886
 const url = `ws://localhost:${port}${webSocketPath}`

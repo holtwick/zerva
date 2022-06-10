@@ -3,7 +3,7 @@
 import { arrayFlatten, DisposerFunction, getGlobalContext, Logger } from "zeed"
 import { ZContext } from "./types"
 
-const log = Logger(`zerva:context`)
+const log = Logger(`zerva:context`, false)
 
 // Others would probably call it "hub" or "bus"...
 

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/vite",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "🌱 Zerva and Vite",
   "keywords": [
     "server",
@@ -40,12 +40,12 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo 'NO TESTS AVAILABLE'",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "vite": "^2.9.11",
-    "zeed": "^0.7.161"
+    "vite": "^2.9.12",
+    "zeed": "^0.7.165"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/email",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "🌱 Zerva send email service",
   "keywords": [
     "server",
@@ -40,17 +40,17 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo 'NO TESTS AVAILABLE'",
-    "watch": "pnpm run build:tsup -- --watch"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "nodemailer": "^6.7.5",
-    "zeed": "^0.7.161"
+    "zeed": "^0.7.165"
   },
   "devDependencies": {
     "@types/node": "^17.0.41",
     "@types/nodemailer": "^6.4.4",
-    "tsup": "^6.1.0"
+    "tsup": "^6.1.2"
   }
 }

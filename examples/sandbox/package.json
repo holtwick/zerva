@@ -1,8 +1,7 @@
 {
-  "name": "zerva-example-keycloak",
+  "name": "zerva-example-sandbox",
   "version": "1.0.0",
   "private": true,
-  "description": "Just a simple test",
   "funding": {
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
@@ -14,16 +13,17 @@
     "url": "https://holtwick.de"
   },
   "type": "module",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
+    "build": "zerva build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "start": "ZEED=* LEVEL=i zerva index.ts"
+    "serve": "ZEED=* node dist/man.cjs",
+    "start": "ZEED=* zerva"
   },
   "dependencies": {
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/keycloak": "workspace:*",
     "zeed": "^0.7.165"
   }
 }

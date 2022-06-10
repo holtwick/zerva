@@ -52,6 +52,10 @@ for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
       `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`
     )
 
+    const tsup = `tsup src/index.ts${
+      hasBrowserCode ? " src/index.browser.ts " : ""
+    }`
+
     package = {
       ...package,
       ...{
@@ -72,9 +76,7 @@ for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
         files: ["dist"],
         scripts: {
           build: "pnpm run clean && pnpm run build:tsup",
-          "build:tsup": `tsup src/index.ts${
-            hasBrowserCode ? " src/index.browser.ts " : ""
-          }`,
+          "build:tsup": tsup,
           clean: "rm -rf dist",
           prepublishOnly: hasTests
             ? "pnpm test && pnpm run build"
@@ -83,7 +85,7 @@ for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
           test: hasTests
             ? "ZEED=* vitest --globals --run -r src"
             : "echo 'NO TESTS AVAILABLE'",
-          watch: "pnpm run build:tsup -- --watch",
+          watch: `${tsup} --watch`,
         },
       },
     }

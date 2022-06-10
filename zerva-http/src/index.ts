@@ -1,5 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import { emit, on, register } from "@zerva/core"
 import cors from "cors"
 import type { Express, Request, Response } from "express"
 import express from "express"
@@ -9,11 +10,10 @@ import type { Server } from "http"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
-import { isLocalHost, Logger, promisify } from "zeed"
-import { emit, on, register } from "@zerva/core"
+import { isLocalHost, Logger, LogLevel, promisify } from "zeed"
 
 const name = "http"
-const log = Logger(`zerva:${name}`)
+const log = Logger(`zerva:${name}`, LogLevel.info)
 
 export type { Response, Request, Express }
 
@@ -58,6 +58,7 @@ export interface httpConfig {
   port?: number
   sslCrt?: string
   sslKey?: string
+  showServerInfo?: boolean
 }
 
 export function useHttp(config?: httpConfig): httpInterface {
@@ -68,22 +69,8 @@ export function useHttp(config?: httpConfig): httpInterface {
     sslCrt,
     port = 8080,
     host, // = process.env.NODE_MODE === "development" ? undefined : "0.0.0.0",
+    showServerInfo = true,
   } = config ?? {}
-
-  process.on("uncaughtException", (err) =>
-    log.error("node js process error", err)
-  )
-
-  // Safety net, probably better suited in `register`?
-  let checkServeTimeout = setTimeout(() => {
-    console.info(
-      "\n\n*** Did you probably forget to call serve() from Zerva to get it all started? ***\n\n"
-    )
-  }, 5000)
-
-  on("serveInit", () => {
-    clearTimeout(checkServeTimeout)
-  })
 
   // The actual web server
   const app = express()
@@ -109,14 +96,14 @@ export function useHttp(config?: httpConfig): httpInterface {
       log.error("SSL files are not found. check your config.js file")
       process.exit(0)
     }
-    log.info("using ssl certs", { sslCrt, sslKey })
+    log("using ssl certs", { sslCrt, sslKey })
     const tls = {
       cert: fs.readFileSync(sslCrt),
       key: fs.readFileSync(sslKey),
     }
     server = httpsModule.createServer(tls, app)
   } else {
-    log.info("using no ssl")
+    log("using no ssl")
     server = httpModule.createServer(app)
   }
 
@@ -220,9 +207,14 @@ export function useHttp(config?: httpConfig): httpInterface {
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
       const host = isLocalHost(address) ? "localhost" : address
-      log.info(
-        `listening on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`
-      )
+      // log.info(
+      //   `Server on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`
+      // )
+      if (showServerInfo) {
+        console.info(
+          `Zerva: Open page at ${isSSL ? "https" : "http"}://${host}:${port}`
+        )
+      }
       emit("httpRunning", { port, family, address, http: server })
     })
   })

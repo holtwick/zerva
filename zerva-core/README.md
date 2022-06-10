@@ -13,13 +13,11 @@ It all starts with the `context` which is the common ground for any **module** w
 Usually you would start to build a server like this:
 
 ```ts
-import { useHttp, serve } from "@zerva/core"
+import { useHttp } from "@zerva/http"
 
 useHttp(
   port: 8080
 })
-
-serve()
 ```
 
 `serve` itself is a **module** that i.e. it is a function working on **context**. It takes a function to call other modules and provides a common lifecycle by emitting `serveInit` and `serveStart`. These are the entry points for other services.
@@ -31,9 +29,12 @@ serve()
 You can write your own module which can use `httpInit` to add some listeners:
 
 ```ts
+
+import { zerva } from "@zerva/core"
+
 function useCounter() {
   let counter = 0
-  on("httpInit", ({ get }) => {
+  zerva.on("httpInit", ({ get }) => {
     get("/counter", () => `Counter ${counter++}`)
   })
 }
@@ -51,7 +52,7 @@ To make sure the `http` module is around as well in our context, it is good prac
 function useCounter() {
   register("counter", ["http"])
   let counter = 1
-  on("httpInit", ({ get }) => {
+  zerva.on("httpInit", ({ get }) => {
     get(
       "/",
       () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
