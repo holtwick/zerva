@@ -49,7 +49,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
-    "zeed": "^0.7.162"
+    "zeed": "^0.7.163"
   },
   "devDependencies": {
     "tsup": "^6.1.0",

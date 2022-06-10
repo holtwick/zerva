@@ -52,7 +52,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.8.0",
-    "zeed": "^0.7.162"
+    "zeed": "^0.7.163"
   },
   "devDependencies": {
     "tsup": "^6.1.0",

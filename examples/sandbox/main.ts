@@ -1,12 +1,5 @@
-// Alternative implementation:
-//
-// Simple demo for node and CommonJS loading
-
-import { register, serve, zerva } from "@zerva/core"
+import { register, zerva } from "@zerva/core"
 import { useHttp } from "@zerva/http"
-import { Logger, sleep } from "zeed"
-
-const log = Logger("demo")
 
 function useCounter() {
   register("counter", ["http"])
@@ -25,18 +18,9 @@ function useCounter() {
   }
 }
 
-async function main() {
-  log("Setup zerva")
+useHttp({
+  port: 8080,
+})
 
-  sleep(1000)
-
-  useHttp({
-    port: 8080,
-  })
-
-  useCounter()
-
-  log("Setup end")
-}
-
-main().then(() => log("done"))
+useCounter()
+ 

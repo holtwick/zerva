@@ -25,7 +25,7 @@
     "@vueuse/head": "^0.7.6",
     "vue": "^3.2.37",
     "vue-router": "^4.0.16",
-    "zeed": "^0.7.162"
+    "zeed": "^0.7.163"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",

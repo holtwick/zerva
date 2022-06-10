@@ -3,7 +3,7 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
 // if (process.argv.length < 3) {
-//   console.info(`Usage: zerva <your-zerva.ts>`)
+//   console.info(`Zerva: Usage: zerva <your-zerva.ts>`)
 //   process.exit(-1)
 // }
 
@@ -107,19 +107,19 @@ async function startNode() {
       ZERVA_VERSION: version,
     },
   })
-  console.info("Starting app")
+  console.info("Zerva: Starting Zerva app")
   zervaNodeProcess.on("error", (err) => {
     console.error("Node process error:", err)
   })
   zervaNodeProcess.on("close", (code) => {
-    // console.info("Node process close with code:", code)
+    // console.info("Zerva: Node process close with code:", code)
     if (zervaNodeProcessDidEndPromise) {
       zervaNodeProcessDidEndPromise()
       zervaNodeProcessDidEndPromise = undefined
     }
   })
   // p.on("exit", () => {
-  //   console.info("Node process exit.")
+  //   console.info("Zerva: Node process exit.")
   // })
 }
 
@@ -137,7 +137,7 @@ function notifyError(error) {
   }
 }
 
-console.info(`Building from entry file ${entry}`)
+console.info(`Zerva: Building from entry file "${entry}"`)
 
 // Started from command line
 const result = build({
@@ -175,7 +175,7 @@ const result = build({
             stopNode()
             notifyError(error)
           } else {
-            console.info("Rebuild succeeded.")
+            console.info("Zerva: Rebuild succeeded.")
             startNode()
           }
         },
@@ -201,7 +201,7 @@ result
     if (!buildMode) {
       startNode()
     } else {
-      console.info(`Build to ${outfile} succeeded.`)
+      console.info(`Zerva: Build to ${outfile} succeeded.`)
     }
   })
   .catch((error) => {

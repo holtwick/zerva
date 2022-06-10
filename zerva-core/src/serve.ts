@@ -1,10 +1,9 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { nextTick } from "process"
 import { Logger } from "zeed"
 import { emit, on } from "./context"
 
-const log = Logger(`zerva:serve`)
+const log = Logger(`zerva:serve`, false)
 
 declare global {
   interface ZContextEvents {
