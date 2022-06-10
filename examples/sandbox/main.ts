@@ -1,8 +1,7 @@
-import { on, register, serve, zerva } from "@zerva/core"
+import * as zz from "@zerva/core"
 import { useHttp } from "@zerva/http"
 
-import { Logger } from "zeed"
-const log = Logger("sandbox")
+const log = zz.Logger("sandbox")
 
 declare global {
   interface ZContextEvents {
@@ -11,10 +10,10 @@ declare global {
 }
 
 function useCounter() {
-  register("counter", ["http"])
+  zz.register("counter", ["http"])
   let counter = 1
 
-  on({
+  zz.on({
     counterInc(up) {
       log("counterInc", up)
       return (counter += up)
@@ -39,10 +38,10 @@ useHttp({
 useCounter()
 
 setTimeout(() => {
-  zerva.call.counterInc(100)
+  zz.zerva.call.counterInc(100)
 }, 5e3)
 
 // We start the server manually, it would only start automatically
 // after all timeouts have finished and that would not be great
 
-serve()
+zz.serve()
