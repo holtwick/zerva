@@ -69,9 +69,9 @@ export function useHttp(config?: httpConfig): httpInterface {
     sslCrt,
     port = 8080,
     host, // = process.env.NODE_MODE === "development" ? undefined : "0.0.0.0",
-    showServerInfo = true
+    showServerInfo = true,
   } = config ?? {}
- 
+
   // The actual web server
   const app = express()
   app.use(
@@ -211,7 +211,9 @@ export function useHttp(config?: httpConfig): httpInterface {
       //   `Server on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`
       // )
       if (showServerInfo) {
-        console.info(`Zerva: Open page at ${isSSL ? "https" : "http"}://${host}:${port}`)
+        console.info(
+          `Zerva: Open page at ${isSSL ? "https" : "http"}://${host}:${port}`
+        )
       }
       emit("httpRunning", { port, family, address, http: server })
     })

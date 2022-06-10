@@ -15,14 +15,15 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "start": "ZEED=* zerva",
+    "build": "zerva build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* node dist/man.cjs",
-    "build": "zerva build"
+    "start": "ZEED=* zerva"
   },
   "dependencies": {
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.7.163"
+    "zeed": "^0.7.165"
   }
 }

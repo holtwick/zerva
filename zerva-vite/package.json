@@ -46,6 +46,6 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "vite": "^2.9.12",
-    "zeed": "^0.7.163"
+    "zeed": "^0.7.165"
   }
 }
