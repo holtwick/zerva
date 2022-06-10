@@ -88,7 +88,7 @@ let zervaNodeProcessDidEndPromise
 
 async function stopNode() {
   if (zervaNodeProcess) {
-    console.log("Stopping app...\n")
+    console.log("Zerva: Stopping app\n")
     new Promise((resolve) => (zervaNodeProcessDidEndPromise = resolve))
     zervaNodeProcess.kill("SIGTERM")
     // p.kill("SIGKILL")
@@ -107,7 +107,7 @@ async function startNode() {
       ZERVA_VERSION: version,
     },
   })
-  console.info("Zerva: Starting Zerva app")
+  console.info("Zerva: Starting app")
   zervaNodeProcess.on("error", (err) => {
     console.error("Node process error:", err)
   })
@@ -171,8 +171,8 @@ const result = build({
     ? false
     : {
         onRebuild(error, result) {
+          stopNode()
           if (error) {
-            stopNode()
             notifyError(error)
           } else {
             console.info("Zerva: Rebuild succeeded.")

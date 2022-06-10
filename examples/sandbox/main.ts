@@ -1,6 +1,9 @@
 import { register, zerva } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 
+// import { Logger } from "zeed"
+// const log = Logger("sandbox")
+
 function useCounter() {
   register("counter", ["http"])
   let counter = 1
@@ -23,3 +26,5 @@ useHttp({
 })
 
 useCounter()
+
+// log.info('All set up!')
