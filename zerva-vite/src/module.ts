@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Logger, on, register, toPath } from "@zerva/core"
+import { Logger, on, register, toHumanReadableFilePath, toPath } from "@zerva/core"
 import "@zerva/http"
 import { existsSync } from "fs"
 import { resolve } from "path"
@@ -15,7 +15,7 @@ interface Config {
 }
 
 export function useVite(config?: Config) {
-  log.info(`use ${name} ${process.env.ZERVA}`)
+  // log.info(`use ${name} ${process.env.ZERVA}`)
   register(name, ["http"])
 
   const { root = process.cwd(), www = "./dist_www" } = config ?? {}
@@ -39,7 +39,8 @@ export function useVite(config?: Config) {
 
   on("httpWillStart", async ({ addStatic, app }) => {
     if (isDevMode) {
-      log.info(`serving through vite from ${rootPath}`)
+      console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
+      // log.info(`serving through vite from ${rootPath}`)
 
       const vite = await createServer({
         root: rootPath,
@@ -49,7 +50,8 @@ export function useVite(config?: Config) {
       })
       app?.use(vite.middlewares)
     } else {
-      log.info(`serving static files at ${wwwPath}}`)
+      console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
+      // log.info(`serving static files at ${wwwPath}}`)
       addStatic("", wwwPath)
 
       // Map dynamic routes to index.html

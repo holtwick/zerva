@@ -7,7 +7,7 @@
 //   process.exit(-1)
 // }
 
-const { resolve } = require("path")
+const { resolve, normalize } = require("path")
 const { existsSync, chmodSync } = require("fs")
 const { build } = require("esbuild")
 const { spawn } = require("child_process")
@@ -76,7 +76,7 @@ if (entry) {
 }
 
 if (!existsSync(entry)) {
-  console.error(`Cannot find entry file: ${entry}`)
+  console.error(`Zerva: Cannot find entry file: ${entry}`)
   process.exit(1)
 }
 
@@ -137,7 +137,16 @@ function notifyError(error) {
   }
 }
 
-console.info(`Zerva: Building from entry file "${entry}"`)
+function toHumanReadableFilePath(path) {
+  const p = normalize(path)
+  const h = process.env.HOME
+  if (h && p.startsWith(h)) {
+    return "~" + p.slice(h.length)
+  }
+  return p
+}
+
+console.info(`Zerva: Building from "${toHumanReadableFilePath(entry)}"`)
 
 // Started from command line
 const result = build({
@@ -201,7 +210,9 @@ result
     if (!buildMode) {
       startNode()
     } else {
-      console.info(`Zerva: Build to ${outfile} succeeded.`)
+      console.info(
+        `Zerva: Building to "${toHumanReadableFilePath(outfile)}" succeeded.`
+      )
     }
   })
   .catch((error) => {
