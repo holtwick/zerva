@@ -23,7 +23,7 @@ describe("context", () => {
       setContext()
       on("test", (x) => {
         expect(x).toBe(123)
-        done()
+        done(undefined)
       })
       emit("test", 123)
     }))
@@ -50,4 +50,18 @@ describe("context", () => {
     expect(hasModule("a")).toBe(true)
     expect(hasModule("b")).toBe(false)
   })
+
+  it("should emit fn", () =>
+    new Promise((done) => {
+      expect.assertions(1)
+      setContext()
+      on({
+        test(x) {
+          expect(x).toBe(123)
+          done(undefined)
+       }
+      })       
+      emit("test", 123)
+    })
+  )
 })

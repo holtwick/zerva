@@ -1,6 +1,6 @@
 {
   "name": "@zerva/plausible",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -47,6 +47,6 @@
     "@zerva/core": "*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^2.2.0",
-    "zeed": "^0.7.165"
+    "zeed": "^0.7.166"
   }
 }

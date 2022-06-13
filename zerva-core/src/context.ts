@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { arrayFlatten, DisposerFunction, getGlobalContext, Logger } from "zeed"
+import { arrayFlatten, DisposerFunction, getGlobalContext, Logger, useDispose } from "zeed"
 import { ZContext } from "./types"
 
 const log = Logger(`zerva:context`, false)
@@ -48,10 +48,26 @@ export async function emit<U extends keyof ZContextEvents>(
 
 /** Listener that binds to the current global context */
 export function on<U extends keyof ZContextEvents>(
-  event: U,
+  first: Partial<ZContextEvents>
+): DisposerFunction; // Overload!
+
+export function on<U extends keyof ZContextEvents>(
+  first: U,
   listener: ZContextEvents[U]
+): DisposerFunction; // Overload!
+
+export function on<U extends keyof ZContextEvents>(
+  first: Partial<ZContextEvents> | U,
+  listener?: ZContextEvents[U] 
 ): DisposerFunction {
-  return getContext().on(event, listener)
+  if (typeof first === 'string' && listener != null) {
+     return getContext().on(first, listener)
+  } 
+  const dispose = useDispose()
+  Object.entries(first).forEach(([k,v]) => {
+    dispose.add(getContext().on(k as any, v))
+  })
+  return dispose
 }
 
 /**
