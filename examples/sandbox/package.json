@@ -24,6 +24,7 @@
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
+    "@zerva/qrcode": "workspace:*",
     "zeed": "^0.7.166"
   }
 }

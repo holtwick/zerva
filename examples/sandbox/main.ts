@@ -1,5 +1,6 @@
 import * as zz from "@zerva/core"
 import { useHttp } from "@zerva/http"
+import { useQrCode } from "../../zerva-qrcode/src"
 
 const log = zz.Logger("sandbox")
 
@@ -32,8 +33,11 @@ function useCounter() {
 }
 
 useHttp({
-  port: 8080,
+  host: "0.0.0.0",
+  port: 3333,
 })
+
+useQrCode()
 
 useCounter()
 
