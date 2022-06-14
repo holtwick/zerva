@@ -12,7 +12,7 @@ import { Logger } from "zeed"
 const log = Logger("zerva:qrcode")
 
 function logQrcode(http: Server) {
-  const networkUrls = getNetworkUrls(http) 
+  const networkUrls = getNetworkUrls(http)
   if (networkUrls.length === 0) {
     console.info("Zerva: No external server IP available.")
     return
@@ -31,7 +31,7 @@ function cyan(str: string): string {
 
 // // Referenced from https://github.com/vitejs/vite/blob/77447496704e61cdb68b5788d8d79f19a2d895f1/packages/vite/src/node/logger.ts#L143
 function getNetworkUrls(server: Server): string[] {
-  const address = server?.address()  
+  const address = server?.address()
   if (!isAddressInfo(address)) return []
   // const hostname = resolveHostname(server.config.server.host)
   // if (hostname.host === "127.0.0.1") return []
@@ -91,8 +91,8 @@ function isAddressInfo(v: any): v is AddressInfo {
 //   name: string
 // }
 
-export function useQrCode() { 
-  on("httpRunning", ({ http }) => {    
+export function useQrCode() {
+  on("httpRunning", ({ http }) => {
     logQrcode(http)
   })
 }

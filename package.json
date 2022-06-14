@@ -23,12 +23,12 @@
     "cross-fetch": "^3.1.5",
     "fast-glob": "^3.2.11",
     "only-allow": "^1.1.0",
-    "prettier": "^2.6.2",
+    "prettier": "^2.7.0",
     "sort-package-json": "^1.57.0",
     "tsup": "^6.1.2",
     "typescript": "^4.7.3",
     "vitest": "^0.14.2",
-    "vue-tsc": "^0.37.5"
+    "vue-tsc": "^0.37.8"
   },
   "packageManager": "pnpm@6.23.0",
   "pnpm": {

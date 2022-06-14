@@ -59,9 +59,8 @@ describe("context", () => {
         test(x) {
           expect(x).toBe(123)
           done(undefined)
-       }
-      })       
+        },
+      })
       emit("test", 123)
-    })
-  )
+    }))
 })
