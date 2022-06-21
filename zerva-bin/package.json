@@ -30,8 +30,8 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^17.0.42",
-    "esbuild": "^0.14.43",
+    "@types/node": "^18.0.0",
+    "esbuild": "^0.14.47",
     "node-notifier": "^10.0.1"
   }
 }
