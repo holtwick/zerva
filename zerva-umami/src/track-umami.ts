@@ -66,6 +66,7 @@ export async function track(opt: TrackEvent | TrackPageview) {
       }
 
       let options = {
+        headers: {},
         ...fetchOptionsJson(body),
       }
 
