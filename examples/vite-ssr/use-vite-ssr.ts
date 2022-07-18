@@ -43,7 +43,7 @@ export function useViteSsr(config: Config) {
       const vite = await createServer({
         root: rootPath,
         server: {
-          middlewareMode: "ssr",
+          middlewareMode: true, // "ssr",
         },
       })
       app.use(vite.middlewares)

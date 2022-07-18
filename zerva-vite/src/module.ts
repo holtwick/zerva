@@ -53,7 +53,7 @@ export function useVite(config?: Config) {
       const vite = await createServer({
         root: rootPath,
         server: {
-          middlewareMode: "html",
+          middlewareMode: true,
         },
       })
       app?.use(vite.middlewares)

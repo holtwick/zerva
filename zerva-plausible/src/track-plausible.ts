@@ -58,6 +58,7 @@ export async function track(opt: TrackEvent) {
       }
 
       let options = {
+        headers: {},
         ...fetchOptionsJson(body, "POST"),
       }
 
