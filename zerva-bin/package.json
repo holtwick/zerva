@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.9.8",
+  "version": "0.10.0",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -30,8 +30,8 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^18.0.0",
-    "esbuild": "^0.14.47",
+    "@types/node": "^18.0.6",
+    "esbuild": "^0.14.49",
     "node-notifier": "^10.0.1"
   }
 }
