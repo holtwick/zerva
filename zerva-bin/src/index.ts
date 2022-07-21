@@ -107,7 +107,7 @@ is restarted on every update.
 
   // Started from command line
   const result = build({
-    target: "es2020",
+    target: "node10.4",
     bundle: true,
     entryPoints: [config.entry],
     banner: {

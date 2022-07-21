@@ -9,7 +9,7 @@ interface ZervaConf {
   build: boolean
   outfile: string
   help: boolean
-  sourcemap: true
+  sourcemap: boolean
   entry: string
   external: string[]
 }
@@ -17,8 +17,6 @@ interface ZervaConf {
 export function getConfig(): ZervaConf {
   let config: Partial<ZervaConf> = {
     build: false,
-    entry: "",
-    outfile: resolve(".out.cjs"),
     help: false,
     version: "",
     sourcemap: true,
@@ -51,12 +49,14 @@ export function getConfig(): ZervaConf {
   args._ = arrayRemoveElement(args._, "build")
 
   if (config.build) {
-    config.entry = config.outfile = resolve("dist/main.cjs")
+    config.outfile = args.outfile ?? resolve("dist/main.cjs")
     config.build = true
   } else {
+    config.outfile = args.outfile ?? resolve(".out.cjs")
+    config.entry = process.argv[2]
+
     // Provide meaningful error messages using sourcemaps
     process.env.NODE_OPTIONS = "--enable-source-maps"
-    config.entry = process.argv[2]
   }
 
   if (config.entry) {
