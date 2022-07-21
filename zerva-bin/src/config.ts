@@ -1,10 +1,21 @@
+// (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
+
 import { existsSync } from "fs"
 import { resolve } from "path"
 import { arrayRemoveElement, parseArgs } from "zeed"
 
-export function getConfig() {
-  let config = {
-    // root: ".",
+interface ZervaConf {
+  version: string
+  build: boolean
+  outfile: string
+  help: boolean
+  sourcemap: true
+  entry: string
+  external: string[]
+}
+
+export function getConfig(): ZervaConf {
+  let config: Partial<ZervaConf> = {
     build: false,
     entry: "",
     outfile: resolve(".out.cjs"),
@@ -63,7 +74,7 @@ export function getConfig() {
   process.argv.splice(2, process.argv.length - 2)
 
   console.log("config =", config)
-  return config
+  return config as ZervaConf
 }
 
 const entryCandidates = [
