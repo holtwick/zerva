@@ -11,7 +11,9 @@ interface ZervaConf {
   help: boolean
   sourcemap: boolean
   entry: string
+  debug: boolean
   external: string[]
+  args: any
 }
 
 export function getConfig(): ZervaConf {
@@ -20,7 +22,9 @@ export function getConfig(): ZervaConf {
     help: false,
     version: "",
     sourcemap: true,
+    debug: false,
     external: [],
+    args: {},
   }
 
   try {
@@ -36,11 +40,14 @@ export function getConfig(): ZervaConf {
   const args = parseArgs({
     alias: {
       build: ["b"],
+      debug: ["d"],
     },
-    booleanArgs: ["build", "noSourcemap"],
+    booleanArgs: ["build", "noSourcemap", "debug"],
     listArgs: ["external"],
   })
 
+  config.debug = !!args.debug
+  config.args = args
   config.help = args.help
   config.sourcemap = !args.noSourcemap
   config.external = args.external ?? []
@@ -53,7 +60,6 @@ export function getConfig(): ZervaConf {
     config.build = true
   } else {
     config.outfile = args.outfile ?? resolve(".out.cjs")
-    config.entry = process.argv[2]
 
     // Provide meaningful error messages using sourcemaps
     process.env.NODE_OPTIONS = "--enable-source-maps"
@@ -73,7 +79,7 @@ export function getConfig(): ZervaConf {
   // Cleanup to args
   process.argv.splice(2, process.argv.length - 2)
 
-  console.log("config =", config)
+  if (config.debug) console.log("config =", config)
   return config as ZervaConf
 }
 
