@@ -32,3 +32,4 @@ For better compatibility the defines can also be accessed as `process.env.ZERVA_
 ```
 npm install -D @zerva/bin @zerva/core @zerva/http 
 ```
+
