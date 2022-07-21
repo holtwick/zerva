@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
