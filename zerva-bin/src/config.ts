@@ -66,8 +66,8 @@ export function getConfig(): ZervaConf {
     process.env.NODE_OPTIONS = "--enable-source-maps"
   }
 
-  if (config.entry) {
-    config.entry = resolve(config.entry)
+  if (args._.length > 0) {
+    config.entry = resolve(args._[0])
   } else {
     for (const entryCandidate of entryCandidates) {
       if (existsSync(resolve(entryCandidate))) {
