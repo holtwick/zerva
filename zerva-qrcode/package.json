@@ -50,7 +50,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "qrcode-terminal": "^0.12.0",
-    "zeed": "^0.7.166"
+    "zeed": "^0.7.168"
   },
   "devDependencies": {
     "@types/qrcode-terminal": "^0.12.0",

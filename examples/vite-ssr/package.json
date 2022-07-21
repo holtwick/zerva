@@ -25,16 +25,16 @@
     "@vueuse/head": "^0.7.6",
     "vue": "^3.2.37",
     "vue-router": "^4.1.2",
-    "zeed": "^0.7.166"
+    "zeed": "^0.7.168"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.1",
     "compression": "^1.7.4",
     "serve-static": "^1.15.0",
     "typescript": "^4.7.4",
-    "vite": "^3.0.1",
-    "vue-tsc": "^0.38.8",
-    "zeed-dom": "^0.9.17",
+    "vite": "^3.0.2",
+    "vue-tsc": "^0.38.9",
+    "zeed-dom": "^0.9.25",
     "zerva": "^0.5.8"
   }
 }

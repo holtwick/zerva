@@ -35,6 +35,6 @@
     "node-notifier": "^10.0.1"
   },
   "devDependencies": {
-    "zeed": "^0.7.166"
+    "zeed": "^0.7.168"
   }
 }
