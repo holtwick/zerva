@@ -21,6 +21,10 @@
   "bin": {
     "zerva": "bin.cjs"
   },
+  "files": [
+    "bin.cjs",
+    "icon.png"
+  ],
   "scripts": {
     "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --external:node-notifier --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "global": "pnpm -g ln",

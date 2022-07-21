@@ -1,6 +1,6 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "alwaysStrict": false
-  }
+  "extends": "../tsconfig.json"
+  // "compilerOptions": {
+  //   "alwaysStrict": false
+  // }
 }

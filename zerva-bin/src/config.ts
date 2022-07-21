@@ -54,6 +54,10 @@ export function getConfig(): ZervaConf {
   config.external = args.external ?? []
   config.build = args.build ?? args._.includes("build")
 
+  if (config.debug) {
+    console.log("argv =", process.argv)
+  }
+
   args._ = arrayRemoveElement(args._, "build")
 
   if (config.build) {
@@ -76,9 +80,6 @@ export function getConfig(): ZervaConf {
       }
     }
   }
-
-  // Cleanup to args
-  process.argv.splice(2, process.argv.length - 2)
 
   if (config.debug) console.log("config =", config)
   return config as ZervaConf
