@@ -83,10 +83,26 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   // https://expressjs.com/en/api.html#express
   const limit = "1gb"
-  app.use(express.raw({ limit })) // application/octet-stream -> Buffer
   app.use(express.json({ limit })) // application/json -> object
   app.use(express.text({ limit })) // text/plain -> string
   app.use(express.urlencoded({ limit, extended: true })) // application/x-www-form-urlencoded
+
+  app.use(
+    express.raw({
+      limit,
+      type: (req) => {
+        let type = req.headers["content-type"]?.toLowerCase()
+        return (
+          type?.startsWith("application/") &&
+          ![
+            "application/octet-stream",
+            "application/json",
+            "application/x-www-form-urlencoded",
+          ].includes(type)
+        )
+      },
+    })
+  ) // application/octet-stream -> Buffer and application/*
 
   const isSSL = sslKey && sslCrt
   let server: Server
