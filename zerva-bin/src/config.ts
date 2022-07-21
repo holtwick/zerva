@@ -38,6 +38,7 @@ export function getConfig(): ZervaConf {
   } catch (err) {}
 
   const args = parseArgs({
+    args: process.argv.slice(2),
     alias: {
       build: ["b"],
       debug: ["d"],
