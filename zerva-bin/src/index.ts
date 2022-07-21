@@ -4,7 +4,7 @@
 
 import { resolve, normalize } from "path"
 import { existsSync, chmodSync } from "fs"
-import { build, BuildFailure } from "esbuild"
+import { build, BuildFailure, BuildOptions } from "esbuild"
 import { ChildProcess, spawn } from "child_process"
 import { getConfig } from "./config"
 
@@ -106,7 +106,7 @@ is restarted on every update.
   )
 
   // Started from command line
-  const result = build({
+  const buildConfig: BuildOptions = {
     target: "node10.4",
     bundle: true,
     entryPoints: [config.entry],
@@ -157,7 +157,10 @@ is restarted on every update.
       "vite",
       ...config.external,
     ],
-  })
+  }
+
+  if (config.debug) console.log("build =", buildConfig)
+  const result = build(buildConfig)
 
   result
     .then((res) => {
