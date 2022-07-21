@@ -22,7 +22,7 @@
     "zerva": "bin.cjs"
   },
   "scripts": {
-    "build": "chmod +x ./bin.cjs",
+    "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --external:node-notifier --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -33,5 +33,8 @@
     "@types/node": "^18.0.6",
     "esbuild": "^0.14.49",
     "node-notifier": "^10.0.1"
+  },
+  "devDependencies": {
+    "zeed": "^0.7.166"
   }
 }
