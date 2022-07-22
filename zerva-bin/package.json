@@ -31,14 +31,14 @@
     "prepublishOnly": "pnpm test && pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "echo todo"
+    "test": "echo todo",
+    "dr": "pnpm run build && node bin.cjs",
+    "db": "pnpm run build && node bin.cjs -b && node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
     "@types/node": "^18.0.6",
     "esbuild": "^0.14.49",
-    "node-notifier": "^10.0.1"
-  },
-  "devDependencies": {
+    "node-notifier": "^10.0.1",
     "zeed": "^0.7.168"
   }
 }

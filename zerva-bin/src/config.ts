@@ -65,9 +65,7 @@ export function getConfig(): ZervaConf {
     config.build = true
   } else {
     config.outfile = args.outfile ?? resolve(".out.cjs")
-
-    // Provide meaningful error messages using sourcemaps
-    process.env.NODE_OPTIONS = "--enable-source-maps"
+    config.sourcemap = true
   }
 
   if (args._.length > 0) {
