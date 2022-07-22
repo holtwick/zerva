@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
