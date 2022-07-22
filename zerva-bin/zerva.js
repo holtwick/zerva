@@ -1,4 +1,6 @@
-console.log("test via console")
+import readme from "README.md"
+
+console.log("test via console", readme.length)
 
 import { Logger } from "zeed"
 const log = Logger("test")
