@@ -10,7 +10,6 @@ import {
 import "@zerva/http"
 import { existsSync } from "fs"
 import { resolve } from "path"
-import { createServer } from "vite"
 
 const name = "vite"
 const log = Logger(`zerva:${name}`)
@@ -49,6 +48,10 @@ export function useVite(config?: Config) {
         `Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`
       )
       // log.info(`serving through vite from ${rootPath}`)
+
+      // Lazy load, because it is only used in dev mode and confuses
+      // in prod mode ;)
+      const { createServer } = await import("vite")
 
       const vite = await createServer({
         root: rootPath,
