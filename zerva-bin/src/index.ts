@@ -160,7 +160,7 @@ is restarted on every update.
       "fsevents",
       "notifier",
       "node-notifier",
-      // "vite",
+      "vite",
       ...config.external,
     ],
   }
