@@ -1,6 +1,12 @@
-console.log("test")
+console.log("test via console")
 
 import { Logger } from "zeed"
 const log = Logger("test")
+log.info("test via zeed")
 
-log.info("test zeed")
+function catchSome() {
+  throw new Error("fake")
+}
+
+// test
+// catchSome()

@@ -86,3 +86,4 @@ dist_www
 
 *.rest
 zerva-bin/bin.cjs
+*.node

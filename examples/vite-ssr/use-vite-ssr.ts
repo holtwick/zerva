@@ -1,5 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import "@zerva/http"
 import { readFileSync } from "fs"
 import { resolve } from "path"
 import { createServer } from "vite"
