@@ -32,8 +32,8 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo todo",
-    "dr": "pnpm run build && node bin.cjs",
-    "db": "pnpm run build && node bin.cjs -b && node --enable-source-maps dist/main.cjs"
+    "dr": "pnpm run build && node bin.cjs -d --loader=.md:text",
+    "db": "pnpm run build && node bin.cjs --build -d --loader=.md:text && node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
     "@types/node": "^18.0.6",
