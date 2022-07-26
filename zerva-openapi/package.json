@@ -44,9 +44,6 @@
     "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "tsup src/index.ts --watch"
   },
-  "zerva": {
-    "static": "./static"
-  },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",

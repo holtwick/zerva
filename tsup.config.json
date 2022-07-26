@@ -2,5 +2,12 @@
   "minify": true,
   "dts": true,
   "sourcemap": true,
-  "format": ["esm", "cjs"]
+  "format": [
+    "esm",
+    "cjs"
+  ],
+  "loader": {
+    ".css": "text",
+    ".html": "text"
+  }
 }
