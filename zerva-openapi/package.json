@@ -30,7 +30,8 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "static"
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
@@ -43,12 +44,16 @@
     "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "tsup src/index.ts --watch"
   },
+  "zerva": {
+    "static": "./static"
+  },
   "dependencies": {
-    "@zerva/core": "*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
     "zeed": "^0.7.168"
   },
   "devDependencies": {
-    "@zerva/bin": "*",
+    "@zerva/bin": "workspace:*",
     "tsup": "^6.2.0",
     "typescipt": "^1.0.0"
   }

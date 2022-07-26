@@ -2,7 +2,6 @@
 
 import { Logger } from "zeed"
 import { on, register } from "@zerva/core"
-import test from "./static/img.png"
 
 const name = "openapi"
 const log = Logger(`zerva:${name}`)
