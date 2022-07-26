@@ -11,7 +11,6 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "sideEffects": false,
   "scripts": {
     "build": "npm run build:client && npm run build:server && npm run build:zerva",
     "build:client": "vite build --ssrManifest --outDir dist/client",

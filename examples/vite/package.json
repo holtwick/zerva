@@ -11,7 +11,6 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "sideEffects": false,
   "scripts": {
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "clean": "rm -rf dist www",
