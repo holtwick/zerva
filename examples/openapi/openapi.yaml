@@ -1,0 +1,58 @@
+openapi: 3.0.0
+
+# https://swagger.io/specification/
+
+info:
+  title: Viidoo Receipts API
+  description: Analyze receipts document content
+  contact:
+    email: support@receipts-app.com 
+  version: 0.1.0
+# servers:
+# - url: https://z-r2.holtwick.de
+#   description: test
+# - url: /
+#   description: local
+# - url: https://z-r2.holtwick.de/api/1.0.0
+#   description: https
+tags:
+  - name: parser
+  - name: geo 
+paths:
+
+  /geoip:
+    get:
+      tags: [geo]
+      summary: Identify country by callers IP address
+      responses:
+        "200":
+          description: Geo location info     
+
+  /api/v1/parser/analyze:
+    post:      
+      tags: [parser]
+      # summary: Parse releavant information from a receipt document of various formats like PDF, JPG, PNG or EML
+      summary: Extract relevant data from PDF with text content 
+      description: Currently only PDF is supported with readable text information. OCR and support for images, HTML and EML is not yet implemented.
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: 'string'
+            # format: 'iso'
+          example: de
+          description: Optional, but it will improve feature recognition due to better assumptions that can be made.
+      requestBody:
+        content:
+          # application/octet-stream:
+          #   schema:              
+          #     type: string
+          #     format: binary
+          application/pdf:
+            schema:              
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: Parsing result             
+ 
