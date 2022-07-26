@@ -40,6 +40,6 @@
     "esbuild": "^0.14.50",
     "esbuild-plugin-yaml": "^0.0.1",
     "node-notifier": "^10.0.1",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }
