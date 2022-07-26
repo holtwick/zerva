@@ -35,6 +35,7 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
+    "build:zerva": "zerva -b src/index.ts --loader=.png:copy",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -47,6 +48,7 @@
     "zeed": "^0.7.168"
   },
   "devDependencies": {
+    "@zerva/bin": "*",
     "tsup": "^6.2.0",
     "typescipt": "^1.0.0"
   }
