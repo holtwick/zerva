@@ -9,6 +9,7 @@ useHttp()
 
 on("httpInit", ({ get }) => {
   get("/", `<p>Goto <a href="/api/">API Documentation</a>`)
+  get("/version", { version: "1.0" })
 })
 
 useOpenApi({
