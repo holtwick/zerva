@@ -36,8 +36,8 @@
     "db": "pnpm run build && node bin.cjs --build -d --loader=.md:text && node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
-    "@types/node": "^18.0.6",
-    "esbuild": "^0.14.49",
+    "@types/node": "^18.6.1",
+    "esbuild": "^0.14.50",
     "node-notifier": "^10.0.1",
     "zeed": "^0.7.168"
   }
