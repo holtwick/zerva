@@ -21,7 +21,6 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {

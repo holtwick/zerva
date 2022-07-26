@@ -22,11 +22,12 @@ for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
   }
 
   delete package.engines
+  delete package.sideEffects
 
   package = {
     ...package,
     ...{
-      sideEffects: false,
+      // sideEffects: false,
       author: {
         name: "Dirk Holtwick",
         email: "dirk.holtwick@gmail.com",
