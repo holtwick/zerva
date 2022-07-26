@@ -45,5 +45,9 @@
   "dependencies": {
     "@zerva/core": "*",
     "zeed": "^0.7.168"
+  },
+  "devDependencies": {
+    "tsup": "^6.2.0",
+    "typescipt": "^1.0.0"
   }
 }

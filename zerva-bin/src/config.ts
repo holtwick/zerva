@@ -4,7 +4,7 @@ import { existsSync } from "fs"
 import { resolve } from "path"
 import { arrayRemoveElement, parseArgs } from "zeed"
 
-interface ZervaConf {
+export interface ZervaConf {
   version: string
   build: boolean
   outfile: string
