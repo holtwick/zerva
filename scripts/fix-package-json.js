@@ -26,6 +26,7 @@ for (let name of fg.sync(["!**/node_modules", "*/**/package.json"])) {
   package = {
     ...package,
     ...{
+      sideEffects: false,
       author: {
         name: "Dirk Holtwick",
         email: "dirk.holtwick@gmail.com",
