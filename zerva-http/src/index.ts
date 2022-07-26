@@ -142,28 +142,32 @@ export function useHttp(config?: httpConfig): httpInterface {
     log(`register get ${path}`)
     app[mode](path, async (req: Request, res: Response) => {
       log(`get ${path}`)
+
+      let suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
+      if (suffix) {
+        res.type(suffix ?? "application/octet-stream")
+      }
+
+      let result: any = handler
       if (typeof handler === "function") {
-        let result = await promisify(handler({ res, req }))
+        result = await promisify(handler({ res, req }))
+      }
 
-        // `undefined` did handle themselves
-        if (result == null) return
-
+      if (result != null) {
         if (typeof result === "number") {
           res.sendStatus(result) // error code
-        } else if (typeof result === "string") {
-          if (result.startsWith("<")) {
-            res.set("Content-Type", "text/html; charset=utf-8")
-            res.send(result) // html
-          } else {
-            res.set("Content-Type", "text/plain; charset=utf-8")
-            res.send(result)
-          }
         } else {
-          // res.set("Content-Type", "application/json; charset=utf-8")
-          res.send(result) // json etc.
+          if (typeof result === "string") {
+            if (!suffix) {
+              if (result.startsWith("<")) {
+                res.set("Content-Type", "text/html; charset=utf-8")
+              } else {
+                res.set("Content-Type", "text/plain; charset=utf-8")
+              }
+            }
+          }
+          res.send(result) // html
         }
-      } else {
-        res.send(handler)
       }
     })
   }
