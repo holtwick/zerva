@@ -11,6 +11,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "scripts": {
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "clean": "rm -rf dist www",
@@ -32,6 +33,6 @@
     "@zerva/vite": "workspace:*",
     "typescript": "^4.7.4",
     "vite": "^3.0.3",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }

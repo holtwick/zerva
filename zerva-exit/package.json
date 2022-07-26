@@ -1,6 +1,6 @@
 {
   "name": "@zerva/exit",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "🌱 Zerva exit gracefully",
   "keywords": [
     "server",
@@ -17,6 +17,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -44,6 +45,6 @@
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }

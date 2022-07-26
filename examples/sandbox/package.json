@@ -12,6 +12,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "main": "main.js",
   "scripts": {
@@ -25,6 +26,6 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/qrcode": "workspace:*",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }

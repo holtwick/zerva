@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "🌱 Zerva socket.io module",
   "keywords": [
     "server",
@@ -17,6 +17,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -50,6 +51,6 @@
     "engine.io": "^6.2.0",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }

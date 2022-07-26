@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
@@ -17,6 +17,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -43,7 +44,7 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   },
   "devDependencies": {
     "@types/jest": "^28.1.6",

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/umami",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -17,6 +17,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -47,6 +48,6 @@
     "@zerva/core": "workspace:*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^3.3.0",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   }
 }

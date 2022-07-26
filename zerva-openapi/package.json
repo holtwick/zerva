@@ -1,6 +1,6 @@
 {
   "name": "@zerva/openapi",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -17,6 +17,7 @@
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -30,13 +31,11 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "static"
+    "dist"
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "build:zerva": "zerva -b src/index.ts --loader=.png:copy",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -47,7 +46,7 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.7.168"
+    "zeed": "^0.8.1"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
