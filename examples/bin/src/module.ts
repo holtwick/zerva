@@ -13,7 +13,7 @@ export function useCounter() {
   register("counter", ["http"])
   let counter = 0
   on("httpInit", ({ get }) => {
-    get("/", async () => {
+    get(["/", "/tick"], async () => {
       await emit("counterIncrement", ++counter)
       return `<div>Counter ${counter}.<br><br>Reload page to increase counter.</div>`
     })

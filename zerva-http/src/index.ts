@@ -2,7 +2,7 @@
 
 import { emit, on, register } from "@zerva/core"
 import cors from "cors"
-import type { Express, Request, Response } from "express"
+import type { Request, Response } from "express"
 import express from "express"
 import fs from "fs"
 import helmet from "helmet"
@@ -10,56 +10,17 @@ import type { Server } from "http"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
-import { isLocalHost, Logger, LogLevel, promisify } from "zeed"
+import { isLocalHost, isString, Logger, LogLevel, promisify } from "zeed"
+import {
+  httpConfig,
+  httpGetHandler,
+  httpHandlerModes,
+  httpInterface,
+} from "./types"
+import { httpPaths } from "./types"
 
 const name = "http"
 const log = Logger(`zerva:${name}`, LogLevel.info)
-
-export type { Response, Request, Express }
-
-export type httpHandlerModes = "get" | "post" | "put" | "delete"
-
-export type httpResultPrimaryTypes = string | number | undefined | null | object
-export type httpGetHandler =
-  | httpResultPrimaryTypes
-  | ((info: {
-      res: Response
-      req: Request
-    }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
-
-export type httpInterface = {
-  app: Express
-  http: Server
-  get: (path: string, handler: httpGetHandler) => void
-  post: (path: string, handler: httpGetHandler) => void
-  put: (path: string, handler: httpGetHandler) => void
-  delete: (path: string, handler: httpGetHandler) => void
-  /** @deprecated */
-  addStatic: (path: string, fsPath: string) => void
-  static: (path: string, fsPath: string) => void
-}
-
-declare global {
-  interface ZContextEvents {
-    httpInit(info: httpInterface): void
-    httpWillStart(info: httpInterface): void
-    httpRunning(info: {
-      http: Server
-      port: number
-      family: string
-      address: string
-    }): void
-    httpStop(): void
-  }
-}
-
-export interface httpConfig {
-  host?: string
-  port?: number
-  sslCrt?: string
-  sslKey?: string
-  showServerInfo?: boolean
-}
 
 export function useHttp(config?: httpConfig): httpInterface {
   register(name, [])
@@ -133,19 +94,22 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   function smartRequestHandler(
     mode: httpHandlerModes,
-    path: string,
+    path: httpPaths,
     handler: httpGetHandler
   ): void {
-    if (!path.startsWith("/")) {
+    if (isString(path) && !path.startsWith("/")) {
       path = `/${path}`
     }
     log(`register get ${path}`)
     app[mode](path, async (req: Request, res: Response) => {
       log(`get ${path}`)
 
-      let suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-      if (suffix) {
-        res.type(suffix ?? "application/octet-stream")
+      let suffix
+      if (isString(path)) {
+        suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
+        if (suffix) {
+          res.type(suffix ?? "application/octet-stream")
+        }
       }
 
       let result: any = handler
@@ -166,30 +130,30 @@ export function useHttp(config?: httpConfig): httpInterface {
               }
             }
           }
-          res.send(result) // html
+          res.send(result)
         }
       }
     })
   }
 
-  function addStatic(path: string, fsPath: string): void {
+  function addStatic(path: httpPaths, fsPath: string): void {
     log(`add static ${path} => ${fsPath}`)
     app.use(path, express.static(fsPath))
   }
 
-  function get(path: string, handler: httpGetHandler) {
+  function get(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("get", path, handler)
   }
 
-  function post(path: string, handler: httpGetHandler) {
+  function post(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("post", path, handler)
   }
 
-  function put(path: string, handler: httpGetHandler) {
+  function put(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("put", path, handler)
   }
 
-  function del(path: string, handler: httpGetHandler) {
+  function del(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("delete", path, handler)
   }
 
