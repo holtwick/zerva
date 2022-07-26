@@ -19,6 +19,8 @@ import {
 } from "./types"
 import { httpPaths } from "./types"
 
+export * from "./types"
+
 const name = "http"
 const log = Logger(`zerva:${name}`, LogLevel.info)
 
