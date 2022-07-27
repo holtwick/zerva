@@ -22,7 +22,7 @@ import { httpPaths } from "./types"
 export * from "./types"
 
 const name = "http"
-const log = Logger(`zerva:${name}`, LogLevel.debug)
+const log = Logger(`zerva:${name}`, LogLevel.info)
 
 export function useHttp(config?: httpConfig): httpInterface {
   register(name, [])
@@ -46,16 +46,22 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   // https://expressjs.com/en/api.html#express
   const limit = "1gb"
-  app.use(express.json({ limit })) // application/json -> object
-  app.use(express.text({ limit })) // text/plain -> string
-  app.use(express.urlencoded({ limit, extended: true })) // application/x-www-form-urlencoded
 
+  // application/json -> object
+  app.use(express.json({ limit }))
+
+  // text/plain -> string
+  app.use(express.text({ limit }))
+
+  // application/x-www-form-urlencoded
+  app.use(express.urlencoded({ limit, extended: true }))
+
+  // application/octet-stream -> Buffer and application/* except json and urlencoded
   app.use(
     express.raw({
       limit,
       type: (req) => {
         let type = req.headers["content-type"]?.toLowerCase()
-        log("type", type)
         return (
           type?.startsWith("application/") &&
           !["application/json", "application/x-www-form-urlencoded"].includes(
@@ -64,7 +70,7 @@ export function useHttp(config?: httpConfig): httpInterface {
         )
       },
     })
-  ) // application/octet-stream -> Buffer and application/*
+  )
 
   const isSSL = sslKey && sslCrt
   let server: Server
