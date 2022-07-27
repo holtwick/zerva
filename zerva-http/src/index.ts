@@ -46,10 +46,17 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   // https://expressjs.com/en/api.html#express
   const limit = "1gb"
-  app.use(express.json({ limit })) // application/json -> object
-  app.use(express.text({ limit })) // text/plain -> string
-  app.use(express.urlencoded({ limit, extended: true })) // application/x-www-form-urlencoded
 
+  // application/json -> object
+  app.use(express.json({ limit }))
+
+  // text/plain -> string
+  app.use(express.text({ limit }))
+
+  // application/x-www-form-urlencoded
+  app.use(express.urlencoded({ limit, extended: true }))
+
+  // application/octet-stream -> Buffer and application/* except json and urlencoded
   app.use(
     express.raw({
       limit,
@@ -57,15 +64,13 @@ export function useHttp(config?: httpConfig): httpInterface {
         let type = req.headers["content-type"]?.toLowerCase()
         return (
           type?.startsWith("application/") &&
-          ![
-            "application/octet-stream",
-            "application/json",
-            "application/x-www-form-urlencoded",
-          ].includes(type)
+          !["application/json", "application/x-www-form-urlencoded"].includes(
+            type
+          )
         )
       },
     })
-  ) // application/octet-stream -> Buffer and application/*
+  )
 
   const isSSL = sslKey && sslCrt
   let server: Server
@@ -102,9 +107,10 @@ export function useHttp(config?: httpConfig): httpInterface {
     if (isString(path) && !path.startsWith("/")) {
       path = `/${path}`
     }
-    log(`register get ${path}`)
+    log(`register ${mode.toUpperCase()} ${path}`)
     app[mode](path, async (req: Request, res: Response) => {
-      log(`get ${path}`)
+      log(`${mode.toUpperCase()} ${path}`)
+      log(`headers =`, req.headers)
 
       let suffix
       if (isString(path)) {
