@@ -62,8 +62,8 @@ export function runMain(config: ZervaConf) {
         notifier.notify({
           title: "Zerva Build Error",
           message: String(error),
-          icon: resolve(__dirname, "icon.png"),
           sound: true,
+          // icon: resolve(__dirname, "icon.png"), // doesn't work anyway
         })
     }
   }

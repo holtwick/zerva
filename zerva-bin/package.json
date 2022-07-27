@@ -32,8 +32,8 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo todo",
-    "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node bin.cjs demo/zerva.js -d --loader=.md:text",
-    "dbld": "pnpm run build && node bin.cjs demo/zerva.js --build -d --loader=.md:text && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
+    "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs demo/zerva.ts -d --loader=.md:text",
+    "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
     "@types/node": "^18.6.1",

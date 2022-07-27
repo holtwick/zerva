@@ -1,4 +1,7 @@
+// @ts-ignore
 import readme from "../README.md"
+
+// @ts-ignore
 import data from "./data.yml"
 
 console.log("test via console", readme.length, data)
