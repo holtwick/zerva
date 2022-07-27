@@ -55,13 +55,12 @@ export function useHttp(config?: httpConfig): httpInterface {
       limit,
       type: (req) => {
         let type = req.headers["content-type"]?.toLowerCase()
+        log("type", type)
         return (
           type?.startsWith("application/") &&
-          ![
-            "application/octet-stream",
-            "application/json",
-            "application/x-www-form-urlencoded",
-          ].includes(type)
+          !["application/json", "application/x-www-form-urlencoded"].includes(
+            type
+          )
         )
       },
     })

@@ -11,6 +11,9 @@ import {
 import "cross-fetch/polyfill"
 import { useHttp } from "."
 
+import { Logger } from "zeed"
+const log = Logger("test-http")
+
 const port = 8888
 const url = `http://localhost:${port}`
 
@@ -29,6 +32,8 @@ describe("http", () => {
       })
 
       post("/data", ({ req }) => {
+        log("headers", req.headers)
+        log("req", req.body)
         return req.body
       })
 
@@ -56,18 +61,7 @@ describe("http", () => {
       "// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved."
     )
 
-    // expect(
-    //   await fetchJson(`${url}/`, {
-    //     method: "POST",
-    //     headers: {
-    //       "content-type": "application/json",
-    //     },
-    //     body: {
-    //       hello: "world",
-    //     },
-    //   })
-    // ).toMatchInlineSnapshot("undefined")
-
+    // Json
     expect(
       await fetchJson(
         `${url}/data`,
@@ -79,6 +73,7 @@ describe("http", () => {
       }
     `)
 
+    // Classic form
     expect(
       await fetchJson(
         `${url}/data`,
@@ -88,6 +83,26 @@ describe("http", () => {
       {
         "hello": "world",
       }
+    `)
+
+    // Binary
+    let bin = new Uint8Array([1, 2, 3])
+    let result = await fetch(`${url}/data`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      body: bin,
+    })
+
+    let buffer = await result.arrayBuffer()
+    let data = new Uint8Array(buffer)
+    expect(data).toMatchInlineSnapshot(`
+      Uint8Array [
+        1,
+        2,
+        3,
+      ]
     `)
   })
 })
