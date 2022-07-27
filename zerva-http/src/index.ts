@@ -22,7 +22,7 @@ import { httpPaths } from "./types"
 export * from "./types"
 
 const name = "http"
-const log = Logger(`zerva:${name}`, LogLevel.info)
+const log = Logger(`zerva:${name}`, LogLevel.debug)
 
 export function useHttp(config?: httpConfig): httpInterface {
   register(name, [])
@@ -102,9 +102,10 @@ export function useHttp(config?: httpConfig): httpInterface {
     if (isString(path) && !path.startsWith("/")) {
       path = `/${path}`
     }
-    log(`register get ${path}`)
+    log(`register ${mode.toUpperCase()} ${path}`)
     app[mode](path, async (req: Request, res: Response) => {
-      log(`get ${path}`)
+      log(`${mode.toUpperCase()} ${path}`)
+      log(`headers =`, req.headers)
 
       let suffix
       if (isString(path)) {
