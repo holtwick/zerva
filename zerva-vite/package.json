@@ -46,7 +46,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "vite": "^3.0.3",
-    "zeed": "^0.8.3"
+    "zeed": "^0.8.6"
   },
   "devDependencies": {
     "tsup": "^6.2.0",
