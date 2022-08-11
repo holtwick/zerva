@@ -13,6 +13,7 @@ export interface ZervaConf {
   entry: string
   debug: boolean
   external: string[]
+  define: Record<string, string>
   loader: Record<string, string>
   args: any
 }
@@ -25,6 +26,7 @@ export function getConfig(): ZervaConf {
     sourcemap: true,
     debug: false,
     external: [],
+    define: {},
     loader: {},
     args: {},
   }
@@ -44,9 +46,10 @@ export function getConfig(): ZervaConf {
     alias: {
       build: ["b"],
       debug: ["d"],
+      help: ["h", "?"],
     },
-    booleanArgs: ["build", "noSourcemap", "debug"],
-    listArgs: ["external", "loader"],
+    booleanArgs: ["build", "noSourcemap", "debug", "help"],
+    listArgs: ["external", "loader", "define"],
   })
 
   config.debug = !!args.debug
@@ -57,6 +60,9 @@ export function getConfig(): ZervaConf {
   config.build = args.build ?? args._.includes("build")
   config.loader = Object.fromEntries(
     (args.loader ?? []).map((s: string) => s.split(":", 2))
+  )
+  config.define = Object.fromEntries(
+    (args.define ?? []).map((s: string) => s.split(":", 2))
   )
 
   if (config.debug) {

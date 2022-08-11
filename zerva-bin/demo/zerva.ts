@@ -10,6 +10,12 @@ import { Logger } from "zeed"
 const log = Logger("test")
 log.info("test via zeed")
 
+if (TEST) {
+  console.log("test")
+} else {
+  console.log("no test")
+}
+
 function catchSome() {
   throw new Error("fake")
 }
