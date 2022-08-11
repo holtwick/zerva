@@ -106,6 +106,7 @@ export function runMain(config: ZervaConf) {
       "process.env.ZERVA_DEVELOPMENT": !config.build,
       "process.env.ZERVA_PRODUCTION": config.build,
       "process.env.ZERVA_VERSION": `"${config.version}"`,
+      ...config.define,
     } as any,
     minify: config.build,
     watch: config.build
