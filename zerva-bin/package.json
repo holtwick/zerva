@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -26,7 +26,7 @@
     "icon.png"
   ],
   "scripts": {
-    "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --external:node-notifier --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -36,10 +36,10 @@
     "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
-    "@types/node": "^18.6.2",
-    "esbuild": "^0.14.50",
+    "@types/node": "^18.7.3",
+    "display-notification": "^3.0.0",
+    "esbuild": "^0.14.54",
     "esbuild-plugin-yaml": "^0.0.1",
-    "node-notifier": "^10.0.1",
-    "zeed": "^0.8.6"
+    "zeed": "^0.8.9"
   }
 }
