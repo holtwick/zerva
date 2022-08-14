@@ -1,9 +1,10 @@
 import { ChildProcess, spawn } from "child_process"
 import { build, BuildFailure, BuildOptions } from "esbuild"
+import { yamlPlugin } from "esbuild-plugin-yaml"
 import { chmod } from "fs/promises"
-import { normalize, resolve } from "path"
+import { normalize } from "path"
 import { ZervaConf } from "./config"
-const { yamlPlugin } = require("esbuild-plugin-yaml")
+import displayNotification from "display-notification"
 
 export function runMain(config: ZervaConf) {
   let zervaNodeProcess: ChildProcess | undefined
@@ -54,19 +55,21 @@ export function runMain(config: ZervaConf) {
     // })
   }
 
-  function notifyError(error: BuildFailure) {
-    if (!config.build) {
-      // https://github.com/mikaelbr/node-notifier
-      const notifier = require("node-notifier")
-      if (notifier)
-        notifier.notify({
-          title: "Zerva Build Error",
-          message: String(error),
-          sound: true,
-          // icon: resolve(__dirname, "icon.png"), // doesn't work anyway
+  async function notifyError(error: BuildFailure) {
+    try {
+      if (!config.build) {
+        // https://www.npmjs.com/package/display-notification
+        await displayNotification({
+          subtitle: "Zerva Build Error",
+          text: String(error),
+          sound: "Bottle",
         })
-    }
+      }
+    } catch (err) {}
   }
+
+  // @ts-ignore
+  // notifyError("TEST")
 
   function toHumanReadableFilePath(path: string) {
     const p = normalize(path)
