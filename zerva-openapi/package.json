@@ -1,6 +1,6 @@
 {
   "name": "@zerva/openapi",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -45,11 +45,11 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.8.6"
+    "zeed": "^0.8.16"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
-    "tsup": "^6.2.0",
+    "tsup": "^6.2.2",
     "typescipt": "^1.0.0"
   }
 }

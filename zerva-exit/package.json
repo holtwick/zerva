@@ -1,6 +1,6 @@
 {
   "name": "@zerva/exit",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "🌱 Zerva exit gracefully",
   "keywords": [
     "server",
@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
-    "zeed": "^0.8.6"
+    "zeed": "^0.8.16"
   }
 }
