@@ -15,6 +15,7 @@ export interface ZervaConf {
   external: string[]
   define: Record<string, string>
   loader: Record<string, string>
+  esbuild: Record<string, string>
   args: any
 }
 
@@ -28,6 +29,7 @@ export function getConfig(): ZervaConf {
     external: [],
     define: {},
     loader: {},
+    esbuild: {},
     args: {},
   }
 
@@ -49,7 +51,7 @@ export function getConfig(): ZervaConf {
       help: ["h", "?"],
     },
     booleanArgs: ["build", "noSourcemap", "debug", "help"],
-    listArgs: ["external", "loader", "define"],
+    listArgs: ["external", "loader", "define", "esbuild"],
   })
 
   config.debug = !!args.debug
@@ -63,6 +65,9 @@ export function getConfig(): ZervaConf {
   )
   config.define = Object.fromEntries(
     (args.define ?? []).map((s: string) => s.split(":", 2))
+  )
+  config.esbuild = Object.fromEntries(
+    (args.esbuild ?? []).map((s: string) => s.split(":", 2))
   )
 
   if (config.debug) {

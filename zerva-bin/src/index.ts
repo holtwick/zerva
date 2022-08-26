@@ -25,6 +25,7 @@ is restarted on every update.
 --external=name     Exclude package from bundle (see esbuild)      
 --loader=.suf:type  Loaders for file types (see esbuild)     
 --define=key:value  Text replacement before compiling (see esbuild)
+--esbuild=key:value Additional esbuild configs
 `
     )
     return
