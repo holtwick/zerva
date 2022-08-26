@@ -148,6 +148,7 @@ export function runMain(config: ZervaConf) {
           "vite",
           ...config.external,
         ],
+    ...config.esbuild,
   }
 
   if (config.debug) console.log("build =", buildConfig)
