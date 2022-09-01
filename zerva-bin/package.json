@@ -36,10 +36,10 @@
     "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.7.14",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.15.5",
+    "esbuild": "^0.15.6",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.8.16"
+    "zeed": "^0.8.19"
   }
 }
