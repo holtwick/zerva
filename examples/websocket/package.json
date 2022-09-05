@@ -25,13 +25,13 @@
     "@zerva/vite": "workspace:*",
     "@zerva/websocket": "workspace:*",
     "cross-fetch": "^3.1.4",
-    "vue": "^3.2.37",
-    "zeed": "^0.8.16"
+    "vue": "^3.2.38",
+    "zeed": "^0.8.19"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.3",
-    "@vue/compiler-sfc": "^3.2.37",
+    "@vitejs/plugin-vue": "^3.1.0",
+    "@vue/compiler-sfc": "^3.2.38",
     "@zerva/bin": "workspace:*",
-    "vite": "^3.0.9"
+    "vite": "^3.1.0"
   }
 }

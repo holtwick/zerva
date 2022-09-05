@@ -63,11 +63,11 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
       if (host) {
         req.headers["host"] = host
       }
-      if (protocol) {
-        req.protocol = protocol
-      } else if (!host && req.hostname.startsWith("localhost")) {
-        req.protocol = "http"
-      }
+      // if (protocol) {
+      //   req.protocol = protocol
+      // } else if (!host && req.hostname.startsWith("localhost")) {
+      //   req.protocol = "http"
+      // }
       next()
     })
 
