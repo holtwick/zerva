@@ -1,6 +1,6 @@
 {
-  "realm": "apperdeck",
-  "auth-server-url": "https://z-keycloak.holtwick.de/auth/",
+  "realm": "holtwick",
+  "auth-server-url": "https://auth.pro.holtwick.de/auth/",
   "ssl-required": "external",
   "resource": "zerva",
   "public-client": true,

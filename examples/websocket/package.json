@@ -29,9 +29,9 @@
     "zeed": "^0.8.19"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.3",
+    "@vitejs/plugin-vue": "^3.1.0",
     "@vue/compiler-sfc": "^3.2.38",
     "@zerva/bin": "workspace:*",
-    "vite": "^3.0.9"
+    "vite": "^3.1.0"
   }
 }

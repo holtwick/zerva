@@ -25,13 +25,13 @@
     "vue": "^3.2.38"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.3",
+    "@vitejs/plugin-vue": "^3.1.0",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
     "typescript": "^4.8.2",
-    "vite": "^3.0.9",
+    "vite": "^3.1.0",
     "zeed": "^0.8.19"
   }
 }
