@@ -54,20 +54,27 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
 
   // 1. Register middleware
   on("httpInit", ({ app }) => {
+    // https://stackoverflow.com/a/46475726/140927
+    app.enable("trust proxy")
+
     app.use(sessionMiddleware)
 
-    // Workaround for a bug
+    // Workaround for proxies that don't set the right X-Proto headers
     app.use((req, res, next) => {
       // log("headers:", JSON.stringify(req.headers, null, 2))
-      // let redirectUrl = protocol + '://' + host + (port === '' ? '' : ':' + port) + (req.originalUrl || req.url) + (hasQuery ? '&' : '?') + 'auth_callback=1';
+
+      if (protocol) {
+        Object.defineProperty(req, "protocol", {
+          configurable: true,
+          enumerable: true,
+          get: () => protocol,
+        })
+      }
+
       if (host) {
         req.headers["host"] = host
       }
-      // if (protocol) {
-      //   req.protocol = protocol
-      // } else if (!host && req.hostname.startsWith("localhost")) {
-      //   req.protocol = "http"
-      // }
+
       next()
     })
 
