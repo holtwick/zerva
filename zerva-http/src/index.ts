@@ -37,12 +37,17 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   // The actual web server
   const app = express()
+
   app.use(
     helmet({
       contentSecurityPolicy: false,
     })
   )
+
   app.use(cors())
+
+  // https://stackoverflow.com/a/46475726/140927
+  app.enable("trust proxy")
 
   // https://expressjs.com/en/api.html#express
   const limit = "1gb"
