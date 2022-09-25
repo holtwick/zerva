@@ -65,23 +65,28 @@ export function useVite(config?: { root?: string; www?: string }) {
       // log.info(`serving static files at ${wwwPath}}`)
       addStatic("", wwwPath)
 
-      //  // https://github.com/vitejs/vite/issues/4042
-      //   if (config?.inputs?.length) {
-      //     app.use(async (req: any, res: any, next: any) => {
-      //       for (const appName in config.inputs) {
-      //         if (req.originalUrl.startsWith(`/${appName}`)) {
-      //           req.url = `/${appName}/index.html`
-      //           break
-      //         }
-      //       }
-      //       next()
-      //     })
-      //   }
+      const multiInputCache: Record<string, string> = {}
 
       // Map dynamic routes to index.html
+      // @ts-ignore
       app?.get(/.*/, (req: any, res: any) => {
-        log("req.path", req.path)
-        res.sendFile(resolve(wwwPath, "index.html"))
+        let path: string | undefined = multiInputCache[req.path]
+        if (!path) {
+          let parts = req.path.split("/").slice(1)
+          while (parts.length > 0) {
+            let testPath = resolve(wwwPath, ...parts, "index.html")
+            if (existsSync(testPath)) {
+              path = testPath
+              break
+            }
+            parts.pop()
+          }
+          if (!path) {
+            path = resolve(wwwPath, "index.html")
+          }
+          multiInputCache[req.path] = path
+        }
+        res.sendFile(path)
       })
     }
   })
