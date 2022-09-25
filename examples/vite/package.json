@@ -13,10 +13,11 @@
   },
   "scripts": {
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
-    "clean": "rm -rf dist www",
+    "clean": "rm -rf dist dist_www",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "serve": "ZEED=* LEVEL=i node dist/main.cjs",
+    "serve": "ZEED=* LEVEL=i node --enable-source-maps dist/main.cjs",
     "start": "ZEED=* LEVEL=a zerva src/zerva/index.ts",
+    "prod": "pnpm run build && pnpm run serve",
     "vite_build": "vite build",
     "vite_dev": "vite",
     "vite_serve": "vite preview"

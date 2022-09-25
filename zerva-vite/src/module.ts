@@ -10,7 +10,6 @@ import {
 import "@zerva/http"
 import { existsSync } from "fs"
 import { resolve } from "path"
-import { createServer } from "vite"
 import { zervaMultiPageAppIndexRouting } from "./multi"
 
 const name = "vite"
@@ -38,7 +37,7 @@ export function useVite(config?: { root?: string; www?: string }) {
       log.error(`web files do not exist at ${wwwPath}`)
     }
   }
-  createServer
+
   on("httpWillStart", async ({ addStatic, app }) => {
     if (isDevMode) {
       console.info(
