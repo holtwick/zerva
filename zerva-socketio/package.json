@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.13.1",
+  "version": "0.13.3",
   "description": "🌱 Zerva socket.io module",
   "keywords": [
     "server",

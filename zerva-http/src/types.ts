@@ -1,15 +1,21 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import type { Express, Request, Response } from "express"
-import type { Server } from "http"
+import { Express, Request, Response } from "express"
+import { Server } from "http"
 
-export type { Response, Request, Express }
+export type { Response, Request, Express, Server }
 
 export type httpHandlerModes = "get" | "post" | "put" | "delete"
 
 export type httpPaths = string | RegExp | Array<string | RegExp>
 
-export type httpResultPrimaryTypes = string | number | undefined | null | object
+export type httpResultPrimaryTypes =
+  | string
+  | number
+  | undefined
+  | null
+  | object
+  | void
 
 export type httpGetHandler =
   | httpResultPrimaryTypes
@@ -19,15 +25,44 @@ export type httpGetHandler =
     }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
 
 export type httpInterface = {
+  /** Express app */
   app: Express
+
+  /** Node http */
   http: Server
+
+  /** GET */
   get: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** POST */
   post: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** PUT */
   put: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** DELETE */
   delete: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** GET */
+  GET: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** POST */
+  POST: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** PUT */
+  PUT: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** DELETE */
+  DELETE: (path: httpPaths, handler: httpGetHandler) => void
+
   /** @deprecated */
   addStatic: (path: httpPaths, fsPath: string) => void
+
+  /** @deprecated */
   static: (path: httpPaths, fsPath: string) => void
+
+  /** Serve stativ file or folder  */
+  STATIC: (path: httpPaths, fsPath: string) => void
 }
 
 export interface httpConfig {

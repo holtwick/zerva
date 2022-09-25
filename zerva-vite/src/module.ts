@@ -10,16 +10,12 @@ import {
 import "@zerva/http"
 import { existsSync } from "fs"
 import { resolve } from "path"
+import { zervaMultiPageAppIndexRouting } from "./multi"
 
 const name = "vite"
 const log = Logger(`zerva:${name}`)
 
-interface Config {
-  root?: string
-  www?: string
-}
-
-export function useVite(config?: Config) {
+export function useVite(config?: { root?: string; www?: string }) {
   // log.info(`use ${name} ${process.env.ZERVA}`)
   register(name, ["http"])
 
@@ -58,7 +54,9 @@ export function useVite(config?: Config) {
         server: {
           middlewareMode: true,
         },
+        plugins: [zervaMultiPageAppIndexRouting()],
       })
+
       app?.use(vite.middlewares)
     } else {
       console.info(
@@ -67,10 +65,28 @@ export function useVite(config?: Config) {
       // log.info(`serving static files at ${wwwPath}}`)
       addStatic("", wwwPath)
 
+      const multiInputCache: Record<string, string> = {}
+
       // Map dynamic routes to index.html
+      // @ts-ignore
       app?.get(/.*/, (req: any, res: any) => {
-        log("req.path", req.path)
-        res.sendFile(resolve(wwwPath, "index.html"))
+        let path: string | undefined = multiInputCache[req.path]
+        if (!path) {
+          let parts = req.path.split("/").slice(1)
+          while (parts.length > 0) {
+            let testPath = resolve(wwwPath, ...parts, "index.html")
+            if (existsSync(testPath)) {
+              path = testPath
+              break
+            }
+            parts.pop()
+          }
+          if (!path) {
+            path = resolve(wwwPath, "index.html")
+          }
+          multiInputCache[req.path] = path
+        }
+        res.sendFile(path)
       })
     }
   })
