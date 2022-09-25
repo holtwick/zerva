@@ -47,7 +47,7 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/node": "^18.7.20",
+    "@types/node": "^18.7.21",
     "@types/ws": "^8.5.3",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
