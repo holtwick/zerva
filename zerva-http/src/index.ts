@@ -2,22 +2,24 @@
 
 import { emit, on, register } from "@zerva/core"
 import cors from "cors"
-import type { Request, Response } from "express"
 import express from "express"
 import fs from "fs"
 import helmet from "helmet"
-import type { Server } from "http"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
 import { isLocalHost, isString, Logger, LogLevel, promisify } from "zeed"
 import {
+  Express,
   httpConfig,
   httpGetHandler,
   httpHandlerModes,
   httpInterface,
+  httpPaths,
+  Request,
+  Response,
+  Server,
 } from "./types"
-import { httpPaths } from "./types"
 
 export * from "./types"
 
@@ -36,7 +38,7 @@ export function useHttp(config?: httpConfig): httpInterface {
   } = config ?? {}
 
   // The actual web server
-  const app = express()
+  const app: Express = express()
 
   app.use(
     helmet({
@@ -172,7 +174,9 @@ export function useHttp(config?: httpConfig): httpInterface {
 
   on("serveInit", async () => {
     log("serveInit")
+
     await emit("httpInit", {
+      // @ts-ignore
       app,
       http: server,
       get,
@@ -192,6 +196,7 @@ export function useHttp(config?: httpConfig): httpInterface {
   on("serveStart", async () => {
     log("serveStart")
     await emit("httpWillStart", {
+      // @ts-ignore
       app,
       http: server,
       get,
