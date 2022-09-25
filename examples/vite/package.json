@@ -16,7 +16,7 @@
     "clean": "rm -rf dist www",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* LEVEL=i node dist/main.cjs",
-    "start": "ZEED=* LEVEL=i zerva src/zerva/index.ts",
+    "start": "ZEED=* LEVEL=a zerva src/zerva/index.ts",
     "vite_build": "vite build",
     "vite_dev": "vite",
     "vite_serve": "vite preview"

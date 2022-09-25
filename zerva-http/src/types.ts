@@ -43,10 +43,26 @@ export type httpInterface = {
   /** DELETE */
   delete: (path: httpPaths, handler: httpGetHandler) => void
 
+  /** GET */
+  GET: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** POST */
+  POST: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** PUT */
+  PUT: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** DELETE */
+  DELETE: (path: httpPaths, handler: httpGetHandler) => void
+
+  /** @deprecated */
   addStatic: (path: httpPaths, fsPath: string) => void
 
   /** @deprecated */
   static: (path: httpPaths, fsPath: string) => void
+
+  /** Serve stativ file or folder  */
+  STATIC: (path: httpPaths, fsPath: string) => void
 }
 
 export interface httpConfig {

@@ -183,8 +183,13 @@ export function useHttp(config?: httpConfig): httpInterface {
       post,
       put,
       delete: del,
+      GET: get,
+      POST: post,
+      PUT: put,
+      DELETE: del,
       addStatic,
       static: addStatic,
+      STATIC: addStatic,
     })
   })
 
@@ -203,8 +208,13 @@ export function useHttp(config?: httpConfig): httpInterface {
       post,
       put,
       delete: del,
+      GET: get,
+      POST: post,
+      PUT: put,
+      DELETE: del,
       addStatic,
       static: addStatic,
+      STATIC: addStatic,
     })
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
@@ -228,7 +238,12 @@ export function useHttp(config?: httpConfig): httpInterface {
     post,
     put,
     delete: del,
+    GET: get,
+    POST: post,
+    PUT: put,
+    DELETE: del,
     addStatic,
     static: addStatic,
+    STATIC: addStatic,
   }
 }
