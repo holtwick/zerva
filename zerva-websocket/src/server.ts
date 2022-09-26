@@ -177,13 +177,13 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       path,
     })
 
-    wss.on("connection", (ws: any, req: any) => {
+    wss.on("connection", (ws, req: any) => {
       log.info("onconnection")
       ws.isAlive = true
       new WebsocketNodeConnection(ws, config)
     })
 
-    http.on("upgrade", (request: any, socket: any, head: Buffer) => {
+    http.on("upgrade", (request: any, socket, head: Buffer) => {
       const { pathname } = parse(request.url)
       if (pathname === path) {
         log("onupgrade")
