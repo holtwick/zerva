@@ -9,7 +9,7 @@ import {
 } from "zeed"
 import { ZContext } from "./types"
 
-const log = Logger(`zerva:context`, false)
+const log = Logger(`zerva:context`, "info")
 
 // Others would probably call it "hub" or "bus"...
 
@@ -102,6 +102,15 @@ export function requireModules(
   return !modules.map((module) => hasModule(module, true)).some((ok) => !ok)
 }
 
+export function assertModules(...requiredModules: (string | string[])[]): void {
+  const modules = arrayFlatten(requiredModules)
+  let missing = modules.filter((module) => !hasModule(module))
+  if (missing.length > 0) {
+    log.error(`Zerva modules required: ${missing}`)
+    throw new Error(`Zerva modules required: ${missing}`)
+  }
+}
+
 /**
  * Register module by name and check for modules it depends on
  *
@@ -128,7 +137,10 @@ export function register(
 
   getContext().modules.push(moduleName)
 
-  return requireModules(modules)
+  assertModules(modules)
+
+  // return requireModules(modules)
+  return true
 }
 
 /**
