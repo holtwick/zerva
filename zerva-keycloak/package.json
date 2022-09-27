@@ -1,6 +1,6 @@
 {
   "name": "@zerva/keycloak",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "description": "🌱 Zerva useKeycloak",
   "keywords": [
     "server",
