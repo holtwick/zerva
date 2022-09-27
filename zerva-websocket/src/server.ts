@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, onInit, register, requireModules } from "@zerva/core"
+import { assertModules, emit, on, onInit, register } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
@@ -160,7 +160,7 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
   register(moduleName)
 
   onInit(() => {
-    requireModules("http")
+    assertModules("http")
   })
 
   on("httpInit", ({ http }) => {
