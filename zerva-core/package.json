@@ -43,7 +43,7 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.8.26"
+    "zeed": "^0.8.28"
   },
   "devDependencies": {
     "@types/jest": "^29.0.3",

@@ -7,7 +7,7 @@ export type { Response, Request, Express, Server }
 
 export type httpHandlerModes = "get" | "post" | "put" | "delete"
 
-export type httpPaths = string | RegExp | Array<string | RegExp>
+export type httpPaths = (string | RegExp)[] | (string | RegExp)
 
 export type httpResultPrimaryTypes =
   | string
