@@ -24,3 +24,9 @@ declare global {
 
 export const getWebsocketUrlFromLocation = (path: string = webSocketPath) =>
   `ws${location.protocol.substr(4)}//${location.host}${path}`
+
+declare module "ws" {
+  export interface WebSocket {
+    isAlive?: boolean
+  }
+}

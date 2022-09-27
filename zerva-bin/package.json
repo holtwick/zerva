@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -36,10 +36,10 @@
     "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
   },
   "dependencies": {
-    "@types/node": "^18.7.21",
+    "@types/node": "^18.7.23",
     "display-notification": "^3.0.0",
     "esbuild": "^0.15.9",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.8.25"
+    "zeed": "^0.8.26"
   }
 }
