@@ -16,7 +16,7 @@ const name = "vite"
 const log = Logger(`zerva:${name}`)
 
 export function useVite(config?: { root?: string; www?: string }) {
-  // log.info(`use ${name} ${process.env.ZERVA}`)
+  log.info(`use ${name} ${process.env.ZERVA}`)
   register(name, ["http"])
 
   const { root = process.cwd(), www = "./dist_www" } = config ?? {}

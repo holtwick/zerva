@@ -28,6 +28,7 @@ log.info("DEMO_SECRET =", process.env.DEMO_SECRET)
 
 useHttp({
   port: 8080,
+  // noExtras: true,
 })
 
 useCounter()
