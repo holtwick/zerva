@@ -1,0 +1,58 @@
+{
+  "name": "@zerva/http",
+  "version": "0.14.1",
+  "description": "🌱 Zerva Express HTTP",
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js",
+      "node": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:tsup": "tsup src/index.ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "ZEED=* vitest --globals --run -r src",
+    "watch": "tsup src/index.ts --watch"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.14",
+    "@zerva/core": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "helmet": "^6.0.0",
+    "zeed": "^0.8.31"
+  },
+  "devDependencies": {
+    "tsup": "^6.2.3",
+    "typescript": "^4.8.4"
+  }
+}

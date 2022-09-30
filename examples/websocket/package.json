@@ -1,0 +1,37 @@
+{
+  "name": "zerva-example-websocket",
+  "version": "0.2.4",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "zerva build && vite build",
+    "dev": "vite",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "ZEED=* LEVEL=* node dist/main.cjs",
+    "start": "ZEED=* LEVEL=* zerva"
+  },
+  "dependencies": {
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/vite": "workspace:*",
+    "@zerva/websocket": "workspace:*",
+    "cross-fetch": "^3.1.4",
+    "vue": "^3.2.40",
+    "zeed": "^0.8.31"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.1.0",
+    "@vue/compiler-sfc": "^3.2.40",
+    "@zerva/bin": "workspace:*",
+    "vite": "^3.1.4"
+  }
+}

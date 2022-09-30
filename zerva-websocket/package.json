@@ -1,0 +1,61 @@
+{
+  "name": "@zerva/websocket",
+  "version": "0.14.1",
+  "description": "🌱 Zerva websocket module",
+  "keywords": [
+    "server",
+    "typescript",
+    "event",
+    "websocket",
+    "socket",
+    "zerva",
+    "zeed"
+  ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "browser": "./dist/index.browser.js",
+      "default": "./dist/index.js",
+      "node": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:tsup": "tsup src/index.ts src/index.browser.ts ",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "ZEED=* vitest --globals --run -r src",
+    "watch": "tsup src/index.ts src/index.browser.ts  --watch"
+  },
+  "dependencies": {
+    "@types/node": "^18.7.23",
+    "@types/ws": "^8.5.3",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "ws": "^8.9.0",
+    "zeed": "^0.8.31"
+  },
+  "devDependencies": {
+    "tsup": "^6.2.3",
+    "typescript": "^4.8.4"
+  }
+}

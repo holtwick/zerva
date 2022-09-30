@@ -1,0 +1,18 @@
+openapi: 3.0.0
+
+# https://swagger.io/specification/
+
+info:
+  title: Test
+  description: Description
+  contact:
+    email: dirk.holtwick@gmail.com
+  version: 1.0.0
+paths:
+  /version:
+    get:
+      summary: Just a version info
+      responses:
+        "200":
+          description: Version
+ 

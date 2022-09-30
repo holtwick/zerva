@@ -1,0 +1,30 @@
+{
+  "name": "zerva-example-sandbox",
+  "version": "1.0.0",
+  "private": true,
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "build": "zerva build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "ZEED=* node dist/man.cjs",
+    "start": "ZEED=* zerva"
+  },
+  "dependencies": {
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/qrcode": "workspace:*",
+    "zeed": "^0.8.31"
+  }
+}
