@@ -1,0 +1,45 @@
+{
+  "name": "@zerva/bin",
+  "version": "0.14.0",
+  "description": "🌱 Zerva Command Line Tool",
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "bin": {
+    "zerva": "bin.cjs"
+  },
+  "files": [
+    "bin.cjs",
+    "icon.png"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "global": "pnpm -g ln",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "echo todo",
+    "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs demo/zerva.ts -d --loader=.md:text --define=TEST:false",
+    "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
+  },
+  "dependencies": {
+    "@types/node": "^18.7.23",
+    "display-notification": "^3.0.0",
+    "esbuild": "^0.15.10",
+    "esbuild-plugin-yaml": "^0.0.1",
+    "zeed": "^0.8.31"
+  }
+}

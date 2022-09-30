@@ -13,13 +13,12 @@ It all starts with the `context` which is the common ground for any **module** w
 Usually you would start to build a server like this:
 
 ```ts
-import { useHttp, serve } from "zerva"
+import { useHttp } from "@zerva/http"
 
 useHttp(
   port: 8080
 })
 
-serve()
 ```
 
 `serve` itself is a **module** that i.e. it is a function working on **context**. It takes a function to call other modules and provides a common lifecycle by emitting `serveInit` and `serveStart`. These are the entry points for other services.
@@ -43,7 +42,7 @@ As you can see a **module** is just a function connecting itself to the **contex
 
 > If you want to use multiple **contexts** just wrap the code using it into `withContext(context, () => { /* your code */ })`.
 
-On `httpInit` we make use of the http-modules specific `get` helper to answer to http-reuests on `/counter`.
+On `httpInit` we make use of the http-modules specific `get` helper to answer to http-requests on `/counter`.
 
 To make sure the `http` module is around as well in our context, it is good practice to register oneself and tell about dependencies using `register`:
 
@@ -94,27 +93,15 @@ To get started, you can use these GitHub Templates:
 
 ## External Modules
 
-- [zerva-websocket](https://github.com/holtwick/zerva-websocket)
-- [zerva-vite](https://github.com/holtwick/zerva-vite)
-- [zerva-email](https://github.com/holtwick/zerva-email)
-- [zerva-umami](https://github.com/holtwick/zerva-umami)
-- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
-
-## Internal Modules
-
-### useHttp
-
-Sets up an Express web server.
-
-Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) for demos.
-
-`httpRunning` is emitted after the web server is listening.
-
-On `httpStop` you can do some optional cleanup for your web server.
-
-### useExit
-
-Catch various exit scenarios and try to emit `serverStop` if possible, for example catch `CTRL-C`.
+- [@zerva/bin](./zerva-bin) - CLI tool
+- [@zerva/core](./zerva-core) - The core of it all
+- [@zerva/vite](./zerva-vite) - Vite integration
+- [@zerva/plausible](./zerva-plausibe) - Visitors tracking using plausible.js
+- [@zerva/umami](./zerva-umami) - Visitors tracking using umami.js
+- [@zerva/websocket](./zerva-websocket) - Websockets
+- [@zerva/socketio](./zerva-socketio) - Websockets using socket.io
+- [@zerva/exit](./zerva-exit) - CTRL-C support
+- [@zerva/qrcode](./zerva-qrcode) - Show QR Code for external IP addresses to simplify mobile development
 
 ## Advanced Topics
 

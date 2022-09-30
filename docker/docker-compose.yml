@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  zerva: # set your preferred name here
+    build: .
+    restart: always
+    volumes:
+      - ./dist:/app/dist
+      - ./www:/app/www
+      - ./data:/app/data
+    environment:
+      - NODE_MODE:production
+      - LOG:/app/data/zerva.log
+      - ZEED:*
+
+networks:
+  default:
+    external:
+      name: proxy

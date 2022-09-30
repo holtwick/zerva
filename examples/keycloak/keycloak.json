@@ -1,0 +1,8 @@
+{
+  "realm": "holtwick",
+  "auth-server-url": "https://auth.pro.holtwick.de/auth/",
+  "ssl-required": "external",
+  "resource": "zerva",
+  "public-client": true,
+  "confidential-port": 0
+}

@@ -1,22 +1,26 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
-    "target": "es2020",
     "declaration": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    // "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["esnext", "dom"],
     "module": "ESNext",
     "moduleResolution": "Node",
-    "outDir": "dist/esm",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "resolveJsonModule": true,
     "sourceMap": true,
-    "strictNullChecks": true,
     "strict": true,
-    "types": ["node", "jest"],
-    "allowJs": true
+    "strictNullChecks": true,
+    "target": "es2020",
+    "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*", "index.ts"],
-  "exclude": ["node_modules", "dist", "src/**/*.spec.ts"]
+  "exclude": ["*/node_modules", "*/dist", "*/www"],
+  "include": ["**/*.ts", "**/*.vue"]
 }
+
+// "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
