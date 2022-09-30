@@ -1,17 +1,16 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { emit, on, register } from "@zerva/core"
-import cors from "cors"
+import e, { default as corsDefault } from "cors"
 import express from "express"
 import fs from "fs"
-import helmet from "helmet"
+import { default as helmetDefault, HelmetOptions } from "helmet"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
 import { isLocalHost, isString, Logger, LogLevel, promisify } from "zeed"
 import {
   Express,
-  httpConfig,
   httpGetHandler,
   httpHandlerModes,
   httpInterface,
@@ -24,9 +23,44 @@ import {
 export * from "./types"
 
 const name = "http"
-const log = Logger(`zerva:${name}`, LogLevel.info)
+const log = Logger(`zerva:${name}`, LogLevel.info) // todo let the coder decide
 
-export function useHttp(config?: httpConfig): httpInterface {
+export function useHttp(config?: {
+  host?: string
+  port?: number
+  sslCrt?: string
+  sslKey?: string
+
+  /** Print server details to console */
+  showServerInfo?: boolean
+
+  /** None of the following middlewares is installed, just plain express. Add your own at httpInit  */
+  noExtras?: boolean
+
+  /** https://github.com/expressjs/cors */
+  cors?: boolean
+
+  /** Security setting https://helmetjs.github.io/ */
+  helmet?: boolean | HelmetOptions
+
+  /** https://stackoverflow.com/a/46475726/140927 */
+  trustProxy?: boolean
+
+  /** https://expressjs.com/en/api.html#express */
+  postLimit?: string
+
+  /** application/json -> object */
+  postJson?: boolean
+
+  /** text/plain -> string  */
+  postText?: boolean
+
+  /** application/octet-stream -> Buffer and application/* except json and urlencoded */
+  postBinary?: boolean
+
+  /** application/x-www-form-urlencoded */
+  postUrlEncoded?: boolean
+}): httpInterface {
   register(name, [])
 
   const {
@@ -35,49 +69,76 @@ export function useHttp(config?: httpConfig): httpInterface {
     port = 8080,
     host, // = process.env.NODE_MODE === "development" ? undefined : "0.0.0.0",
     showServerInfo = true,
+    noExtras = false,
+    cors = true,
+    helmet = true,
+    trustProxy = true,
+    postLimit = "1gb",
+    postJson = true,
+    postText = true,
+    postBinary = true,
+    postUrlEncoded = true,
   } = config ?? {}
+
+  log("config =", config)
 
   // The actual web server
   const app: Express = express()
 
-  app.use(
-    helmet({
-      contentSecurityPolicy: false,
-    })
-  )
+  if (noExtras === true) {
+    log("noExtra")
+  } else {
+    if (helmet) {
+      const options =
+        helmet === true ? { contentSecurityPolicy: false } : helmet
+      log("Helmet", options)
+      app.use(helmetDefault(options))
+    }
 
-  app.use(cors())
+    if (cors) {
+      log("CORS")
+      app.use(corsDefault())
+    }
 
-  // https://stackoverflow.com/a/46475726/140927
-  app.enable("trust proxy")
+    if (trustProxy) {
+      log("Trust Proxy")
+      app.enable("trust proxy")
+    }
 
-  // https://expressjs.com/en/api.html#express
-  const limit = "1gb"
+    if (postJson) {
+      log(`Post JSON, limit=${postLimit}`)
+      app.use(express.json({ limit: postLimit }))
+    }
 
-  // application/json -> object
-  app.use(express.json({ limit }))
+    if (postText) {
+      log(`Post Text, limit=${postLimit}`)
+      app.use(express.text({ limit: postLimit }))
+    }
 
-  // text/plain -> string
-  app.use(express.text({ limit }))
+    if (postUrlEncoded) {
+      log(`Post UrlEncoded, limit=${postLimit}`)
+      app.use(express.urlencoded({ limit: postLimit, extended: true }))
+    }
 
-  // application/x-www-form-urlencoded
-  app.use(express.urlencoded({ limit, extended: true }))
-
-  // application/octet-stream -> Buffer and application/* except json and urlencoded
-  app.use(
-    express.raw({
-      limit,
-      type: (req) => {
-        let type = req.headers["content-type"]?.toLowerCase()
-        return (
-          type?.startsWith("application/") &&
-          !["application/json", "application/x-www-form-urlencoded"].includes(
-            type
-          )
-        )
-      },
-    })
-  )
+    if (postBinary) {
+      log(`Post Uint8Binary, limit=${postLimit}`)
+      app.use(
+        express.raw({
+          limit: postLimit,
+          type: (req) => {
+            let type = req.headers["content-type"]?.toLowerCase()
+            return (
+              type?.startsWith("application/") &&
+              ![
+                "application/json",
+                "application/x-www-form-urlencoded",
+              ].includes(type)
+            )
+          },
+        })
+      )
+    }
+  }
 
   const isSSL = sslKey && sslCrt
   let server: Server

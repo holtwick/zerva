@@ -65,14 +65,6 @@ export type httpInterface = {
   STATIC: (path: httpPaths, fsPath: string) => void
 }
 
-export interface httpConfig {
-  host?: string
-  port?: number
-  sslCrt?: string
-  sslKey?: string
-  showServerInfo?: boolean
-}
-
 declare global {
   interface ZContextEvents {
     httpInit(info: httpInterface): void
