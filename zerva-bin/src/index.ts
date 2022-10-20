@@ -21,6 +21,7 @@ is restarted on every update.
 
 --build, -b         Build, else run debug server
 --outfile, -o       Target file
+--esm, -e           Build ESM else CJS
 --no-sourcemap      Do not emit source maps
 --external=name     Exclude package from bundle (see esbuild)      
 --loader=.suf:type  Loaders for file types (see esbuild)     

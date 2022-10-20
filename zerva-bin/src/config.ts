@@ -10,6 +10,7 @@ export interface ZervaConf {
   build: boolean
   outfile: string
   help: boolean
+  esm: boolean
   sourcemap: boolean
   entry: string
   debug: boolean
@@ -24,6 +25,7 @@ export function getConfig(): ZervaConf {
   let config: Partial<ZervaConf> = {
     build: false,
     help: false,
+    esm: false,
     version: "",
     sourcemap: true,
     debug: false,
@@ -49,9 +51,10 @@ export function getConfig(): ZervaConf {
     alias: {
       build: ["b"],
       debug: ["d"],
+      esm: ["e"],
       help: ["h", "?"],
     },
-    booleanArgs: ["build", "noSourcemap", "debug", "help"],
+    booleanArgs: ["build", "noSourcemap", "debug", "help", "esm"],
     listArgs: ["external", "loader", "define", "esbuild"],
   })
 
@@ -61,6 +64,7 @@ export function getConfig(): ZervaConf {
   config.sourcemap = !args.noSourcemap
   config.external = args.external ?? []
   config.build = args.build ?? args._.includes("build")
+  config.esm = args.esm
   config.loader = Object.fromEntries(
     (args.loader ?? []).map((s: string) => s.split(":", 2))
   )
@@ -77,11 +81,13 @@ export function getConfig(): ZervaConf {
 
   args._ = arrayRemoveElement(args._, "build")
 
+  const suffix = config.esm ? "mjs" : "cjs"
+
   if (config.build) {
-    config.outfile = args.outfile ?? resolve("dist/main.cjs")
+    config.outfile = args.outfile ?? resolve(`dist/main.${suffix}`)
     config.build = true
   } else {
-    config.outfile = args.outfile ?? resolve(".out.cjs")
+    config.outfile = args.outfile ?? resolve(`.out.${suffix}`)
     config.sourcemap = true
   }
 

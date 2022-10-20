@@ -33,7 +33,8 @@
     "start": "pnpm run watch",
     "test": "echo todo",
     "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs demo/zerva.ts -d --loader=.md:text --define=TEST:false",
-    "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node --enable-source-maps dist/main.cjs"
+    "dbld": "pnpm run build && node ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.cjs",
+    "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
   },
   "dependencies": {
     "@types/node": "^18.7.23",
