@@ -43,10 +43,11 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
   const statementsCache: Record<string, Statement> = {}
 
   // Check current state
-  const state = prepare(`PRAGMA table_info(${tableName})`).get()
-  log('state', state)
+  const state = prepare(`PRAGMA table_info(${tableName})`).all()
+  // const state = db.pragma(`table_info(${tableName})`)
+  // log('state', state)
 
-  if (state == null) {
+  if (state == null || state.length <= 0) {
 
     // Create table https://www.sqlite.org/lang_createtable.html
     const fieldsList = ['id INTEGER PRIMARY KEY AUTOINCREMENT']
@@ -56,11 +57,13 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
   } else {
 
     // Update table https://www.sqlite.org/lang_altertable.html
-    let missingFields = arrayMinus(Object.keys(fields), Object.keys(state))
-    const fieldsList = []
-    for (const field of missingFields)
-      fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${affinity[fields[field]] ?? 'text'}`)
-    db.exec(fieldsList.join('; '))
+    let missingFields = arrayMinus(Object.keys(fields), state.map((col: any) => col.name))
+    if (missingFields.length > 0) {
+      const fieldsList = []
+      for (const field of missingFields)
+        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${affinity[fields[field]] ?? 'text'}`)
+      db.exec(fieldsList.join('; '))
+    }
   }
 
   //
