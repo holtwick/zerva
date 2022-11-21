@@ -1,21 +1,7 @@
-# 🌱 Zerva super simple database module
+# 🌱 Zerva useSqliteDatabase
 
 **This is a side project of [Zerva](https://github.com/holtwick/zerva)**
 
-## Get started
+> SQLite abstraction.
 
-```ts
-xxx
-```
-
-## API Inspirations
-
-- [DenoDB](https://eveningkid.com/denodb-docs/)
-- [Prisma](https://www.prisma.io/docs/concepts/components/prisma-client)
-
-## Todo
-
-- [ ] Observe files using Chokidar (see r2)
-- [ ] Use [LRU Cache](https://www.npmjs.com/package/lru-cache)
-- [ ] Create index for `findBy`
-- [ ] REST API and auth support
+Use [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) with Zerva through a simplified abstraction layer.

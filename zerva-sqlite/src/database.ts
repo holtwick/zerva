@@ -1,19 +1,42 @@
-import type { Database, Statement } from 'better-sqlite3'
+import type { Database, Statement, Options } from 'better-sqlite3'
 import BetterSqlite3 from 'better-sqlite3'
-import { Logger, arraySorted, useDispose } from 'zeed'
+import { Logger, arraySorted, useDispose, arrayMinus } from 'zeed'
 
 const log = Logger('sqlite')
 
-type ColumnTypes = 'text' | 'integer'
+// https://www.sqlite.org/datatype3.html
+const affinity = {
+  'integer': 'integer',
+  'int': 'integer',
 
-interface ComplexType {
-  type: ColumnTypes
-  primaryKey?: boolean
-  length?: number
+  'text': 'text',
+  'varchar': 'text',
+  'string': 'text',
+
+  'blob': 'blob',
+
+  'real': 'real',
+  'float': 'real',
+  'double': 'real',
+  'number': 'real',
+
+  'numeric': 'numeric',
+  'decimal': 'numeric',
+  'boolean': 'numeric',
+  'date': 'numeric',
+  'datetime': 'numeric',
 }
 
+type ColumnTypes = keyof typeof affinity
+
+// interface ComplexType {
+//   type: ColumnTypes
+//   primaryKey?: boolean
+//   length?: number
+// }
+
 interface TableFieldsDefinition {
-  [key: string]: ColumnTypes | ComplexType
+  [key: string]: ColumnTypes // | ComplexType
 }
 
 function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsDefinition) {
@@ -23,19 +46,26 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
   const state = prepare(`PRAGMA table_info(${tableName})`).get()
   log('state', state)
 
-  const fieldsList = ['id INTEGER PRIMARY KEY AUTOINCREMENT']
+  if (state == null) {
 
-  for (const [field, colType] of Object.entries(fields))
-    fieldsList.push(`${field} ${colType}`)
+    // Create table https://www.sqlite.org/lang_createtable.html
+    const fieldsList = ['id INTEGER PRIMARY KEY AUTOINCREMENT']
+    for (const [field, colType] of Object.entries(fields))
+      fieldsList.push(`${field} ${affinity[colType] ?? 'text'}`)
+    db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(', ')})`)
+  } else {
 
-  if (state == null)
-    db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(',\n')})`)
-  else
-    throw new Error('Not implemented')
+    // Update table https://www.sqlite.org/lang_altertable.html
+    let missingFields = arrayMinus(Object.keys(fields), Object.keys(state))
+    const fieldsList = []
+    for (const field of missingFields)
+      fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${affinity[fields[field]] ?? 'text'}`)
+    db.exec(fieldsList.join('; '))
+  }
 
   //
 
-  function prepare(value: string): Statement {
+  function prepare(value: string): any /* Statement */ {
     let stmt = statementsCache[value]
     if (stmt == null) {
       stmt = db.prepare(value)
@@ -50,7 +80,7 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
 
   const sortedFields = arraySorted(['id', ...Object.keys(fields)])
 
-  const _insertStatement = prepare(`INSERT INTO ${tableName} (${sortedFields.join(',')}) VALUES(${sortedFields.map(_ => '?').join(',')})`)
+  const _insertStatement = prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   function insert(obj: T) {
     _insertStatement.run(sortedFields.map(field => (obj as any)[field]))
@@ -65,7 +95,7 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
         values.push((obj as any)[field])
       }
     }
-    prepare(`UPDATE ${tableName} SET ${fields.join(',')} WHERE id=? LIMIT 1`).run([...values, id])
+    prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE id=? LIMIT 1`).run([...values, id])
   }
 
   function updateWhere(where: string, obj: Partial<T>) {
@@ -77,7 +107,7 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
         values.push((obj as any)[field])
       }
     }
-    return prepare(`UPDATE ${tableName} SET ${fields.join(',')} WHERE ${where}`).run(values)
+    return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE ${where}`).run(values)
   }
 
   const _deleteStatement = prepare(`DELETE FROM ${tableName} WHERE id=?`)
@@ -92,19 +122,19 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
     insert,
     update,
     updateWhere,
-    // deleteRow,
-    delete: deleteRow, // todo
-    // prepare,
+    delete: deleteRow,
+    prepare,
   }
 }
 
-export function useSqliteDatabase(name: string) {
+export function useSqliteDatabase(name: string, opt: Options = {}) {
   const dispose = useDispose()
 
   if (!name.includes('.') && name !== ':memory:')
     name += '.sqlite'
 
-  const db = new BetterSqlite3(name, { verbose: log })
+  // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
+  const db = new BetterSqlite3(name, opt)
   dispose.add(() => db.close())
 
   function transaction(fn: (...args: any[]) => any) {

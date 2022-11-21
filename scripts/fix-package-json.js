@@ -85,6 +85,8 @@ async function main() {
             prepublishOnly: hasTests
               ? "pnpm test && pnpm run build"
               : "pnpm run build",
+            release:
+              "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
             start: "pnpm run watch",
             test: hasTests
               ? "ZEED=* vitest --globals --run -r src"

@@ -37,6 +37,7 @@
     "build:tsup": "tsup src/index.ts src/index.browser.ts ",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
+    "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
