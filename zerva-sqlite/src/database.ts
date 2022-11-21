@@ -4,16 +4,39 @@ import { Logger, arraySorted, useDispose } from 'zeed'
 
 const log = Logger('sqlite')
 
-type ColumnTypes = 'text' | 'integer'
+// https://www.sqlite.org/datatype3.html#affinity
 
-interface ComplexType {
-  type: ColumnTypes
-  primaryKey?: boolean
-  length?: number
+const affinity = {
+  'integer': 'integer',
+  'int': 'integer',
+
+  'text': 'text',
+  'varchar': 'text',
+  'string': 'text',
+
+  'blob': 'blob',
+
+  'real': 'real',
+  'float': 'real',
+  'double': 'real',
+
+  'numeric': 'numeric',
+  'decimal': 'numeric',
+  'boolean': 'numeric',
+  'date': 'numeric',
+  'datetime': 'numeric',
 }
 
+type ColumnTypes = keyof typeof affinity
+
+// interface ComplexType {
+//   type: ColumnTypes
+//   primaryKey?: boolean
+//   length?: number
+// }
+
 interface TableFieldsDefinition {
-  [key: string]: ColumnTypes | ComplexType
+  [key: string]: ColumnTypes // | ComplexType
 }
 
 function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsDefinition) {
@@ -26,7 +49,7 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
   const fieldsList = ['id INTEGER PRIMARY KEY AUTOINCREMENT']
 
   for (const [field, colType] of Object.entries(fields))
-    fieldsList.push(`${field} ${colType}`)
+    fieldsList.push(`${field} ${affinity[colType] ?? 'text'}`)
 
   if (state == null)
     db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(',\n')})`)
