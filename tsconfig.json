@@ -10,17 +10,28 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
     "target": "es2020",
-    "types": ["node", "vitest/globals"]
+    "types": [
+      "node",
+      "vitest/globals"
+    ]
   },
-  "exclude": ["*/node_modules", "*/dist", "*/www"],
-  "include": ["**/*.ts", "**/*.vue"]
+  "exclude": [
+    "*/node_modules",
+    "*/dist",
+    "*/www"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.vue"
+  ]
 }
-
 // "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],

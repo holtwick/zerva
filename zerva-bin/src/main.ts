@@ -91,6 +91,7 @@ export function runMain(config: ZervaConf) {
     bundle: true,
     platform: "node",
     target: "node16",
+    format: config.esm ? "esm" : "cjs",
     entryPoints: [config.entry],
     legalComments: "none",
     outfile: config.outfile,
@@ -118,7 +119,7 @@ export function runMain(config: ZervaConf) {
     watch: config.build
       ? false
       : {
-          onRebuild(error, result) {
+          onRebuild(error: any) {
             stopNode()
             if (error) {
               notifyError(error)
@@ -155,7 +156,7 @@ export function runMain(config: ZervaConf) {
   const result = build(buildConfig)
 
   result
-    .then(async (res) => {
+    .then(async () => {
       try {
         await chmod(config.outfile, 0o755)
       } catch (err) {}
@@ -170,7 +171,7 @@ export function runMain(config: ZervaConf) {
         )
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       notifyError(error)
     })
 }

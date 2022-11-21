@@ -1,6 +1,6 @@
 {
   "name": "@zerva/websocket",
-  "version": "0.14.2",
+  "version": "0.15.0",
   "description": "🌱 Zerva websocket module",
   "keywords": [
     "server",
@@ -47,15 +47,15 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/node": "^18.7.23",
+    "@types/node": "^18.11.9",
     "@types/ws": "^8.5.3",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "ws": "^8.9.0",
-    "zeed": "^0.8.31"
+    "ws": "^8.11.0",
+    "zeed": "^0.8.49"
   },
   "devDependencies": {
-    "tsup": "^6.2.3",
-    "typescript": "^4.8.4"
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.3"
   }
 }
