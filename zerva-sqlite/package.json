@@ -3,6 +3,11 @@
   "version": "0.15.0",
   "private": false,
   "description": "",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
@@ -11,7 +16,6 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "browser": "./dist/index.js",
       "default": "./dist/index.js",
       "node": "./dist/index.js",
@@ -21,21 +25,19 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
-    "build:tsup": "tsup src/index.ts  --format esm,cjs --dts --sourcemap --minify --keep-names",
-    "check": "tsc --noEmit",
+    "build:tsup": "tsup src/index.ts",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm test && pnpm run build",
-    "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "sample": "ZEED=* tsx src/index.ts",
-    "watch": "tsup src/index.ts  --format esm,cjs --dts --sourcemap --minify --keep-names --watch"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.2",
