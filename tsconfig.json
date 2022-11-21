@@ -5,8 +5,14 @@
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    // "isolatedModules": true,
+    "isolatedModules": true,
     "jsx": "preserve",
+    // "lib": [
+    //   "ESNext",
+    //   "DOM",
+    //   "DOM.Iterable",
+    //   "WebWorker"
+    // ],
     "module": "ESNext",
     "moduleResolution": "Node",
     "paths": {
@@ -14,6 +20,7 @@
         "src/*"
       ]
     },
+    "preserveSymlinks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
@@ -34,4 +41,3 @@
     "**/*.vue"
   ]
 }
-// "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
