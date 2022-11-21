@@ -47,6 +47,6 @@
     "@zerva/core": "workspace:*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^3.3.0",
-    "zeed": "^0.8.31"
+    "zeed": "^0.8.49"
   }
 }
