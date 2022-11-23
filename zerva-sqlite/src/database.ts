@@ -1,8 +1,13 @@
-import type { Database, Statement, Options } from 'better-sqlite3'
+// @ts-ignore
 import BetterSqlite3 from 'better-sqlite3'
-import { Logger, arraySorted, useDispose, arrayMinus } from 'zeed'
+import { arrayMinus, arraySorted, Logger, useDispose } from 'zeed'
+import './better-sqlite3'
 
 const log = Logger('sqlite')
+
+export type SqliteDatabase = BetterSqlite3.Database
+export type SqliteStatement = BetterSqlite3.Statement
+export type SqliteOptions = BetterSqlite3.Options
 
 // https://www.sqlite.org/datatype3.html
 const affinity = {
@@ -39,13 +44,13 @@ interface TableFieldsDefinition {
   [key: string]: ColumnTypes // | ComplexType
 }
 
-function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsDefinition) {
-  const statementsCache: Record<string, Statement> = {}
+function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableFieldsDefinition) {
+  const statementsCache: Record<string, SqliteStatement> = {}
 
   // Check current state
-  const state = prepare(`PRAGMA table_info(${tableName})`).all()
-  // const state = db.pragma(`table_info(${tableName})`)
-  // log('state', state)
+  const _tableInfoStatement = prepare(`PRAGMA table_info(${tableName})`)
+  const info = () => _tableInfoStatement.all()
+  const state = info()
 
   if (state == null || state.length <= 0) {
 
@@ -127,17 +132,18 @@ function useSqliteTable<T>(db: Database, tableName: string, fields: TableFieldsD
     updateWhere,
     delete: deleteRow,
     prepare,
+    info
   }
 }
 
-export function useSqliteDatabase(name: string, opt: Options = {}) {
+export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
   const dispose = useDispose()
 
   if (!name.includes('.') && name !== ':memory:')
     name += '.sqlite'
 
   // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
-  const db = new BetterSqlite3(name, opt)
+  const db: SqliteDatabase = new BetterSqlite3(name, opt)
   dispose.add(() => db.close())
 
   function transaction(fn: (...args: any[]) => any) {
@@ -149,7 +155,7 @@ export function useSqliteDatabase(name: string, opt: Options = {}) {
   }
 
   return {
-    db: db as any,
+    db,
     table,
     transaction,
     dispose,
