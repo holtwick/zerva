@@ -1,6 +1,6 @@
 {
   "name": "@zerva/exit",
-  "version": "0.15.0",
+  "version": "0.15.3",
   "description": "🌱 Zerva exit gracefully",
   "keywords": [
     "server",
