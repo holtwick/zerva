@@ -22,6 +22,8 @@ describe("database.spec", () => {
       age: 'integer',
     })
 
+    table.index('name')
+
     table.insert({
       name: 'Dirk',
       age: 49,
@@ -46,6 +48,14 @@ describe("database.spec", () => {
         "name": "Diego",
       }
     `)
+
+    expect(table.getByField('name', 'Diego')).toMatchInlineSnapshot(`
+    {
+      "age": 49,
+      "id": 1,
+      "name": "Diego",
+    }
+  `)
 
     // 
 
@@ -150,10 +160,12 @@ describe("database.spec", () => {
       [
         "PRAGMA table_info(test)",
         "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer)",
+        "CREATE INDEX IF NOT EXISTS idx_name ON test(name)",
         "INSERT INTO test (age, id, name) VALUES(49.0, NULL, 'Dirk')",
         "SELECT * FROM test WHERE id=1.0",
         "UPDATE test SET name='Diego' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0",
+        "SELECT * FROM test WHERE name='Diego'",
         "PRAGMA table_info(test)",
         "ALTER TABLE test ADD COLUMN amount real;",
         "ALTER TABLE test ADD COLUMN note text",

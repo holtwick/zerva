@@ -156,4 +156,4 @@ declare namespace Database {
 
 declare const Database: BetterSqlite3.DatabaseConstructor
 
-export default Database
+// export default Database
