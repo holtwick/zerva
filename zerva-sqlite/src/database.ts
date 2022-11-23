@@ -103,8 +103,12 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: T): SqliteRunResult {
-    return _insertStatement.run(sortedFields.map(field => (obj as any)[field]))
+  function insert(obj: T): number | undefined {
+    try {
+      return _insertStatement.run(sortedFields.map(field => (obj as any)[field])).lastInsertRowid
+    } catch (err) {
+      // log('insert err', err)
+    }
   }
 
   /** Update content `obj` of row with `id`  */
@@ -145,9 +149,19 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all()
   }
 
+  /** Get number of rows  */
+  function count(): number {
+    return prepare(`SELECT count(id) AS count FROM ${tableName}`).get().count
+  }
+
   /** Create index `idx_field` of column `field` if not exists. */
   function index(field: keyof T, indexName?: string): SqliteRunResult {
     return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName}(${String(field)})`).run()
+  }
+
+  /** Create index `idx_field` of column `field` if not exists. */
+  function indexUnique(field: keyof T, indexName?: string): SqliteRunResult {
+    return prepare(`CREATE UNIQUE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName}(${String(field)})`).run()
   }
 
   return {
@@ -160,6 +174,8 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     prepare,
     info,
     index,
+    indexUnique,
+    count,
     all
   }
 }

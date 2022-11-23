@@ -22,12 +22,25 @@ describe("database.spec", () => {
       age: 'integer',
     })
 
-    table.index('name')
+    table.indexUnique('name')
 
-    table.insert({
+    let newId = table.insert({
       name: 'Dirk',
       age: 49,
     })
+
+    expect(newId).toBe(1)
+
+    let error = table.insert({
+      name: 'Dirk',
+      age: 50,
+    })
+
+    expect(error).toBe(undefined)
+
+    let count = table.count()
+
+    expect(count).toBe(1)
 
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
@@ -172,8 +185,10 @@ describe("database.spec", () => {
       [
         "PRAGMA table_info(test)",
         "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer)",
-        "CREATE INDEX IF NOT EXISTS idx_name ON test(name)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_name ON test(name)",
         "INSERT INTO test (age, id, name) VALUES(49.0, NULL, 'Dirk')",
+        "INSERT INTO test (age, id, name) VALUES(50.0, NULL, 'Dirk')",
+        "SELECT count(id) AS count FROM test",
         "SELECT * FROM test WHERE id=1.0",
         "UPDATE test SET name='Diego' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0",
