@@ -105,6 +105,18 @@ describe("database.spec", () => {
 
     //
 
+    expect(table.all()).toMatchInlineSnapshot(`
+      [
+        {
+          "age": 49,
+          "amount": 1.23,
+          "id": 1,
+          "name": "Diego",
+          "note": "it is working!",
+        },
+      ]
+    `)
+
     table.delete(1)
 
     expect(table.get(1)).toMatchInlineSnapshot('undefined')
@@ -173,6 +185,7 @@ describe("database.spec", () => {
         "UPDATE test SET amount=1.23, note='it is working!' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0",
         "SELECT * FROM test WHERE id=1.0",
+        "SELECT * FROM test ORDER BY id",
         "DELETE FROM test WHERE id=1.0",
         "SELECT * FROM test WHERE id=1.0",
         "PRAGMA table_info(test)",
