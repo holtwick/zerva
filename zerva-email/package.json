@@ -1,6 +1,6 @@
 {
   "name": "@zerva/email",
-  "version": "0.15.3",
+  "version": "0.16.0",
   "description": "🌱 Zerva send email service",
   "keywords": [
     "server",
