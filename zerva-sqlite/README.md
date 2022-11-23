@@ -2,15 +2,23 @@
 
 **This is a side project of [Zerva](https://github.com/holtwick/zerva)**
 
-> SQLite abstraction.
+> SQLite abstraction
 
-Use [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) with Zerva through a simplified abstraction layer.
+### Installation
+
+```
+npm install @zerva/sqlite
+```
+
+### Help
+
+Use [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) through a simplified abstraction layer.
 
 A principle followed here to keep life easy with databases is: **Never delete something, in particular no columns!**
 
-Example:
-
 ```ts
+import { useSqliteDatabase } from '@zerva/sqlite'
+
 // Open / create the database
 const db = useSqliteDatabase('test.sqlite')
 
