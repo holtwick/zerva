@@ -8,6 +8,7 @@ const log = Logger('sqlite')
 export type SqliteDatabase = BetterSqlite3.Database
 export type SqliteStatement = BetterSqlite3.Statement
 export type SqliteOptions = BetterSqlite3.Options
+export type SqliteRunResult = BetterSqlite3.RunResult
 
 // https://www.sqlite.org/datatype3.html
 const affinity = {
@@ -86,8 +87,8 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: string, value: any): T {
-    const sql = `SELECT * FROM ${tableName} WHERE ${name}=?`
+  function getByField(name: keyof T, value: any): T {
+    const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
   }
@@ -102,12 +103,12 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: T) {
+  function insert(obj: T): SqliteRunResult {
     return _insertStatement.run(sortedFields.map(field => (obj as any)[field]))
   }
 
   /** Update content `obj` of row with `id`  */
-  function update(id: number | string, obj: Partial<T>) {
+  function update(id: number | string, obj: Partial<T>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -120,7 +121,7 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   }
 
   /** Update multiple fields `where` condition */
-  function updateWhere(where: string, obj: Partial<T>) {
+  function updateWhere(where: string, obj: Partial<T>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -135,18 +136,18 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id=?`)
 
   /** Delete row with `id` */
-  function deleteRow(id: number | string) {
+  function deleteRow(id: number | string): SqliteRunResult {
     _deleteStatement.run([id])
   }
 
   /** Get all rows and `orderBy` */
-  function all(orderBy: string = 'id') {
+  function all(orderBy: string = 'id'): T[] {
     return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all()
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function index(field: string, indexName?: string) {
-    return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + field} ON ${tableName}(${field})`).run()
+  function index(field: keyof T, indexName?: string): SqliteRunResult {
+    return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName}(${String(field)})`).run()
   }
 
   return {
