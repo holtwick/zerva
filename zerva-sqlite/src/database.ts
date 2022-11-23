@@ -99,7 +99,6 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     return _getStatement.get(id)
   }
 
-
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
@@ -140,6 +139,11 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     _deleteStatement.run([id])
   }
 
+  /** Get all rows and `orderBy` */
+  function all(orderBy: string = 'id') {
+    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all()
+  }
+
   /** Create index `idx_field` of column `field` if not exists. */
   function index(field: string, indexName?: string) {
     return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + field} ON ${tableName}(${field})`).run()
@@ -154,7 +158,8 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     delete: deleteRow,
     prepare,
     info,
-    index
+    index,
+    all
   }
 }
 
