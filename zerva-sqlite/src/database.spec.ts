@@ -11,15 +11,20 @@ describe("database.spec", () => {
     let sql: string[] = []
 
     const db = useSqliteDatabase('test.sqlite', {
-      verbose: (s: any) => sql.push(s)
+      verbose: (s: any) => {
+        log(s)
+        sql.push(s)
+      }
     })
 
     const table = db.table<{
       name: string,
       age: number
+      active: boolean
     }>('test', {
       name: 'text',
       age: 'integer',
+      active: 'boolean'
     })
 
     table.indexUnique('name')
@@ -27,6 +32,7 @@ describe("database.spec", () => {
     let newId = table.insert({
       name: 'Dirk',
       age: 49,
+      active: true
     })
 
     expect(newId).toBe(1)
@@ -34,6 +40,7 @@ describe("database.spec", () => {
     let error = table.insert({
       name: 'Dirk',
       age: 50,
+      active: false
     })
 
     expect(error).toBe(undefined)
@@ -44,6 +51,7 @@ describe("database.spec", () => {
 
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
+        "active": 1,
         "age": 49,
         "id": 1,
         "name": "Dirk",
@@ -56,6 +64,7 @@ describe("database.spec", () => {
 
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
+        "active": 1,
         "age": 49,
         "id": 1,
         "name": "Diego",
@@ -63,12 +72,13 @@ describe("database.spec", () => {
     `)
 
     expect(table.getByField('name', 'Diego')).toMatchInlineSnapshot(`
-    {
-      "age": 49,
-      "id": 1,
-      "name": "Diego",
-    }
-  `)
+      {
+        "active": 1,
+        "age": 49,
+        "id": 1,
+        "name": "Diego",
+      }
+    `)
 
     // 
 
@@ -84,6 +94,7 @@ describe("database.spec", () => {
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
       {
+        "active": 1,
         "age": 49,
         "amount": null,
         "id": 1,
@@ -99,6 +110,7 @@ describe("database.spec", () => {
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
       {
+        "active": 1,
         "age": 49,
         "amount": 1.23,
         "id": 1,
@@ -108,6 +120,7 @@ describe("database.spec", () => {
     `)
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
+        "active": 1,
         "age": 49,
         "amount": 1.23,
         "id": 1,
@@ -121,6 +134,7 @@ describe("database.spec", () => {
     expect(table.all()).toMatchInlineSnapshot(`
       [
         {
+          "active": 1,
           "age": 49,
           "amount": 1.23,
           "id": 1,
@@ -163,13 +177,21 @@ describe("database.spec", () => {
         {
           "cid": 3,
           "dflt_value": null,
+          "name": "active",
+          "notnull": 0,
+          "pk": 0,
+          "type": "numeric",
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
           "name": "amount",
           "notnull": 0,
           "pk": 0,
           "type": "REAL",
         },
         {
-          "cid": 4,
+          "cid": 5,
           "dflt_value": null,
           "name": "note",
           "notnull": 0,
@@ -184,10 +206,10 @@ describe("database.spec", () => {
     expect(sql).toMatchInlineSnapshot(`
       [
         "PRAGMA table_info(test)",
-        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer)",
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric)",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_name ON test(name)",
-        "INSERT INTO test (age, id, name) VALUES(49.0, NULL, 'Dirk')",
-        "INSERT INTO test (age, id, name) VALUES(50.0, NULL, 'Dirk')",
+        "INSERT INTO test (active, age, id, name) VALUES(1.0, 49.0, NULL, 'Dirk')",
+        "INSERT INTO test (active, age, id, name) VALUES(0.0, 50.0, NULL, 'Dirk')",
         "SELECT count(id) AS count FROM test",
         "SELECT * FROM test WHERE id=1.0",
         "UPDATE test SET name='Diego' WHERE id=1.0 LIMIT 1",

@@ -1,6 +1,6 @@
 // @ts-ignore
 import BetterSqlite3 from 'better-sqlite3'
-import { arrayMinus, arraySorted, Logger, useDispose } from 'zeed'
+import { arrayMinus, arraySorted, isBoolean, Logger, useDispose } from 'zeed'
 import './better-sqlite3'
 
 const log = Logger('sqlite')
@@ -87,7 +87,7 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: keyof T, value: any): T {
+  function getByField(name: keyof T, value: any): T & { id: number } {
     const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
@@ -96,7 +96,7 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=?`)
 
   /** Query row with `id`  */
-  function get(id: number | string): T {
+  function get(id: number | string): T & { id: number } {
     return _getStatement.get(id)
   }
 
@@ -105,9 +105,13 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   /** Insert `obj` */
   function insert(obj: T): number | undefined {
     try {
-      return _insertStatement.run(sortedFields.map(field => (obj as any)[field])).lastInsertRowid
+      return _insertStatement.run(sortedFields.map(field => {
+        let value = (obj as any)[field]
+        if (isBoolean(value)) value = value ? 1 : 0
+        return value
+      })).lastInsertRowid
     } catch (err) {
-      // log('insert err', err)
+      log('insert err', err)
     }
   }
 
@@ -118,7 +122,9 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)
-        values.push((obj as any)[field])
+        let value = (obj as any)[field]
+        if (isBoolean(value)) value = value ? 1 : 0
+        values.push(value)
       }
     }
     return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE id=? LIMIT 1`).run([...values, id])
