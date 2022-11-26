@@ -1,6 +1,6 @@
 // @ts-ignore
 import BetterSqlite3 from 'better-sqlite3'
-import { arrayMinus, arraySorted, Logger, useDispose } from 'zeed'
+import { arrayMinus, arraySorted, isBoolean, isPrimitive, Logger, useDispose } from 'zeed'
 import './better-sqlite3'
 
 const log = Logger('sqlite')
@@ -8,6 +8,7 @@ const log = Logger('sqlite')
 export type SqliteDatabase = BetterSqlite3.Database
 export type SqliteStatement = BetterSqlite3.Statement
 export type SqliteOptions = BetterSqlite3.Options
+export type SqliteRunResult = BetterSqlite3.RunResult
 
 // https://www.sqlite.org/datatype3.html
 const affinity = {
@@ -34,17 +35,19 @@ const affinity = {
 
 type ColumnTypes = keyof typeof affinity
 
-// interface ComplexType {
-//   type: ColumnTypes
-//   primaryKey?: boolean
-//   length?: number
-// }
-
 interface TableFieldsDefinition {
   [key: string]: ColumnTypes // | ComplexType
 }
 
-function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableFieldsDefinition) {
+function useSqliteTable<
+  RowType,
+  FullRowType = RowType & { id: number },
+  RowKeys = keyof FullRowType
+>(
+  db: SqliteDatabase,
+  tableName: string,
+  fields: TableFieldsDefinition
+) {
   const statementsCache: Record<string, SqliteStatement> = {}
 
   // Check current state
@@ -77,17 +80,23 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
 
   /** Prepare statement and cache it. */
   function prepare(value: string): SqliteStatement {
+    value = value.trim()
     let stmt = statementsCache[value]
     if (stmt == null) {
-      stmt = db.prepare(value)
-      statementsCache[value] = stmt
+      try {
+        stmt = db.prepare(value)
+        statementsCache[value] = stmt
+      } catch (err) {
+        log.warn(`Error while preparing "${value}":`, err)
+        throw err
+      }
     }
     return stmt
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: string, value: any): T {
-    const sql = `SELECT * FROM ${tableName} WHERE ${name}=?`
+  function getByField(name: RowKeys, value: any): FullRowType {
+    const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
   }
@@ -95,32 +104,66 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=?`)
 
   /** Query row with `id`  */
-  function get(id: number | string): T {
+  function get(id: number | string): FullRowType {
     return _getStatement.get(id)
+  }
+
+  function normalizeValue(value: any) {
+    if (isBoolean(value)) return value ? 1 : 0
+    if (!isPrimitive(value)) return String(value)
+    return value
   }
 
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: T) {
-    return _insertStatement.run(sortedFields.map(field => (obj as any)[field]))
+  function insert(obj: RowType): number | undefined {
+    try {
+      return _insertStatement.run(sortedFields.map(field => normalizeValue((obj as any)[field]))).lastInsertRowid
+    } catch (err) {
+      log('insert err', err)
+    }
   }
 
   /** Update content `obj` of row with `id`  */
-  function update(id: number | string, obj: Partial<T>) {
+  function update(id: number | string, obj: Partial<RowType>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)
-        values.push((obj as any)[field])
+        values.push(normalizeValue((obj as any)[field]))
       }
     }
-    return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE id=? LIMIT 1`).run([...values, id])
+    return prepare(
+      `UPDATE ${tableName} SET ${fields.join(', ')} WHERE id=? LIMIT 1`
+    ).run([...values, id])
+  }
+
+  function upsert(field: RowKeys, obj: Partial<RowType>) {
+    if ((obj as any)[String(field)] == null)
+      throw new Error(`Field ${field} has to be part of object ${obj}`)
+
+    const fields = []
+    const values = []
+    for (const field of sortedFields) {
+      if (field in obj) {
+        fields.push(field)
+        values.push(normalizeValue((obj as any)[field]))
+      }
+    }
+
+    let fieldNames = fields.join(', ')
+    let placeholders = fields.map(_ => '?').join(', ')
+    let fieldsUpdate = fields.map(field => `${field}=?`).join(', ')
+
+    return prepare(
+      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${String(field)}) DO UPDATE SET ${fieldsUpdate}`
+    ).run([...values, ...values])
   }
 
   /** Update multiple fields `where` condition */
-  function updateWhere(where: string, obj: Partial<T>) {
+  function updateWhere(where: string, obj: Partial<RowType>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -129,24 +172,34 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
         values.push((obj as any)[field])
       }
     }
-    return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE ${where}`).run(values)
+    return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE ${where} `).run(values)
   }
 
-  const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id=?`)
+  const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id =? `)
 
   /** Delete row with `id` */
-  function deleteRow(id: number | string) {
+  function deleteRow(id: number | string): SqliteRunResult {
     _deleteStatement.run([id])
   }
 
   /** Get all rows and `orderBy` */
-  function all(orderBy: string = 'id') {
-    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all()
+  function all(orderBy: string = 'id'): RowType[] {
+    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all()
+  }
+
+  /** Get number of rows  */
+  function count(): number {
+    return prepare(`SELECT count(id) AS count FROM ${tableName} `).get().count
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function index(field: string, indexName?: string) {
-    return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + field} ON ${tableName}(${field})`).run()
+  function index(field: RowKeys, indexName?: string): SqliteRunResult {
+    return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName} (${String(field)})`).run()
+  }
+
+  /** Create index `idx_field` of column `field` if not exists. */
+  function indexUnique(field: RowKeys, indexName?: string): SqliteRunResult {
+    return prepare(`CREATE UNIQUE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName} (${String(field)})`).run()
   }
 
   return {
@@ -155,10 +208,13 @@ function useSqliteTable<T>(db: SqliteDatabase, tableName: string, fields: TableF
     insert,
     update,
     updateWhere,
+    upsert,
     delete: deleteRow,
     prepare,
     info,
     index,
+    indexUnique,
+    count,
     all
   }
 }
