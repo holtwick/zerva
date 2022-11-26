@@ -84,7 +84,6 @@ function useSqliteTable<
     let stmt = statementsCache[value]
     if (stmt == null) {
       try {
-        log('prepare', value)
         stmt = db.prepare(value)
         statementsCache[value] = stmt
       } catch (err) {
