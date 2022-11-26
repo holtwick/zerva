@@ -142,7 +142,7 @@ function useSqliteTable<
   }
 
   function upsert(field: RowKeys, obj: Partial<RowType>) {
-    if (!(field in obj))
+    if ((obj as any)[String(field)] == null)
       throw new Error(`Field ${field} has to be part of object ${obj}`)
 
     const fields = []
