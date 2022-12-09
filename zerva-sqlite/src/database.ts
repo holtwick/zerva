@@ -33,20 +33,20 @@ const affinity = {
   'datetime': 'numeric',
 }
 
-type ColumnTypes = keyof typeof affinity
+type ColTypes = keyof typeof affinity
 
-interface TableFieldsDefinition {
-  [key: string]: ColumnTypes // | ComplexType
+interface TableColsDefinition {
+  [key: string]: ColTypes // | ComplexType
 }
 
 function useSqliteTable<
-  RowType,
-  FullRowType = RowType & { id: number },
-  RowKey = keyof FullRowType
+  ColType,
+  ColFullType = ColType & { id: number },
+  ColName = keyof ColFullType
 >(
   db: SqliteDatabase,
   tableName: string,
-  fields: TableFieldsDefinition
+  fields: TableColsDefinition
 ) {
   const statementsCache: Record<string, SqliteStatement> = {}
 
@@ -95,7 +95,7 @@ function useSqliteTable<
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: RowKey, value: any): FullRowType {
+  function getByField(name: ColName, value: any): ColFullType {
     const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
@@ -104,7 +104,7 @@ function useSqliteTable<
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=?`)
 
   /** Query row with `id`  */
-  function get(id: number | string): FullRowType {
+  function get(id: number | string): ColFullType {
     return _getStatement.get(id)
   }
 
@@ -117,7 +117,7 @@ function useSqliteTable<
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: RowType): number | undefined {
+  function insert(obj: ColType): number | undefined {
     try {
       return _insertStatement.run(sortedFields.map(field => normalizeValue((obj as any)[field]))).lastInsertRowid
     } catch (err) {
@@ -126,7 +126,7 @@ function useSqliteTable<
   }
 
   /** Update content `obj` of row with `id`  */
-  function update(id: number | string, obj: Partial<FullRowType>): SqliteRunResult {
+  function update(id: number | string, obj: Partial<ColFullType>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -141,10 +141,10 @@ function useSqliteTable<
   }
 
   /** On UNIQUE or PRIMARY indexes we can update values or insert a new row, if index values were not yet set. */
-  function upsert(conflictRow: RowKey | RowKey[], obj: Partial<FullRowType>) {
-    const conflictRows = isArray(conflictRow) ? conflictRow : [conflictRow]
+  function upsert(colName: ColName | ColName[], obj: Partial<ColFullType>) {
+    const colNames = isArray(colName) ? colName : [colName]
 
-    for (let row of conflictRows) {
+    for (let row of colNames) {
       if ((obj as any)[String(row)] == null)
         throw new Error(`Field ${row} has to be part of object ${obj}`)
     }
@@ -163,12 +163,12 @@ function useSqliteTable<
     let fieldsUpdate = fields.map(field => `${field}=?`).join(', ')
 
     return prepare(
-      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${conflictRows.map(r => String(r)).join(', ')}) DO UPDATE SET ${fieldsUpdate}`
+      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${colNames.map(r => String(r)).join(', ')}) DO UPDATE SET ${fieldsUpdate}`
     ).run([...values, ...values])
   }
 
   /** Update multiple fields `where` condition */
-  function updateWhere(where: string, obj: Partial<RowType>): SqliteRunResult {
+  function updateWhere(where: string, obj: Partial<ColType>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -188,7 +188,7 @@ function useSqliteTable<
   }
 
   /** Get all rows and `orderBy` */
-  function all(orderBy: string = 'id'): RowType[] {
+  function all(orderBy: string = 'id'): ColType[] {
     return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all()
   }
 
@@ -198,14 +198,14 @@ function useSqliteTable<
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function index(field: RowKey | RowKey[], indexName?: string, unique?: boolean): SqliteRunResult {
-    const fields = isArray(field) ? field : [field]
+  function index(col: ColName | ColName[], indexName?: string, unique?: boolean): SqliteRunResult {
+    const fields = isArray(col) ? col : [col]
     return prepare(`CREATE ${unique === true ? 'UNIQUE ' : ''}INDEX IF NOT EXISTS ${indexName ?? 'idx_' + fields.map(r => String(r)).join('_')} ON ${tableName} (${fields.map(r => String(r)).join(', ')})`).run()
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function indexUnique(field: RowKey | RowKey[], indexName?: string): SqliteRunResult {
-    return index(field, indexName, true)
+  function indexUnique(col: ColName | ColName[], indexName?: string): SqliteRunResult {
+    return index(col, indexName, true)
   }
 
   return {
@@ -239,7 +239,7 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     return db.transaction(fn) as any
   }
 
-  function table<T>(tableName: string, fields: TableFieldsDefinition) {
+  function table<T>(tableName: string, fields: TableColsDefinition) {
     return useSqliteTable<T>(db, tableName, fields)
   }
 
