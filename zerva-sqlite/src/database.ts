@@ -33,13 +33,14 @@ const affinity = {
   'datetime': 'numeric',
 }
 
-type ColTypes = keyof typeof affinity
+export type ColTypes = keyof typeof affinity
 
-interface TableColsDefinition {
+export interface TableColsDefinition {
   [key: string]: ColTypes // | ComplexType
 }
 
-function useSqliteTable<
+/** Only use via `useSqliteDatabase`! */
+export function useSqliteTable<
   ColType,
   ColFullType = ColType & { id: number },
   ColName = keyof ColFullType
