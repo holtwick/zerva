@@ -1,6 +1,6 @@
 // @ts-ignore
 import BetterSqlite3 from 'better-sqlite3'
-import { arrayMinus, arraySorted, isBoolean, isPrimitive, Logger, useDispose } from 'zeed'
+import { arrayMinus, arraySorted, isArray, isBoolean, isPrimitive, Logger, useDispose } from 'zeed'
 import './better-sqlite3'
 
 const log = Logger('sqlite')
@@ -42,7 +42,7 @@ interface TableFieldsDefinition {
 function useSqliteTable<
   RowType,
   FullRowType = RowType & { id: number },
-  RowKeys = keyof FullRowType
+  RowKey = keyof FullRowType
 >(
   db: SqliteDatabase,
   tableName: string,
@@ -95,7 +95,7 @@ function useSqliteTable<
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: RowKeys, value: any): FullRowType {
+  function getByField(name: RowKey, value: any): FullRowType {
     const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
@@ -126,7 +126,7 @@ function useSqliteTable<
   }
 
   /** Update content `obj` of row with `id`  */
-  function update(id: number | string, obj: Partial<RowType>): SqliteRunResult {
+  function update(id: number | string, obj: Partial<FullRowType>): SqliteRunResult {
     const fields = []
     const values = []
     for (const field of sortedFields) {
@@ -140,9 +140,14 @@ function useSqliteTable<
     ).run([...values, id])
   }
 
-  function upsert(field: RowKeys, obj: Partial<RowType>) {
-    if ((obj as any)[String(field)] == null)
-      throw new Error(`Field ${field} has to be part of object ${obj}`)
+  /** On UNIQUE or PRIMARY indexes we can update values or insert a new row, if index values were not yet set. */
+  function upsert(conflictRow: RowKey | RowKey[], obj: Partial<FullRowType>) {
+    const conflictRows = isArray(conflictRow) ? conflictRow : [conflictRow]
+
+    for (let row of conflictRows) {
+      if ((obj as any)[String(row)] == null)
+        throw new Error(`Field ${row} has to be part of object ${obj}`)
+    }
 
     const fields = []
     const values = []
@@ -158,7 +163,7 @@ function useSqliteTable<
     let fieldsUpdate = fields.map(field => `${field}=?`).join(', ')
 
     return prepare(
-      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${String(field)}) DO UPDATE SET ${fieldsUpdate}`
+      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${conflictRows.map(r => String(r)).join(', ')}) DO UPDATE SET ${fieldsUpdate}`
     ).run([...values, ...values])
   }
 
@@ -193,13 +198,14 @@ function useSqliteTable<
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function index(field: RowKeys, indexName?: string): SqliteRunResult {
-    return prepare(`CREATE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName} (${String(field)})`).run()
+  function index(field: RowKey | RowKey[], indexName?: string, unique?: boolean): SqliteRunResult {
+    const fields = isArray(field) ? field : [field]
+    return prepare(`CREATE ${unique === true ? 'UNIQUE ' : ''}INDEX IF NOT EXISTS ${indexName ?? 'idx_' + fields.map(r => String(r)).join('_')} ON ${tableName} (${fields.map(r => String(r)).join(', ')})`).run()
   }
 
   /** Create index `idx_field` of column `field` if not exists. */
-  function indexUnique(field: RowKeys, indexName?: string): SqliteRunResult {
-    return prepare(`CREATE UNIQUE INDEX IF NOT EXISTS ${indexName ?? 'idx_' + String(field)} ON ${tableName} (${String(field)})`).run()
+  function indexUnique(field: RowKey | RowKey[], indexName?: string): SqliteRunResult {
+    return index(field, indexName, true)
   }
 
   return {

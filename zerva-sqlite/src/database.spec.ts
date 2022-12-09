@@ -73,6 +73,24 @@ describe("database.spec", () => {
       }
     `)
 
+    table.indexUnique(['name', 'age'])
+
+    table.upsert(['name', 'age'], {
+      id: 1,
+      name: 'Dirk',
+      age: 50,
+      active: true
+    })
+
+    expect(table.get(1)).toMatchInlineSnapshot(`
+      {
+        "active": 1,
+        "age": 50,
+        "id": 1,
+        "name": "Dirk",
+      }
+    `)
+
     table.upsert('name', {
       name: 'Anna',
       age: 20,
@@ -87,7 +105,7 @@ describe("database.spec", () => {
 
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
-        "active": 0,
+        "active": 1,
         "age": 50,
         "id": 1,
         "name": "Diego",
@@ -96,7 +114,7 @@ describe("database.spec", () => {
 
     expect(table.getByField('name', 'Diego')).toMatchInlineSnapshot(`
       {
-        "active": 0,
+        "active": 1,
         "age": 50,
         "id": 1,
         "name": "Diego",
@@ -117,7 +135,7 @@ describe("database.spec", () => {
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
       {
-        "active": 0,
+        "active": 1,
         "age": 50,
         "amount": null,
         "id": 1,
@@ -133,7 +151,7 @@ describe("database.spec", () => {
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
       {
-        "active": 0,
+        "active": 1,
         "age": 50,
         "amount": 1.23,
         "id": 1,
@@ -143,7 +161,7 @@ describe("database.spec", () => {
     `)
     expect(table.get(1)).toMatchInlineSnapshot(`
       {
-        "active": 0,
+        "active": 1,
         "age": 50,
         "amount": 1.23,
         "id": 1,
@@ -157,7 +175,7 @@ describe("database.spec", () => {
     expect(table.all()).toMatchInlineSnapshot(`
       [
         {
-          "active": 0,
+          "active": 1,
           "age": 50,
           "amount": 1.23,
           "id": 1,
@@ -244,6 +262,9 @@ describe("database.spec", () => {
         "SELECT count(id) AS count FROM test",
         "SELECT * FROM test WHERE id=1.0",
         "INSERT INTO test (active, age, name) VALUES(0.0, 50.0, 'Dirk') ON CONFLICT(name) DO UPDATE SET active=0.0, age=50.0, name='Dirk'",
+        "SELECT * FROM test WHERE id=1.0",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_name_age ON test (name, age)",
+        "INSERT INTO test (active, age, id, name) VALUES(1.0, 50.0, 1.0, 'Dirk') ON CONFLICT(name, age) DO UPDATE SET active=1.0, age=50.0, id=1.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0",
         "INSERT INTO test (active, age, name) VALUES(1.0, 20.0, 'Anna') ON CONFLICT(name) DO UPDATE SET active=1.0, age=20.0, name='Anna'",
         "SELECT count(id) AS count FROM test",
