@@ -97,12 +97,47 @@ export function useSqliteTable<
 
   /** Query `value` of a certain `field` */
   function getByField(name: ColName, value: any): ColFullType {
-    const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=?`
+    const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=? LIMIT 1`
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return prepare(sql).get(value)
   }
 
-  const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=?`)
+  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: ColName | ColName[]) {
+    const fields = []
+    const values = []
+    if (cols) {
+      for (const field of sortedFields) {
+        if (field in cols ?? {}) {
+          fields.push(`${field}=?`)
+          values.push(normalizeValue((cols as any)[field]))
+        }
+      }
+    }
+    let sql = `SELECT * FROM ${tableName}`
+    if (fields.length > 0) sql += ` WHERE ${fields.join(' AND ')}`
+    if (orderBy != null) {
+      if (isArray(orderBy)) sql += ` ORDER BY ${orderBy.join(', ')}`
+      else sql += ` ORDER BY ${orderBy}`
+    }
+    if (limit != null) sql += ` LIMIT ${limit}`
+    // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
+    return {
+      statement: prepare(sql),
+      values
+    }
+  }
+
+  function findOne(cols: Partial<ColFullType>): ColFullType {
+    let { statement, values } = findPrepare(cols, 1)
+    return statement.get(values)
+  }
+
+  function findAll(cols?: Partial<ColFullType>, orderBy?: ColName | ColName[]): ColFullType {
+    let { statement, values } = findPrepare(cols, undefined, orderBy)
+    return statement.all(values)
+  }
+
+  const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=? LIMIT 1`)
 
   /** Query row with `id`  */
   function get(id: number | string): ColFullType {
@@ -222,7 +257,9 @@ export function useSqliteTable<
     index,
     indexUnique,
     count,
-    all
+    all,
+    findOne,
+    findAll
   }
 }
 
