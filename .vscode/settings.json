@@ -1,0 +1,12 @@
+{
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "vitest.disabledWorkspaceFolders": [
+    "root",
+    "/Users/dirk/work/apperdeck",
+    "/Users/dirk/work/github-zerva"
+  ]
+}
