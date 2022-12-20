@@ -89,3 +89,5 @@ zerva-bin/bin.cjs
 *.node
 
 .npmrc*
+
+.vscode
