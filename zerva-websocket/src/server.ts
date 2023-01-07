@@ -5,13 +5,7 @@ import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
 import { Channel, equalBinary, Logger, LogLevelAliasType, uname } from "zeed"
-import {
-  pingMessage,
-  pongMessage,
-  webSocketPath,
-  wsReadyStateConnecting,
-  wsReadyStateOpen,
-} from "./types"
+import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen, } from "./types"
 
 const moduleName = "websocket"
 
@@ -24,14 +18,14 @@ interface ZWebSocketConfig {
 function safeLength(data: any): number {
   try {
     return data?.length ?? data?.byteLength ?? data?.count ?? -1
-  } catch (err: any) {}
+  } catch (err: any) { }
   return -1
 }
 
 function safeType(data: any): string {
   try {
     return (data as any)?.constructor?.name ?? typeof data ?? "unknown"
-  } catch (err: any) {}
+  } catch (err: any) { }
   return "unknown"
 }
 

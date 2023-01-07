@@ -47,12 +47,12 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "express-session": "^1.17.3",
-    "keycloak-connect": "^20.0.1",
-    "zeed": "^0.8.49"
+    "keycloak-connect": "^20.0.2",
+    "zeed": "^0.8.58"
   },
   "devDependencies": {
     "@types/express-session": "^1.17.5",
     "tsup": "^6.5.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.4"
   }
 }
