@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -37,10 +37,10 @@
     "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
   },
   "dependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.18",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.15.15",
+    "esbuild": "^0.16.15",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.8.49"
+    "zeed": "^0.8.58"
   }
 }

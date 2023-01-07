@@ -1,6 +1,6 @@
 {
   "name": "@zerva/socketio",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "🌱 Zerva socket.io module",
   "keywords": [
     "server",
@@ -44,13 +44,13 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/ws": "^8.5.3",
+    "@types/ws": "^8.5.4",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "detect-browser": "^5.3.0",
     "engine.io": "^6.2.1",
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
-    "zeed": "^0.8.49"
+    "zeed": "^0.8.58"
   }
 }

@@ -9,6 +9,7 @@ export interface ZervaConf {
   version: string
   build: boolean
   outfile: string
+  metafile: boolean
   help: boolean
   esm: boolean
   sourcemap: boolean
@@ -27,6 +28,7 @@ export function getConfig(): ZervaConf {
     help: false,
     esm: false,
     version: "",
+    metafile: true,
     sourcemap: true,
     debug: false,
     external: [],
@@ -62,6 +64,7 @@ export function getConfig(): ZervaConf {
   config.args = args
   config.help = args.help
   config.sourcemap = !args.noSourcemap
+  config.metafile = !args.metafile
   config.external = args.external ?? []
   config.build = args.build ?? args._.includes("build")
   config.esm = args.esm
