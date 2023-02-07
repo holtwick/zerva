@@ -55,3 +55,10 @@ let doe = table.get(1)
 // Directly do all you like do with BetterSQLite3
 const betterSQLiteDatabase = db.db
 ```
+
+## Links
+
+Inspirations and alternatives:
+
+- https://mongoosejs.com/docs/typescript.html
+- https://sequelize.org/
