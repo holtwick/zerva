@@ -9,7 +9,7 @@ import {
   trackPageView,
 } from "./track-umami"
 
-const name = "uammi"
+const name = "umami"
 const log = Logger(`zerva:${name}`)
 
 interface Config {

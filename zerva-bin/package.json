@@ -37,10 +37,10 @@
     "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
   },
   "dependencies": {
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.13.0",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.16.15",
+    "esbuild": "^0.17.6",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.8.58"
+    "zeed": "^0.9.5"
   }
 }
