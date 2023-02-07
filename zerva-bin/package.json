@@ -40,7 +40,7 @@
   "dependencies": {
     "@types/node": "^18.13.0",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.16.0",
+    "esbuild": "=0.16.17",
     "esbuild-plugin-yaml": "^0.0.1",
     "zeed": "^0.9.5"
   }
