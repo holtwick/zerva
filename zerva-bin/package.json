@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.17.2",
+  "version": "0.17.3",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -29,6 +29,7 @@
     "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
+    "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "echo todo",
@@ -39,7 +40,7 @@
   "dependencies": {
     "@types/node": "^18.13.0",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.17.6",
+    "esbuild": "^0.16.0",
     "esbuild-plugin-yaml": "^0.0.1",
     "zeed": "^0.9.5"
   }
