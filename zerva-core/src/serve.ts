@@ -32,6 +32,7 @@ export function onStop(handler: () => void) {
 
 export async function serveStop() {
   if (serverRunning) {    
+    serverRunning = false
     await emit("serveStop")
   }
 }
