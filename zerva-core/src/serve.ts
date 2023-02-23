@@ -74,15 +74,12 @@ process.on("beforeExit", serverCheck)
 
 // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
 const signals:any = {   
-  // SIGABRT: 0,
-  // SIGQUIT: 0,
   SIGHUP: 1,
   SIGINT: 2,
   SIGTERM: 15,
 }
 
-Object.keys(signals).forEach((signal) => {  
-  log.info('on', signal)
+Object.keys(signals).forEach((signal) => {    
   process.on(signal, () => {    
     log.info(`Process received a ${signal} signal`)
     serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
