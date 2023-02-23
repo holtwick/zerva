@@ -41,12 +41,14 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "tsup src/index.ts --watch"
+    "watch": "tsup src/index.ts --watch",
+    "drun": "ZEED=* LEVEL=a zerva demo/zerva.ts"
   },
   "dependencies": {
     "zeed": "^0.9.22"
   },
   "devDependencies": {
+    "@zerva/bin": "workspace:*",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.14.1",
     "tsup": "^6.6.3",

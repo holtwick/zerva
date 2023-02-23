@@ -13,6 +13,9 @@ declare global {
   }
 }
 
+let serverStarted = false
+let serverRunning = false
+
 // Shortcuts
 
 export function onInit(handler: () => void) {
@@ -28,10 +31,13 @@ export function onStop(handler: () => void) {
 }
 
 export async function serveStop() {
-  await emit("serveStop")
+  if (serverRunning) {    
+    await emit("serveStop")
+  }
 }
 
-let serverStarted = false
+on('serveStart', () => serverRunning = true)
+on('serveStop', () => serverRunning = false)
 
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
@@ -53,7 +59,7 @@ export async function serve(fn?: () => void) {
   log("serve")
 }
 
-function serverCheck() {
+function serverCheck() {  
   if (serverStarted !== true) {
     log.info("Zerva has not been started manually, will start now!")
     serve()
@@ -61,20 +67,23 @@ function serverCheck() {
 }
 
 process.on("beforeExit", serverCheck)
-
+// process.on('exit', serveStop)
+ 
 // Graceful exit
 
 // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
-const signals:any = {
+const signals:any = {   
+  // SIGABRT: 0,
+  // SIGQUIT: 0,
   SIGHUP: 1,
   SIGINT: 2,
   SIGTERM: 15,
 }
 
 Object.keys(signals).forEach((signal) => {  
-  process.on(signal, async () => {    
+  log.info('on', signal)
+  process.on(signal, () => {    
     log.info(`Process received a ${signal} signal`)
-    await serveStop()
-    process.exit(128 + (signals[signal] ?? 0))
+    serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
   })
 })
