@@ -3,7 +3,7 @@
 import { Logger } from "zeed"
 import { emit, on } from "./context"
 
-const log = Logger(`zerva:serve`, false)
+const log = Logger(`zerva:serve`, 'info')
 
 declare global {
   interface ZContextEvents {
@@ -43,14 +43,14 @@ export async function serve(fn?: () => void) {
   serverStarted = true
 
   if (fn) {
-    log.info("launch")
+    log("launch")
     fn()
   }
-  log.info("init")
+  log("init")
   await emit("serveInit")
-  log.info("start")
+  log("start")
   await emit("serveStart")
-  log.info("serve")
+  log("serve")
 }
 
 function serverCheck() {
@@ -71,9 +71,9 @@ const signals:any = {
   SIGTERM: 15,
 }
 
-Object.keys(signals).forEach((signal) => {
-  process.on(signal, async () => {
-    log.info(`process received a ${signal} signal`)
+Object.keys(signals).forEach((signal) => {  
+  process.on(signal, async () => {    
+    log.info(`Process received a ${signal} signal`)
     await serveStop()
     process.exit(128 + (signals[signal] ?? 0))
   })

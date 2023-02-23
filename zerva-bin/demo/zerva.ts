@@ -22,3 +22,4 @@ function catchSome() {
 
 // test
 // catchSome()
+
