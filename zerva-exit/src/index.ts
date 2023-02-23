@@ -1,36 +1,25 @@
+// Inspired by https://medium.com/@becintec/building-graceful-node-applications-in-docker-4d2cd4d5d392
+
 import { serveStop } from "@zerva/core"
-import { Logger } from "zeed"
+import type { LoggerInterface } from 'zeed'
+import { Logger } from 'zeed'
 
-const log = Logger("zerva:exit")
+const log: LoggerInterface = Logger('zerva:exit')
 
-/**
- * Handle exit signals gracefully and let modules perform `serveStop`
- */
+/** @deprecated */
 export function useExit(config: any = {}) {
-  log.info("exit")
+  // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
+  const signals:any = {
+    SIGHUP: 1,
+    SIGINT: 2,
+    SIGTERM: 15,
+  }
 
-  process.on("exit", async () => {
-    log.info("exit received")
-    // await serveStop()
-  })
-
-  process.on("SIGABRT", async () => {
-    log.info("SIGABRT received")
-    await serveStop()
-  })
-
-  process.on("SIGQUIT", async () => {
-    log.info("SIGQUIT received")
-    await serveStop()
-  })
-
-  process.on("SIGINT", async () => {
-    log.info("SIGINT received")
-    await serveStop()
-  })
-
-  process.on("SIGTERM", async () => {
-    log.info("SIGTERM received")
-    await serveStop()
+  Object.keys(signals).forEach((signal) => {
+    process.on(signal, async () => {
+      log.info(`process received a ${signal} signal`)
+      await serveStop()
+      process.exit(128 + (signals[signal] ?? 0))
+    })
   })
 }

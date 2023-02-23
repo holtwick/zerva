@@ -124,8 +124,8 @@ For better compatibility the defines can also be accessed as `process.env.ZERVA_
 
 ## Minimal Requirements
 
-- Node: 14.13.1
-- JS target: es2020
+- Node: 16
+- JS target: es2022
 
 See [tsconfig/bases](https://github.com/tsconfig/bases) to learn details about the configuration considerations.
 

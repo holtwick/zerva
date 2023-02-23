@@ -46,11 +46,11 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "vite": "^4.1.1",
-    "zeed": "^0.9.5"
+    "vite": "^4.1.4",
+    "zeed": "^0.9.22"
   },
   "devDependencies": {
-    "tsup": "^6.5.0",
+    "tsup": "^6.6.3",
     "typescript": "^4.9.5"
   },
   "peerDependencies": {

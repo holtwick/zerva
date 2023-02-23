@@ -48,10 +48,10 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "nodemailer": "^6.9.1",
-    "zeed": "^0.9.5"
+    "zeed": "^0.9.22"
   },
   "devDependencies": {
-    "@types/node": "^18.13.0",
-    "tsup": "^6.5.0"
+    "@types/node": "^18.14.1",
+    "tsup": "^6.6.3"
   }
 }
