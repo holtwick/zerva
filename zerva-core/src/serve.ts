@@ -81,7 +81,7 @@ const signals:any = {
 
 Object.keys(signals).forEach((signal) => {    
   process.on(signal, () => {    
-    log.info(`Process received a ${signal} signal`)
+    log(`Process received a ${signal} signal`)
     serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
   })
 })
