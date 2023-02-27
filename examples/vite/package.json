@@ -12,12 +12,12 @@
     "url": "https://holtwick.de"
   },
   "scripts": {
-    "build": "pnpm run clean && zerva build --esm src/zerva/index.ts && vite build",
+    "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
     "clean": "rm -rf dist dist_www",
     "prod": "pnpm run build && pnpm run serve",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* LEVEL=i node --enable-source-maps dist/main.mjs",
-    "start": "ZEED=* LEVEL=a zerva --esm src/zerva/index.ts",
+    "start": "ZEED=* LEVEL=a zerva src/zerva/index.ts",
     "vite_build": "vite build",
     "vite_dev": "vite",
     "vite_serve": "vite preview"

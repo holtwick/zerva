@@ -3,7 +3,7 @@
 import { Logger } from "zeed"
 import { emit, on } from "./context"
 
-const log = Logger(`zerva:serve`, false)
+const log = Logger(`zerva:serve`, 'info')
 
 declare global {
   interface ZContextEvents {
@@ -12,6 +12,9 @@ declare global {
     serveStop(): void
   }
 }
+
+let serverStarted = false
+let serverRunning = false
 
 // Shortcuts
 
@@ -28,10 +31,14 @@ export function onStop(handler: () => void) {
 }
 
 export async function serveStop() {
-  await emit("serveStop")
+  if (serverRunning) {    
+    serverRunning = false
+    await emit("serveStop")
+  }
 }
 
-let serverStarted = false
+on('serveStart', () => serverRunning = true)
+on('serveStop', () => serverRunning = false)
 
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
@@ -43,17 +50,17 @@ export async function serve(fn?: () => void) {
   serverStarted = true
 
   if (fn) {
-    log.info("launch")
+    log("launch")
     fn()
   }
-  log.info("init")
+  log("init")
   await emit("serveInit")
-  log.info("start")
+  log("start")
   await emit("serveStart")
-  log.info("serve")
+  log("serve")
 }
 
-function serverCheck() {
+function serverCheck() {  
   if (serverStarted !== true) {
     log.info("Zerva has not been started manually, will start now!")
     serve()
@@ -61,20 +68,20 @@ function serverCheck() {
 }
 
 process.on("beforeExit", serverCheck)
-
+// process.on('exit', serveStop)
+ 
 // Graceful exit
 
 // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
-const signals:any = {
+const signals:any = {   
   SIGHUP: 1,
   SIGINT: 2,
   SIGTERM: 15,
 }
 
-Object.keys(signals).forEach((signal) => {
-  process.on(signal, async () => {
-    log.info(`process received a ${signal} signal`)
-    await serveStop()
-    process.exit(128 + (signals[signal] ?? 0))
+Object.keys(signals).forEach((signal) => {    
+  process.on(signal, () => {    
+    log(`Process received a ${signal} signal`)
+    serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
   })
 })

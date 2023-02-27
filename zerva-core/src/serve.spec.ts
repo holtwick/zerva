@@ -49,7 +49,7 @@ describe("serve", () => {
       {
         "init": true,
         "start": true,
-        "stop": true,
+        "stop": false,
       }
     `)
   })

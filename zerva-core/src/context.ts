@@ -76,6 +76,25 @@ export function on<U extends keyof ZContextEvents>(
   return dispose
 }
 
+export function once<U extends keyof ZContextEvents>(
+  first: U,
+  listener: ZContextEvents[U]
+): DisposerFunction // Overload!
+
+export function once<U extends keyof ZContextEvents>(
+  first: Partial<ZContextEvents> | U,
+  listener?: ZContextEvents[U]
+): DisposerFunction {
+  if (typeof first === "string" && listener != null) {
+    return getContext().once(first, listener)
+  }
+  const dispose = useDispose()
+  Object.entries(first).forEach(([k, v]) => {
+    dispose.add(getContext().once(k as any, v))
+  })
+  return dispose
+}
+
 /**
  * Check existance of registered module.
  *
