@@ -91,3 +91,5 @@ zerva-bin/bin.cjs
 .npmrc*
 
 .vscode
+
+_archive
