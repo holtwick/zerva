@@ -1,24 +1,16 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { emit, on, register } from "@zerva/core"
-import e, { default as corsDefault } from "cors"
+import { default as corsDefault } from "cors"
 import express from "express"
 import fs from "fs"
+import compressionMiddleware from 'compression'
 import { default as helmetDefault, HelmetOptions } from "helmet"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
 import { isLocalHost, isString, Logger, LogLevel, promisify } from "zeed"
-import {
-  Express,
-  httpGetHandler,
-  httpHandlerModes,
-  httpInterface,
-  httpPaths,
-  Request,
-  Response,
-  Server,
-} from "./types"
+import { Express, httpGetHandler, httpHandlerModes, httpInterface, httpPaths, Request, Response, Server } from "./types"
 
 export * from "./types"
 
@@ -42,6 +34,9 @@ export function useHttp(config?: {
 
   /** Security setting https://helmetjs.github.io/ */
   helmet?: boolean | HelmetOptions
+
+  /** Compress content */
+  compression?: boolean
 
   /** https://stackoverflow.com/a/46475726/140927 */
   trustProxy?: boolean
@@ -72,6 +67,7 @@ export function useHttp(config?: {
     noExtras = false,
     cors = true,
     helmet = true,
+    compression = true,
     trustProxy = true,
     postLimit = "1gb",
     postJson = true,
@@ -89,10 +85,13 @@ export function useHttp(config?: {
     log("noExtra")
   } else {
     if (helmet) {
-      const options =
-        helmet === true ? { contentSecurityPolicy: false } : helmet
+      const options = helmet === true ? { contentSecurityPolicy: false } : helmet
       log("Helmet", options)
       app.use(helmetDefault(options))
+    }
+
+    if (compression) {
+      app.use(compressionMiddleware())
     }
 
     if (cors) {
@@ -217,41 +216,39 @@ export function useHttp(config?: {
     app.use(path, express.static(fsPath))
   }
 
-  function get(path: httpPaths, handler: httpGetHandler) {
+  function GET(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("get", path, handler)
   }
 
-  function post(path: httpPaths, handler: httpGetHandler) {
+  function POST(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("post", path, handler)
   }
 
-  function put(path: httpPaths, handler: httpGetHandler) {
+  function PUT(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("put", path, handler)
   }
 
-  function del(path: httpPaths, handler: httpGetHandler) {
+  function DELETE(path: httpPaths, handler: httpGetHandler) {
     return smartRequestHandler("delete", path, handler)
   }
 
   on("serveInit", async () => {
     log("serveInit")
-
-    await emit("httpInit", {
-      // @ts-ignore
+    await emit("httpInit", {       
       app,
       http: server,
-      get,
-      post,
-      put,
-      delete: del,
-      GET: get,
-      POST: post,
-      PUT: put,
-      DELETE: del,
+      get: GET,
+      post: POST,
+      put: PUT,
+      delete: DELETE,
+      GET,
+      POST,
+      PUT,
+      DELETE: DELETE,
       addStatic,
       static: addStatic,
       STATIC: addStatic,
-    })
+    } as any)
   })
 
   on("serveStop", async () => {
@@ -262,21 +259,20 @@ export function useHttp(config?: {
   on("serveStart", async () => {
     log("serveStart")
     await emit("httpWillStart", {
-      // @ts-ignore
       app,
       http: server,
-      get,
-      post,
-      put,
-      delete: del,
-      GET: get,
-      POST: post,
-      PUT: put,
-      DELETE: del,
+      get: GET,
+      post: POST,
+      put: PUT,
+      delete: DELETE,
+      GET,
+      POST,
+      PUT,
+      DELETE,
       addStatic,
       static: addStatic,
       STATIC: addStatic,
-    })
+    } as any)
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
       const host = isLocalHost(address) ? "localhost" : address
@@ -295,14 +291,14 @@ export function useHttp(config?: {
   return {
     app,
     http: server,
-    get,
-    post,
-    put,
-    delete: del,
-    GET: get,
-    POST: post,
-    PUT: put,
-    DELETE: del,
+    get: GET,
+    post: POST,
+    put: PUT,
+    delete: DELETE,
+    GET: GET,
+    POST: POST,
+    PUT: PUT,
+    DELETE: DELETE,
     addStatic,
     static: addStatic,
     STATIC: addStatic,
