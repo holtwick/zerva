@@ -1,6 +1,6 @@
 {
   "name": "@zerva/keycloak",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "🌱 Zerva useKeycloak",
   "keywords": [
     "server",
@@ -47,8 +47,8 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "express-session": "^1.17.3",
-    "keycloak-connect": "^21.0.0",
-    "zeed": "^0.9.22"
+    "keycloak-connect": "^21.0.1",
+    "zeed": "^0.9.26"
   },
   "devDependencies": {
     "@types/express-session": "^1.17.6",

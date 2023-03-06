@@ -1,7 +1,5 @@
 {
-  "minify": true,
   "dts": true,
-  "sourcemap": true,
   "format": [
     "esm",
     "cjs"
@@ -9,5 +7,7 @@
   "loader": {
     ".css": "text",
     ".html": "text"
-  }
+  },
+  "minify": true,
+  "sourcemap": true
 }

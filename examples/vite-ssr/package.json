@@ -22,10 +22,10 @@
     "start": "ZEED=* zerva"
   },
   "dependencies": {
-    "@vueuse/head": "^1.1.9",
+    "@vueuse/head": "^1.1.15",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
-    "zeed": "^0.9.22"
+    "zeed": "^0.9.26"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
