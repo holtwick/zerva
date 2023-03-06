@@ -45,11 +45,11 @@
     "drun": "ZEED=* LEVEL=a zerva demo/zerva.ts"
   },
   "dependencies": {
-    "zeed": "^0.9.22"
+    "zeed": "^0.9.26"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.14.6",
     "@zerva/bin": "workspace:*",
     "tsup": "^6.6.3",
     "typescript": "^4.9.5",
