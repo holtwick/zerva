@@ -48,7 +48,7 @@
     "@zerva/http": "workspace:*",
     "express-session": "^1.17.3",
     "keycloak-connect": "^21.0.1",
-    "zeed": "^0.9.26"
+    "zeed": "^0.10.1"
   },
   "devDependencies": {
     "@types/express-session": "^1.17.6",

@@ -9,13 +9,13 @@ import { default as helmetDefault, HelmetOptions } from "helmet"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
-import { isLocalHost, isString, Logger, LogLevel, promisify } from "zeed"
+import { isLocalHost, isString, Logger, LogLevelInfo, promisify } from "zeed"
 import { Express, httpGetHandler, httpHandlerModes, httpInterface, httpPaths, Request, Response, Server } from "./types"
 
 export * from "./types"
 
 const name = "http"
-const log = Logger(`zerva:${name}`, LogLevel.info) // todo let the coder decide
+const log = Logger(`zerva:${name}`, LogLevelInfo) // todo let the coder decide
 
 export function useHttp(config?: {
   host?: string
