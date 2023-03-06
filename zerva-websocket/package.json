@@ -1,6 +1,6 @@
 {
   "name": "@zerva/websocket",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "🌱 Zerva websocket module",
   "keywords": [
     "server",
@@ -53,7 +53,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.12.1",
-    "zeed": "^0.9.26"
+    "zeed": "^0.10.1"
   },
   "devDependencies": {
     "tsup": "^6.6.3",

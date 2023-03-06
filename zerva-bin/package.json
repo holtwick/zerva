@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -42,6 +42,6 @@
     "display-notification": "^3.0.0",
     "esbuild": "=0.16.17",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.9.26"
+    "zeed": "^0.10.1"
   }
 }

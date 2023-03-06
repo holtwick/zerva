@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
@@ -45,7 +45,7 @@
     "drun": "ZEED=* LEVEL=a zerva demo/zerva.ts"
   },
   "dependencies": {
-    "zeed": "^0.9.26"
+    "zeed": "^0.10.1"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
