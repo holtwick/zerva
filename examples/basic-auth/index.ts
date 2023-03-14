@@ -3,14 +3,20 @@
 import { on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import { useBasicAuth } from "@zerva/basic-auth"
+import { Logger, LoggerInterface } from "zeed"
+
+const log: LoggerInterface = Logger("basic-auth")
+
+log('start')
 
 useHttp()
 
 useBasicAuth({
+  logout: '/logout',
   routes: ["/protected"],
   users: {
     a: 'b'
-  }
+  },
 })
 
 on("httpInit", ({ get }) => {
@@ -24,29 +30,12 @@ on("httpInit", ({ get }) => {
     </p>`
   )
 
-  get("/protected", ({ req }) => {
-    //@ts-ignore
-    const content = req?.kauth?.grant?.access_token?.content
-    const info =
-      content != null
-        ? {
-            auth: true,
-            username: content.preferred_username,
-            email: content.email,
-            name: content.name,
-            // content,
-            // keys: Object.keys(content),
-            // roles: content.realm_access.roles,
-            // roles: content.resource_access.contenthub.roles,
-            // content,
-          }
-        : {
-            auth: false,
-          }
+  get("/protected", ({ req }) => {    
+    log('protected',  req)
     return `<p>
         This should be protected:
       </p>
-        <pre>${JSON.stringify(info, null, 2)}</pre>
+        User: ${req.user}
       <p>
         <a href="/logout">Logout</a>
       </p>`

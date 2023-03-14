@@ -1,5 +1,5 @@
 import { on, register } from "@zerva/core"
-import { Logger } from "zeed"
+import { Logger, size } from "zeed"
 import { auth } from "./auth"
 import '@zerva/http'
 
@@ -15,11 +15,8 @@ declare global {
 interface ZervaKeycloakConfig {
   routes?: any[]
   users?: Record<string, string>
-  // host?: string
-  // protocol?: string
-  // logout?: string
-  // sessionSecret?: string
-  // sessionStore?: session.Store
+  logout?: string
+  realm?: string
 }
 
 export function useBasicAuth(config?: ZervaKeycloakConfig) {
@@ -27,18 +24,23 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
   register(name, ["http"])
 
   const {
-    routes = [],
-    users = {}
-    // host,
-    // protocol,
-    // logout = "/logout",
-    // sessionSecret = uuid(),
+    routes = ['/'],
+    users = {},
+    logout,
+    realm="default"
   } = config ?? {}
 
-  function check(user:string, password:string) {
+if (size(users) <= 0) log.error('No user credentials found!')
+
+  function doCheckCredentials(user: string, password: string) {
     return users[user] === password
   }
-  
+
+  function doLogout(res: any) {
+    res.statusCode = 401
+    res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)    
+  }
+
   // 1. Register middleware
   on("httpInit", ({ app }) => {
     // https://stackoverflow.com/a/46475726/140927
@@ -50,6 +52,12 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
     //   keycloak.protect()
     // )
 
+    // todo does not accept reentering of credentials
+    if (logout)
+      app.use(logout, (_req, res, _next) => {
+        doLogout(res)
+        res.end('You have successfully logged out')
+      })
 
     routes.forEach((route) => {
       log.info("protect", route)
@@ -58,19 +66,15 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
 
         // Check credentials
         // The "check" function will typically be against your user store
-        if (!credentials || !check(credentials.user, credentials.password)) {
-          res.statusCode = 401
-          res.setHeader('WWW-Authenticate', 'Basic realm="example"')
+        if (!credentials || !doCheckCredentials(credentials.user, credentials.password)) {
+          doLogout(res)
           res.end('Access denied')
-        } else {
-          res.end('Access granted')
+          return
         }
+
+        (req as any).user = credentials.user
+        next()
       })
     })
-
-    // emit("keycloakInit", {
-    //   keycloak,
-    //   app,
-    // })
   })
 }
