@@ -6,13 +6,13 @@ import '@zerva/http'
 const name = "basic-auth"
 const log = Logger(`zerva:${name}`)
 
-declare global {
-  interface ZContextEvents {
-    // basicAuth(info: { keycloak: Keycloak; app: Express }): void
-  }
-}
+// declare global {
+//   interface ZContextEvents {
+//     basicAuth(info: { keycloak: Keycloak; app: Express }): void
+//   }
+// }
 
-interface ZervaKeycloakConfig {
+interface ZervaBasicAuthConfig {
   routes?: any[]
   users?: Record<string, string>
   logout?: string
@@ -20,7 +20,7 @@ interface ZervaKeycloakConfig {
   waitSecondsBetweenAuthorization: number
 }
 
-export function useBasicAuth(config?: ZervaKeycloakConfig) {
+export function useBasicAuth(config?: ZervaBasicAuthConfig) {
   log.info(`use ${name}`)
   register(name, ["http"])
 
@@ -38,7 +38,7 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
     return users[user] === password
   }
 
-  function doLogout(res: any) {
+  function doReturnError(res: any) {
     res.statusCode = 401
     res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)
   }
@@ -57,7 +57,7 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
     // todo does not accept reentering of credentials
     if (logout)
       app.use(logout, (_req, res, _next) => {
-        doLogout(res)
+        doReturnError(res)
         res.end('You have successfully logged out')
       })
 
@@ -69,6 +69,7 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
 
         if (credentials && (credentials.user.length || credentials.password.length)) {
 
+          // Credentials ok? Go for it!
           if (doCheckCredentials(credentials.user, credentials.password)) {
             (req as any).user = credentials.user
             next()
@@ -77,11 +78,12 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
 
           log('Wrong credentials', credentials)
 
+          // Prevent brute force
           if (waitSecondsBetweenAuthorization > 0) {
             let now = Date.now()
             if ((now - lastTry) < (waitSecondsBetweenAuthorization * 1000)) {
               log.warn('Rate limit reached!')
-              doLogout(res)
+              doReturnError(res)
               res.end('Please try again later')
               return
             }
@@ -89,7 +91,7 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
           }
         }
 
-        doLogout(res)
+        doReturnError(res)
         res.end('Access denied')
       })
     })
