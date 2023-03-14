@@ -17,6 +17,7 @@ interface ZervaKeycloakConfig {
   users?: Record<string, string>
   logout?: string
   realm?: string
+  waitSecondsBetweenAuthorization: number
 }
 
 export function useBasicAuth(config?: ZervaKeycloakConfig) {
@@ -27,10 +28,11 @@ export function useBasicAuth(config?: ZervaKeycloakConfig) {
     routes = ['/'],
     users = {},
     logout,
-    realm="default"
+    realm = "default",
+    waitSecondsBetweenAuthorization = 1
   } = config ?? {}
 
-if (size(users) <= 0) log.error('No user credentials found!')
+  if (size(users) <= 0) log.error('No user credentials found!')
 
   function doCheckCredentials(user: string, password: string) {
     return users[user] === password
@@ -38,7 +40,7 @@ if (size(users) <= 0) log.error('No user credentials found!')
 
   function doLogout(res: any) {
     res.statusCode = 401
-    res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)    
+    res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)
   }
 
   // 1. Register middleware
@@ -59,21 +61,36 @@ if (size(users) <= 0) log.error('No user credentials found!')
         res.end('You have successfully logged out')
       })
 
-    routes.forEach((route) => {
-      log.info("protect", route)
-      app.use(route, (req, res, next) => {
-        var credentials = auth(req)
+    let lastTry = 0
 
-        // Check credentials
-        // The "check" function will typically be against your user store
-        if (!credentials || !doCheckCredentials(credentials.user, credentials.password)) {
-          doLogout(res)
-          res.end('Access denied')
-          return
+    routes.forEach((route) => {
+      app.use(route, (req, res, next) => {
+        const credentials = auth(req)
+
+        if (credentials && (credentials.user.length || credentials.password.length)) {
+
+          if (doCheckCredentials(credentials.user, credentials.password)) {
+            (req as any).user = credentials.user
+            next()
+            return
+          }
+
+          log('Wrong credentials', credentials)
+
+          if (waitSecondsBetweenAuthorization > 0) {
+            let now = Date.now()
+            if ((now - lastTry) < (waitSecondsBetweenAuthorization * 1000)) {
+              log.warn('Rate limit reached!')
+              doLogout(res)
+              res.end('Please try again later')
+              return
+            }
+            lastTry = now
+          }
         }
 
-        (req as any).user = credentials.user
-        next()
+        doLogout(res)
+        res.end('Access denied')
       })
     })
   })

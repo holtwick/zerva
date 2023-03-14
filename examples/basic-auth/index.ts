@@ -13,6 +13,7 @@ useHttp()
 
 useBasicAuth({
   logout: '/logout',
+  waitSecondsBetweenAuthorization: 5,
   routes: ["/protected"],
   users: {
     a: 'b'
@@ -30,8 +31,7 @@ on("httpInit", ({ get }) => {
     </p>`
   )
 
-  get("/protected", ({ req }) => {    
-    log('protected',  req)
+  get("/protected", ({ req }) => {
     return `<p>
         This should be protected:
       </p>
