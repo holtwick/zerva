@@ -1,6 +1,6 @@
 {
   "name": "@zerva/sqlite",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "private": false,
   "description": "",
   "funding": {
@@ -41,12 +41,12 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "better-sqlite3": "^8.1.0",
-    "zeed": "^0.10.1"
+    "better-sqlite3": "^8.2.0",
+    "zeed": "^0.10.7"
   },
   "devDependencies": {
     "tsup": "^6.6.3",
-    "tsx": "^3.12.3",
+    "tsx": "^3.12.5",
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vitest": "^0.29.2"

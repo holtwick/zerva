@@ -1,7 +1,7 @@
 {
-  "name": "@zerva/plausible",
+  "name": "@zerva/basic-auth",
   "version": "0.21.0",
-  "description": "🌱 Zerva module template",
+  "description": "🌱 Zerva useBasicAuth",
   "keywords": [
     "server",
     "typescript",
@@ -44,10 +44,12 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/request-ip": "^0.0.37",
     "@zerva/core": "workspace:*",
-    "cross-fetch": "^3.1.5",
-    "request-ip": "^3.3.0",
+    "@zerva/http": "workspace:*",
     "zeed": "^0.10.7"
+  },
+  "devDependencies": {
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "zerva-example-minimal",
+  "name": "zerva-example-basic-auth",
   "version": "1.0.0",
   "private": true,
   "description": "Just a simple test",
@@ -17,9 +17,11 @@
   "main": "index.js",
   "scripts": {
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "start": "ZEED=* node index.js"
+    "start": "ZEED=* LEVEL=a zerva index.ts"
   },
   "dependencies": {
+    "@zerva/basic-auth": "workspace:*",
+    "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "zeed": "^0.10.7"
