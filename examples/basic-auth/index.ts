@@ -12,12 +12,10 @@ log('start')
 useHttp()
 
 useBasicAuth({
-  logout: '/logout',
   waitSecondsBetweenAuthorization: 5,
   routes: ["/protected"],
-  users: {
-    a: 'b'
-  },
+  logout: '/logout',
+  auth: { a: 'b' },
 })
 
 on("httpInit", ({ get }) => {
@@ -35,7 +33,7 @@ on("httpInit", ({ get }) => {
     return `<p>
         This should be protected:
       </p>
-        User: ${req.user}
+        User: ${(req as any).user}
       <p>
         <a href="/logout">Logout</a>
       </p>`

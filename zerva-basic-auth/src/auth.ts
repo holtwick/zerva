@@ -7,7 +7,7 @@ export function getAuthorization(req: any) {
   return req.headers.authorization
 }
 
-export function parse(string: string) {
+export function parseCredentials(string: string) {
 
   // parse header
   const match = CREDENTIALS_REGEXP.exec(string)
@@ -24,7 +24,7 @@ export function parse(string: string) {
   }
 }
 
-export function auth(req: any) {
-  return parse(getAuthorization(req))
+export function getCredentials(req: any) {
+  return parseCredentials(getAuthorization(req))
 }
 

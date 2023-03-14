@@ -1,6 +1,6 @@
 import { on, register } from "@zerva/core"
-import { Logger, size } from "zeed"
-import { auth } from "./auth"
+import { isRecord, Logger, size } from "zeed"
+import { getCredentials } from "./auth"
 import '@zerva/http'
 
 const name = "basic-auth"
@@ -14,10 +14,10 @@ const log = Logger(`zerva:${name}`)
 
 interface ZervaBasicAuthConfig {
   routes?: any[]
-  users?: Record<string, string>
+  auth?: Record<string, string> | ((user:string, password:string) => boolean)
   logout?: string
   realm?: string
-  waitSecondsBetweenAuthorization: number
+  waitSecondsBetweenAuthorization?: number
 }
 
 export function useBasicAuth(config?: ZervaBasicAuthConfig) {
@@ -26,16 +26,20 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
 
   const {
     routes = ['/'],
-    users = {},
+    auth,
     logout,
     realm = "default",
     waitSecondsBetweenAuthorization = 1
   } = config ?? {}
 
-  if (size(users) <= 0) log.error('No user credentials found!')
+  if (auth == null || (isRecord(auth) && size(auth) <= 0)) log.error('No user credentials found!')
 
   function doCheckCredentials(user: string, password: string) {
-    return users[user] === password
+    if (auth == null) 
+      return false
+    if (typeof auth === 'function')
+      return auth(user,password)
+    return auth[user] === password
   }
 
   function doReturnError(res: any) {
@@ -65,7 +69,7 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
 
     routes.forEach((route) => {
       app.use(route, (req, res, next) => {
-        const credentials = auth(req)
+        const credentials = getCredentials(req)
 
         if (credentials && (credentials.user.length || credentials.password.length)) {
 
