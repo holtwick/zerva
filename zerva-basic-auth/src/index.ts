@@ -1,44 +1,52 @@
 import { on, register } from "@zerva/core"
-import { Logger, size } from "zeed"
-import { auth } from "./auth"
+import { isRecord, Logger, size } from "zeed"
+import { getCredentials } from "./auth"
 import '@zerva/http'
+
+export * from './htpasswd-md5'
 
 const name = "basic-auth"
 const log = Logger(`zerva:${name}`)
 
-declare global {
-  interface ZContextEvents {
-    // basicAuth(info: { keycloak: Keycloak; app: Express }): void
-  }
-}
+// declare global {
+//   interface ZContextEvents {
+//     basicAuth(info: { keycloak: Keycloak; app: Express }): void
+//   }
+// }
 
-interface ZervaKeycloakConfig {
+interface ZervaBasicAuthConfig {
   routes?: any[]
-  users?: Record<string, string>
+  auth?: Record<string, string> | ((user:string, password:string) => boolean)
   logout?: string
   realm?: string
+  waitSecondsBetweenAuthorization?: number
 }
 
-export function useBasicAuth(config?: ZervaKeycloakConfig) {
+export function useBasicAuth(config?: ZervaBasicAuthConfig) {
   log.info(`use ${name}`)
   register(name, ["http"])
 
   const {
     routes = ['/'],
-    users = {},
+    auth,
     logout,
-    realm="default"
+    realm = "default",
+    waitSecondsBetweenAuthorization = 1
   } = config ?? {}
 
-if (size(users) <= 0) log.error('No user credentials found!')
+  if (auth == null || (isRecord(auth) && size(auth) <= 0)) log.error('No user credentials found!')
 
   function doCheckCredentials(user: string, password: string) {
-    return users[user] === password
+    if (auth == null) 
+      return false
+    if (typeof auth === 'function')
+      return auth(user,password)
+    return auth[user] === password
   }
 
-  function doLogout(res: any) {
+  function doReturnError(res: any) {
     res.statusCode = 401
-    res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)    
+    res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`)
   }
 
   // 1. Register middleware
@@ -55,25 +63,42 @@ if (size(users) <= 0) log.error('No user credentials found!')
     // todo does not accept reentering of credentials
     if (logout)
       app.use(logout, (_req, res, _next) => {
-        doLogout(res)
+        doReturnError(res)
         res.end('You have successfully logged out')
       })
 
-    routes.forEach((route) => {
-      log.info("protect", route)
-      app.use(route, (req, res, next) => {
-        var credentials = auth(req)
+    let lastTry = 0
 
-        // Check credentials
-        // The "check" function will typically be against your user store
-        if (!credentials || !doCheckCredentials(credentials.user, credentials.password)) {
-          doLogout(res)
-          res.end('Access denied')
-          return
+    routes.forEach((route) => {
+      app.use(route, (req, res, next) => {
+        const credentials = getCredentials(req)
+
+        if (credentials && (credentials.user.length || credentials.password.length)) {
+
+          // Credentials ok? Go for it!
+          if (doCheckCredentials(credentials.user, credentials.password)) {
+            (req as any).user = credentials.user
+            next()
+            return
+          }
+
+          log('Wrong credentials', credentials)
+
+          // Prevent brute force
+          if (waitSecondsBetweenAuthorization > 0) {
+            let now = Date.now()
+            if ((now - lastTry) < (waitSecondsBetweenAuthorization * 1000)) {
+              log.warn('Rate limit reached!')
+              doReturnError(res)
+              res.end('Please try again later')
+              return
+            }
+            lastTry = now
+          }
         }
 
-        (req as any).user = credentials.user
-        next()
+        doReturnError(res)
+        res.end('Access denied')
       })
     })
   })

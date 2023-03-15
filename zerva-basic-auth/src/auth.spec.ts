@@ -1,8 +1,8 @@
-import { parse } from "./auth"
+import { parseCredentials } from "./auth"
 
 describe("auth.spec", () => {
   it("should auth", async () => {
-    expect(parse('Basic YTpi')).toMatchInlineSnapshot(`
+    expect(parseCredentials('Basic YTpi')).toMatchInlineSnapshot(`
       {
         "password": "b",
         "user": "a",

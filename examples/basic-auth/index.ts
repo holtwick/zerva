@@ -2,8 +2,9 @@
 
 import { on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
-import { useBasicAuth } from "@zerva/basic-auth"
+import { useBasicAuth, useHtpasswd } from "@zerva/basic-auth"
 import { Logger, LoggerInterface } from "zeed"
+import { readFileSync } from "fs"
 
 const log: LoggerInterface = Logger("basic-auth")
 
@@ -11,12 +12,13 @@ log('start')
 
 useHttp()
 
+let {validate} = useHtpasswd(readFileSync('.htpasswd', 'utf8'))
+
 useBasicAuth({
-  logout: '/logout',
+  waitSecondsBetweenAuthorization: 5,
   routes: ["/protected"],
-  users: {
-    a: 'b'
-  },
+  logout: '/logout',
+  auth: validate // { a: 'b' },
 })
 
 on("httpInit", ({ get }) => {
@@ -26,16 +28,15 @@ on("httpInit", ({ get }) => {
       Not protected.
     </p>
     <p>
-      <a href="/protected">But this one is</a>.
+      <a href="/protected">But this one is with test:test</a>.
     </p>`
   )
 
-  get("/protected", ({ req }) => {    
-    log('protected',  req)
+  get("/protected", ({ req }) => {
     return `<p>
         This should be protected:
       </p>
-        User: ${req.user}
+        User: ${(req as any).user}
       <p>
         <a href="/logout">Logout</a>
       </p>`
