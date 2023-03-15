@@ -3,6 +3,8 @@ import { isRecord, Logger, size } from "zeed"
 import { getCredentials } from "./auth"
 import '@zerva/http'
 
+export * from './htpasswd-md5'
+
 const name = "basic-auth"
 const log = Logger(`zerva:${name}`)
 
