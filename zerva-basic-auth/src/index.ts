@@ -16,7 +16,7 @@ const log = Logger(`zerva:${name}`)
 
 interface ZervaBasicAuthConfig {
   routes?: any[]
-  auth?: Record<string, string> | ((user:string, password:string) => boolean)
+  auth?: Record<string, string> | ((user: string, password: string) => boolean)
   logout?: string
   realm?: string
   waitSecondsBetweenAuthorization?: number
@@ -34,13 +34,14 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
     waitSecondsBetweenAuthorization = 1
   } = config ?? {}
 
-  if (auth == null || (isRecord(auth) && size(auth) <= 0)) log.error('No user credentials found!')
+  if (auth == null || (isRecord(auth) && size(auth) <= 0)) 
+    log.error('No user credentials found!')
 
   function doCheckCredentials(user: string, password: string) {
-    if (auth == null) 
+    if (auth == null)
       return false
     if (typeof auth === 'function')
-      return auth(user,password)
+      return auth(user, password)
     return auth[user] === password
   }
 
@@ -77,7 +78,9 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
 
           // Credentials ok? Go for it!
           if (doCheckCredentials(credentials.user, credentials.password)) {
-            (req as any).user = credentials.user
+            log.debug(`Access granted for "${credentials.user}"`)
+            let _req = req as any
+            _req.user = credentials.user
             next()
             return
           }
