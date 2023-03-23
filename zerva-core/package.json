@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.21.0",
+  "version": "0.22.1",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
@@ -45,14 +45,14 @@
     "drun": "ZEED=* LEVEL=a zerva demo/zerva.ts"
   },
   "dependencies": {
-    "zeed": "^0.10.7"
+    "zeed": "^0.10.17"
   },
   "devDependencies": {
-    "@types/jest": "^29.4.1",
-    "@types/node": "^18.15.3",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.5",
     "@zerva/bin": "workspace:*",
-    "tsup": "^6.6.3",
-    "typescript": "^4.9.5",
-    "vitest": "^0.29.2"
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.2",
+    "vitest": "^0.29.7"
   }
 }

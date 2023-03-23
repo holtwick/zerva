@@ -1,6 +1,6 @@
 {
   "name": "@zerva/bin",
-  "version": "0.21.0",
+  "version": "0.22.1",
   "description": "🌱 Zerva Command Line Tool",
   "keywords": [
     "server",
@@ -34,14 +34,14 @@
     "start": "pnpm run watch",
     "test": "echo todo",
     "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs --esm demo/zerva.ts -d --loader=.md:text --define=TEST:false",
-    "dbld": "pnpm run build && node ./bin.cjs --esm demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.cjs",
+    "dbld": "pnpm run build && node ./bin.cjs --esm demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
     "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
   },
   "dependencies": {
-    "@types/node": "^18.15.3",
+    "@types/node": "^18.15.5",
     "display-notification": "^3.0.0",
-    "esbuild": "=0.16.17",
+    "esbuild": "^0.17.12",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.10.7"
+    "zeed": "^0.10.17"
   }
 }
