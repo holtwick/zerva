@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { assertModules, emit, on, onInit, register } from "@zerva/core"
+import { assertModules, emit, on, onInit, onStop, register } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
@@ -157,6 +157,7 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
     assertModules("http")
   })
 
+
   on("httpInit", ({ http }) => {
     let path = config.path ?? webSocketPath
     if (!path.startsWith("/")) path = `/${path}`
@@ -177,6 +178,10 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       new WebsocketNodeConnection(ws, config)
     })
 
+    onStop(() => {
+      wss.close()
+    })
+ 
     http.on("upgrade", (request: any, socket, head: Buffer) => {
       const { pathname } = parse(request.url)
       if (pathname === path) {
