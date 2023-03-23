@@ -7,7 +7,7 @@ import data from "./data.yml"
 console.log("test via console", readme.length, data)
 
 import { Logger } from "zeed"
-const log = Logger("test")
+const log = Logger("test8")
 log.info("test via zeed")
 
 if (TEST) {

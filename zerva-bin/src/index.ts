@@ -6,7 +6,7 @@ import { existsSync } from "fs"
 import { runMain } from "./main"
 import { getConfig } from "./config"
 
-function main() {
+async function main() {
   let config = getConfig()
 
   if (config.help) {
@@ -40,7 +40,7 @@ is restarted on every update.
   // Cleanup to args
   // process.argv.splice(2, process.argv.length - 2)
 
-  runMain(config)
+  await runMain(config)
 }
 
-main()
+void main()
