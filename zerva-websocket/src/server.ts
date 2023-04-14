@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { assertModules, emit, on, onInit, onStop, register } from "@zerva/core"
+import { assertModules, emit, on, once, onInit, onStop, register } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
@@ -178,10 +178,8 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       new WebsocketNodeConnection(ws, config)
     })
 
-    onStop(() => {
-      wss.close()
-    })
- 
+    once('serveStop', () => wss.close()) // todo does this have the expected effect?
+
     http.on("upgrade", (request: any, socket, head: Buffer) => {
       const { pathname } = parse(request.url)
       if (pathname === path) {
