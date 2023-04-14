@@ -50,13 +50,13 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "zeed": "^0.10.17"
+    "helmet": "^6.1.5",
+    "zeed": "^0.10.21"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2",
-    "vitest": "^0.29.7"
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }

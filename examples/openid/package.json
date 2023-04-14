@@ -1,5 +1,5 @@
 {
-  "name": "zerva-example-umami",
+  "name": "zerva-example-openid",
   "version": "1.0.0",
   "private": true,
   "description": "Just a simple test",
@@ -17,13 +17,13 @@
   "main": "index.js",
   "scripts": {
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "start": "ZEED=* LEVEL=i zerva index.ts"
+    "start": "ZEED=* LEVEL=a zerva index.ts"
   },
   "dependencies": {
+    "@zerva/openid": "workspace:*",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/umami": "workspace:*",
     "zeed": "^0.10.21"
   }
 }

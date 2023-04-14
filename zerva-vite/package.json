@@ -47,11 +47,11 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "vite": "^4.2.1",
-    "zeed": "^0.10.17"
+    "zeed": "^0.10.21"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.4"
   },
   "peerDependencies": {
     "vite": ">=3.0.0"
