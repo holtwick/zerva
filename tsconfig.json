@@ -33,11 +33,13 @@
   },
   "exclude": [
     "*/node_modules",
+    "*/ssr-vue",
     "*/dist",
     "*/www"
   ],
   "include": [
     "**/*.ts",
+    "**/*.tsx",
     "**/*.vue"
   ]
 }
