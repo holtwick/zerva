@@ -20,10 +20,10 @@
     "start": "ZEED=* LEVEL=a zerva index.ts"
   },
   "dependencies": {
-    "@zerva/openid": "workspace:*",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.10.21"
+    "@zerva/openid": "workspace:*",
+    "zeed": "^0.10.22"
   }
 }

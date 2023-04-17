@@ -1,10 +1,10 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { assertModules, emit, on, once, onInit, onStop, register } from "@zerva/core"
+import { assertModules, emit, on, once, onInit, register } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
-import { Channel, equalBinary, Logger, LogLevelAliasType, uname } from "zeed"
+import { Channel, equalBinary, Logger, LogLevelAliasType, uname, useDispose } from "zeed"
 import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen, } from "./types"
 
 const moduleName = "websocket"
@@ -101,20 +101,24 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
-    ws.on("close", () => {
+    let dispose = useDispose()
+
+    ws.on("close", async () => {
       log.info("onclose")
       this.stopHeartBeat()
       if (this.isConnected) {
         this.isConnected = false
-        this.emit("close")
-        emit("webSocketDisconnect", {
+        await this.emit("close")
+        await emit("webSocketDisconnect", {
           channel: this as any,
         })
+        await dispose()
       }
     })
 
     emit("webSocketConnect", {
       channel: this as any,
+      dispose
     })
   }
 
@@ -156,7 +160,6 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
   onInit(() => {
     assertModules("http")
   })
-
 
   on("httpInit", ({ http }) => {
     let path = config.path ?? webSocketPath
