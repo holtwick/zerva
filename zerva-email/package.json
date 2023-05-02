@@ -35,7 +35,10 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -51,7 +54,7 @@
     "zeed": "^0.10.22"
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.3",
     "tsup": "^6.7.0"
   }
 }
