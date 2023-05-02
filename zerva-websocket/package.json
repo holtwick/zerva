@@ -1,6 +1,6 @@
 {
   "name": "@zerva/websocket",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "🌱 Zerva websocket module",
   "keywords": [
     "server",
@@ -39,7 +39,10 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts src/index.browser.ts ",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -48,16 +51,16 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/node": "^18.15.5",
+    "@types/node": "^18.16.3",
     "@types/ws": "^8.5.4",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.13.0",
-    "zeed": "^0.10.17"
+    "zeed": "^0.10.22"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2",
-    "vitest": "^0.29.7"
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }

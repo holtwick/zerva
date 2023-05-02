@@ -56,9 +56,8 @@ async function main() {
         `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`
       )
 
-      const tsup = `tsup src/index.ts${
-        hasBrowserCode ? " src/index.browser.ts " : ""
-      }`
+      const tsup = `tsup src/index.ts${hasBrowserCode ? " src/index.browser.ts " : ""
+        }`
 
       package = {
         ...package,
@@ -92,6 +91,10 @@ async function main() {
               ? "ZEED=* vitest --globals --run -r src"
               : "echo 'NO TESTS AVAILABLE'",
             watch: `${tsup} --watch`,
+            "check": "vue-tsc --noEmit -p ./tsconfig.json",
+            "clean": "rm -rf dist www",
+            "lint": "eslint .",
+            "lint:fix": "eslint . --fix",
           },
         },
       }

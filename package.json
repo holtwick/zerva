@@ -1,6 +1,6 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
@@ -8,36 +8,31 @@
     "check": "vue-tsc --noEmit -p tsconfig.json",
     "clean": "pnpm -r --filter=@zerva/* run clean",
     "fix": "node scripts/fix-package-json.js",
-    "format": "prettier --write .",
     "preinstall": "npx only-allow pnpm",
     "prepublish": "npx only-allow pnpm",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
+    "lint:fix": "pnpm -r --filter=@zerva/* run lint:fix",
     "test": "pnpm -r --filter=@zerva/* test",
     "update": "pnpm -r update -i --latest",
     "rebuild": "pnpm -r rebuild"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.37.0",
-    "@antfu/ni": "^0.20.0",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.5",
-    "bumpp": "^9.0.0",
+    "@antfu/eslint-config": "^0.38.5",
+    "@antfu/ni": "^0.21.3",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.3",
+    "bumpp": "^9.1.0",
     "cross-fetch": "^3.1.5",
-    "eslint": "^8.36.0",
+    "eslint": "^8.39.0",
     "fast-glob": "^3.2.12",
     "only-allow": "^1.1.1",
-    "prettier": "^2.8.6",
     "sort-package-json": "^2.4.1",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.2.1",
-    "vitest": "^0.29.7",
-    "vue-tsc": "^1.2.0"
-  },
-  "packageManager": "pnpm@6.23.0",
-  "pnpm": {
-    "overrides": {}
+    "typescript": "^5.0.4",
+    "vite": "^4.3.4",
+    "vitest": "^0.30.1",
+    "vue-tsc": "^1.6.3"
   }
 }

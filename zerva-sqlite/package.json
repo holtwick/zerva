@@ -1,6 +1,6 @@
 {
   "name": "@zerva/sqlite",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "private": false,
   "description": "",
   "funding": {
@@ -32,7 +32,10 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -41,14 +44,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "better-sqlite3": "^8.2.0",
-    "zeed": "^0.10.17"
+    "better-sqlite3": "^8.3.0",
+    "zeed": "^0.10.22"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
-    "tsx": "^3.12.6",
-    "typescript": "^5.0.2",
-    "vite": "^4.2.1",
-    "vitest": "^0.29.7"
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.4",
+    "vitest": "^0.30.1"
   }
 }

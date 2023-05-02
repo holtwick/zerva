@@ -25,15 +25,23 @@ export async function runMain(config: ZervaConf) {
 
   async function startNode() {
     await stopNode()
+
+    const cwd =  process.cwd()
+    const nodeArgs = [
+      "--enable-source-maps",
+      ...config.node,
+      config.outfile,
+    ]
+
+    if (config.debug) {
+      console.info(`Zerva: Spawn node in ${cwd} with args:`, nodeArgs)
+    }
+
     zervaNodeProcess = spawn(
       process.execPath,
-      [
-        //
-        "--enable-source-maps",
-        config.outfile,
-      ],
+      nodeArgs,
       {
-        cwd: process.cwd(),
+        cwd,
         stdio: "inherit",
         env: {
           ...process.env,
@@ -42,7 +50,7 @@ export async function runMain(config: ZervaConf) {
         },
       }
     )
-    console.info("Zerva: Starting app")
+    console.info("Zerva: Starting app")   
     zervaNodeProcess.on("error", (err) => {
       console.error("Node process error:", err)
     })

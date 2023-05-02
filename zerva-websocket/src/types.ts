@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Channel } from "zeed"
+import { Channel, UseDispose } from "zeed"
 
 export {}
 
@@ -17,7 +17,7 @@ export const wsReadyStateClosed = 3 // eslint-disable-line
 
 declare global {
   interface ZContextEvents {
-    webSocketConnect(info: { channel: Channel }): void
+    webSocketConnect(info: { channel: Channel, dispose: UseDispose }): void
     webSocketDisconnect(info: { error?: Error; channel: Channel }): void
   }
 }

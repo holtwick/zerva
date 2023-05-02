@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "🌱 Zerva Express HTTP",
   "keywords": [
     "server",
@@ -35,7 +35,10 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -50,13 +53,13 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "zeed": "^0.10.17"
+    "helmet": "^6.1.5",
+    "zeed": "^0.10.22"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2",
-    "vitest": "^0.29.7"
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }

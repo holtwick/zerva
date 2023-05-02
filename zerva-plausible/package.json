@@ -1,6 +1,6 @@
 {
   "name": "@zerva/plausible",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -35,7 +35,10 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -48,6 +51,6 @@
     "@zerva/core": "workspace:*",
     "cross-fetch": "^3.1.5",
     "request-ip": "^3.3.0",
-    "zeed": "^0.10.17"
+    "zeed": "^0.10.22"
   }
 }

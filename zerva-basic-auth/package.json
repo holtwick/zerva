@@ -1,6 +1,6 @@
 {
   "name": "@zerva/basic-auth",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "🌱 Zerva useBasicAuth",
   "keywords": [
     "server",
@@ -35,21 +35,24 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
-    "prepublishOnly": "pnpm run build",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "echo 'NO TESTS AVAILABLE'",
+    "test": "ZEED=* vitest --globals --run -r src",
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.10.17"
+    "zeed": "^0.10.22"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.4"
   }
 }

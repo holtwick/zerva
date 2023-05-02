@@ -1,6 +1,6 @@
 {
   "name": "@zerva/core",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "🌱 Simple event driven server",
   "keywords": [
     "server",
@@ -35,24 +35,26 @@
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
-    "clean": "rm -rf dist",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "tsup src/index.ts --watch",
-    "drun": "ZEED=* LEVEL=a zerva demo/zerva.ts"
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.10.17"
+    "zeed": "^0.10.22"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.5",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.3",
     "@zerva/bin": "workspace:*",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2",
-    "vitest": "^0.29.7"
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }

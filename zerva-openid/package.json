@@ -1,7 +1,7 @@
 {
-  "name": "@zerva/socketio",
+  "name": "@zerva/openid",
   "version": "0.22.2",
-  "description": "🌱 Zerva socket.io module",
+  "description": "🌱 Zerva useOpenID",
   "keywords": [
     "server",
     "typescript",
@@ -20,7 +20,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "browser": "./dist/index.browser.js",
+      "browser": "./dist/index.js",
       "default": "./dist/index.js",
       "node": "./dist/index.js",
       "require": "./dist/index.cjs"
@@ -34,26 +34,26 @@
   ],
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
-    "build:tsup": "tsup src/index.ts src/index.browser.ts ",
+    "build:tsup": "tsup src/index.ts",
     "check": "vue-tsc --noEmit -p ./tsconfig.json",
     "clean": "rm -rf dist www",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepublishOnly": "pnpm test && pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "ZEED=* vitest --globals --run -r src",
-    "watch": "tsup src/index.ts src/index.browser.ts  --watch"
+    "test": "echo 'NO TESTS AVAILABLE'",
+    "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/ws": "^8.5.4",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "detect-browser": "^5.3.0",
-    "engine.io": "^6.4.2",
-    "socket.io": "^4.6.1",
-    "socket.io-client": "^4.6.1",
+    "express-openid-connect": "^2.15.0",
     "zeed": "^0.10.22"
+  },
+  "devDependencies": {
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4"
   }
 }
