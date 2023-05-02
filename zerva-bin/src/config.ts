@@ -16,9 +16,10 @@ export interface ZervaConf {
   entry: string
   debug: boolean
   external: string[]
+  node: []
   define: Record<string, string>
   loader: Record<string, string>
-  esbuild: Record<string, string>
+  esbuild: Record<string, string>     
   args: any
 }
 
@@ -35,6 +36,7 @@ export function getConfig(): ZervaConf {
     define: {},
     loader: {},
     esbuild: {},
+    node: [],
     args: {},
   }
 
@@ -54,10 +56,10 @@ export function getConfig(): ZervaConf {
       build: ["b"],
       debug: ["d"],
       esm: ["e"],
-      help: ["h", "?"],
+      help: ["h", "?"],    
     },
     booleanArgs: ["build", "noSourcemap", "debug", "help", "esm"],
-    listArgs: ["external", "loader", "define", "esbuild"],
+    listArgs: ["external", "loader", "define", "esbuild", "node"],
   })
 
   config.debug = !!args.debug
@@ -66,6 +68,7 @@ export function getConfig(): ZervaConf {
   config.sourcemap = !args.noSourcemap
   config.metafile = !args.metafile
   config.external = args.external ?? []
+  config.node = args.node ?? []
   config.build = args.build ?? args._.includes("build")
   config.esm = args.esm
   config.loader = Object.fromEntries(
@@ -76,8 +79,7 @@ export function getConfig(): ZervaConf {
   )
   config.esbuild = Object.fromEntries(
     (args.esbuild ?? []).map((s: string) => s.split(":", 2))
-  )
-
+  )  
   if (config.debug) {
     console.log("argv =", process.argv)
   }
