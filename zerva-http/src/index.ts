@@ -55,6 +55,10 @@ export function useHttp(config?: {
 
   /** application/x-www-form-urlencoded */
   postUrlEncoded?: boolean
+
+  /** Open a browser */
+  openBrowser: boolean
+
 }): httpInterface {
   register(name, [])
 
@@ -74,6 +78,7 @@ export function useHttp(config?: {
     postText = true,
     postBinary = true,
     postUrlEncoded = true,
+    openBrowser = false
   } = config ?? {}
 
   log("config =", config)
@@ -124,7 +129,7 @@ export function useHttp(config?: {
       app.use(
         express.raw({
           limit: postLimit,
-          type: (req) => {
+          type: (req: any) => {
             let type = req.headers["content-type"]?.toLowerCase()
             return (
               type?.startsWith("application/") &&
@@ -234,7 +239,7 @@ export function useHttp(config?: {
 
   on("serveInit", async () => {
     log("serveInit")
-    await emit("httpInit", {       
+    await emit("httpInit", {
       app,
       http: server,
       get: GET,
@@ -276,15 +281,24 @@ export function useHttp(config?: {
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
       const host = isLocalHost(address) ? "localhost" : address
-      // log.info(
-      //   `Server on ${isSSL ? "https" : "http"}://${host}:${port} (${family})`
-      // )
+      const url = `${isSSL ? "https" : "http"}://${host}:${port}`
       if (showServerInfo) {
-        console.info(
-          `Zerva: Open page at ${isSSL ? "https" : "http"}://${host}:${port}`
-        )
+        console.info(`Zerva: Open page at ${url}`)
       }
+
       emit("httpRunning", { port, family, address, http: server })
+
+      if (openBrowser) {
+        const start =
+          process.platform == "darwin"
+            ? "open -u"
+            : process.platform == "win32"
+              ? "start"
+              : "xdg-open"
+        const cmd = start + " " + url
+        console.info(`Zerva: Open browser with: ${cmd}`)
+        import("node:child_process").then(m => m.exec(cmd))
+      }
     })
   })
 
