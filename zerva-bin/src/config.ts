@@ -15,11 +15,12 @@ export interface ZervaConf {
   sourcemap: boolean
   entry: string
   debug: boolean
+  open: boolean
   external: string[]
   node: []
   define: Record<string, string>
   loader: Record<string, string>
-  esbuild: Record<string, string>     
+  esbuild: Record<string, string>
   args: any
 }
 
@@ -32,6 +33,7 @@ export function getConfig(): ZervaConf {
     metafile: true,
     sourcemap: true,
     debug: false,
+    open: false,
     external: [],
     define: {},
     loader: {},
@@ -43,12 +45,12 @@ export function getConfig(): ZervaConf {
   try {
     const pkg = require(resolve(process.cwd(), "package.json"))
     config.version = pkg.version
-  } catch (err) {}
+  } catch (err) { }
 
   try {
     const configFromFile = require(resolve(process.cwd(), "zerva.conf.js"))
     if (configFromFile) Object.assign(config, configFromFile)
-  } catch (err) {}
+  } catch (err) { }
 
   const args = parseArgs({
     args: process.argv.slice(2),
@@ -56,7 +58,7 @@ export function getConfig(): ZervaConf {
       build: ["b"],
       debug: ["d"],
       esm: ["e"],
-      help: ["h", "?"],    
+      help: ["h", "?"],
     },
     booleanArgs: ["build", "noSourcemap", "debug", "help", "esm"],
     listArgs: ["external", "loader", "define", "esbuild", "node"],
@@ -79,7 +81,7 @@ export function getConfig(): ZervaConf {
   )
   config.esbuild = Object.fromEntries(
     (args.esbuild ?? []).map((s: string) => s.split(":", 2))
-  )  
+  )
   if (config.debug) {
     console.log("argv =", process.argv)
   }

@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Express, Request, Response } from "express"
+import type {Express, Request, Response } from 'express-serve-static-core' 
 import { Server } from "http"
 
 export type { Response, Request, Express, Server }
