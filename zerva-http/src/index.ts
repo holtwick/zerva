@@ -9,7 +9,7 @@ import { default as helmetDefault, HelmetOptions } from "helmet"
 import httpModule from "http"
 import httpsModule from "https"
 import { AddressInfo } from "net"
-import { isLocalHost, isString, Logger, LogLevelInfo, promisify } from "zeed"
+import { isLocalHost, isString, Logger, LogLevelInfo, promisify, valueToBoolean } from "zeed"
 import { Express, httpGetHandler, httpHandlerModes, httpInterface, httpPaths, Request, Response, Server } from "./types"
 
 export * from "./types"
@@ -288,7 +288,7 @@ export function useHttp(config?: {
 
       emit("httpRunning", { port, family, address, http: server })
 
-      if (openBrowser) {
+      if (openBrowser || valueToBoolean(process.env.ZERVA_HTTP_OPEN, false)) {
         const start =
           process.platform == "darwin"
             ? "open -u"
