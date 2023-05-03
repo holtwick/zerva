@@ -57,7 +57,7 @@ export function useHttp(config?: {
   postUrlEncoded?: boolean
 
   /** Open a browser */
-  openBrowser: boolean
+  openBrowser?: boolean
 
 }): httpInterface {
   register(name, [])
