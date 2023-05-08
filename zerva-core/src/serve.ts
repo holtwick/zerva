@@ -13,6 +13,7 @@ declare global {
   }
 }
 
+// todo context sensitive?
 let serverStarted = false
 let serverRunning = false
 
@@ -31,7 +32,7 @@ export function onStop(handler: () => void) {
 }
 
 export async function serveStop() {
-  if (serverRunning) {    
+  if (serverRunning) {
     serverRunning = false
     await emit("serveStop")
   }
@@ -60,7 +61,7 @@ export async function serve(fn?: () => void) {
   log("serve")
 }
 
-function serverCheck() {  
+function serverCheck() {
   if (serverStarted !== true) {
     log.info("Zerva has not been started manually, will start now!")
     serve()
@@ -69,18 +70,18 @@ function serverCheck() {
 
 process.on("beforeExit", serverCheck)
 // process.on('exit', serveStop)
- 
+
 // Graceful exit
 
 // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
-const signals:any = {   
+const signals: any = {
   SIGHUP: 1,
   SIGINT: 2,
   SIGTERM: 15,
 }
 
-Object.keys(signals).forEach((signal) => {    
-  process.on(signal, () => {    
+Object.keys(signals).forEach((signal) => {
+  process.on(signal, () => {
     log(`Process received a ${signal} signal`)
     serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
   })

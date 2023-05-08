@@ -26,7 +26,7 @@ export async function runMain(config: ZervaConf) {
   async function startNode() {
     await stopNode()
 
-    const cwd =  process.cwd()
+    const cwd = process.cwd()
     const nodeArgs = [
       "--enable-source-maps",
       ...config.node,
@@ -50,7 +50,7 @@ export async function runMain(config: ZervaConf) {
         },
       }
     )
-    console.info("Zerva: Starting app")   
+    console.info("Zerva: Starting app")
     zervaNodeProcess.on("error", (err) => {
       console.error("Node process error:", err)
     })
@@ -190,7 +190,6 @@ export async function runMain(config: ZervaConf) {
   const result = buildContext.rebuild()
   result
     .then(async (r) => {
-      console.info("***** RESULT", r)
       try {
         await chmod(config.outfile, 0o755)
       } catch (err) { }
@@ -199,7 +198,6 @@ export async function runMain(config: ZervaConf) {
       buildContext.dispose()
     })
     .catch((error: any) => {
-      // console.info("***** ERROR", error)
       notifyError(error)
     })
 }
