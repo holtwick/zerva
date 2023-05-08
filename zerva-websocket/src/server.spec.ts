@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve } from "@zerva/core"
+import { createPromise, emit, on, serve, setContext } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
 import { Logger, sleep, useMessageHub, uuid } from "zeed"
@@ -23,8 +23,11 @@ type WebsocketActions = {
 
 describe("module", () => {
   beforeAll(async () => {
+    setContext() // Avoid conflict of multiple registration
+
     useHttp({ port })
     useWebSocket({})
+
     on("webSocketConnect", ({ channel }) => {
       useMessageHub({
         channel,
@@ -39,9 +42,11 @@ describe("module", () => {
       })
     })
 
+    const [promise, resolve] = createPromise()
+    on("httpRunning", resolve)
     await serve()
+    await promise
 
-    await sleep(1000)
   })
 
   afterAll(async () => {

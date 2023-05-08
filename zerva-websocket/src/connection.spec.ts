@@ -1,9 +1,9 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve } from "@zerva/core"
+import { on, serve, serveStop, setContext } from "@zerva/core"
 import { useHttp } from "@zerva/http"
 import WebSocket from "ws"
-import { createPromise, Uint8ArrayToString, waitOn } from "zeed"
+import { Uint8ArrayToString, createPromise, waitOn } from "zeed"
 import { WebSocketConnection } from "./connection"
 import { useWebSocket } from "./server"
 import { webSocketPath } from "./types"
@@ -18,10 +18,10 @@ const url = `ws://localhost:${port}${webSocketPath}`
 
 describe("connection", () => {
   beforeAll(async () => {
+    setContext() // Avoid conflict of multiple registration
+
     useHttp({ port })
     useWebSocket({})
-
-    const [promise, resolve] = createPromise()
 
     on("webSocketConnect", ({ channel }) => {
       channel.on("message", (msg) => {
@@ -29,14 +29,14 @@ describe("connection", () => {
       })
     })
 
+    const [promise, resolve] = createPromise()
     on("httpRunning", resolve)
-
     await serve()
     await promise
   })
 
   afterAll(async () => {
-    await emit("serveStop")
+    await serveStop()
   })
 
   it("should ping", async () => {

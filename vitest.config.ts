@@ -13,6 +13,7 @@ export default defineConfig({
     // root: './src',
     globals: true,
     threads: false,
+    // singleThread: true,
     // watch: true,
     // isolate: false,
     alias: {

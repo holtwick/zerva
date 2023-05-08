@@ -4,7 +4,7 @@ import { assertModules, emit, on, once, onInit, register } from "@zerva/core"
 import "@zerva/http"
 import { parse } from "url"
 import WebSocket, { WebSocketServer } from "ws"
-import { Channel, equalBinary, Logger, LogLevelAliasType, uname, useDispose } from "zeed"
+import { Channel, equalBinary, Logger, LoggerInterface, LogLevelAliasType, uname, useDispose, UseDispose } from "zeed"
 import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen, } from "./types"
 
 const moduleName = "websocket"
@@ -31,13 +31,13 @@ function safeType(data: any): string {
 
 export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
-  private heartbeatInterval: any
-
-  // Heartbeat state
-  private isAlive: boolean = true
 
   // After close this will be false
   public isConnected: boolean = true
+
+  public dispose: UseDispose = useDispose()
+
+  private log: LoggerInterface
 
   constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
     super()
@@ -46,50 +46,54 @@ export class WebsocketNodeConnection extends Channel {
     this.ws.binaryType = "arraybuffer"
 
     const id = uname(moduleName)
-    const log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
-    log.info("new connection", id)
+    this.log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
+    this.log.info("new connection", id)
 
     const { pingInterval = 30000 } = config
 
+    // Heartbeat state
+    let isAlive = true
+
     // Will ensure that we don't loose the connection due to inactivity
     if (pingInterval > 0) {
-      log.info("Heartbeat interval", pingInterval)
-      this.heartbeatInterval = setInterval(() => {
-        if (this.isAlive === false) {
-          log("heartbeat failed, now close", ws)
+      this.log.info("Heartbeat interval", pingInterval)
+
+      const heartbeatInterval = setInterval(() => {
+        if (isAlive === false) {
+          this.log("heartbeat failed, now close", ws)
           this.close()
         }
-        this.isAlive = false
+        isAlive = false
         ws.ping()
       }, pingInterval)
+
+      this.dispose.add(() => clearInterval(heartbeatInterval))
     }
 
     ws.on("pong", () => {
-      this.isAlive = true
+      isAlive = true
     })
 
     ws.on("message", (data: ArrayBuffer, isBinary: boolean) => {
       try {
-        log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
+        this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
 
         // Hardcoded message type to allow ping from client side, sends pong
         // This is different to the hearbeat and isAlive from before!
         if (equalBinary(data, pingMessage)) {
-          log("-> ping -> pong")
+          this.log("-> ping -> pong")
           this.postMessage(pongMessage)
         } else {
-          this.emit("message", {
-            data,
-          })
+          this.emit("message", { data })
         }
       } catch (error) {
-        log.warn("message parsing issues", error, data)
+        this.log.warn("message parsing issues", error, data)
       }
     })
 
-    ws.on("error", (error) => {
-      log.error("onerror", error)
-      this.stopHeartBeat()
+    ws.on("error", async (error) => {
+      this.log.error("onerror", error)
+      await this.dispose()
       ws.close()
       if (this.isConnected) {
         this.isConnected = false
@@ -101,24 +105,22 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
-    let dispose = useDispose()
 
     ws.on("close", async () => {
-      log.info("onclose")
-      this.stopHeartBeat()
+      this.log.info("onclose")
+      await this.dispose()
       if (this.isConnected) {
         this.isConnected = false
         await this.emit("close")
         await emit("webSocketDisconnect", {
           channel: this as any,
         })
-        await dispose()
       }
     })
 
     emit("webSocketConnect", {
       channel: this as any,
-      dispose
+      dispose: this.dispose
     })
   }
 
@@ -137,21 +139,15 @@ export class WebsocketNodeConnection extends Channel {
     }
   }
 
-  stopHeartBeat() {
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval)
-      this.heartbeatInterval = undefined
-    }
-  }
-
-  close() {
-    this.stopHeartBeat()
+  async close() {
+    this.log('trigger close')
+    await this.dispose()
     this.ws.close()
   }
 }
 
 export function useWebSocket(config: ZWebSocketConfig = {}) {
-  const log = Logger(moduleName, config.logLevel ?? false)
+  const log = Logger(moduleName)
 
   log("setup")
 
@@ -175,26 +171,47 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       path,
     })
 
-    wss.on("connection", (ws, req: any) => {
+    let pool = new Map<string, WebsocketNodeConnection>()
+
+    wss.on("connection", (ws) => {
       log.info("onconnection")
       ws.isAlive = true
-      new WebsocketNodeConnection(ws, config)
+
+      let conn = new WebsocketNodeConnection(ws, config)
+      let id = conn.id
+      log.info("onconnection -> pool", id)
+      conn.dispose.add(() => pool.delete(id))
+      pool.set(id, conn)
     })
 
-    once('serveStop', () => wss.close()) // todo does this have the expected effect?
-
-    http.on("upgrade", (request: any, socket, head: Buffer) => {
+    function handleUpgrade(request: any, socket: any, head: Buffer) {
       const { pathname } = parse(request.url)
+      log("onupgrade", pathname, path)
       if (pathname === path) {
-        log("onupgrade")
+
         wss.handleUpgrade(request, socket, head, (ws: any) => {
           log("upgrade connection")
           wss.emit("connection", ws, request)
         })
+
         // } else {
         //   log("ignore upgrade") // this can be vite HMR e.g.
         //   // socket.destroy()
       }
+    }
+
+    http.on("upgrade", handleUpgrade)
+
+    once('serveStop', async () => {
+      log.info('server stop forced', pool)
+      http.off('upgrade', handleUpgrade)
+
+      for (const conn of pool.values())
+        await conn.close()
+      pool.clear()
+
+      await new Promise(resolve => wss.close(resolve))
     })
+
   })
 }
