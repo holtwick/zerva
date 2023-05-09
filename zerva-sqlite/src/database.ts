@@ -1,6 +1,6 @@
 // @ts-ignore
 import BetterSqlite3 from 'better-sqlite3'
-import { arrayMinus, arraySorted, isArray, isBoolean, isPrimitive, Logger, useDispose } from 'zeed'
+import { arrayMinus, arraySorted, isArray, isBoolean, isNumber, isPrimitive, isString, Logger, useDispose } from 'zeed'
 import './better-sqlite3'
 
 const log = Logger('sqlite')
@@ -37,6 +37,14 @@ export type ColTypes = keyof typeof affinity
 
 export interface TableColsDefinition {
   [key: string]: ColTypes // | ComplexType
+}
+
+/** Escape for .dump() */
+export function escapeSQLValueSingleQuotes(value: any) {
+  if (value == null) return 'NULL'
+  if (isNumber(value)) return String(value)
+  if (!isString(value)) value = JSON.stringify(value)
+  return "'" + String(value).replace(/\'/gim, "''") + "'"
 }
 
 /** Only use via `useSqliteDatabase`! */
@@ -281,10 +289,37 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     return useSqliteTable<T>(db, tableName, fields)
   }
 
+  // todo: implement with yield and stream
+  /** Similar to `.dump` in SQLite CLI */
+  function dump() {
+    let statements: string[] = []
+
+    function add(statement: string) {
+      statements.push(String(statement))
+    }
+
+    let tables = db.prepare("SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'").all()
+    for (let tableDefinition of tables) {
+      add(tableDefinition.sql)
+
+      if (tableDefinition.type === 'table') {
+        let values = db.prepare(`SELECT * FROM ${tableDefinition.name} LIMIT 100`).all()
+        let sortedFields = Object.keys(values[0] ?? {})
+        for (let row of values) {
+          add(`INSERT INTO ${tableDefinition.name} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(name => escapeSQLValueSingleQuotes(row[name])).join(', ')})`)
+        }
+      }
+    }
+
+    return statements.join(';\n')
+  }
+
+
   return {
     db,
     table,
     transaction,
+    dump,
     dispose,
   }
 }
