@@ -55,7 +55,8 @@ export function useSqliteTable<
 >(
   db: SqliteDatabase,
   tableName: string,
-  fields: TableColsDefinition
+  fields: TableColsDefinition,
+  primaryKeyName: string = 'id'
 ) {
   const statementsCache: Record<string, SqliteStatement> = {}
 
@@ -67,7 +68,7 @@ export function useSqliteTable<
   if (state == null || state.length <= 0) {
 
     // Create table https://www.sqlite.org/lang_createtable.html
-    const fieldsList = ['id INTEGER PRIMARY KEY AUTOINCREMENT']
+    const fieldsList = [`${primaryKeyName} INTEGER PRIMARY KEY AUTOINCREMENT`]
     for (const [field, colType] of Object.entries(fields))
       fieldsList.push(`${field} ${affinity[colType] ?? 'text'}`)
     db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(', ')})`)
@@ -83,7 +84,7 @@ export function useSqliteTable<
     }
   }
 
-  const sortedFields = arraySorted(['id', ...Object.keys(fields)])
+  const sortedFields = arraySorted([primaryKeyName, ...Object.keys(fields)])
 
   //
 
@@ -145,7 +146,7 @@ export function useSqliteTable<
     return statement.all(values)
   }
 
-  const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE id=? LIMIT 1`)
+  const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
 
   /** Query row with `id`  */
   function get(id: number | string): ColFullType {
