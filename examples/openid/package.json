@@ -24,6 +24,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/openid": "workspace:*",
+    "express-session": "^1.17.3",
     "zeed": "^0.10.22"
   }
 }

@@ -2,24 +2,48 @@
 
 import { on, serve } from "@zerva/core"
 import { useHttp } from "@zerva/http"
-import { useOpenID } from "@zerva/openid"
-import { Logger, LoggerInterface } from "zeed"
+import { escape } from "node:querystring"
+import { Logger, LoggerInterface, uuid, isString, setupEnv, fetchJson, encodeQuery, fetchOptionsJson } from "zeed"
+var session = require('express-session')
 
 const log: LoggerInterface = Logger("basic-auth")
 
 log('start')
 
+setupEnv()
+
 useHttp()
 
-useOpenID({
-  routes: ["/protected"],
-  issuerBaseUrl: process.env['OAUTH2_URL'] ?? '', // todo  
-  baseUrl: process.env['OAUTH2_CALLBACK_URL'] ?? 'http://localhost:8080',
-  clientId: process.env['OAUTH2_CLIENT_ID'] ?? '', // todo,
-  clientSecret: process.env['OAUTH2_CLIENT_SECRET'] ?? '' // todo
+const callbackPath = '/auth/callback'
+
+const {
+  OAUTH2_URL: urlBase = '',
+  OAUTH2_CALLBACK_URL: redirectUri = `http://localhost:8080${callbackPath}`,
+  OAUTH2_CLIENT_ID: clientId = '',
+  OAUTH2_CLIENT_SECRET: clientSecret = ''
+} = process.env ?? {}
+
+// const urlRedirect = `${urlBase}/login/oauth/authorize?client_id=${escape(clientId)}&redirect_uri=${escape(urlCallback)}&response_type=code&state=${uuid()}`
+const authorizationUri = `${urlBase}/login/oauth/authorize`
+const accessTokenUri = `${urlBase}/login/oauth/access_token`
+
+log('settings', {
+  clientId,
+  clientSecret,
+  accessTokenUri,
+  authorizationUri,
+  redirectUri
 })
 
-on("httpInit", ({ get }) => {
+on("httpInit", ({ app, get }) => {
+
+  app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  }))
+
   get(
     "/",
     `<p>
@@ -30,15 +54,51 @@ on("httpInit", ({ get }) => {
     </p>`
   )
 
-  get("/protected", ({ req }) => {
-    return `<p>
+  let authInfo: any
+
+  async function getTokenWithCode(code: string) {
+    return await fetchJson(accessTokenUri, fetchOptionsJson({
+      "client_id": clientId,
+      "client_secret": clientSecret,
+      "code": code,
+      "grant_type": "authorization_code",
+      "redirect_uri": redirectUri
+    }))
+  }
+
+  get(callbackPath, async ({ req, res }) => {
+    log('auth', req.query)
+    const { code, state } = req.query
+    if (isString(code)) {
+      authInfo = await getTokenWithCode(code)
+      log('authInfo', authInfo)
+      if (authInfo) {
+        return res.redirect('/')
+      }
+    }
+    return 'FAIL'
+  })
+
+  get('/login', ({ req, res }) => {
+    const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${uuid()}`
+    log('redirect uri', uri)
+    res.redirect(301, uri)
+  })
+
+  get("/protected",
+    ({ req, res }) => {
+      if (!authInfo)
+        return res.redirect('/login')
+
+      return `<p>
         This should be protected:
       </p>
         User: ${(req as any).user}
       <p>
         <a href="/logout">Logout</a>
       </p>`
-  })
+    })
+
 })
 
 serve()

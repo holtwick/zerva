@@ -34,7 +34,7 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
     waitSecondsBetweenAuthorization = 1
   } = config ?? {}
 
-  if (auth == null || (isRecord(auth) && size(auth) <= 0)) 
+  if (auth == null || (isRecord(auth) && size(auth) <= 0))
     log.error('No user credentials found!')
 
   function doCheckCredentials(user: string, password: string) {
@@ -63,7 +63,7 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
 
     // todo does not accept reentering of credentials
     if (logout)
-      app.use(logout, (_req, res, _next) => {
+      app.use(logout, (_req: any, res: any, _next: any) => {
         doReturnError(res)
         res.end('You have successfully logged out')
       })
@@ -71,7 +71,7 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
     let lastTry = 0
 
     routes.forEach((route) => {
-      app.use(route, (req, res, next) => {
+      app.use(route, (req: any, res: any, next: any) => {
         const credentials = getCredentials(req)
 
         if (credentials && (credentials.user.length || credentials.password.length)) {
