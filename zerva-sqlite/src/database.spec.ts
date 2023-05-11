@@ -6,7 +6,9 @@ const log = Logger('test')
 
 describe('database.spec', () => {
   it('should do common stuff', async () => {
-    try { unlinkSync('test.sqlite') }
+    try {
+      unlinkSync('test.sqlite')
+    }
     catch (err) { }
 
     const sql: string[] = []
@@ -301,7 +303,7 @@ describe('database.spec', () => {
     // CREATE UNIQUE INDEX idx_name_age ON test (name, age);
     // COMMIT;`
 
-    db.dispose()
+    db.dispose.sync()
 
     expect(sql).toMatchInlineSnapshot(`
       [

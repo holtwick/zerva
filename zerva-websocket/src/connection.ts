@@ -64,9 +64,7 @@ export class WebSocketConnection extends Channel {
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
     if (isBrowser()) {
-      this.dispose.add(
-        useEventListener(window, 'beforeunload', () => this.close()),
-      )
+      this.dispose.add(useEventListener(window, 'beforeunload', () => this.close()))
       this.dispose.add(useEventListener(window, 'focus', () => this.ping()))
     }
     else if (typeof process !== 'undefined') {
@@ -79,13 +77,7 @@ export class WebSocketConnection extends Channel {
   }
 
   postMessage(data: any): void {
-    if (
-      this.ws
-      && (this.ws.readyState != null
-        ? this.ws.readyState === wsReadyStateConnecting
-          || this.ws.readyState === wsReadyStateOpen
-        : true)
-    ) {
+    if (this.ws && (this.ws.readyState != null ? (this.ws.readyState === wsReadyStateConnecting || this.ws.readyState === wsReadyStateOpen) : true)) {
       try {
         this.ws.send(data)
         return
@@ -157,7 +149,7 @@ export class WebSocketConnection extends Channel {
           }
         }
         else {
-          this.emit('message', { data })
+          void this.emit('message', { data })
         }
       })
 
@@ -173,7 +165,7 @@ export class WebSocketConnection extends Channel {
 
           if (this.isConnected) {
             this.isConnected = false
-            this.emit('disconnect')
+            void this.emit('disconnect')
           }
           else {
             this.unsuccessfulReconnects++
@@ -184,11 +176,7 @@ export class WebSocketConnection extends Channel {
             // log10(wsUnsuccessfulReconnects).
             // The idea is to increase reconnect timeout slowly and have no reconnect
             // timeout at the beginning (this.log(1) = 0)
-            const reconnectDelay = Math.min(
-              Math.log10(this.unsuccessfulReconnects + 1)
-                * reconnectTimeoutBase,
-              maxReconnectTimeout,
-            )
+            const reconnectDelay = Math.min(Math.log10(this.unsuccessfulReconnects + 1) * reconnectTimeoutBase, maxReconnectTimeout)
             this.reconnectTimout = setTimeout(
               () => this._connect(),
               reconnectDelay,
@@ -216,7 +204,7 @@ export class WebSocketConnection extends Channel {
               messageReconnectTimeout / 2,
             )
           }
-          this.emit('connect')
+          void this.emit('connect')
         }
       })
     }

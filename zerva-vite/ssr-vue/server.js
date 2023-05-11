@@ -16,7 +16,7 @@ async function createServer(
     : ''
 
   const manifest = isProd
-    ? // @ts-expect-error
+    ? // @ts-expect-error xxx
     require('./dist/client/ssr-manifest.json')
     : {}
 

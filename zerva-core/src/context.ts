@@ -17,10 +17,12 @@ const log = Logger('zerva:context', 'info')
 
 let context = new ZContext()
 
+// eslint-disable-next-line import/no-mutable-exports
 export let setContext = (newContext?: ZContext): void => {
   context = newContext || new ZContext()
 }
 
+// eslint-disable-next-line import/no-mutable-exports
 export let getContext = (): ZContext => context
 
 try {
@@ -146,8 +148,7 @@ export function register(
   const modules = arrayFlatten(dependencies)
 
   log(
-    `register ${moduleName} ${
-      modules.length ? `with dependencies=${modules}` : ''
+    `register ${moduleName} ${modules.length ? `with dependencies=${modules}` : ''
     }`,
   )
 

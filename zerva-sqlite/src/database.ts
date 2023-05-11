@@ -1,4 +1,4 @@
-// @ts-expect-error
+// @ts-expect-error xxx
 import BetterSqlite3 from 'better-sqlite3'
 import { Logger, arrayMinus, arraySorted, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
 import './better-sqlite3'

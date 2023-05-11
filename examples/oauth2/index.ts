@@ -6,6 +6,13 @@ import { useHttp } from '@zerva/http'
 import type { LoggerInterface } from 'zeed'
 import { Logger, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
 import session from 'express-session'
+import type { HttpNextFunction, HttpRequest, HttpResponse, zervaHttpInterface } from '@zerva/http'
+
+declare module 'express-session' {
+  interface SessionData {
+    oauth2: any
+  }
+}
 
 const log: LoggerInterface = Logger('basic-auth')
 
@@ -38,7 +45,9 @@ log('settings', {
   redirectUri,
 })
 
-on('httpInit', ({ app, get }) => {
+on('httpInit', (info) => {
+  const { app, onGET } = info as zervaHttpInterface
+
   app.set('trust proxy', 1) // trust first proxy
 
   app.use(session({
@@ -48,7 +57,7 @@ on('httpInit', ({ app, get }) => {
     cookie: { secure: true },
   }))
 
-  get(
+  onGET(
     '/',
     `<p>
       Not protected.
@@ -82,7 +91,7 @@ on('httpInit', ({ app, get }) => {
     }))
   }
 
-  get(callbackPath, async ({ req, res }) => {
+  onGET(callbackPath, async ({ req, res }) => {
     log('auth', req.query)
     const { code, state } = req.query
     if (isString(code)) {
@@ -96,14 +105,14 @@ on('httpInit', ({ app, get }) => {
     return 'FAIL'
   })
 
-  get('/login', ({ req, res }) => {
+  onGET('/login', ({ req, res }) => {
     // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
     const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${uuid()}`
     log('redirect uri', uri)
     res.redirect(301, uri)
   })
 
-  get('/logout', ({ req, res }) => {
+  onGET('/logout', ({ req, res }) => {
     // todo
     // // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
     // const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${uuid()}`
@@ -111,11 +120,20 @@ on('httpInit', ({ app, get }) => {
     // res.redirect(301, uri)
   })
 
-  function protected(req: Request, res: Response, next: () => {}) {
+  function oauth2(req: HttpRequest, res: HttpResponse, next: HttpNextFunction) {
+    let oauth2 = req.session.oauth2
+    if (!oauth2) {
+      oauth2 = {
+        id: uuid(),
+      }
+      req.session.oauth2 = oauth2
+    }
 
+    if (!authInfo)
+      return res.redirect('/login')
   }
 
-  get('/protected',
+  onGET('/protected', oauth2,
     ({ req, res }) => {
       if (!authInfo)
         return res.redirect('/login')
@@ -123,11 +141,11 @@ on('httpInit', ({ app, get }) => {
       return `<p>
         This should be protected:
       </p>
-        User: ${(req).user}
+        User: ${undefined}
       <p>
         <a href="/logout">Logout</a>
       </p>`
     })
 })
 
-serve()
+void serve()

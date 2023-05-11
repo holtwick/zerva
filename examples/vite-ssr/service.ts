@@ -9,4 +9,4 @@ useViteSsr({
   root: '.',
 })
 
-serve()
+void serve()

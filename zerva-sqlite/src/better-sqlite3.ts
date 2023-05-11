@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 // Type definitions for better-sqlite3 7.6
 // Project: https://github.com/JoshuaWise/better-sqlite3
 // Definitions by: Ben Davies <https://github.com/Morfent>
@@ -11,6 +12,8 @@
 // TypeScript Version: 3.8
 
 /// <reference types="node" />
+
+import type { Buffer } from 'node:buffer'
 
 export { }
 
@@ -154,6 +157,6 @@ declare namespace Database {
   type Database = BetterSqlite3.Database
 }
 
-declare const Database: BetterSqlite3.DatabaseConstructor
+// declare const Database: BetterSqlite3.DatabaseConstructor
 
 // export default Database

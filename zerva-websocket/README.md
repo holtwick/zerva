@@ -66,10 +66,10 @@ On the client side you may connect easily and call the messages:
 
 ```ts
 const channel = new WebSocketConnection()
-const send = useMessageHub({ channel }.send<Messages>()
+const send = useMessageHub({ channel }).send<Messages>()
 
-let response = await send.echo("Hello World")
-expect(response).toBe("Hello World")
+const response = await send.echo('Hello World')
+expect(response).toBe('Hello World')
 ```
 
 ### Variant C: PubSub Interface

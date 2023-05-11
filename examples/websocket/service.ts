@@ -17,6 +17,7 @@ let counter = 0
 on('webSocketConnect', ({ channel }) => {
   log.info('connected')
 
+  // eslint-disable-next-line no-constant-condition
   if (true) {
     channel.on('message', (msg) => {
       log.info('message', JSON.parse(msg.data))
@@ -71,4 +72,4 @@ on('httpInit', ({ get, addStatic }) => {
   addStatic('test', 'test')
 })
 
-serve()
+void serve()

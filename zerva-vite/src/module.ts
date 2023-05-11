@@ -1,15 +1,9 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import {
-  Logger,
-  on,
-  register,
-  toHumanReadableFilePath,
-  toPath,
-} from '@zerva/core'
 import '@zerva/http'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { Logger, on, register, toHumanReadableFilePath, toPath } from '@zerva/core'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 const name = 'vite'
@@ -23,10 +17,7 @@ export function useVite(config?: { root?: string; www?: string }) {
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
 
-  const isDevMode
-    = process.env.ZERVA_DEVELOPMENT
-    || process.env.ZERVA_VITE
-    || process.env.NODE_MODE === 'development'
+  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
   if (isDevMode) {
     if (!existsSync(rootPath))
@@ -39,9 +30,8 @@ export function useVite(config?: { root?: string; www?: string }) {
 
   on('httpWillStart', async ({ addStatic, app }) => {
     if (isDevMode) {
-      console.info(
-        `Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`,
-      )
+      // eslint-disable-next-line no-console
+      console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
       // log.info(`serving through vite from ${rootPath}`)
 
       // Lazy load, because it is only used in dev mode and confuses
@@ -59,9 +49,8 @@ export function useVite(config?: { root?: string; www?: string }) {
       app?.use(vite.middlewares)
     }
     else {
-      console.info(
-        `Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`,
-      )
+      // eslint-disable-next-line no-console
+      console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
       // log.info(`serving static files at ${wwwPath}}`)
       addStatic('', wwwPath)
 

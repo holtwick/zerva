@@ -45,4 +45,4 @@ setTimeout(() => {
 // We start the server manually, it would only start automatically
 // after all timeouts have finished and that would not be great
 
-zz.serve()
+void zz.serve()

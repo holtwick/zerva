@@ -64,7 +64,7 @@ export async function serve(fn?: () => void) {
 function serverCheck() {
   if (serverStarted !== true) {
     log.info('Zerva has not been started manually, will start now!')
-    serve()
+    void serve()
   }
 }
 
@@ -83,6 +83,10 @@ const signals: any = {
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     log(`Process received a ${signal} signal`)
-    serveStop().then(() => process.exit(128 + (signals[signal] ?? 0)))
+    serveStop().then(() => {
+      process.exit(128 + (+signals[signal] ?? 0))
+    }).catch((err) => {
+      log.error(`Error on srveStop: ${err}`)
+    })
   })
 })

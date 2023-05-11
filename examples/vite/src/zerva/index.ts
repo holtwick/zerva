@@ -19,4 +19,4 @@ useCounter()
 //   log('Cleanup done')
 // })
 
-serve()
+void serve()

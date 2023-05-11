@@ -16,10 +16,10 @@ export function useHttpLog(opt?: {
   interval?: string
   compress?: string
 }) {
-  on('httpInit', ({ app }) => {
+  on('httpInit', async ({ app }) => {
     const filename = opt?.filename ?? 'access.log'
     const path = resolve(process.cwd(), opt?.path ?? 'logs')
-    ensureFolder(path)
+    await ensureFolder(path)
     const stream = opt?.rotate
       ? createStreamRotate(filename, {
         path,

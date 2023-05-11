@@ -1,8 +1,10 @@
-// @ts-expect-error
+/* eslint-disable no-console */
 import { Logger } from 'zeed'
+
+// @ts-expect-error xxx
 import readme from '../README.md'
 
-// @ts-expect-error
+// @ts-expect-error xxx
 import data from './data.yml'
 
 console.log('test via console', readme.length, data)

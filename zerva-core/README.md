@@ -13,9 +13,9 @@ It all starts with the `context` which is the common ground for any **module** w
 Usually you would start to build a server like this:
 
 ```ts
-import { useHttp } from "@zerva/http"
+import { useHttp } from '@zerva/http'
 
-useHttp(
+useHttp({
   port: 8080
 })
 ```
@@ -74,11 +74,13 @@ For convenience, you can use the `zerva` command line tool. It is based on [estr
 In your `package.json` you might want to add these lines:
 
 ```json
-"scripts": {
-  "start": "zerva",
-  "build": "zerva build",
-  "serve": "node dist/main.cjs"
-},
+{
+  "scripts": {
+    "start": "zerva",
+    "build": "zerva build",
+    "serve": "node dist/main.cjs"
+  }
+}
 ```
 
 ## Docker

@@ -18,14 +18,14 @@ declare global {
 
 describe('context', () => {
   it('should emit', () =>
-    new Promise((done) => {
+    new Promise((resolve) => {
       expect.assertions(1)
       setContext()
       on('test', (x) => {
         expect(x).toBe(123)
-        done(undefined)
+        resolve(undefined)
       })
-      emit('test', 123)
+      void emit('test', 123)
     }))
 
   it('should register', () => {
@@ -52,15 +52,15 @@ describe('context', () => {
   })
 
   it('should emit fn', () =>
-    new Promise((done) => {
+    new Promise((resolve) => {
       expect.assertions(1)
       setContext()
       on({
         test(x) {
           expect(x).toBe(123)
-          done(undefined)
+          resolve(undefined)
         },
       })
-      emit('test', 123)
+      void emit('test', 123)
     }))
 })

@@ -1,9 +1,9 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import type { Server } from 'node:http'
-import type { Express, Request, RequestHandler, Response } from 'express-serve-static-core'
+import type { Express, NextFunction as HttpNextFunction, Request as HttpRequest, RequestHandler as HttpRequestHandler, Response as HttpResponse } from 'express-serve-static-core'
 
-export type { Response, Request, Express, Server, RequestHandler }
+export type { HttpResponse, HttpRequest, Express, Server, HttpRequestHandler, HttpNextFunction }
 
 export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
@@ -19,11 +19,11 @@ export type zervaHttpResultPrimaryTypes =
 
 export type zervaHttpGetHandler =
   | zervaHttpResultPrimaryTypes
-  | RequestHandler
-  | ((info: {
-    res: Response
-    req: Request
-  }) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
+  // | HttpRequestHandler
+  | ((info: HttpRequest & {
+    res: HttpResponse
+    req: HttpRequest
+  }, res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
 
 export interface zervaHttpInterface {
   /** Express app */
@@ -33,37 +33,49 @@ export interface zervaHttpInterface {
   http: Server
 
   /** GET */
-  get(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  get(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** POST */
-  post(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  post(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** PUT */
-  put(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  put(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** DELETE */
-  delete(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  delete(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** GET */
-  GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onGET(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** POST */
-  POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onPOST(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** PUT */
-  PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onPUT(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** DELETE */
-  DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onDELETE(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+
+  /** GET */
+  GET(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+
+  /** POST */
+  POST(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+
+  /** PUT */
+  PUT(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+
+  /** DELETE */
+  DELETE(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** @deprecated use STATIC */
-  addStatic(path: zervaHttpPaths, fsPath: string): void
+  addStatic(this: void, path: zervaHttpPaths, fsPath: string): void
 
   /** @deprecated use STATIC */
-  static(path: zervaHttpPaths, fsPath: string): void
+  static(this: void, path: zervaHttpPaths, fsPath: string): void
 
   /** Serve stativ file or folder  */
-  STATIC(path: zervaHttpPaths, fsPath: string): void
+  STATIC(this: void, path: zervaHttpPaths, fsPath: string): void
 }
 
 declare global {

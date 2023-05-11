@@ -17,4 +17,4 @@ onStop(async () => {
   log('stop done')
 })
 
-serve()
+void serve()
