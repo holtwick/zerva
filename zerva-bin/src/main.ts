@@ -7,6 +7,8 @@ import { chmodSync } from 'node:fs'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
+
+// @ts-expect-error xxx
 import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
 
@@ -15,9 +17,14 @@ export async function runMain(config: ZervaConf) {
   let zervaNodeProcessDidEndPromise: ((value?: unknown) => void) | undefined
 
   async function stopNode() {
+    // console.log(`Zerva: Trigger stopping app ${zervaNodeProcess}\n`)
+
     if (zervaNodeProcess) {
       console.log('Zerva: Stopping app\n')
-      await new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
+
+      // sic!
+      const _ = new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
+
       zervaNodeProcess.kill('SIGTERM')
       // p.kill("SIGKILL")
       zervaNodeProcess = undefined
@@ -56,7 +63,7 @@ export async function runMain(config: ZervaConf) {
       console.error('Node process error:', err)
     })
     zervaNodeProcess.on('close', (code) => {
-      // console.info("Zerva: Node process close with code:", code)
+      // console.info('Zerva: Node process close with code:', code)
       if (zervaNodeProcessDidEndPromise) {
         zervaNodeProcessDidEndPromise()
         zervaNodeProcessDidEndPromise = undefined

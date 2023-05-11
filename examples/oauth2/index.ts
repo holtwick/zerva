@@ -1,6 +1,5 @@
 // Simple demo for node and CommonJS loading
 
-import { escape } from 'node:querystring'
 import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import type { LoggerInterface } from 'zeed'
@@ -8,9 +7,21 @@ import { Logger, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'z
 import session from 'express-session'
 import type { HttpNextFunction, HttpRequest, HttpResponse, zervaHttpInterface } from '@zerva/http'
 
+interface AuthInfo {
+  uuid?: string
+  state?: string
+  timestamp?: number
+  access_token?: string
+  refresh_token?: string
+  expires_in?: number
+  token_type?: string
+}
+
 declare module 'express-session' {
   interface SessionData {
-    oauth2: any
+    authInfo: AuthInfo
+    uuid?: string
+    views?: any
   }
 }
 
@@ -20,7 +31,9 @@ log('start')
 
 setupEnv()
 
-useHttp()
+useHttp({
+  noExtras: true,
+})
 
 const callbackPath = '/auth/callback'
 
@@ -51,11 +64,20 @@ on('httpInit', (info) => {
   app.set('trust proxy', 1) // trust first proxy
 
   app.use(session({
-    secret: 'YLHJyZ&dSxeBn@hcbKcU@6wpDvG9',
+    name: 'app',
+    secret: 'YLHJyZdSxeBnhcbKcUwpDvG',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
   }))
+
+  app.use((req, res, next) => {
+    log('init session', req.session.authInfo)
+    // if (!req.session.uuid)
+    //   req.session.uuid = uuid()
+    if (!req.session.authInfo)
+      req.session.authInfo = { uuid: uuid() }
+    next()
+  })
 
   onGET(
     '/',
@@ -66,8 +88,6 @@ on('httpInit', (info) => {
       <a href="/protected">But this one is with test:test</a>.
     </p>`,
   )
-
-  let authInfo: any
 
   async function getTokenWithCode(code: string) {
     // https://www.oauth.com/oauth2-servers/accessing-data/obtaining-an-access-token/
@@ -95,19 +115,32 @@ on('httpInit', (info) => {
     log('auth', req.query)
     const { code, state } = req.query
     if (isString(code)) {
-      authInfo = await getTokenWithCode(code)
-      log('authInfo', authInfo)
-
-      // todo connect with session
-      if (authInfo)
-        return res.redirect('/')
+      const authResponse = await getTokenWithCode(code)
+      log('authInfo', authResponse)
+      if (authResponse) {
+        if (req.session.authInfo?.state === state) {
+          Object.assign(req.session.authInfo!, authResponse)
+          return res.redirect('/')
+        }
+        else {
+          return `different states ${req.session.authInfo?.state} !== ${state}`
+        }
+      }
+      else {
+        return 'no response'
+      }
     }
-    return 'FAIL'
+    else {
+      return 'no code'
+    }
   })
 
   onGET('/login', ({ req, res }) => {
     // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
-    const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${uuid()}`
+
+    const state = uuid()
+    req.session.authInfo!.state = state
+    const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${state}`
     log('redirect uri', uri)
     res.redirect(301, uri)
   })
@@ -120,32 +153,35 @@ on('httpInit', (info) => {
     // res.redirect(301, uri)
   })
 
-  function oauth2(req: HttpRequest, res: HttpResponse, next: HttpNextFunction) {
-    let oauth2 = req.session.oauth2
-    if (!oauth2) {
-      oauth2 = {
-        id: uuid(),
-      }
-      req.session.oauth2 = oauth2
-    }
+  // function getAuthInfo(req: HttpRequest): AuthInfo {
+  //   if (req.session.authInfo == null) {
+  //     req.session.authInfo = {
+  //       id: uuid(),
+  //     }
+  //     req.session.save()
+  //   }
+  //   log('getAuthInfo', req.session.id, req.session.authInfo)
+  //   return req.session.authInfo
+  // }
 
-    if (!authInfo)
-      return res.redirect('/login')
+  function oauth2(req: HttpRequest, res: HttpResponse, next: HttpNextFunction) {
+    log('middleware oauth')
+    // const authInfo = getAuthInfo(req)
+    if (req.session.authInfo?.access_token)
+      next()
+    res.redirect('/login')
   }
 
-  onGET('/protected', oauth2,
-    ({ req, res }) => {
-      if (!authInfo)
-        return res.redirect('/login')
-
-      return `<p>
+  onGET('/protected',
+    oauth2,
+    ({ req }) => `<p>
         This should be protected:
       </p>
-        User: ${undefined}
+        User: ${req.session.authInfo}
       <p>
         <a href="/logout">Logout</a>
-      </p>`
-    })
+      </p>`,
+  )
 })
 
 void serve()
