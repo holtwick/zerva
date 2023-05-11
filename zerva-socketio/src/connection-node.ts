@@ -1,8 +1,8 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Logger, promisify, tryTimeout } from "zeed"
-import { Server, Socket } from "socket.io"
-import { ZSocketEmitOptions } from "./types"
+import { Logger, promisify, tryTimeout } from 'zeed'
+import type { Server, Socket } from 'socket.io'
+import type { ZSocketEmitOptions } from './types'
 
 declare global {
   interface ZContextEvents {
@@ -12,21 +12,21 @@ declare global {
   }
 }
 
-const logName = "ws-server"
+const logName = 'ws-server'
 const log = Logger(logName)
 
 export class ZSocketIOConnection {
   id: string
   socket: Socket
   timeout: number
-  verified: boolean = false
+  verified = false
   log: any
 
   get shortId() {
-    return String(this.socket?.id || "").substr(0, 6)
+    return String(this.socket?.id || '').substr(0, 6)
   }
 
-  constructor(socket: any, timeout: number = -1) {
+  constructor(socket: any, timeout = -1) {
     this.socket = socket
     this.id = socket.id
     this.timeout = timeout
@@ -45,10 +45,11 @@ export class ZSocketIOConnection {
             this.log(`emit(${event})`, args)
             this.socket.emit(event, args[0], resolve)
           }),
-          this.timeout
+          this.timeout,
         )) ?? null
       )
-    } catch (err) {
+    }
+    catch (err) {
       this.log.warn(`emit(${event})`, err)
     }
     return null
@@ -66,10 +67,11 @@ export class ZSocketIOConnection {
             this.log(`emit(${event})`, args)
             this.socket.emit(event, args[0], resolve)
           }),
-          options?.timeout || this.timeout
+          options?.timeout || this.timeout,
         )) ?? null
       )
-    } catch (err) {
+    }
+    catch (err) {
       this.log.warn(`emit(${event})`, err)
     }
     return null
@@ -78,33 +80,36 @@ export class ZSocketIOConnection {
   /** Listen to event and provide result if requested */
   async on<U extends keyof ZSocketIOEvents>(
     event: U,
-    listener: ZSocketIOEvents[U]
+    listener: ZSocketIOEvents[U],
   ) {
-    // @ts-ignore
+    // @ts-expect-error
     this.socket.on(event, async (data: any, callback: any) => {
       try {
         this.log(`on(${event})`)
-        let result = await promisify(listener(data))
+        const result = await promisify(listener(data))
         this.log(`our response on(${event})`, result)
-        if (callback) callback(result)
-      } catch (err: any) {
+        if (callback)
+          callback(result)
+      }
+      catch (err: any) {
         this.log.warn(`error for on(${event})`, err)
-        if (callback) callback({ error: err.message })
+        if (callback)
+          callback({ error: err.message })
       }
     })
   }
 
   onAny(fn: any) {
     this.socket.onAny((...args) => {
-      this.log("onAny", ...args)
+      this.log('onAny', ...args)
       fn(...args)
     })
   }
 
   onClose(fn: any) {
-    this.socket.on("close", fn) // ???
-    this.socket.on("disconnect", fn)
-    this.socket.on("error", fn)
+    this.socket.on('close', fn) // ???
+    this.socket.on('disconnect', fn)
+    this.socket.on('error', fn)
   }
 
   static async broadcast<U extends keyof ZSocketIOEvents>(
@@ -113,9 +118,9 @@ export class ZSocketIOConnection {
     ...args: Parameters<ZSocketIOEvents[U]>
   ): Promise<void> {
     log(
-      "broadcast to",
-      connections.map((conn) => conn.id)
+      'broadcast to',
+      connections.map(conn => conn.id),
     )
-    await Promise.all(connections.map((conn) => conn.emit(event, ...args)))
+    await Promise.all(connections.map(conn => conn.emit(event, ...args)))
   }
 }

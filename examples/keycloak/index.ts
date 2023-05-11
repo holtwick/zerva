@@ -1,31 +1,31 @@
 // Simple demo for node and CommonJS loading
 
-import { on, serve } from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import { useKeycloak } from "@zerva/keycloak"
+import { on, serve } from '@zerva/core'
+import { useHttp } from '@zerva/http'
+import { useKeycloak } from '@zerva/keycloak'
 
 useHttp()
 
 useKeycloak({
-  routes: ["/protected"],
+  routes: ['/protected'],
 })
 
-on("httpInit", ({ get }) => {
+on('httpInit', ({ get }) => {
   get(
-    "/",
+    '/',
     `<p>
       Not protected.
     </p>
     <p>
       <a href="/protected">But this one is</a>.
-    </p>`
+    </p>`,
   )
 
-  get("/protected", ({ req }) => {
-    //@ts-ignore
+  get('/protected', ({ req }) => {
+    // @ts-expect-error
     const content = req?.kauth?.grant?.access_token?.content
-    const info =
-      content != null
+    const info
+      = content != null
         ? {
             auth: true,
             username: content.preferred_username,

@@ -1,9 +1,9 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Logger } from "zeed"
-import { emit, on } from "./context"
+import { Logger } from 'zeed'
+import { emit, on } from './context'
 
-const log = Logger(`zerva:serve`, 'info')
+const log = Logger('zerva:serve', 'info')
 
 declare global {
   interface ZContextEvents {
@@ -20,21 +20,21 @@ let serverRunning = false
 // Shortcuts
 
 export function onInit(handler: () => void) {
-  on("serveInit", handler)
+  on('serveInit', handler)
 }
 
 export function onStart(handler: () => void) {
-  on("serveStart", handler)
+  on('serveStart', handler)
 }
 
 export function onStop(handler: () => void) {
-  on("serveStop", handler)
+  on('serveStop', handler)
 }
 
 export async function serveStop() {
   if (serverRunning) {
     serverRunning = false
-    await emit("serveStop")
+    await emit('serveStop')
   }
 }
 
@@ -47,28 +47,28 @@ on('serveStop', () => serverRunning = false)
  * @param fn Call your modules in here to add them to the context
  */
 export async function serve(fn?: () => void) {
-  log("serve")
+  log('serve')
   serverStarted = true
 
   if (fn) {
-    log("launch")
+    log('launch')
     fn()
   }
-  log("init")
-  await emit("serveInit")
-  log("start")
-  await emit("serveStart")
-  log("serve")
+  log('init')
+  await emit('serveInit')
+  log('start')
+  await emit('serveStart')
+  log('serve')
 }
 
 function serverCheck() {
   if (serverStarted !== true) {
-    log.info("Zerva has not been started manually, will start now!")
+    log.info('Zerva has not been started manually, will start now!')
     serve()
   }
 }
 
-process.on("beforeExit", serverCheck)
+process.on('beforeExit', serverCheck)
 // process.on('exit', serveStop)
 
 // Graceful exit

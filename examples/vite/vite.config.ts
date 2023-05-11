@@ -1,18 +1,21 @@
-import vue from "@vitejs/plugin-vue"
-import { resolve } from "path"
-import { defineConfig, UserConfig } from "vite"
+import { resolve } from 'node:path'
+import vue from '@vitejs/plugin-vue'
+import type { UserConfig } from 'vite'
+import { defineConfig } from 'vite'
 
-const testPlugin = () => ({
-  name: "test",
-  configureServer(server: any) {
-    return () => {
-      server.middlewares.use(async (req: any, res: any, next: any) => {
-        console.log(req.originalUrl)
-        next()
-      })
-    }
-  },
-})
+function testPlugin() {
+  return {
+    name: 'test',
+    configureServer(server: any) {
+      return () => {
+        server.middlewares.use(async (req: any, res: any, next: any) => {
+          console.log(req.originalUrl)
+          next()
+        })
+      }
+    },
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,12 +25,12 @@ export default defineConfig({
     testPlugin(),
   ],
   build: {
-    outDir: "./dist_www",
+    outDir: './dist_www',
     sourcemap: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
-        help: resolve(__dirname, "help/index.html"),
+        main: resolve(__dirname, 'index.html'),
+        help: resolve(__dirname, 'help/index.html'),
       },
     },
   },

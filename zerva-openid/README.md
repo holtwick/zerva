@@ -4,9 +4,9 @@
 
 ```js
 useOpenID({
-  routes: ["/admin"],
+  routes: ['/admin'],
   users: {
-    'user': 'password'
+    user: 'password'
   }
 })
 ```

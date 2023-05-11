@@ -13,6 +13,5 @@ paths:
     get:
       summary: Just a version info
       responses:
-        "200":
+        '200':
           description: Version
- 

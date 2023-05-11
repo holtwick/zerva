@@ -1,9 +1,9 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
-import { existsSync } from "fs"
-import { resolve } from "path"
-import { arrayRemoveElement, parseArgs } from "zeed"
-import { entryCandidates } from "./static"
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { arrayRemoveElement, parseArgs } from 'zeed'
+import { entryCandidates } from './static'
 
 export interface ZervaConf {
   version: string
@@ -25,11 +25,11 @@ export interface ZervaConf {
 }
 
 export function getConfig(): ZervaConf {
-  let config: Partial<ZervaConf> = {
+  const config: Partial<ZervaConf> = {
     build: false,
     help: false,
     esm: false,
-    version: "",
+    version: '',
     metafile: true,
     sourcemap: true,
     debug: false,
@@ -43,25 +43,28 @@ export function getConfig(): ZervaConf {
   }
 
   try {
-    const pkg = require(resolve(process.cwd(), "package.json"))
+    const pkg = require(resolve(process.cwd(), 'package.json'))
     config.version = pkg.version
-  } catch (err) { }
+  }
+  catch (err) { }
 
   try {
-    const configFromFile = require(resolve(process.cwd(), "zerva.conf.js"))
-    if (configFromFile) Object.assign(config, configFromFile)
-  } catch (err) { }
+    const configFromFile = require(resolve(process.cwd(), 'zerva.conf.js'))
+    if (configFromFile)
+      Object.assign(config, configFromFile)
+  }
+  catch (err) { }
 
   const args = parseArgs({
     args: process.argv.slice(2),
     alias: {
-      build: ["b"],
-      debug: ["d"],
-      esm: ["e"],
-      help: ["h", "?"],
+      build: ['b'],
+      debug: ['d'],
+      esm: ['e'],
+      help: ['h', '?'],
     },
-    booleanArgs: ["build", "noSourcemap", "debug", "help", "esm"],
-    listArgs: ["external", "loader", "define", "esbuild", "node"],
+    booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm'],
+    listArgs: ['external', 'loader', 'define', 'esbuild', 'node'],
   })
 
   config.debug = !!args.debug
@@ -71,36 +74,37 @@ export function getConfig(): ZervaConf {
   config.metafile = !args.metafile
   config.external = args.external ?? []
   config.node = args.node ?? []
-  config.build = args.build ?? args._.includes("build")
+  config.build = args.build ?? args._.includes('build')
   config.esm = args.esm
   config.loader = Object.fromEntries(
-    (args.loader ?? []).map((s: string) => s.split(":", 2))
+    (args.loader ?? []).map((s: string) => s.split(':', 2)),
   )
   config.define = Object.fromEntries(
-    (args.define ?? []).map((s: string) => s.split(":", 2))
+    (args.define ?? []).map((s: string) => s.split(':', 2)),
   )
   config.esbuild = Object.fromEntries(
-    (args.esbuild ?? []).map((s: string) => s.split(":", 2))
+    (args.esbuild ?? []).map((s: string) => s.split(':', 2)),
   )
-  if (config.debug) {
-    console.log("argv =", process.argv)
-  }
+  if (config.debug)
+    console.log('argv =', process.argv)
 
-  args._ = arrayRemoveElement(args._, "build")
+  args._ = arrayRemoveElement(args._, 'build')
 
-  const suffix = config.esm ? "mjs" : "cjs"
+  const suffix = config.esm ? 'mjs' : 'cjs'
 
   if (config.build) {
     config.outfile = args.outfile ?? resolve(`dist/main.${suffix}`)
     config.build = true
-  } else {
+  }
+  else {
     config.outfile = args.outfile ?? resolve(`.out.${suffix}`)
     config.sourcemap = true
   }
 
   if (args._.length > 0) {
     config.entry = resolve(args._[0])
-  } else {
+  }
+  else {
     for (const entryCandidate of entryCandidates) {
       if (existsSync(resolve(entryCandidate))) {
         config.entry = entryCandidate
@@ -109,6 +113,7 @@ export function getConfig(): ZervaConf {
     }
   }
 
-  if (config.debug) console.log("config =", config)
+  if (config.debug)
+    console.log('config =', config)
   return config as ZervaConf
 }

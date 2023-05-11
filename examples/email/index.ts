@@ -1,11 +1,11 @@
-import { emit, serve } from "@zerva/core"
-import { useEmail } from "@zerva/email"
-import { Logger, setupEnv, valueToInteger, valueToString } from "zeed"
+import { emit } from '@zerva/core'
+import { useEmail } from '@zerva/email'
+import { Logger, setupEnv, valueToInteger, valueToString } from 'zeed'
 
 setupEnv()
 
-const log = Logger("app")
-log.info("app")
+const log = Logger('app')
+log.info('app')
 
 const transport = {
   host: valueToString(process.env.EMAIL_HOST),
@@ -17,12 +17,12 @@ const transport = {
   },
 }
 
-log.info("email transport", JSON.stringify(transport, null, 2))
+log.info('email transport', JSON.stringify(transport, null, 2))
 
 useEmail({ transport })
 
-emit("emailSend", {
-  to: valueToString(process.env.EMAIL_TO, "example@example.com"),
+emit('emailSend', {
+  to: valueToString(process.env.EMAIL_TO, 'example@example.com'),
 })
 
 // serve()

@@ -1,5 +1,6 @@
+import type { SendMailOptions } from 'nodemailer'
+
 export {}
-import { SendMailOptions } from "nodemailer"
 
 // https://nodemailer.com/smtp/
 export interface ZEmailConfig extends Record<string, any> {}

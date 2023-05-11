@@ -1,15 +1,15 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { Logger } from "zeed"
-import { on, register } from "@zerva/core"
+import { Logger } from 'zeed'
+import { on, register } from '@zerva/core'
 import {
   setTrackCollectUrl,
   setTrackWebsiteId,
   trackEvent,
   trackPageView,
-} from "./track-umami"
+} from './track-umami'
 
-const name = "umami"
+const name = 'umami'
 const log = Logger(`zerva:${name}`)
 
 interface Config {
@@ -24,6 +24,6 @@ export function useUmami(config: Config) {
   setTrackCollectUrl(config.collectUrl)
   setTrackWebsiteId(config.websiteId)
 
-  on("trackEvent", trackEvent)
-  on("trackPageView", trackPageView)
+  on('trackEvent', trackEvent)
+  on('trackPageView', trackPageView)
 }

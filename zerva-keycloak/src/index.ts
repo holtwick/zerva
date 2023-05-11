@@ -1,10 +1,11 @@
-import { emit, on, register } from "@zerva/core"
-import { Express } from "@zerva/http"
-import session from "express-session"
-import KeycloakConnect, { Keycloak } from "keycloak-connect"
-import { Logger, uuid } from "zeed"
+import { emit, on, register } from '@zerva/core'
+import type { Express } from '@zerva/http'
+import session from 'express-session'
+import type { Keycloak } from 'keycloak-connect'
+import KeycloakConnect from 'keycloak-connect'
+import { Logger, uuid } from 'zeed'
 
-const name = "keycloak"
+const name = 'keycloak'
 const log = Logger(`zerva:${name}`)
 
 declare global {
@@ -24,13 +25,13 @@ interface ZervaKeycloakConfig {
 
 export function useKeycloak(config?: ZervaKeycloakConfig) {
   log.info(`use ${name}`)
-  register(name, ["http"])
+  register(name, ['http'])
 
   const {
     host,
     protocol,
     routes = [],
-    logout = "/logout",
+    logout = '/logout',
     sessionSecret = uuid(),
   } = config ?? {}
 
@@ -49,13 +50,13 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
 
   const keycloakMiddleware = keycloak.middleware({
     logout,
-    admin: "/",
+    admin: '/',
   })
 
   // 1. Register middleware
-  on("httpInit", ({ app }) => {
+  on('httpInit', ({ app }) => {
     // https://stackoverflow.com/a/46475726/140927
-    app.enable("trust proxy")
+    app.enable('trust proxy')
 
     app.use(sessionMiddleware)
 
@@ -64,16 +65,15 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
       // log("headers:", JSON.stringify(req.headers, null, 2))
 
       if (protocol) {
-        Object.defineProperty(req, "protocol", {
+        Object.defineProperty(req, 'protocol', {
           configurable: true,
           enumerable: true,
           get: () => protocol,
         })
       }
 
-      if (host) {
-        req.headers["host"] = host
-      }
+      if (host)
+        req.headers.host = host
 
       next()
     })
@@ -87,20 +87,20 @@ export function useKeycloak(config?: ZervaKeycloakConfig) {
     // )
 
     routes.forEach((route) => {
-      log.info("protect", route)
+      log.info('protect', route)
       app.use(route, keycloak.protect())
     })
 
-    emit("keycloakInit", {
+    emit('keycloakInit', {
       keycloak,
       app,
     })
   })
 }
 
-export function keycloakGetRoles(req: Request, resource: string = "master") {
+export function keycloakGetRoles(req: Request, resource = 'master') {
   return (
-    // @ts-ignore
+    // @ts-expect-error
     req?.kauth?.grant?.access_token?.content?.resource_access?.[resource]
       ?.roles ?? []
   )
@@ -109,28 +109,28 @@ export function keycloakGetRoles(req: Request, resource: string = "master") {
 export function keycloakCheckRole(
   req: Request,
   role: string,
-  resource: string = "master"
+  resource = 'master',
 ) {
   return keycloakGetRoles(req, resource).includes(role)
 }
 
-export function keycloakGetUserName(req: Request, resource: string = "master") {
+export function keycloakGetUserName(req: Request, resource = 'master') {
   return (
-    // @ts-ignore
-    req?.kauth?.grant?.access_token?.content?.preferred_username ?? ""
+    // @ts-expect-error
+    req?.kauth?.grant?.access_token?.content?.preferred_username ?? ''
   )
 }
 
-export function keycloakGetEmail(req: Request, resource: string = "master") {
+export function keycloakGetEmail(req: Request, resource = 'master') {
   return (
-    // @ts-ignore
-    req?.kauth?.grant?.access_token?.content?.email ?? ""
+    // @ts-expect-error
+    req?.kauth?.grant?.access_token?.content?.email ?? ''
   )
 }
 
-export function keycloakGetName(req: Request, resource: string = "master") {
+export function keycloakGetName(req: Request, resource = 'master') {
   return (
-    // @ts-ignore
-    req?.kauth?.grant?.access_token?.content?.name ?? ""
+    // @ts-expect-error
+    req?.kauth?.grant?.access_token?.content?.name ?? ''
   )
 }

@@ -1,21 +1,21 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import type { DisposerFunction } from 'zeed'
 import {
-  arrayFlatten,
-  DisposerFunction,
-  getGlobalContext,
   Logger,
+  arrayFlatten,
+  getGlobalContext,
   useDispose,
-} from "zeed"
-import { ZContext } from "./types"
+} from 'zeed'
+import { ZContext } from './types'
 
-const log = Logger(`zerva:context`, "info")
+const log = Logger('zerva:context', 'info')
 
 // Others would probably call it "hub" or "bus"...
 
 // Global logger to guarantee all submodules use the same logger instance
 
-var context = new ZContext()
+let context = new ZContext()
 
 export let setContext = (newContext?: ZContext): void => {
   context = newContext || new ZContext()
@@ -24,20 +24,21 @@ export let setContext = (newContext?: ZContext): void => {
 export let getContext = (): ZContext => context
 
 try {
-  let _global = getGlobalContext()
-  if (_global?.zerva == null) {
+  const _global = getGlobalContext()
+  if (_global?.zerva == null)
     _global.zerva = context
-  } else {
+  else
     context = _global.zerva
-  }
+
   setContext = (newContext?: ZContext) => {
-    let context = newContext || new ZContext()
-    log("set context", context.name)
+    const context = newContext || new ZContext()
+    log('set context', context.name)
     _global.zerva = context
   }
   getContext = (): ZContext => _global.zerva as ZContext
-} catch (e) {
-  log.warn("Unable to register Zerva Context globally")
+}
+catch (e) {
+  log.warn('Unable to register Zerva Context globally')
 }
 
 /** The global context as constant */
@@ -48,7 +49,7 @@ export async function emit<U extends keyof ZContextEvents>(
   event: U,
   ...args: Parameters<ZContextEvents[U]>
 ): Promise<boolean> {
-  log("emit", event, JSON.stringify(args.map((o) => typeof o)))
+  log('emit', event, JSON.stringify(args.map(o => typeof o)))
   return await getContext().emit(event, ...args)
 }
 
@@ -64,11 +65,11 @@ export function on<U extends keyof ZContextEvents>(
 
 export function on<U extends keyof ZContextEvents>(
   first: Partial<ZContextEvents> | U,
-  listener?: ZContextEvents[U]
+  listener?: ZContextEvents[U],
 ): DisposerFunction {
-  if (typeof first === "string" && listener != null) {
+  if (typeof first === 'string' && listener != null)
     return getContext().on(first, listener)
-  }
+
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
     dispose.add(getContext().on(k as any, v))
@@ -83,11 +84,11 @@ export function once<U extends keyof ZContextEvents>(
 
 export function once<U extends keyof ZContextEvents>(
   first: Partial<ZContextEvents> | U,
-  listener?: ZContextEvents[U]
+  listener?: ZContextEvents[U],
 ): DisposerFunction {
-  if (typeof first === "string" && listener != null) {
+  if (typeof first === 'string' && listener != null)
     return getContext().once(first, listener)
-  }
+
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
     dispose.add(getContext().once(k as any, v))
@@ -102,12 +103,12 @@ export function once<U extends keyof ZContextEvents>(
  * @param strict Log error if check fails
  * @returns `true` if `module` has been registered before
  */
-export function hasModule(module: string, strict: boolean = false): boolean {
+export function hasModule(module: string, strict = false): boolean {
   const has = getContext().modules.includes(module.toLowerCase())
   log(`hasModule ${module} => ${has} (strict=${strict})`)
-  if (strict && !has) {
+  if (strict && !has)
     log.error(`module '${module}' is missing`)
-  }
+
   return has
 }
 
@@ -118,12 +119,12 @@ export function requireModules(
   ...requiredModules: (string | string[])[]
 ): boolean {
   const modules = arrayFlatten(requiredModules)
-  return !modules.map((module) => hasModule(module, true)).some((ok) => !ok)
+  return !modules.map(module => hasModule(module, true)).some(ok => !ok)
 }
 
 export function assertModules(...requiredModules: (string | string[])[]): void {
   const modules = arrayFlatten(requiredModules)
-  let missing = modules.filter((module) => !hasModule(module))
+  const missing = modules.filter(module => !hasModule(module))
   if (missing.length > 0) {
     log.error(`Zerva modules required: ${missing}`)
     throw new Error(`Zerva modules required: ${missing}`)
@@ -142,17 +143,16 @@ export function register(
 ): boolean {
   moduleName = moduleName.toLowerCase()
 
-  let modules = arrayFlatten(dependencies)
+  const modules = arrayFlatten(dependencies)
 
   log(
     `register ${moduleName} ${
-      modules.length ? `with dependencies=${modules}` : ""
-    }`
+      modules.length ? `with dependencies=${modules}` : ''
+    }`,
   )
 
-  if (hasModule(moduleName)) {
+  if (hasModule(moduleName))
     log.warn(`The module '${moduleName} has been registered multiple times`)
-  }
 
   getContext().modules.push(moduleName)
 
@@ -171,10 +171,10 @@ export function register(
  */
 export function withContext(
   newContext: ZContext | undefined,
-  handler: (context?: ZContext) => void
+  handler: (context?: ZContext) => void,
 ) {
-  log("withContext")
-  let previousContext = getContext()
+  log('withContext')
+  const previousContext = getContext()
   setContext(newContext)
   handler(newContext)
   setContext(previousContext)

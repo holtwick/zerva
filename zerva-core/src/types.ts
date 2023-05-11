@@ -1,4 +1,4 @@
-import { Emitter, uname } from "zeed"
+import { Emitter, uname } from 'zeed'
 
 declare global {
   interface ZContextEvents {
@@ -11,7 +11,7 @@ declare global {
 }
 
 export class ZContext extends Emitter<ZContextEvents> {
-  name: string = uname("context")
+  name: string = uname('context')
   modules: string[] = []
   // config: any
 }

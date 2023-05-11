@@ -1,4 +1,4 @@
 <template>
   <div>Hello World</div>
-  <iframe src="/counter"></iframe>
+  <iframe src="/counter" />
 </template>

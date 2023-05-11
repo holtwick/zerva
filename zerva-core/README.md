@@ -29,13 +29,12 @@ useHttp(
 You can write your own module which can use `httpInit` to add some listeners:
 
 ```ts
-
-import { zerva } from "@zerva/core"
+import { zerva } from '@zerva/core'
 
 function useCounter() {
   let counter = 0
-  zerva.on("httpInit", ({ get }) => {
-    get("/counter", () => `Counter ${counter++}`)
+  zerva.on('httpInit', ({ get }) => {
+    get('/counter', () => `Counter ${counter++}`)
   })
 }
 ```
@@ -50,11 +49,11 @@ To make sure the `http` module is around as well in our context, it is good prac
 
 ```ts
 function useCounter() {
-  register("counter", ["http"])
+  register('counter', ['http'])
   let counter = 1
-  zerva.on("httpInit", ({ get }) => {
+  zerva.on('httpInit', ({ get }) => {
     get(
-      "/",
+      '/',
       () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
     )
   })

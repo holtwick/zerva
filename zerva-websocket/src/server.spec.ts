@@ -1,56 +1,55 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { createPromise, emit, on, serve, setContext } from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import WebSocket from "ws"
-import { Logger, sleep, useMessageHub, uuid } from "zeed"
-import { WebSocketConnection } from "./connection"
-import { useWebSocket } from "./server"
-import { webSocketPath } from "./types"
+import { createPromise, emit, on, serve, setContext } from '@zerva/core'
+import { useHttp } from '@zerva/http'
+import WebSocket from 'ws'
+import { Logger, sleep, useMessageHub, uuid } from 'zeed'
+import { WebSocketConnection } from './connection'
+import { useWebSocket } from './server'
+import { webSocketPath } from './types'
 
-// @ts-ignore
+// @ts-expect-error
 global.WebSocket = WebSocket
 
-const log = Logger("test:module")
+const log = Logger('test:module')
 
 const port = 8889
 const url = `ws://localhost:${port}${webSocketPath}`
 
-type WebsocketActions = {
+interface WebsocketActions {
   echo(value: any): Promise<any>
   throwsError(): Promise<void>
 }
 
-describe("module", () => {
+describe('module', () => {
   beforeAll(async () => {
     setContext() // Avoid conflict of multiple registration
 
     useHttp({ port })
     useWebSocket({})
 
-    on("webSocketConnect", ({ channel }) => {
+    on('webSocketConnect', ({ channel }) => {
       useMessageHub({
         channel,
       }).listen<WebsocketActions>({
         echo(value) {
-          log("echo", value)
+          log('echo', value)
           return value
         },
         throwsError() {
-          throw new Error("fakeError")
+          throw new Error('fakeError')
         },
       })
     })
 
     const [promise, resolve] = createPromise()
-    on("httpRunning", resolve)
+    on('httpRunning', resolve)
     await serve()
     await promise
-
   })
 
   afterAll(async () => {
-    await emit("serveStop")
+    await emit('serveStop')
   })
 
   // it("should connect", () =>
@@ -89,7 +88,7 @@ describe("module", () => {
   //   channel.close()
   // })
 
-  it("should connect use smart connection", async () => {
+  it('should connect use smart connection', async () => {
     expect.assertions(2)
 
     const channel = new WebSocketConnection(url)
@@ -97,21 +96,22 @@ describe("module", () => {
     // await sleep(500)
 
     const id = uuid()
-    let result = await bridge.echo({ id })
-    log("result", result)
+    const result = await bridge.echo({ id })
+    log('result', result)
     expect(result).toEqual({ id })
 
     try {
       await bridge.throwsError()
-    } catch (err) {
-      // @ts-ignore
-      expect(err.message).toBe("fakeError")
+    }
+    catch (err) {
+      // @ts-expect-error
+      expect(err.message).toBe('fakeError')
     }
 
     channel.close()
   })
 
-  it("should ping", async () => {
+  it('should ping', async () => {
     const channel = new WebSocketConnection(url, {
       messageReconnectTimeout: 1200, // emits at 600
     })

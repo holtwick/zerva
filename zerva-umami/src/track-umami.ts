@@ -1,24 +1,24 @@
-import { getClientIp } from "request-ip"
-import { fetchOptionsJson, fetchText, Logger } from "zeed"
-import { fetch } from "cross-fetch"
+import { getClientIp } from 'request-ip'
+import { Logger, fetchOptionsJson, fetchText } from 'zeed'
+import { fetch } from 'cross-fetch'
 
-const log = Logger("track")
+const log = Logger('track')
 
 let umamiCollectUrl: string
 let umamiWebsiteId: string
 
 export function setTrackWebsiteId(id: string) {
   umamiWebsiteId = id
-  log.info("Umami website ID:", umamiWebsiteId)
+  log.info('Umami website ID:', umamiWebsiteId)
 }
 
 export function setTrackCollectUrl(url: string) {
   umamiCollectUrl = url
-  log.info("Umami collect URL:", umamiCollectUrl)
+  log.info('Umami collect URL:', umamiCollectUrl)
 }
 
-type TrackEvent = {
-  type: "event"
+interface TrackEvent {
+  type: 'event'
   req: any
   url?: string
   event_type?: string
@@ -26,8 +26,8 @@ type TrackEvent = {
   website?: string
 }
 
-type TrackPageview = {
-  type: "pageview"
+interface TrackPageview {
+  type: 'pageview'
   req: any
   url?: string
   website?: string
@@ -38,16 +38,18 @@ export async function track(opt: TrackEvent | TrackPageview) {
     try {
       let { type, req, url, website } = opt
 
-      if (!url) url = req.originalUrl
-      if (!website) website = umamiWebsiteId
+      if (!url)
+        url = req.originalUrl
+      if (!website)
+        website = umamiWebsiteId
 
-      const language = req.get("accept-language")
-      const ua = req.get("user-agent")
-      const referrer = req.get("referrer")
+      const language = req.get('accept-language')
+      const ua = req.get('user-agent')
+      const referrer = req.get('referrer')
       const ip = getClientIp(req)
       const hostname = req.hostname
 
-      let body = {
+      const body = {
         type,
         payload: {
           url,
@@ -60,29 +62,30 @@ export async function track(opt: TrackEvent | TrackPageview) {
 
       // log.info("track", { body, ua, referrer, ip })
 
-      if (type === "event") {
-        let { event_type, event_value } = opt as TrackEvent
+      if (type === 'event') {
+        const { event_type, event_value } = opt as TrackEvent
         Object.assign(body.payload, { event_type, event_value })
       }
 
-      let options = {
+      const options = {
         headers: {},
         ...fetchOptionsJson(body),
       }
 
       Object.assign(options.headers, {
-        "Accept-Language": language,
-        "User-Agent": ua,
-        Referer: referrer,
-        "cf-connecting-ip": ip,
+        'Accept-Language': language,
+        'User-Agent': ua,
+        'Referer': referrer,
+        'cf-connecting-ip': ip,
       })
 
       // log.info(`track ${type} to ${umamiTrackUrl}:`, options)
 
-      let response = await fetchText(umamiCollectUrl, options, fetch)
+      const response = await fetchText(umamiCollectUrl, options, fetch)
       // log.info("tracked", response)
-    } catch (err) {
-      log.warn("Failed to track", err)
+    }
+    catch (err) {
+      log.warn('Failed to track', err)
     }
   }, 0)
 }
@@ -91,11 +94,11 @@ export async function trackEvent(
   req: any,
   event_type: string,
   event_value: any,
-  url?: string
+  url?: string,
 ) {
   log.info(`event ${event_type}=${event_value}`)
   await track({
-    type: "event",
+    type: 'event',
     event_type,
     event_value,
     url,
@@ -106,7 +109,7 @@ export async function trackEvent(
 export async function trackPageView(req: any, url?: string) {
   log.info(`pageview ${url}`)
   await track({
-    type: "pageview",
+    type: 'pageview',
     url,
     req,
   })

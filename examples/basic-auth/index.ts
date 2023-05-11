@@ -1,38 +1,39 @@
 // Simple demo for node and CommonJS loading
 
-import { on, serve } from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import { useBasicAuth, useHtpasswd } from "@zerva/basic-auth"
-import { Logger, LoggerInterface } from "zeed"
-import { readFileSync } from "fs"
+import { readFileSync } from 'node:fs'
+import { on, serve } from '@zerva/core'
+import { useHttp } from '@zerva/http'
+import { useBasicAuth, useHtpasswd } from '@zerva/basic-auth'
+import type { LoggerInterface } from 'zeed'
+import { Logger } from 'zeed'
 
-const log: LoggerInterface = Logger("basic-auth")
+const log: LoggerInterface = Logger('basic-auth')
 
 log('start')
 
 useHttp()
 
-let {validate} = useHtpasswd(readFileSync('.htpasswd', 'utf8'))
+const { validate } = useHtpasswd(readFileSync('.htpasswd', 'utf8'))
 
 useBasicAuth({
   waitSecondsBetweenAuthorization: 5,
-  routes: ["/protected"],
+  routes: ['/protected'],
   logout: '/logout',
-  auth: validate // { a: 'b' },
+  auth: validate, // { a: 'b' },
 })
 
-on("httpInit", ({ get }) => {
+on('httpInit', ({ get }) => {
   get(
-    "/",
+    '/',
     `<p>
       Not protected.
     </p>
     <p>
       <a href="/protected">But this one is with test:test</a>.
-    </p>`
+    </p>`,
   )
 
-  get("/protected", ({ req }) => {
+  get('/protected', ({ req }) => {
     return `<p>
         This should be protected:
       </p>

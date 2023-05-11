@@ -1,13 +1,15 @@
-import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client"
-import { ZSocketEmitOptions } from "./types"
-import { empty, Logger, LoggerInterface, promisify, tryTimeout } from "zeed"
-import "./types"
+import type { ManagerOptions, Socket, SocketOptions } from 'socket.io-client'
+import { io } from 'socket.io-client'
+import type { LoggerInterface } from 'zeed'
+import { Logger, empty, promisify, tryTimeout } from 'zeed'
+import type { ZSocketEmitOptions } from './types'
 
-const logName = "ws-client"
+const logName = 'ws-client'
 const log = Logger(logName)
 
-export const getWebsocketUrlFromLocation = () =>
-  "ws" + location.protocol.substr(4) + "//" + location.host
+export function getWebsocketUrlFromLocation() {
+  return `ws${location.protocol.substr(4)}//${location.host}`
+}
 
 export class ZSocketIOConnection {
   private socket?: any // Socket
@@ -16,23 +18,22 @@ export class ZSocketIOConnection {
   constructor(socket: Socket) {
     this.socket = socket
 
-    if (this.socket?.id) {
+    if (this.socket?.id)
       this.log = Logger(`${this.shortId}:${logName}`)
-    }
 
     // let didResolve = false
-    this.socket?.on("connect", () => {
+    this.socket?.on('connect', () => {
       this.log = Logger(`${this.shortId}:${logName}`)
-      this.log(`on connect`)
+      this.log('on connect')
     })
 
-    this.socket?.on("error", (err: any) => {
-      this.log(`on error:`, err)
+    this.socket?.on('error', (err: any) => {
+      this.log('on error:', err)
       // conn.close()
     })
 
-    this.socket?.on("disconnect", (err: any) => {
-      this.log(`on disconnect:`, err)
+    this.socket?.on('disconnect', (err: any) => {
+      this.log('on disconnect:', err)
     })
 
     // this.socket?.onAny((...args) => {
@@ -41,8 +42,8 @@ export class ZSocketIOConnection {
 
     // Hack to reconnect on iOS
     // https://stackoverflow.com/a/4910900/140927
-    var now
-    var lastFired = new Date().getTime()
+    let now
+    let lastFired = new Date().getTime()
     setInterval(() => {
       now = new Date().getTime()
       if (now - lastFired > 2000) {
@@ -54,15 +55,15 @@ export class ZSocketIOConnection {
   }
 
   get id(): string {
-    let id = this.socket?.id
-    if (empty(id)) {
-      log.warn("Expected to find a socket ID")
-    }
-    return id || ""
+    const id = this.socket?.id
+    if (empty(id))
+      log.warn('Expected to find a socket ID')
+
+    return id || ''
   }
 
   get shortId() {
-    return String(this.socket?.id || "").substr(0, 6)
+    return String(this.socket?.id || '').substr(0, 6)
   }
 
   emit<U extends keyof ZSocketIOEvents>(
@@ -92,34 +93,38 @@ export class ZSocketIOConnection {
             resolve(value)
           })
         }),
-        options?.timeout || -1
+        options?.timeout || -1,
       )
-    } catch (err) {
+    }
+    catch (err) {
       this.log.warn(`emit(${event})`, err)
     }
   }
 
   async on<U extends keyof ZSocketIOEvents>(
     event: U,
-    listener: ZSocketIOEvents[U]
+    listener: ZSocketIOEvents[U],
   ) {
-    // @ts-ignore
+    // @ts-expect-error
     this.socket?.on(event, async (data: any, callback: any) => {
       try {
         this.log(`on(${event})`, data)
-        let result = await promisify(listener(data))
+        const result = await promisify(listener(data))
         this.log(`our resonse on(${event})`, result)
-        if (callback) callback(result)
-      } catch (err: any) {
+        if (callback)
+          callback(result)
+      }
+      catch (err: any) {
         this.log.warn(`warnung on(${event})`, err)
-        if (callback) callback({ error: err.message })
+        if (callback)
+          callback({ error: err.message })
       }
     })
   }
 
   onAny(fn: any) {
     this.socket?.onAny((...args: any[]) => {
-      this.log("onAny", ...args)
+      this.log('onAny', ...args)
       fn(...args)
     })
   }
@@ -131,12 +136,12 @@ export class ZSocketIOConnection {
 
   public static connect(
     host?: string,
-    options?: ManagerOptions & SocketOptions
+    options?: ManagerOptions & SocketOptions,
   ): ZSocketIOConnection | undefined {
-    let wsHost = host ?? getWebsocketUrlFromLocation()
-    log("start connecting to", wsHost)
+    const wsHost = host ?? getWebsocketUrlFromLocation()
+    log('start connecting to', wsHost)
     const socket = io(wsHost, {
-      transports: ["websocket"],
+      transports: ['websocket'],
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 3000,
@@ -144,9 +149,8 @@ export class ZSocketIOConnection {
       autoConnect: true,
       ...options,
     } as any)
-    if (socket) {
+    if (socket)
       return new ZSocketIOConnection(socket)
-    }
   }
 
   // static async broadcast<U extends keyof ZSocketIOEvents>(

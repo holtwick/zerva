@@ -1,11 +1,11 @@
-import { on, register } from "@zerva/core"
-import { isRecord, Logger, size } from "zeed"
-import { getCredentials } from "./auth"
+import { on, register } from '@zerva/core'
+import { Logger, isRecord, size } from 'zeed'
+import { getCredentials } from './auth'
 import '@zerva/http'
 
 export * from './htpasswd-md5'
 
-const name = "basic-auth"
+const name = 'basic-auth'
 const log = Logger(`zerva:${name}`)
 
 // declare global {
@@ -24,14 +24,14 @@ interface ZervaBasicAuthConfig {
 
 export function useBasicAuth(config?: ZervaBasicAuthConfig) {
   log.info(`use ${name}`)
-  register(name, ["http"])
+  register(name, ['http'])
 
   const {
     routes = ['/'],
     auth,
     logout,
-    realm = "default",
-    waitSecondsBetweenAuthorization = 1
+    realm = 'default',
+    waitSecondsBetweenAuthorization = 1,
   } = config ?? {}
 
   if (auth == null || (isRecord(auth) && size(auth) <= 0))
@@ -51,9 +51,9 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
   }
 
   // 1. Register middleware
-  on("httpInit", ({ app }) => {
+  on('httpInit', ({ app }) => {
     // https://stackoverflow.com/a/46475726/140927
-    app.enable("trust proxy")
+    app.enable('trust proxy')
 
     // app.use(
     //   // https://regex101.com/r/Jieut9/1
@@ -62,11 +62,12 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
     // )
 
     // todo does not accept reentering of credentials
-    if (logout)
+    if (logout) {
       app.use(logout, (_req: any, res: any, _next: any) => {
         doReturnError(res)
         res.end('You have successfully logged out')
       })
+    }
 
     let lastTry = 0
 
@@ -75,11 +76,10 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
         const credentials = getCredentials(req)
 
         if (credentials && (credentials.user.length || credentials.password.length)) {
-
           // Credentials ok? Go for it!
           if (doCheckCredentials(credentials.user, credentials.password)) {
             log.debug(`Access granted for "${credentials.user}"`)
-            let _req = req as any
+            const _req = req
             _req.user = credentials.user
             next()
             return
@@ -89,7 +89,7 @@ export function useBasicAuth(config?: ZervaBasicAuthConfig) {
 
           // Prevent brute force
           if (waitSecondsBetweenAuthorization > 0) {
-            let now = Date.now()
+            const now = Date.now()
             if ((now - lastTry) < (waitSecondsBetweenAuthorization * 1000)) {
               log.warn('Rate limit reached!')
               doReturnError(res)

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import logo from "../assets/logo.png"
-import { ClientOnly } from "./ClientOnly"
-import { state } from "../state"
-import { useHead } from "@vueuse/head"
+import { useHead } from '@vueuse/head'
+import logo from '../assets/logo.png'
+import { state } from '../state'
+import { ClientOnly } from './ClientOnly'
 
-const isClient = typeof window !== "undefined"
+const isClient = typeof window !== 'undefined'
 
 useHead({
-  title: "Website Title",
+  title: 'Website Title',
   meta: [
     {
-      name: `description`,
-      content: `Website description`,
+      name: 'description',
+      content: 'Website description',
     },
   ],
 })
@@ -20,14 +20,16 @@ useHead({
 <template>
   <h1>Hello World</h1>
 
-  <client-only> CLIENT ONLY </client-only>
+  <ClientOnly> CLIENT ONLY </ClientOnly>
 
   <p>
     <a href="/sub">Sub Page</a>
   </p>
 
   <p>
-    <router-link to="/sub">Sub Page via Vue</router-link>
+    <router-link to="/sub">
+      Sub Page via Vue
+    </router-link>
   </p>
 
   <p>
@@ -56,7 +58,7 @@ useHead({
     <code>components/HelloWorld.vue</code> to test hot module replacement.
   </p>
 
-  <img :src="logo" />
+  <img :src="logo">
 </template>
 
 <style>

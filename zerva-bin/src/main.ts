@@ -1,13 +1,15 @@
-import { ChildProcess, spawn } from "child_process"
-import { BuildOptions, context, Plugin } from "esbuild"
-import { yamlPlugin } from "esbuild-plugin-yaml"
-import { chmod } from "fs/promises"
-import { normalize } from "path"
-import { ZervaConf } from "./config"
+import type { ChildProcess } from 'node:child_process'
+import { spawn } from 'node:child_process'
+import { chmod } from 'node:fs/promises'
+import { normalize } from 'node:path'
+import { chmodSync } from 'node:fs'
+import type { BuildOptions, Plugin } from 'esbuild'
+import { context } from 'esbuild'
+import { yamlPlugin } from 'esbuild-plugin-yaml'
+import displayNotification from 'display-notification'
+import type { ZervaConf } from './config'
 
-// @ts-ignore
-import displayNotification from "display-notification"
-import { chmodSync } from "fs"
+// @ts-expect-error
 
 export async function runMain(config: ZervaConf) {
   let zervaNodeProcess: ChildProcess | undefined
@@ -15,9 +17,9 @@ export async function runMain(config: ZervaConf) {
 
   async function stopNode() {
     if (zervaNodeProcess) {
-      console.log("Zerva: Stopping app\n")
-      new Promise((resolve) => (zervaNodeProcessDidEndPromise = resolve))
-      zervaNodeProcess.kill("SIGTERM")
+      console.log('Zerva: Stopping app\n')
+      new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
+      zervaNodeProcess.kill('SIGTERM')
       // p.kill("SIGKILL")
       zervaNodeProcess = undefined
     }
@@ -28,33 +30,32 @@ export async function runMain(config: ZervaConf) {
 
     const cwd = process.cwd()
     const nodeArgs = [
-      "--enable-source-maps",
+      '--enable-source-maps',
       ...config.node,
       config.outfile,
     ]
 
-    if (config.debug) {
+    if (config.debug)
       console.info(`Zerva: Spawn node in ${cwd} with args:`, nodeArgs)
-    }
 
     zervaNodeProcess = spawn(
       process.execPath,
       nodeArgs,
       {
         cwd,
-        stdio: "inherit",
+        stdio: 'inherit',
         env: {
           ...process.env,
-          ZERVA_MODE: "development",
+          ZERVA_MODE: 'development',
           ZERVA_VERSION: config.version,
         },
-      }
+      },
     )
-    console.info("Zerva: Starting app")
-    zervaNodeProcess.on("error", (err) => {
-      console.error("Node process error:", err)
+    console.info('Zerva: Starting app')
+    zervaNodeProcess.on('error', (err) => {
+      console.error('Node process error:', err)
     })
-    zervaNodeProcess.on("close", (code) => {
+    zervaNodeProcess.on('close', (code) => {
       // console.info("Zerva: Node process close with code:", code)
       if (zervaNodeProcessDidEndPromise) {
         zervaNodeProcessDidEndPromise()
@@ -71,29 +72,30 @@ export async function runMain(config: ZervaConf) {
       if (!config.build) {
         // https://www.npmjs.com/package/display-notification
         await displayNotification({
-          subtitle: "Zerva Build Error",
+          subtitle: 'Zerva Build Error',
           text: error?.text ?? 'Error',
-          sound: "Bottle",
+          sound: 'Bottle',
         })
       }
-    } catch (err) { }
+    }
+    catch (err) { }
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   // notifyError("TEST")
 
   function toHumanReadableFilePath(path: string) {
     const p = normalize(path)
     const h = process.env.HOME
-    if (h && p.startsWith(h)) {
-      return "~" + p.slice(h.length)
-    }
+    if (h && p.startsWith(h))
+      return `~${p.slice(h.length)}`
+
     return p
   }
 
   console.info(`Zerva: Building from "${toHumanReadableFilePath(config.entry)}"`)
 
-  let plugins = [
+  const plugins = [
     yamlPlugin({}),
   ]
 
@@ -102,8 +104,7 @@ export async function runMain(config: ZervaConf) {
       name: 'zerva-rebuild',
       setup(build) {
         build.onStart(stopNode)
-        build.onEnd(result => {
-
+        build.onEnd((result) => {
           if (result.errors?.length > 0) {
             console.log(`build ended with ${result.errors.length} errors`)
             notifyError(result.errors?.[0])
@@ -112,7 +113,8 @@ export async function runMain(config: ZervaConf) {
 
           try {
             chmodSync(config.outfile, 0o755)
-          } catch (err) { }
+          }
+          catch (err) { }
           startNode()
         })
 
@@ -121,68 +123,67 @@ export async function runMain(config: ZervaConf) {
     } as Plugin)
   }
 
-
   // Started from command line
   const buildConfig: BuildOptions = {
     bundle: true,
-    platform: "node",
-    target: "node16",
-    format: config.esm ? "esm" : "cjs",
+    platform: 'node',
+    target: 'node16',
+    format: config.esm ? 'esm' : 'cjs',
     entryPoints: [config.entry],
-    legalComments: "none",
+    legalComments: 'none',
     outfile: config.outfile,
     metafile: config.metafile,
     sourcemap: !config.build || config.sourcemap,
-    jsxFactory: "h",
+    jsxFactory: 'h',
     loader: {
-      ".json": "json",
+      '.json': 'json',
       ...config.loader,
     },
     plugins,
     banner: {
-      js: "/*\n\n    Generated by Zerva <https://github.com/holtwick/zerva>\n\n*/",
+      js: '/*\n\n    Generated by Zerva <https://github.com/holtwick/zerva>\n\n*/',
     },
     define: {
       // ZERVA_MODE: buildMode ? "production" : "development",
-      ZERVA_DEVELOPMENT: String(!config.build),
-      ZERVA_PRODUCTION: String(config.build),
-      ZERVA_VERSION: `"${config.version}"`,
-      "process.env.ZERVA_DEVELOPMENT": String(!config.build),
-      "process.env.ZERVA_PRODUCTION": String(config.build),
-      "process.env.ZERVA_VERSION": `"${config.version}"`,
+      'ZERVA_DEVELOPMENT': String(!config.build),
+      'ZERVA_PRODUCTION': String(config.build),
+      'ZERVA_VERSION': `"${config.version}"`,
+      'process.env.ZERVA_DEVELOPMENT': String(!config.build),
+      'process.env.ZERVA_PRODUCTION': String(config.build),
+      'process.env.ZERVA_VERSION': `"${config.version}"`,
       ...config.define,
     } as any,
     minify: config.build,
     external: config.build
       ? [
         //
-        "esbuild",
-        "fs",
-        "fsevents",
-        "notifier",
-        "node-notifier",
-        ...config.external,
-      ] : [
+          'esbuild',
+          'fs',
+          'fsevents',
+          'notifier',
+          'node-notifier',
+          ...config.external,
+        ] : [
         //
-        "esbuild",
-        "fs",
-        "fsevents",
-        "notifier",
-        "node-notifier",
-        "vite",
-        ...config.external,
-      ],
+          'esbuild',
+          'fs',
+          'fsevents',
+          'notifier',
+          'node-notifier',
+          'vite',
+          ...config.external,
+        ],
     ...config.esbuild,
   }
 
-
-  if (config.debug) console.log("build =", buildConfig)
+  if (config.debug)
+    console.log('build =', buildConfig)
 
   // https://github.com/evanw/esbuild/blob/main/CHANGELOG.md#0170
   const buildContext = await context(buildConfig)
 
   if (!config.build) {
-    console.info(`Zerva: Watching...`)
+    console.info('Zerva: Watching...')
     await buildContext.watch()
     return
   }
@@ -192,7 +193,8 @@ export async function runMain(config: ZervaConf) {
     .then(async (r) => {
       try {
         await chmod(config.outfile, 0o755)
-      } catch (err) { }
+      }
+      catch (err) { }
 
       console.info(`Zerva: Building to "${toHumanReadableFilePath(config.outfile)}" succeeded.`)
       buildContext.dispose()

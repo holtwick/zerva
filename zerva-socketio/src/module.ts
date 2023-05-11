@@ -1,13 +1,14 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, onInit, register, requireModules } from "@zerva/core"
-import "@zerva/http"
-import { detect } from "detect-browser"
-import { Server, ServerOptions, Socket } from "socket.io"
-import { Logger } from "zeed"
-import { ZSocketIOConnection } from "./connection-node"
+import { emit, on, onInit, register, requireModules } from '@zerva/core'
+import '@zerva/http'
+import { detect } from 'detect-browser'
+import type { ServerOptions, Socket } from 'socket.io'
+import { Server } from 'socket.io'
+import { Logger } from 'zeed'
+import { ZSocketIOConnection } from './connection-node'
 
-const name = "zerva:socketio"
+const name = 'zerva:socketio'
 const log = Logger(name)
 
 interface ZSocketIOConfig {
@@ -16,48 +17,48 @@ interface ZSocketIOConfig {
 }
 
 export function useSocketIO(config: ZSocketIOConfig = {}) {
-  log("setup")
+  log('setup')
 
   register(name)
 
   onInit(() => {
-    requireModules("http")
+    requireModules('http')
   })
 
-  on("httpInit", ({ http }) => {
-    log("init")
+  on('httpInit', ({ http }) => {
+    log('init')
 
-    let io = new Server(http, {
+    const io = new Server(http, {
       serveClient: false,
       cors: {
-        origin: "*",
-        methods: ["GET", "PUT", "POST"],
+        origin: '*',
+        methods: ['GET', 'PUT', 'POST'],
       },
       ...config.options,
     })
 
-    emit("socketIOSetup", io)
+    emit('socketIOSetup', io)
 
-    io.on("connection", (socket: Socket) => {
+    io.on('connection', (socket: Socket) => {
       let browserInfo = {} as any
       let ip
       try {
         ip = socket.request.connection.remoteAddress
-        let ua = socket.request.headers["user-agent"]
-        if (typeof ua === "string") {
+        const ua = socket.request.headers['user-agent']
+        if (typeof ua === 'string')
           browserInfo = detect(ua)
-        }
-      } catch (err) {}
+      }
+      catch (err) {}
 
       // Socket ID first, to have ahomegenous coloring
       const log = Logger(
-        `${socket?.id?.substr(0, 6)}:${browserInfo?.name ?? ""}:ws`
+        `${socket?.id?.substr(0, 6)}:${browserInfo?.name ?? ''}:ws`,
       )
       log.info(
-        `connection socketId=${socket.id}, os=${browserInfo?.os}, ${browserInfo?.type}=${browserInfo?.name} ${browserInfo?.version}, ip=${ip}`
+        `connection socketId=${socket.id}, os=${browserInfo?.os}, ${browserInfo?.type}=${browserInfo?.name} ${browserInfo?.version}, ip=${ip}`,
       )
 
-      let conn = new ZSocketIOConnection(socket)
+      const conn = new ZSocketIOConnection(socket)
 
       if (config.debug) {
         socket.onAny((name: string, msg: any) => {
@@ -65,24 +66,24 @@ export function useSocketIO(config: ZSocketIOConfig = {}) {
         })
       }
 
-      conn.on("serverPing", (data) => {
-        conn.emit("serverPong", data)
+      conn.on('serverPing', (data) => {
+        conn.emit('serverPong', data)
         return data
       })
 
-      conn.on("serverConfig", () => config)
+      conn.on('serverConfig', () => config)
 
-      socket.on("disconnect", () => {
-        log.info("user disconnected")
-        emit("socketIODisconnect", conn)
+      socket.on('disconnect', () => {
+        log.info('user disconnected')
+        emit('socketIODisconnect', conn)
       })
 
-      socket.on("error", () => {
-        log.error("error")
-        emit("socketIODisconnect", conn, "error")
+      socket.on('error', () => {
+        log.error('error')
+        emit('socketIODisconnect', conn, 'error')
       })
 
-      emit("socketIOConnect", conn)
+      emit('socketIOConnect', conn)
     })
   })
 }

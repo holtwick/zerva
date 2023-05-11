@@ -8,7 +8,7 @@ import {
   register,
   requireModules,
   setContext,
-} from "./context"
+} from './context'
 
 declare global {
   interface ZContextEvents {
@@ -16,42 +16,42 @@ declare global {
   }
 }
 
-describe("context", () => {
-  it("should emit", () =>
+describe('context', () => {
+  it('should emit', () =>
     new Promise((done) => {
       expect.assertions(1)
       setContext()
-      on("test", (x) => {
+      on('test', (x) => {
         expect(x).toBe(123)
         done(undefined)
       })
-      emit("test", 123)
+      emit('test', 123)
     }))
 
-  it("should register", () => {
+  it('should register', () => {
     setContext()
-    register("a")
-    register("b", "a")
-    expect(hasModule("c")).toBe(false)
-    expect(hasModule("a")).toBe(true)
-    requireModules("a")
+    register('a')
+    register('b', 'a')
+    expect(hasModule('c')).toBe(false)
+    expect(hasModule('a')).toBe(true)
+    requireModules('a')
     // requireModules(["x"])
   })
 
-  it("should allow sub-context", async () => {
+  it('should allow sub-context', async () => {
     setContext()
-    register("a")
-    expect(hasModule("a")).toBe(true)
+    register('a')
+    expect(hasModule('a')).toBe(true)
     createContext(() => {
-      expect(hasModule("a")).toBe(false)
-      register("b")
-      expect(hasModule("b")).toBe(true)
+      expect(hasModule('a')).toBe(false)
+      register('b')
+      expect(hasModule('b')).toBe(true)
     })
-    expect(hasModule("a")).toBe(true)
-    expect(hasModule("b")).toBe(false)
+    expect(hasModule('a')).toBe(true)
+    expect(hasModule('b')).toBe(false)
   })
 
-  it("should emit fn", () =>
+  it('should emit fn', () =>
     new Promise((done) => {
       expect.assertions(1)
       setContext()
@@ -61,6 +61,6 @@ describe("context", () => {
           done(undefined)
         },
       })
-      emit("test", 123)
+      emit('test', 123)
     }))
 })

@@ -1,9 +1,5 @@
-<template>
-  <ExampleExternalComponent />
-</template>
-
 <script>
-import ExampleExternalComponent from "example-external-component"
+import ExampleExternalComponent from 'example-external-component'
 
 export default {
   components: {
@@ -11,3 +7,7 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ExampleExternalComponent />
+</template>

@@ -1,7 +1,8 @@
-import { onStart, onStop, serve } from "../src"
-import { Logger, LoggerInterface, sleep } from "zeed"
+import type { LoggerInterface } from 'zeed'
+import { Logger, sleep } from 'zeed'
+import { onStart, onStop, serve } from '../src'
 
-const log: LoggerInterface = Logger("demo")
+const log: LoggerInterface = Logger('demo')
 
 log('demo')
 

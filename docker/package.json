@@ -1,8 +1,8 @@
 {
   "name": "@zerva/docker",
+  "type": "module",
   "version": "0.7.13",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "zerva build",
     "serve": "node dist/main.cjs",

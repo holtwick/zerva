@@ -1,13 +1,13 @@
 // Original at https://github.com/gevorg/apache-md5/blob/master/src/index.js
 
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 
 /// Hash generation string.
-const itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+const itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 /// To 64 bit version.
 function to64(index: number, count: number) {
-  let result = ""
+  let result = ''
 
   while (--count >= 0) {
     // Result char count.
@@ -20,15 +20,16 @@ function to64(index: number, count: number) {
 
 /// Returns salt.
 export function getSalt(inputSalt?: string) {
-  let salt = ""
+  let salt = ''
 
   if (inputSalt) {
     // Remove $apr1$ token and extract salt.
-    salt = inputSalt.split("$")[2]
-  } else {
+    salt = inputSalt.split('$')[2]
+  }
+  else {
     while (salt.length < 8) {
       // Random 8 chars.
-      let rchIndex = Math.floor(Math.random() * 64)
+      const rchIndex = Math.floor(Math.random() * 64)
       salt += itoa64[rchIndex]
     }
   }
@@ -39,37 +40,37 @@ export function getSalt(inputSalt?: string) {
 /// Returns password.
 function getPassword(final: string) {
   // Encrypted pass.
-  let epass = ""
+  let epass = ''
 
   epass += to64(
-    (final.charCodeAt(0) << 16) |
-    (final.charCodeAt(6) << 8) |
-    final.charCodeAt(12),
-    4
+    (final.charCodeAt(0) << 16)
+    | (final.charCodeAt(6) << 8)
+    | final.charCodeAt(12),
+    4,
   )
   epass += to64(
-    (final.charCodeAt(1) << 16) |
-    (final.charCodeAt(7) << 8) |
-    final.charCodeAt(13),
-    4
+    (final.charCodeAt(1) << 16)
+    | (final.charCodeAt(7) << 8)
+    | final.charCodeAt(13),
+    4,
   )
   epass += to64(
-    (final.charCodeAt(2) << 16) |
-    (final.charCodeAt(8) << 8) |
-    final.charCodeAt(14),
-    4
+    (final.charCodeAt(2) << 16)
+    | (final.charCodeAt(8) << 8)
+    | final.charCodeAt(14),
+    4,
   )
   epass += to64(
-    (final.charCodeAt(3) << 16) |
-    (final.charCodeAt(9) << 8) |
-    final.charCodeAt(15),
-    4
+    (final.charCodeAt(3) << 16)
+    | (final.charCodeAt(9) << 8)
+    | final.charCodeAt(15),
+    4,
   )
   epass += to64(
-    (final.charCodeAt(4) << 16) |
-    (final.charCodeAt(10) << 8) |
-    final.charCodeAt(5),
-    4
+    (final.charCodeAt(4) << 16)
+    | (final.charCodeAt(10) << 8)
+    | final.charCodeAt(5),
+    4,
   )
   epass += to64(final.charCodeAt(11), 2)
 
@@ -77,79 +78,72 @@ function getPassword(final: string) {
 }
 
 export function createEntry(password: string, salt?: string) {
-  let magic = ""
-  if (salt && salt.split("$")[1] === "1") {
-    magic = "$1$"
-  } else {
-    magic = "$apr1$"
-  }
+  let magic = ''
+  if (salt && salt.split('$')[1] === '1')
+    magic = '$1$'
+  else
+    magic = '$apr1$'
 
   salt = getSalt(salt)
 
   let ctx = password + magic + salt
   let final = crypto
-    .createHash("md5")
-    .update(password + salt + password, "ascii")
-    .digest("binary")
+    .createHash('md5')
+    .update(password + salt + password, 'ascii')
+    .digest('binary')
 
-  for (let pl = password.length; pl > 0; pl -= 16) {
+  for (let pl = password.length; pl > 0; pl -= 16)
     ctx += final.substr(0, pl > 16 ? 16 : pl)
-  }
 
   for (let i = password.length; i; i >>= 1) {
-    if (i % 2) {
+    if (i % 2)
       ctx += String.fromCharCode(0)
-    } else {
+    else
       ctx += password.charAt(0)
-    }
   }
 
   final = crypto
-    .createHash("md5")
-    .update(ctx, "ascii")
-    .digest("binary")
+    .createHash('md5')
+    .update(ctx, 'ascii')
+    .digest('binary')
 
   // 1000 loop.
   for (let i = 0; i < 1000; ++i) {
     // Weird stuff.
-    let ctxl = ""
+    let ctxl = ''
 
-    if (i % 2) {
+    if (i % 2)
       ctxl += password
-    } else {
+    else
       ctxl += final.substr(0, 16)
-    }
 
-    if (i % 3) {
+    if (i % 3)
       ctxl += salt
-    }
 
-    if (i % 7) {
+    if (i % 7)
       ctxl += password
-    }
 
-    if (i % 2) {
+    if (i % 2)
       ctxl += final.substr(0, 16)
-    } else {
+    else
       ctxl += password
-    }
 
     // Final assignment after each loop.
     final = crypto
-      .createHash("md5")
-      .update(ctxl, "ascii")
-      .digest("binary")
+      .createHash('md5')
+      .update(ctxl, 'ascii')
+      .digest('binary')
   }
 
-  return magic + salt + "$" + getPassword(final)
+  return `${magic + salt}$${getPassword(final)}`
 }
 
 export function useHtpasswd(content: string) {
-  let cache = new Map()
-  let entries = Object.fromEntries(content.split(/[\n\r]+/gim).map(line => line.split(':', 2)).filter(v => v?.length == 2))
+  const cache = new Map()
+  const entries = Object.fromEntries(content.split(/[\n\r]+/gim).map(line => line.split(':', 2)).filter(v => v?.length == 2))
 
   function validate(user: string, password: string): boolean {
-    let key = user + ':' + password
+    const key = `${user}:${password}`
     let result = cache.get(key)
     if (result == null) {
       const obj = entries[user]
@@ -164,6 +158,6 @@ export function useHtpasswd(content: string) {
 
   return {
     validate,
-    entries
+    entries,
   }
 }

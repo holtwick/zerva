@@ -1,17 +1,17 @@
 {
   "name": "zerva-example-websocket",
+  "type": "module",
   "version": "0.2.4",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
   "scripts": {
     "build": "zerva build && vite build",
     "dev": "vite",

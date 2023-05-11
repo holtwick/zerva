@@ -1,23 +1,23 @@
 {
   "name": "@zerva/vite",
+  "type": "module",
   "version": "0.23.0",
   "description": "🌱 Zerva and Vite",
-  "keywords": [
-    "server",
-    "typescript",
-    "event"
-  ],
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
   "exports": {
     ".": {
       "browser": "./dist/index.js",
@@ -46,6 +46,9 @@
     "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "tsup src/index.ts --watch"
   },
+  "peerDependencies": {
+    "vite": ">=3.0.0"
+  },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
@@ -55,8 +58,5 @@
   "devDependencies": {
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
-  },
-  "peerDependencies": {
-    "vite": ">=3.0.0"
   }
 }

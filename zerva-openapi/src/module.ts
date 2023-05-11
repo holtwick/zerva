@@ -1,15 +1,15 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { on, register } from "@zerva/core"
-import "@zerva/http"
-import { Logger } from "zeed"
+import { on, register } from '@zerva/core'
+import '@zerva/http'
+import { Logger } from 'zeed'
 
-import indexCss from "./static/index.css.txt"
-import swaggerUiBundle from "./static/swagger-ui-bundle.js.txt"
-import swaggerUiPreset from "./static/swagger-ui-standalone-preset.js.txt"
-import swaggerUiCss from "./static/swagger-ui.css.txt"
+import indexCss from './static/index.css.txt'
+import swaggerUiBundle from './static/swagger-ui-bundle.js.txt'
+import swaggerUiPreset from './static/swagger-ui-standalone-preset.js.txt'
+import swaggerUiCss from './static/swagger-ui.css.txt'
 
-const name = "openapi"
+const name = 'openapi'
 const log = Logger(`zerva:${name}`)
 
 interface Config {
@@ -21,9 +21,9 @@ export function useOpenApi(config: Config) {
   log.info(`use ${name}`)
   register(name)
 
-  const { path = "/api-docs", data } = config
+  const { path = '/api-docs', data } = config
 
-  on("httpInit", ({ app, get }) => {
+  on('httpInit', ({ app, get }) => {
     get(`${path}/swagger.json`, data)
 
     get(`${path}/index.css`, indexCss)
@@ -65,7 +65,7 @@ export function useOpenApi(config: Config) {
           </script>          
         </body>
       </html>
-       `
+       `,
     )
   })
 }

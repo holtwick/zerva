@@ -38,19 +38,19 @@ const table = db.table<Person>('person', {
 })
 
 // Create index, if not existed before
-table.index('name') 
+table.index('name')
 
-// Insert 
+// Insert
 table.insert({
   name: 'Doe',
   age: 49,
 })
 
 // Get all rows
-let allRows = table.all() 
+const allRows = table.all()
 
 // Get one row
-let doe = table.get(1)
+const doe = table.get(1)
 
 // Directly do all you like do with BetterSQLite3
 const betterSQLiteDatabase = db.db

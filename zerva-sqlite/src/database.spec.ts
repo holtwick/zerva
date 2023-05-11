@@ -1,51 +1,52 @@
-import { unlinkSync } from 'fs'
+import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
 import { useSqliteDatabase } from './database'
 
 const log = Logger('test')
 
-describe("database.spec", () => {
-  it("should do common stuff", async () => {
-    try { unlinkSync('test.sqlite') } catch (err) { }
+describe('database.spec', () => {
+  it('should do common stuff', async () => {
+    try { unlinkSync('test.sqlite') }
+    catch (err) { }
 
-    let sql: string[] = []
+    const sql: string[] = []
 
     const db = useSqliteDatabase('test.sqlite', {
       verbose: (s: any) => {
         log(s)
         sql.push(s)
-      }
+      },
     })
 
     const table = db.table<{
-      name: string,
+      name: string
       age: number
       active: boolean
     }>('test', {
       name: 'text',
       age: 'integer',
-      active: 'boolean'
+      active: 'boolean',
     })
 
     table.indexUnique('name')
 
-    let newId = table.insert({
+    const newId = table.insert({
       name: 'Dirk',
       age: 49,
-      active: true
+      active: true,
     })
 
     expect(newId).toBe(1)
 
-    let error = table.insert({
+    const error = table.insert({
       name: 'Dirk',
       age: 50,
-      active: false
+      active: false,
     })
 
     expect(error).toBe(undefined)
 
-    let count = table.count()
+    const count = table.count()
 
     expect(count).toBe(1)
 
@@ -61,7 +62,7 @@ describe("database.spec", () => {
     table.upsert('name', {
       name: 'Dirk',
       age: 50,
-      active: false
+      active: false,
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -79,7 +80,7 @@ describe("database.spec", () => {
       id: 1,
       name: 'Dirk',
       age: 50,
-      active: true
+      active: true,
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -94,13 +95,13 @@ describe("database.spec", () => {
     table.upsert('name', {
       name: 'An\'na',
       age: 20,
-      active: true
+      active: true,
     })
 
     expect(table.count()).toBe(2)
 
     table.update(1, {
-      name: "Diego",
+      name: 'Diego',
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -121,16 +122,16 @@ describe("database.spec", () => {
       }
     `)
 
-    // 
+    //
 
     const table2 = db.table<{
-      name: string,
+      name: string
       amount: number
       note: string
     }>('test', {
       name: 'text',
       amount: 'real',
-      note: 'string'
+      note: 'string',
     })
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
@@ -146,7 +147,7 @@ describe("database.spec", () => {
 
     table2.update(1, {
       amount: 1.23,
-      note: 'it is working!'
+      note: 'it is working!',
     })
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
@@ -280,8 +281,7 @@ describe("database.spec", () => {
       ]
     `)
 
-
-    let sqlDump = db.dump()
+    const sqlDump = db.dump()
 
     expect(sqlDump).toMatchInlineSnapshot(`
       "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, amount real, note text);

@@ -9,7 +9,7 @@ Put a `keycloak.json` file in your launch folder. You can generate it from insid
 
 ```js
 useKeycloak({
-  routes: ["/admin"]
+  routes: ['/admin']
 })
 ```
 

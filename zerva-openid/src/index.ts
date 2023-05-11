@@ -1,9 +1,9 @@
-import { on, register } from "@zerva/core"
+import { on, register } from '@zerva/core'
 import '@zerva/http'
 import { auth } from 'express-openid-connect'
-import { Logger } from "zeed"
+import { Logger } from 'zeed'
 
-const name = "basic-auth"
+const name = 'basic-auth'
 const log = Logger(`zerva:${name}`)
 
 interface ZervaOpenIDConfig {
@@ -25,20 +25,20 @@ interface ZervaOpenIDConfig {
 
 export function useOpenID(config?: ZervaOpenIDConfig) {
   log.info(`use ${name}`)
-  register(name, ["http"])
+  register(name, ['http'])
 
   const {
     routes = ['/'],
     baseUrl,
     issuerBaseUrl,
     clientId,
-    clientSecret
+    clientSecret,
   } = config ?? {}
 
   // 1. Register middleware
-  on("httpInit", ({ app }) => {
+  on('httpInit', ({ app }) => {
     // https://stackoverflow.com/a/46475726/140927
-    app.enable("trust proxy")
+    app.enable('trust proxy')
 
     // app.use(
     //   // https://regex101.com/r/Jieut9/1
@@ -46,7 +46,7 @@ export function useOpenID(config?: ZervaOpenIDConfig) {
     //   keycloak.protect()
     // )
 
-    let authMiddleware = auth({
+    const authMiddleware = auth({
       issuerBaseURL: issuerBaseUrl,
       baseURL: baseUrl,
       clientID: clientId,

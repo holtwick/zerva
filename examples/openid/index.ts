@@ -1,12 +1,13 @@
 // Simple demo for node and CommonJS loading
 
-import { on, serve } from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import { escape } from "node:querystring"
-import { Logger, LoggerInterface, uuid, isString, setupEnv, fetchJson, encodeQuery, fetchOptionsJson } from "zeed"
+import { escape } from 'node:querystring'
+import { on, serve } from '@zerva/core'
+import { useHttp } from '@zerva/http'
+import type { LoggerInterface } from 'zeed'
+import { Logger, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
 import session from 'express-session'
 
-const log: LoggerInterface = Logger("basic-auth")
+const log: LoggerInterface = Logger('basic-auth')
 
 log('start')
 
@@ -22,7 +23,7 @@ const {
   OAUTH2_URL: urlBase = '',
   OAUTH2_CALLBACK_URL: redirectUri = `http://localhost:8080${callbackPath}`,
   OAUTH2_CLIENT_ID: clientId = '',
-  OAUTH2_CLIENT_SECRET: clientSecret = ''
+  OAUTH2_CLIENT_SECRET: clientSecret = '',
 } = process.env ?? {}
 
 // const urlRedirect = `${urlBase}/login/oauth/authorize?client_id=${escape(clientId)}&redirect_uri=${escape(urlCallback)}&response_type=code&state=${uuid()}`
@@ -34,28 +35,27 @@ log('settings', {
   clientSecret,
   accessTokenUri,
   authorizationUri,
-  redirectUri
+  redirectUri,
 })
 
-on("httpInit", ({ app, get }) => {
-
+on('httpInit', ({ app, get }) => {
   app.set('trust proxy', 1) // trust first proxy
 
   app.use(session({
     secret: 'YLHJyZ&dSxeBn@hcbKcU@6wpDvG9',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    cookie: { secure: true },
   }))
 
   get(
-    "/",
+    '/',
     `<p>
       Not protected.
     </p>
     <p>
       <a href="/protected">But this one is with test:test</a>.
-    </p>`
+    </p>`,
   )
 
   let authInfo: any
@@ -63,22 +63,22 @@ on("httpInit", ({ app, get }) => {
   async function getTokenWithCode(code: string) {
     // https://www.oauth.com/oauth2-servers/accessing-data/obtaining-an-access-token/
     return await fetchJson(accessTokenUri, fetchOptionsJson({
-      "grant_type": "authorization_code",
-      "client_id": clientId,
-      "client_secret": clientSecret,
-      "code": code,
-      "redirect_uri": redirectUri
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      redirect_uri: redirectUri,
     }))
   }
 
   async function getTokenRefresh(token: string) {
-    // https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/    
+    // https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/
     return await fetchJson(accessTokenUri, fetchOptionsJson({
-      "grant_type": "refresh_token",
-      "client_id": clientId,
-      "client_secret": clientSecret,
-      "redirect_uri": redirectUri,
-      "refresh_token": token
+      grant_type: 'refresh_token',
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri,
+      refresh_token: token,
     }))
   }
 
@@ -90,9 +90,8 @@ on("httpInit", ({ app, get }) => {
       log('authInfo', authInfo)
 
       // todo connect with session
-      if (authInfo) {
+      if (authInfo)
         return res.redirect('/')
-      }
     }
     return 'FAIL'
   })
@@ -116,7 +115,7 @@ on("httpInit", ({ app, get }) => {
 
   }
 
-  get("/protected",
+  get('/protected',
     ({ req, res }) => {
       if (!authInfo)
         return res.redirect('/login')
@@ -129,7 +128,6 @@ on("httpInit", ({ app, get }) => {
         <a href="/logout">Logout</a>
       </p>`
     })
-
 })
 
 serve()

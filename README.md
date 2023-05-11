@@ -32,8 +32,8 @@ You can write your own module which can use `httpInit` to add some listeners:
 ```ts
 function useCounter() {
   let counter = 0
-  on("httpInit", ({ get }) => {
-    get("/counter", () => `Counter ${counter++}`)
+  on('httpInit', ({ get }) => {
+    get('/counter', () => `Counter ${counter++}`)
   })
 }
 ```
@@ -48,11 +48,11 @@ To make sure the `http` module is around as well in our context, it is good prac
 
 ```ts
 function useCounter() {
-  register("counter", ["http"])
+  register('counter', ['http'])
   let counter = 1
-  on("httpInit", ({ get }) => {
+  on('httpInit', ({ get }) => {
     get(
-      "/",
+      '/',
       () => `Counter ${counter++}.<br><br>Reload page to increase counter.`
     )
   })

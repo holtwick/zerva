@@ -1,11 +1,11 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import type { Server } from 'node:http'
 import type { Express, Request, RequestHandler, Response } from 'express-serve-static-core'
-import { Server } from "http"
 
 export type { Response, Request, Express, Server }
 
-export type httpHandlerModes = "get" | "post" | "put" | "delete"
+export type httpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
 export type httpPaths = (string | RegExp)[] | (string | RegExp)
 
@@ -25,7 +25,7 @@ export type httpGetHandler =
     req: Request
   }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
 
-export type httpInterface = {
+export interface httpInterface {
   /** Express app */
   app: Express
 
