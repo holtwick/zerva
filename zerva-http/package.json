@@ -56,7 +56,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "zeed": "^0.10.23"
+    "zeed": "^0.10.24"
   },
   "devDependencies": {
     "tsup": "^6.7.0",

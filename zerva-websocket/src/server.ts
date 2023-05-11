@@ -1,8 +1,8 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { assertModules, emit, on, onInit, once, register } from '@zerva/core'
 import '@zerva/http'
 import { parse } from 'node:url'
+import { assertModules, emit, on, onInit, once, register } from '@zerva/core'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'

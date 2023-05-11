@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     // setupFiles: ['vitest-setup.ts'],
     include: ['**/*.{client,test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '*/_archive/*'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '_archive', '*/_archive/*'],
     // snapshotFormat: {
     //   printBasicPrototype: true,
     // },
