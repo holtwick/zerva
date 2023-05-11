@@ -218,6 +218,7 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       pool.clear()
 
       await new Promise(resolve => wss.close(resolve))
+      log.info('server stop done')
     })
   })
 }
