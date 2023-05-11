@@ -5,14 +5,13 @@ import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import type { AddressInfo } from 'node:net'
 import { emit, on, register } from '@zerva/core'
+import compressionMiddleware from 'compression'
 import corsDefault from 'cors'
 import express from 'express'
-import compressionMiddleware from 'compression'
 import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
 import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
-import type { NextFunction } from 'express-serve-static-core'
-import type { Express, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
+import type { Express, HttpNextFunction, HttpRequest, HttpResponse, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
 
@@ -189,7 +188,7 @@ export function useHttp(config?: {
       suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
     for (const handler of handlers) {
-      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
+      app[mode](path, async (req: HttpRequest, res: HttpResponse, next: HttpNextFunction) => {
         log(`${mode.toUpperCase()} ${path}`)
         log('headers =', req.headers)
 
@@ -259,6 +258,10 @@ export function useHttp(config?: {
       POST,
       PUT,
       DELETE,
+      onGET: GET,
+      onPOST: POST,
+      onPUT: PUT,
+      onDELETE: DELETE,
       addStatic,
       static: addStatic,
       STATIC: addStatic,
@@ -283,6 +286,10 @@ export function useHttp(config?: {
       POST,
       PUT,
       DELETE,
+      onGET: GET,
+      onPOST: POST,
+      onPUT: PUT,
+      onDELETE: DELETE,
       addStatic,
       static: addStatic,
       STATIC: addStatic,
@@ -323,6 +330,10 @@ export function useHttp(config?: {
     POST,
     PUT,
     DELETE,
+    onGET: GET,
+    onPOST: POST,
+    onPUT: PUT,
+    onDELETE: DELETE,
     addStatic,
     static: addStatic,
     STATIC: addStatic,

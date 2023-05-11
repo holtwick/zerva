@@ -2,6 +2,7 @@
 
 import { emit, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson, on, serve } from '@zerva/core'
 import { Logger } from 'zeed'
+import type { zervaHttpInterface } from '.'
 import { useHttp } from '.'
 
 const log = Logger('test-http')
@@ -14,7 +15,7 @@ describe('http', () => {
     useHttp({ port })
 
     on('httpInit', (info) => {
-      const { get, post, addStatic } = info
+      const { onGET, onPOST, STATIC } = info as zervaHttpInterface
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
@@ -24,19 +25,19 @@ describe('http', () => {
         next()
       }
 
-      info.get('/hello', middleware, 'Hello World')
-      get('/json', { itIs: 'json', v: 1 })
-      get('/test2', ({ req }) => {
+      onGET('/hello', middleware, 'Hello World')
+      onGET('/json', { itIs: 'json', v: 1 })
+      onGET('/test2', ({ req }) => {
         req.protocol = 'xxx'
       })
 
-      post('/data', ({ req }) => {
+      onPOST('/data', ({ req }) => {
         log('headers', req.headers)
         log('req', req.body)
         return req.body
       })
 
-      addStatic('/', __dirname)
+      STATIC('/', __dirname)
     })
 
     await serve()
