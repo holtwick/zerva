@@ -1,7 +1,7 @@
 {
   "name": "@zerva/bin",
   "type": "module",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "description": "🌱 Zerva Command Line Tool",
   "author": {
     "name": "Dirk Holtwick",
