@@ -1,4 +1,3 @@
-import { fetch } from 'cross-fetch'
 import { getClientIp } from 'request-ip'
 import { Logger, fetchOptionsJson, fetchText } from 'zeed'
 

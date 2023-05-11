@@ -1,19 +1,19 @@
 {
   "name": "@zerva/sqlite",
-  "type": "module",
   "version": "0.23.0",
   "private": false,
   "description": "",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "browser": "./dist/index.js",
@@ -45,13 +45,16 @@
   },
   "dependencies": {
     "better-sqlite3": "^8.3.0",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4",
-    "vite": "^4.3.4",
+    "vite": "^4.3.5",
     "vitest": "^0.30.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

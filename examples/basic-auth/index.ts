@@ -37,7 +37,7 @@ on('httpInit', ({ get }) => {
     return `<p>
         This should be protected:
       </p>
-        User: ${(req as any).user}
+        User: ${(req).user}
       <p>
         <a href="/logout">Logout</a>
       </p>`

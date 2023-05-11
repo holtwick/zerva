@@ -1,23 +1,23 @@
 {
   "name": "@zerva/umami",
-  "type": "module",
   "version": "0.23.0",
   "description": "🌱 Zerva module template",
-  "author": {
-    "name": "Dirk Holtwick",
-    "email": "dirk.holtwick@gmail.com",
-    "url": "https://holtwick.de"
-  },
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
   "exports": {
     ".": {
       "browser": "./dist/index.js",
@@ -49,8 +49,10 @@
   "dependencies": {
     "@types/request-ip": "^0.0.37",
     "@zerva/core": "workspace:*",
-    "cross-fetch": "^3.1.5",
     "request-ip": "^3.3.0",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

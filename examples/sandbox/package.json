@@ -1,18 +1,18 @@
 {
   "name": "zerva-example-sandbox",
-  "type": "module",
   "version": "1.0.0",
   "private": true,
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
+  "type": "module",
   "main": "main.js",
   "scripts": {
     "build": "zerva build",
@@ -24,7 +24,6 @@
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "@zerva/qrcode": "workspace:*",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
   }
 }

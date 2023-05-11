@@ -1,19 +1,19 @@
 {
   "name": "zerva-example-umami",
-  "type": "module",
   "version": "1.0.0",
   "private": true,
   "description": "Just a simple test",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
@@ -24,6 +24,6 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/openapi": "workspace:*",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
   }
 }

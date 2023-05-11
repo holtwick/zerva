@@ -1,6 +1,5 @@
 import { getClientIp } from 'request-ip'
 import { Logger, fetchOptionsJson, fetchText } from 'zeed'
-import { fetch } from 'cross-fetch'
 
 const log = Logger('track')
 
