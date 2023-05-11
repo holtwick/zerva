@@ -18,6 +18,8 @@ export async function runMain(config: ZervaConf) {
   //
 
   let zervaNodeProcess: ChildProcess | undefined
+  let zervaNodeProcessDidEndPromise: Promise<number> | undefined
+  let zervaNodeProcessDidEndResolve: (value: number) => void | undefined
 
   // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
   const signals: any = {
@@ -30,13 +32,11 @@ export async function runMain(config: ZervaConf) {
     process.on(signal, () => {
       console.log(`Zerva: Process received a ${signal} signal`)
 
-      void stopNode()
-
-      // Not elegant, but working for now:)
-      setInterval(() => {
-        if (zervaNodeProcess == null)
-          process.exit(128 + (+signals[signal] ?? 0))
-      }, 200)
+      stopNode().then(() => {
+        process.exit(128 + (+signals[signal] ?? 0))
+      }).catch((err) => {
+        console.error('Zerva: Exit error', err)
+      })
     })
   })
 
@@ -46,9 +46,13 @@ export async function runMain(config: ZervaConf) {
 
   async function stopNode() {
     if (zervaNodeProcess) {
+      zervaNodeProcessDidEndPromise = new Promise(resolve => zervaNodeProcessDidEndResolve = resolve)
       console.log('Zerva: Stopping app\n')
       zervaNodeProcess.kill('SIGTERM')
+      await zervaNodeProcessDidEndPromise
     }
+    zervaNodeProcessDidEndPromise = undefined
+    zervaNodeProcessDidEndPromise = undefined
   }
 
   async function startNode() {
@@ -78,12 +82,14 @@ export async function runMain(config: ZervaConf) {
       },
     )
 
-    console.info('Zerva: Starting app')
+    console.info('\nZerva: Starting app')
     zervaNodeProcess.on('error', (err) => {
       console.error('Zerva: Node process error:', err)
     })
     zervaNodeProcess.on('close', (code) => {
       console.info('Zerva: Node process close with code:', code)
+      if (zervaNodeProcessDidEndResolve)
+        zervaNodeProcessDidEndResolve(code ?? 0)
       zervaNodeProcess = undefined
     })
     // zervaNodeProcess.on('exit', () => {
@@ -134,14 +140,12 @@ export async function runMain(config: ZervaConf) {
             void notifyError(result.errors?.[0])
             return
           }
-
           try {
             chmodSync(config.outfile, 0o755)
           }
           catch (err) { }
           void startNode()
         })
-
         build.onDispose(stopNode)
       },
     } as Plugin)

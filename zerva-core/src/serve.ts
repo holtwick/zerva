@@ -61,10 +61,13 @@ export async function serve(fn?: () => void) {
   log('serve')
 }
 
-function serverCheck() {
+async function serverCheck() {
   if (serverStarted !== true) {
     log.info('Zerva has not been started manually, will start now!')
     void serve()
+  }
+  else if (serverRunning === true) {
+    await emit('serveStop')
   }
 }
 
