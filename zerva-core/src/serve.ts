@@ -3,7 +3,7 @@
 import { Logger } from 'zeed'
 import { emit, on } from './context'
 
-const log = Logger('zerva:serve', 'info')
+const log = Logger('zerva:serve')
 
 declare global {
   interface ZContextEvents {
@@ -67,7 +67,8 @@ async function serverCheck() {
     void serve()
   }
   else if (serverRunning === true) {
-    await emit('serveStop')
+    log('Reached the end, will finish gracefully.')
+    await serveStop()
   }
 }
 
