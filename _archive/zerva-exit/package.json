@@ -1,0 +1,53 @@
+{
+  "name": "@zerva/exit",
+  "type": "module",
+  "version": "0.18.0",
+  "description": "🌱 Zerva exit gracefully",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js",
+      "node": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:tsup": "tsup src/index.ts",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "pnpm run build",
+    "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "echo 'NO TESTS AVAILABLE'",
+    "watch": "tsup src/index.ts --watch"
+  },
+  "dependencies": {
+    "@zerva/core": "workspace:*",
+    "zeed": "^0.9.22"
+  }
+}

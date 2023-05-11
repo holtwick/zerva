@@ -5,11 +5,11 @@ import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import type { AddressInfo } from 'node:net'
 import { emit, on, register } from '@zerva/core'
-import { default as corsDefault } from 'cors'
+import corsDefault from 'cors'
 import express from 'express'
 import compressionMiddleware from 'compression'
 import type { HelmetOptions } from 'helmet'
-import { default as helmetDefault } from 'helmet'
+import helmetDefault from 'helmet'
 import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
 import type { NextFunction } from 'express-serve-static-core'
 import type { Express, Request, Response, Server, httpGetHandler, httpHandlerModes, httpInterface, httpPaths } from './types'
@@ -171,7 +171,7 @@ export function useHttp(config?: {
   })
 
   server.on('clientError', (err: Error) => {
-    log.error('client request error, err')
+    log.error('client request error', err)
   })
 
   function smartRequestHandler(
@@ -184,17 +184,18 @@ export function useHttp(config?: {
 
     log(`register ${mode.toUpperCase()} ${path}`)
 
+    let suffix: string | undefined
+    if (isString(path))
+      suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
+
     for (const handler of handlers) {
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
         log(`${mode.toUpperCase()} ${path}`)
         log('headers =', req.headers)
 
-        let suffix
-        if (isString(path)) {
-          suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-          if (suffix)
-            res.type(suffix ?? 'application/octet-stream')
-        }
+        // todo
+        if (suffix)
+          res.type(suffix ?? 'application/octet-stream')
 
         let result: any = handler
         if (typeof handler === 'function') {
@@ -291,20 +292,22 @@ export function useHttp(config?: {
       const host = isLocalHost(address) ? 'localhost' : address
       const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
       if (showServerInfo)
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Open page at ${url}`)
 
-      emit('httpRunning', { port, family, address, http: server })
+      void emit('httpRunning', { port, family, address, http: server })
 
       if (openBrowser || valueToBoolean(process.env.ZERVA_HTTP_OPEN, false)) {
         const start
-          = process.platform == 'darwin'
+          = process.platform === 'darwin'
             ? 'open -u'
-            : process.platform == 'win32'
+            : process.platform === 'win32'
               ? 'start'
               : 'xdg-open'
         const cmd = `${start} ${url}`
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Open browser with: ${cmd}`)
-        import('node:child_process').then(m => m.exec(cmd))
+        import('node:child_process').then(m => m.exec(cmd)).catch(err => log.error('Cannot start child process', err))
       }
     })
   })

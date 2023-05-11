@@ -82,7 +82,6 @@ async function main() {
           scripts: {
             'build': 'pnpm run clean && pnpm run build:tsup',
             'build:tsup': tsup,
-            'clean': 'rm -rf dist',
             'prepublishOnly': hasTests
               ? 'pnpm test && pnpm run build'
               : 'pnpm run build',
@@ -97,6 +96,9 @@ async function main() {
             'clean': 'rm -rf dist www',
             'lint': 'eslint .',
             'lint:fix': 'eslint . --fix',
+          },
+          engines: {
+            node: '>=18.0.0',
           },
         },
       }

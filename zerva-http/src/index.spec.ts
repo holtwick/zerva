@@ -1,7 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { emit, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson, on, serve } from '@zerva/core'
-import 'cross-fetch/polyfill'
 import { Logger } from 'zeed'
 import { useHttp } from '.'
 
@@ -21,6 +20,7 @@ describe('http', () => {
 
       function middleware(req: any, res: any, next: any) {
         res.set('X-Test', '123')
+        next()
       }
 
       get('/hello', middleware, 'Hello World')
@@ -49,7 +49,7 @@ describe('http', () => {
     const res = await fetch(`${url}/hello`)
 
     expect(await res.text()).toEqual('Hello World')
-    // expect(res.headers.get('X-Test')).toEqual('123')
+    expect(res.headers.get('X-Test')).toEqual('123')
 
     expect(await (await fetch(`${url}/json`)).json()).toEqual({
       itIs: 'json',
