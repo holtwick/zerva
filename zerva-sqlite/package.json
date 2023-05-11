@@ -1,6 +1,6 @@
 {
   "name": "@zerva/sqlite",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "private": false,
   "description": "",
   "funding": {
@@ -45,13 +45,16 @@
   },
   "dependencies": {
     "better-sqlite3": "^8.3.0",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4",
-    "vite": "^4.3.4",
-    "vitest": "^0.30.1"
+    "vite": "^4.3.5",
+    "vitest": "^0.31.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

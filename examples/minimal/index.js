@@ -1,21 +1,21 @@
 // Simple demo for node and CommonJS loading
 
-import { on, register, serve } from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import { Logger, setupEnv } from "zeed"
+import { on, register, serve } from '@zerva/core'
+import { useHttp } from '@zerva/http'
+import { Logger, setupEnv } from 'zeed'
 
-const log = Logger("demo")
+const log = Logger('demo')
 
 setupEnv()
 
 function useCounter() {
-  register("counter", ["http"])
+  register('counter', ['http'])
   let counter = 1
-  on("httpInit", ({ get }) => {
+  on('httpInit', ({ get }) => {
     get(
-      "/",
+      '/',
       () =>
-        `<div>Counter ${counter++}.<br><br>Reload page to increase counter. </div>`
+        `<div>Counter ${counter++}.<br><br>Reload page to increase counter. </div>`,
     )
   })
   return {
@@ -23,13 +23,13 @@ function useCounter() {
   }
 }
 
-log("Setup zerva")
-log.info("DEMO_SECRET =", process.env.DEMO_SECRET)
+log('Setup zerva')
+log.info('DEMO_SECRET =', process.env.DEMO_SECRET)
 
 useHttp({
   port: 8080,
   // noExtras: true,
-  openBrowser: true
+  openBrowser: true,
 })
 
 useCounter()

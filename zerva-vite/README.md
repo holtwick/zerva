@@ -10,8 +10,8 @@ Use it like this in your project:
 
 ```ts
 useVite({
-  root: ".", // default: process.cwd()
-  www: "./dist_www", // default: ./dist_www
+  root: '.', // default: process.cwd()
+  www: './dist_www', // default: ./dist_www
 })
 ```
 

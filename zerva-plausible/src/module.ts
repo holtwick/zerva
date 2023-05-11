@@ -1,15 +1,15 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { on, register } from "@zerva/core"
-import { Logger } from "zeed"
+import { on, register } from '@zerva/core'
+import { Logger } from 'zeed'
 import {
   setTrackCollectUrl,
   setTrackWebsiteId,
   trackEvent,
   trackPageView,
-} from "./track-plausible"
+} from './track-plausible'
 
-const name = "plausible"
+const name = 'plausible'
 const log = Logger(`zerva:${name}`)
 
 interface Config {
@@ -24,6 +24,6 @@ export function usePlausible(config: Config) {
   setTrackCollectUrl(config.apiEventUrl)
   setTrackWebsiteId(config.websiteId)
 
-  on("trackEvent", trackEvent)
-  on("trackPageView", trackPageView)
+  on('trackEvent', trackEvent)
+  on('trackPageView', trackPageView)
 }

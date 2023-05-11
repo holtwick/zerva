@@ -1,11 +1,11 @@
-import { renderToString, SSRContext } from "vue/server-renderer"
-import { Logger } from "zeed"
-import "./main"
-import { createApp } from "./main"
+import type { SSRContext } from 'vue/server-renderer'
+import { renderToString } from 'vue/server-renderer'
+import { Logger } from 'zeed'
+import { createApp } from './main'
 
-const log = Logger("entry-server")
+const log = Logger('entry-server')
 
-let cache: Record<string, string> = {}
+const cache: Record<string, string> = {}
 
 // https://vitejs.dev/guide/ssr.html
 // https://github.com/vitejs/vite/tree/main/packages/playground/ssr-vue
@@ -47,7 +47,8 @@ export async function render(url: string, manifest: any) {
 
     // return [html, preloadLinks]
     cache[url] = html
-  } else {
+  }
+  else {
     log.info(`take ${url} from cache`, html)
   }
 

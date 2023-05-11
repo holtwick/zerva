@@ -1,51 +1,52 @@
-import { unlinkSync } from 'fs'
+import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
 import { useSqliteDatabase } from './database'
 
 const log = Logger('test')
 
-describe("database.spec", () => {
-  it("should do common stuff", async () => {
-    try { unlinkSync('test.sqlite') } catch (err) { }
+describe('database.spec', () => {
+  it('should do common stuff', async () => {
+    try { unlinkSync('test.sqlite') }
+    catch (err) { }
 
-    let sql: string[] = []
+    const sql: string[] = []
 
     const db = useSqliteDatabase('test.sqlite', {
       verbose: (s: any) => {
         log(s)
         sql.push(s)
-      }
+      },
     })
 
     const table = db.table<{
-      name: string,
+      name: string
       age: number
       active: boolean
     }>('test', {
       name: 'text',
       age: 'integer',
-      active: 'boolean'
+      active: 'boolean',
     })
 
     table.indexUnique('name')
 
-    let newId = table.insert({
+    const newId = table.insert({
       name: 'Dirk',
       age: 49,
-      active: true
+      active: true,
     })
 
     expect(newId).toBe(1)
 
-    let error = table.insert({
+    const error = table.insert({
       name: 'Dirk',
       age: 50,
-      active: false
+      active: false,
     })
 
     expect(error).toBe(undefined)
 
-    let count = table.count()
+    const count = table.count()
 
     expect(count).toBe(1)
 
@@ -61,7 +62,7 @@ describe("database.spec", () => {
     table.upsert('name', {
       name: 'Dirk',
       age: 50,
-      active: false
+      active: false,
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -79,7 +80,7 @@ describe("database.spec", () => {
       id: 1,
       name: 'Dirk',
       age: 50,
-      active: true
+      active: true,
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -92,15 +93,15 @@ describe("database.spec", () => {
     `)
 
     table.upsert('name', {
-      name: 'Anna',
+      name: 'An\'na',
       age: 20,
-      active: true
+      active: true,
     })
 
     expect(table.count()).toBe(2)
 
     table.update(1, {
-      name: "Diego",
+      name: 'Diego',
     })
 
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -121,16 +122,16 @@ describe("database.spec", () => {
       }
     `)
 
-    // 
+    //
 
     const table2 = db.table<{
-      name: string,
+      name: string
       amount: number
       note: string
     }>('test', {
       name: 'text',
       amount: 'real',
-      note: 'string'
+      note: 'string',
     })
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
@@ -146,7 +147,7 @@ describe("database.spec", () => {
 
     table2.update(1, {
       amount: 1.23,
-      note: 'it is working!'
+      note: 'it is working!',
     })
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
@@ -187,7 +188,7 @@ describe("database.spec", () => {
           "age": 20,
           "amount": null,
           "id": 3,
-          "name": "Anna",
+          "name": "An'na",
           "note": null,
         },
       ]
@@ -203,7 +204,7 @@ describe("database.spec", () => {
           "age": 20,
           "amount": null,
           "id": 3,
-          "name": "Anna",
+          "name": "An'na",
           "note": null,
         },
       ]
@@ -280,6 +281,26 @@ describe("database.spec", () => {
       ]
     `)
 
+    const sqlDump = db.dump()
+
+    expect(sqlDump).toMatchInlineSnapshot(`
+      "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, amount real, note text);
+      INSERT INTO test (id, name, age, active, amount, note) VALUES(3, 'An''na', 20, 1, NULL, NULL);
+      CREATE UNIQUE INDEX idx_name ON test (name);
+      CREATE UNIQUE INDEX idx_name_age ON test (name, age)"
+    `)
+
+    // let x = `
+    // PRAGMA foreign_keys=OFF;
+    // BEGIN TRANSACTION;
+    // CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, amount real, note text);
+    // INSERT INTO test VALUES(3,'An''na',20,1,NULL,NULL);
+    // DELETE FROM sqlite_sequence;
+    // INSERT INTO sqlite_sequence VALUES('test',3);
+    // CREATE UNIQUE INDEX idx_name ON test (name);
+    // CREATE UNIQUE INDEX idx_name_age ON test (name, age);
+    // COMMIT;`
+
     db.dispose()
 
     expect(sql).toMatchInlineSnapshot(`
@@ -296,7 +317,7 @@ describe("database.spec", () => {
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_name_age ON test (name, age)",
         "INSERT INTO test (active, age, id, name) VALUES(1.0, 50.0, 1.0, 'Dirk') ON CONFLICT(name, age) DO UPDATE SET active=1.0, age=50.0, id=1.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
-        "INSERT INTO test (active, age, name) VALUES(1.0, 20.0, 'Anna') ON CONFLICT(name) DO UPDATE SET active=1.0, age=20.0, name='Anna'",
+        "INSERT INTO test (active, age, name) VALUES(1.0, 20.0, 'An''na') ON CONFLICT(name) DO UPDATE SET active=1.0, age=20.0, name='An''na'",
         "SELECT count(id) AS count FROM test",
         "UPDATE test SET name='Diego' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
@@ -314,6 +335,8 @@ describe("database.spec", () => {
         "DELETE FROM test WHERE id =1.0 ",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "PRAGMA table_info(test)",
+        "SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
+        "SELECT * FROM test LIMIT 100",
       ]
     `)
 

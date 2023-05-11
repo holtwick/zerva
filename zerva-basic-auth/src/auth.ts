@@ -1,4 +1,4 @@
-import { fromBase64String } from "zeed"
+import { fromBase64String } from 'zeed'
 
 const CREDENTIALS_REGEXP = /^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$/
 const USER_PASS_REGEXP = /^([^:]*):(.*)$/
@@ -8,7 +8,6 @@ export function getAuthorization(req: any) {
 }
 
 export function parseCredentials(string: string) {
-
   // parse header
   const match = CREDENTIALS_REGEXP.exec(string)
 
@@ -18,7 +17,7 @@ export function parseCredentials(string: string) {
     if (userPass) {
       return {
         user: userPass[1],
-        password: userPass[2]
+        password: userPass[2],
       }
     }
   }
@@ -27,4 +26,3 @@ export function parseCredentials(string: string) {
 export function getCredentials(req: any) {
   return parseCredentials(getAuthorization(req))
 }
-

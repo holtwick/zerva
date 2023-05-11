@@ -1,0 +1,29 @@
+{
+  "name": "zerva-example-openid",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Just a simple test",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "ZEED=* LEVEL=a zerva index.ts"
+  },
+  "dependencies": {
+    "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "express-session": "^1.17.3",
+    "zeed": "^0.10.23"
+  }
+}

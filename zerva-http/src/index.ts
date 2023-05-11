@@ -1,20 +1,22 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, register } from "@zerva/core"
-import { default as corsDefault } from "cors"
-import express from "express"
-import fs from "fs"
+import fs from 'node:fs'
+import httpModule from 'node:http'
+import httpsModule from 'node:https'
+import type { AddressInfo } from 'node:net'
+import { emit, on, register } from '@zerva/core'
+import corsDefault from 'cors'
+import express from 'express'
 import compressionMiddleware from 'compression'
-import { default as helmetDefault, HelmetOptions } from "helmet"
-import httpModule from "http"
-import httpsModule from "https"
-import { AddressInfo } from "net"
-import { isLocalHost, isString, Logger, LogLevelInfo, promisify, valueToBoolean } from "zeed"
-import { Express, httpGetHandler, httpHandlerModes, httpInterface, httpPaths, Request, Response, Server } from "./types"
+import type { HelmetOptions } from 'helmet'
+import helmetDefault from 'helmet'
+import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
+import type { NextFunction } from 'express-serve-static-core'
+import type { Express, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
-export * from "./types"
+export * from './types'
 
-const name = "http"
+const name = 'http'
 const log = Logger(`zerva:${name}`, LogLevelInfo) // todo let the coder decide
 
 export function useHttp(config?: {
@@ -59,7 +61,7 @@ export function useHttp(config?: {
   /** Open a browser */
   openBrowser?: boolean
 
-}): httpInterface {
+}): zervaHttpInterface {
   register(name, [])
 
   const {
@@ -73,40 +75,40 @@ export function useHttp(config?: {
     helmet = true,
     compression = true,
     trustProxy = true,
-    postLimit = "1gb",
+    postLimit = '1gb',
     postJson = true,
     postText = true,
     postBinary = true,
     postUrlEncoded = true,
-    openBrowser = false
+    openBrowser = false,
   } = config ?? {}
 
-  log("config =", config)
+  log('config =', config)
 
   // The actual web server
   const app: Express = express()
 
   if (noExtras === true) {
-    log("noExtra")
-  } else {
+    log('noExtra')
+  }
+  else {
     if (helmet) {
       const options = helmet === true ? { contentSecurityPolicy: false } : helmet
-      log("Helmet", options)
+      log('Helmet', options)
       app.use(helmetDefault(options))
     }
 
-    if (compression) {
+    if (compression)
       app.use(compressionMiddleware())
-    }
 
     if (cors) {
-      log("CORS")
+      log('CORS')
       app.use(corsDefault())
     }
 
     if (trustProxy) {
-      log("Trust Proxy")
-      app.enable("trust proxy")
+      log('Trust Proxy')
+      app.enable('trust proxy')
     }
 
     if (postJson) {
@@ -130,16 +132,16 @@ export function useHttp(config?: {
         express.raw({
           limit: postLimit,
           type: (req: any) => {
-            let type = req.headers["content-type"]?.toLowerCase()
+            const type = req.headers['content-type']?.toLowerCase()
             return (
-              type?.startsWith("application/") &&
-              ![
-                "application/json",
-                "application/x-www-form-urlencoded",
+              type?.startsWith('application/')
+              && ![
+                'application/json',
+                'application/x-www-form-urlencoded',
               ].includes(type)
             )
           },
-        })
+        }),
       )
     }
   }
@@ -149,97 +151,104 @@ export function useHttp(config?: {
 
   if (isSSL) {
     if (!fs.existsSync(sslKey) || !fs.existsSync(sslCrt)) {
-      log.error("SSL files are not found. check your config.js file")
+      log.error('SSL files are not found. check your config.js file')
       process.exit(0)
     }
-    log("using ssl certs", { sslCrt, sslKey })
+    log('using ssl certs', { sslCrt, sslKey })
     const tls = {
       cert: fs.readFileSync(sslCrt),
       key: fs.readFileSync(sslKey),
     }
     server = httpsModule.createServer(tls, app)
-  } else {
-    log("using no ssl")
+  }
+  else {
+    log('using no ssl')
     server = httpModule.createServer(app)
   }
 
-  server.on("error", (err: Error) => {
-    log.error("starting web server failed:", err.message)
+  server.on('error', (err: Error) => {
+    log.error('starting web server failed:', err.message)
   })
 
-  server.on("clientError", (err: Error) => {
-    log.error("client request error, err")
+  server.on('clientError', (err: Error) => {
+    log.error('client request error', err)
   })
 
   function smartRequestHandler(
-    mode: httpHandlerModes,
-    path: httpPaths,
-    handler: httpGetHandler
+    mode: zervaHttpHandlerModes,
+    path: zervaHttpPaths,
+    handlers: zervaHttpGetHandler[],
   ): void {
-    if (isString(path) && !path.startsWith("/")) {
+    if (isString(path) && !path.startsWith('/'))
       path = `/${path}`
-    }
+
     log(`register ${mode.toUpperCase()} ${path}`)
-    app[mode](path, async (req: Request, res: Response) => {
-      log(`${mode.toUpperCase()} ${path}`)
-      log(`headers =`, req.headers)
 
-      let suffix
-      if (isString(path)) {
-        suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-        if (suffix) {
-          res.type(suffix ?? "application/octet-stream")
+    let suffix: string | undefined
+    if (isString(path))
+      suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
+
+    for (const handler of handlers) {
+      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
+        log(`${mode.toUpperCase()} ${path}`)
+        log('headers =', req.headers)
+
+        // todo
+        if (suffix)
+          res.type(suffix ?? 'application/octet-stream')
+
+        let result: any = handler
+        if (typeof handler === 'function') {
+          const reqX = req as any
+          reqX.req = req
+          //  result = await promisify(handler({ req, res }))
+          result = await promisify(handler(reqX, res, next))
         }
-      }
 
-      let result: any = handler
-      if (typeof handler === "function") {
-        result = await promisify(handler({ res, req }))
-      }
-
-      if (result != null) {
-        if (typeof result === "number") {
-          res.sendStatus(result) // error code
-        } else {
-          if (typeof result === "string") {
-            if (!suffix) {
-              if (result.startsWith("<")) {
-                res.set("Content-Type", "text/html; charset=utf-8")
-              } else {
-                res.set("Content-Type", "text/plain; charset=utf-8")
+        if (result != null) {
+          if (typeof result === 'number') {
+            res.sendStatus(result) // error code
+          }
+          else {
+            if (typeof result === 'string') {
+              if (!suffix) {
+                if (result.startsWith('<'))
+                  res.set('Content-Type', 'text/html; charset=utf-8')
+                else
+                  res.set('Content-Type', 'text/plain; charset=utf-8')
               }
             }
+            res.send(result)
           }
-          res.send(result)
         }
-      }
-    })
+      })
+    }
   }
 
-  function addStatic(path: httpPaths, fsPath: string): void {
+  function addStatic(path: zervaHttpPaths, fsPath: string): void {
     log(`add static ${path} => ${fsPath}`)
     app.use(path, express.static(fsPath))
   }
 
-  function GET(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("get", path, handler)
+  function GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
+    return smartRequestHandler('get', path, handlers)
   }
 
-  function POST(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("post", path, handler)
+  function POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
+    return smartRequestHandler('post', path, handlers)
   }
 
-  function PUT(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("put", path, handler)
+  function PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
+    return smartRequestHandler('put', path, handlers)
   }
 
-  function DELETE(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("delete", path, handler)
+  function DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
+    return smartRequestHandler('delete', path, handlers)
   }
 
-  on("serveInit", async () => {
-    log("serveInit")
-    await emit("httpInit", {
+  on('serveInit', async () => {
+    log('serveInit')
+    await emit('httpInit', {
       app,
       http: server,
       get: GET,
@@ -249,21 +258,21 @@ export function useHttp(config?: {
       GET,
       POST,
       PUT,
-      DELETE: DELETE,
+      DELETE,
       addStatic,
       static: addStatic,
       STATIC: addStatic,
     } as any)
   })
 
-  on("serveStop", async () => {
-    await emit("httpStop")
-    return new Promise((resolve) => server.close(resolve as any))
+  on('serveStop', async () => {
+    await emit('httpStop')
+    return new Promise(resolve => server.close(resolve as any))
   })
 
-  on("serveStart", async () => {
-    log("serveStart")
-    await emit("httpWillStart", {
+  on('serveStart', async () => {
+    log('serveStart')
+    await emit('httpWillStart', {
       app,
       http: server,
       get: GET,
@@ -280,24 +289,25 @@ export function useHttp(config?: {
     } as any)
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
-      const host = isLocalHost(address) ? "localhost" : address
-      const url = `${isSSL ? "https" : "http"}://${host}:${port}`
-      if (showServerInfo) {
+      const host = isLocalHost(address) ? 'localhost' : address
+      const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
+      if (showServerInfo)
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Open page at ${url}`)
-      }
 
-      emit("httpRunning", { port, family, address, http: server })
+      void emit('httpRunning', { port, family, address, http: server })
 
       if (openBrowser || valueToBoolean(process.env.ZERVA_HTTP_OPEN, false)) {
-        const start =
-          process.platform == "darwin"
-            ? "open -u"
-            : process.platform == "win32"
-              ? "start"
-              : "xdg-open"
-        const cmd = start + " " + url
+        const start
+          = process.platform === 'darwin'
+            ? 'open -u'
+            : process.platform === 'win32'
+              ? 'start'
+              : 'xdg-open'
+        const cmd = `${start} ${url}`
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Open browser with: ${cmd}`)
-        import("node:child_process").then(m => m.exec(cmd))
+        import('node:child_process').then(m => m.exec(cmd)).catch(err => log.error('Cannot start child process', err))
       }
     })
   })
@@ -309,10 +319,10 @@ export function useHttp(config?: {
     post: POST,
     put: PUT,
     delete: DELETE,
-    GET: GET,
-    POST: POST,
-    PUT: PUT,
-    DELETE: DELETE,
+    GET,
+    POST,
+    PUT,
+    DELETE,
     addStatic,
     static: addStatic,
     STATIC: addStatic,

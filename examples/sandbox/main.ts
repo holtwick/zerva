@@ -1,8 +1,7 @@
-import * as zz from "@zerva/core"
-import { useHttp } from "@zerva/http"
-import { useQrCode } from "../../zerva-qrcode/src"
+import * as zz from '@zerva/core'
+import { useHttp } from '@zerva/http'
 
-const log = zz.Logger("sandbox")
+const log = zz.Logger('sandbox')
 
 declare global {
   interface ZContextEvents {
@@ -11,17 +10,17 @@ declare global {
 }
 
 function useCounter() {
-  zz.register("counter", ["http"])
+  zz.register('counter', ['http'])
   let counter = 1
 
   zz.on({
     counterInc(up) {
-      log("counterInc", up)
+      log('counterInc', up)
       return (counter += up)
     },
     httpInit({ get }) {
-      get("/", ({ req }) => {
-        log("get", req.path)
+      get('/', ({ req }) => {
+        log('get', req.path)
         return `<div>Counter ${counter++}.<br><br>Reload page to increase counter. </div>`
       })
     },
@@ -33,11 +32,9 @@ function useCounter() {
 }
 
 useHttp({
-  host: "0.0.0.0",
+  host: '0.0.0.0',
   port: 3333,
 })
-
-useQrCode()
 
 useCounter()
 

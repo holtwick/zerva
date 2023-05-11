@@ -1,14 +1,14 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { onInit, onStart, onStop, serve, serveStop, setContext } from "./index"
+import { onInit, onStart, onStop, serve, serveStop, setContext } from './index'
 
-describe("serve", () => {
-  it("should pass all phases", async () => {
+describe('serve', () => {
+  it('should pass all phases', async () => {
     setContext()
 
     let initCount = 0
 
-    let obj = {
+    const obj = {
       init: false,
       start: false,
       stop: false,

@@ -1,15 +1,15 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import type {Express, Request, Response } from 'express-serve-static-core' 
-import { Server } from "http"
+import type { Server } from 'node:http'
+import type { Express, Request, RequestHandler, Response } from 'express-serve-static-core'
 
-export type { Response, Request, Express, Server }
+export type { Response, Request, Express, Server, RequestHandler }
 
-export type httpHandlerModes = "get" | "post" | "put" | "delete"
+export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
-export type httpPaths = (string | RegExp)[] | (string | RegExp)
+export type zervaHttpPaths = (string | RegExp)[] | (string | RegExp)
 
-export type httpResultPrimaryTypes =
+export type zervaHttpResultPrimaryTypes =
   | string
   | number
   | undefined
@@ -17,14 +17,15 @@ export type httpResultPrimaryTypes =
   | object
   | void
 
-export type httpGetHandler =
-  | httpResultPrimaryTypes
+export type zervaHttpGetHandler =
+  | zervaHttpResultPrimaryTypes
+  | RequestHandler
   | ((info: {
-      res: Response
-      req: Request
-    }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
+    res: Response
+    req: Request
+  }) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
 
-export type httpInterface = {
+export interface zervaHttpInterface {
   /** Express app */
   app: Express
 
@@ -32,43 +33,43 @@ export type httpInterface = {
   http: Server
 
   /** GET */
-  get: (path: httpPaths, handler: httpGetHandler) => void
+  get(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** POST */
-  post: (path: httpPaths, handler: httpGetHandler) => void
+  post(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** PUT */
-  put: (path: httpPaths, handler: httpGetHandler) => void
+  put(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** DELETE */
-  delete: (path: httpPaths, handler: httpGetHandler) => void
+  delete(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** GET */
-  GET: (path: httpPaths, handler: httpGetHandler) => void
+  GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** POST */
-  POST: (path: httpPaths, handler: httpGetHandler) => void
+  POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** PUT */
-  PUT: (path: httpPaths, handler: httpGetHandler) => void
+  PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
   /** DELETE */
-  DELETE: (path: httpPaths, handler: httpGetHandler) => void
+  DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
 
-  /** @deprecated */
-  addStatic: (path: httpPaths, fsPath: string) => void
+  /** @deprecated use STATIC */
+  addStatic(path: zervaHttpPaths, fsPath: string): void
 
-  /** @deprecated */
-  static: (path: httpPaths, fsPath: string) => void
+  /** @deprecated use STATIC */
+  static(path: zervaHttpPaths, fsPath: string): void
 
   /** Serve stativ file or folder  */
-  STATIC: (path: httpPaths, fsPath: string) => void
+  STATIC(path: zervaHttpPaths, fsPath: string): void
 }
 
 declare global {
   interface ZContextEvents {
-    httpInit(info: httpInterface): void
-    httpWillStart(info: httpInterface): void
+    httpInit(info: zervaHttpInterface): void
+    httpWillStart(info: zervaHttpInterface): void
     httpRunning(info: {
       http: Server
       port: number

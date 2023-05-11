@@ -13,8 +13,8 @@ On `httpStop` you can do some optional cleanup for your web server.
 Will serve on `http://localhost:8080`:
 
 ```ts
-import { serve } from "@zerva/core"
-import { useHttp } from "@zerva/http"
+import { serve } from '@zerva/core'
+import { useHttp } from '@zerva/http'
 
 useHttp()
 serve()
@@ -24,7 +24,7 @@ serve()
 
 ```ts
 interface Config {
-  host?: string 
+  host?: string
   port?: number // default: 8080
   sslCrt?: string
   sslKey?: string

@@ -7,7 +7,7 @@
 ## Get started
 
 ```ts
-import { useWebSocket } from "zerva-websocket"
+import { useWebSocket } from 'zerva-websocket'
 
 useHttp({ port: 8080 })
 useWebSocket()
@@ -20,9 +20,9 @@ useWebSocket()
 By establishing a connection you get a [Zeed Channel](https://github.com/holtwick/zeed/tree/master/src/common/msg#channel) to send raw string or binary data between server and client. The interfaces are the same for client and server side. On server side minimal code looks like this:
 
 ```ts
-on("webSocketConnect", ({ channel }) => {
-  channel.postMessage("Hello World")
-  channel.on("message", (msg) => {
+on('webSocketConnect', ({ channel }) => {
+  channel.postMessage('Hello World')
+  channel.on('message', (msg) => {
     console.log(msg.data)
   })
 })
@@ -32,10 +32,10 @@ Client side like this:
 
 ```ts
 const channel = new WebSocketConnection()
-channel.on("connect", () => {
-  channel.postMessage("Hello World")
+channel.on('connect', () => {
+  channel.postMessage('Hello World')
 })
-channel.on("message", (msg) => {
+channel.on('message', (msg) => {
   console.log(msg.data)
 })
 ```
@@ -53,7 +53,7 @@ interface Messages {
 Then implement them in on the server side:
 
 ```ts
-on("webSocketConnect", ({ channel }) => {
+on('webSocketConnect', ({ channel }) => {
   useMessageHub({ channel }).listen<Messages>({
     echo(message) {
       return message

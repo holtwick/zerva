@@ -1,8 +1,8 @@
 import {
-  createMemoryHistory,
   createRouter as _createRouter,
+  createMemoryHistory,
   createWebHistory,
-} from "vue-router"
+} from 'vue-router'
 
 // Auto generates routes from vue files under ./pages
 // https://vitejs.dev/guide/features.html#glob-import
@@ -10,12 +10,12 @@ import {
 
 const routes = [
   {
-    path: "/sub",
-    component: () => import("./components/SubPage.vue"),
+    path: '/sub',
+    component: () => import('./components/SubPage.vue'),
   },
   {
-    path: "/",
-    component: () => import("./components/HelloWorld.vue"),
+    path: '/',
+    component: () => import('./components/HelloWorld.vue'),
   },
 ]
 //  Object.keys(pages).map((path) => {

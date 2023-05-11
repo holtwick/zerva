@@ -1,23 +1,23 @@
 {
   "name": "@zerva/bin",
-  "version": "0.23.0",
+  "type": "module",
+  "version": "0.24.0",
   "description": "🌱 Zerva Command Line Tool",
-  "keywords": [
-    "server",
-    "typescript",
-    "event"
-  ],
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
   "bin": {
     "zerva": "bin.cjs"
   },
@@ -38,10 +38,10 @@
     "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
   },
   "dependencies": {
-    "@types/node": "^18.16.3",
+    "@types/node": "^20.1.2",
     "display-notification": "^3.0.0",
     "esbuild": "^0.17.18",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.10.22"
+    "zeed": "^0.10.23"
   }
 }

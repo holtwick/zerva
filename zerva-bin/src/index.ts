@@ -2,17 +2,17 @@
 
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
-import { existsSync } from "fs"
-import { runMain } from "./main"
-import { getConfig } from "./config"
+import { existsSync } from 'node:fs'
+import { runMain } from './main'
+import { getConfig } from './config'
 
 async function main() {
-  let config = getConfig()
+  const config = getConfig()
 
   if (config.help) {
     console.info(
       `usage: ${
-        process.argv?.[1]?.trim()?.toLocaleLowerCase() || ""
+        process.argv?.[1]?.trim()?.toLocaleLowerCase() || ''
       } [options] <entryFile>
 
 If started without arguments, the entry file is searched in default locations and the
@@ -29,7 +29,7 @@ is restarted on every update.
 --define=key:value  Text replacement before compiling (see esbuild)
 --esbuild=key:value Additional esbuild configs
 --node=arg          Command line argument to be added to node execution
-`
+`,
     )
     return
   }

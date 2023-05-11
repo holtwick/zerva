@@ -1,72 +1,74 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import {
-  emit,
-  fetchJson,
-  fetchOptionsFormURLEncoded,
-  fetchOptionsJson,
-  on,
-  serve,
-} from "@zerva/core"
-import "cross-fetch/polyfill"
-import { useHttp } from "."
+import { emit, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson, on, serve } from '@zerva/core'
+import { Logger } from 'zeed'
+import { useHttp } from '.'
 
-import { Logger } from "zeed"
-const log = Logger("test-http")
+const log = Logger('test-http')
 
 const port = 8888
 const url = `http://localhost:${port}`
 
-describe("http", () => {
+describe('http', () => {
   beforeAll(async () => {
     useHttp({ port })
 
-    on("httpInit", ({ get, post, addStatic }) => {
+    on('httpInit', (info) => {
+      const { get, post, addStatic } = info
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
-      get("/hello", "Hello World")
-      get("/json", { itIs: "json", v: 1 })
-      get("/test2", ({ req }) => {
-        req.protocol = "xxx"
+
+      function middleware(req: any, res: any, next: any) {
+        res.set('X-Test', '123')
+        next()
+      }
+
+      info.get('/hello', middleware, 'Hello World')
+      get('/json', { itIs: 'json', v: 1 })
+      get('/test2', ({ req }) => {
+        req.protocol = 'xxx'
       })
 
-      post("/data", ({ req }) => {
-        log("headers", req.headers)
-        log("req", req.body)
+      post('/data', ({ req }) => {
+        log('headers', req.headers)
+        log('req', req.body)
         return req.body
       })
 
-      addStatic("/", __dirname)
+      addStatic('/', __dirname)
     })
 
     await serve()
   })
 
   afterAll(async () => {
-    await emit("serveStop")
+    await emit('serveStop')
   })
 
-  it("should connect typed", async () => {
-    expect(await (await fetch(`${url}/hello`)).text()).toEqual("Hello World")
+  it('should connect typed', async () => {
+    const res = await fetch(`${url}/hello`)
+
+    expect(await res.text()).toEqual('Hello World')
+    expect(res.headers.get('X-Test')).toEqual('123')
 
     expect(await (await fetch(`${url}/json`)).json()).toEqual({
-      itIs: "json",
+      itIs: 'json',
       v: 1,
     })
 
     expect(
-      (await (await fetch(`${url}/index.ts`)).text()).split("\n")[0]
+      (await (await fetch(`${url}/index.ts`)).text()).split('\n')[0],
     ).toEqual(
-      "// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved."
+      '// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.',
     )
 
     // Json
     expect(
       await fetchJson(
         `${url}/data`,
-        fetchOptionsJson({ hello: "world" }, "POST")
-      )
+        fetchOptionsJson({ hello: 'world' }, 'POST'),
+      ),
     ).toMatchInlineSnapshot(`
       {
         "hello": "world",
@@ -77,8 +79,8 @@ describe("http", () => {
     expect(
       await fetchJson(
         `${url}/data`,
-        fetchOptionsFormURLEncoded({ hello: "world" }, "POST")
-      )
+        fetchOptionsFormURLEncoded({ hello: 'world' }, 'POST'),
+      ),
     ).toMatchInlineSnapshot(`
       {
         "hello": "world",
@@ -86,17 +88,17 @@ describe("http", () => {
     `)
 
     // Binary
-    let bin = new Uint8Array([1, 2, 3])
-    let result = await fetch(`${url}/data`, {
-      method: "POST",
+    const bin = new Uint8Array([1, 2, 3])
+    const result = await fetch(`${url}/data`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/octet-stream",
+        'Content-Type': 'application/octet-stream',
       },
       body: bin,
     })
 
-    let buffer = await result.arrayBuffer()
-    let data = new Uint8Array(buffer)
+    const buffer = await result.arrayBuffer()
+    const data = new Uint8Array(buffer)
     expect(data).toMatchInlineSnapshot(`
       Uint8Array [
         1,

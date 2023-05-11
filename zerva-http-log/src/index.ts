@@ -1,5 +1,5 @@
 import { createWriteStream } from 'node:fs'
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { ensureFolder, on } from '@zerva/core'
 import '@zerva/http'
 import morgan from 'morgan'

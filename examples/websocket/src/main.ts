@@ -1,9 +1,10 @@
-import { Logger } from "zeed"
-const log = Logger("main")
+import { Logger } from 'zeed'
 
-log("app starts")
+import { createApp } from 'vue'
+import App from './App.vue'
 
-import { createApp } from "vue"
-import App from "./App.vue"
+const log = Logger('main')
 
-createApp(App).mount("#app")
+log('app starts')
+
+createApp(App).mount('#app')
