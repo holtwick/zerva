@@ -1,17 +1,10 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import {
-  emit,
-  fetchJson,
-  fetchOptionsFormURLEncoded,
-  fetchOptionsJson,
-  on,
-  serve,
-} from "@zerva/core"
+import { emit, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson, on, serve, } from "@zerva/core"
 import "cross-fetch/polyfill"
 import { useHttp } from "."
-
 import { Logger } from "zeed"
+
 const log = Logger("test-http")
 
 const port = 8888
@@ -25,7 +18,12 @@ describe("http", () => {
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
-      get("/hello", "Hello World")
+
+      function middleware(req: any, res: any, next: any) {
+        res.set("X-Test", "123")
+      }
+
+      get("/hello", middleware, "Hello World")
       get("/json", { itIs: "json", v: 1 })
       get("/test2", ({ req }) => {
         req.protocol = "xxx"
@@ -48,7 +46,10 @@ describe("http", () => {
   })
 
   it("should connect typed", async () => {
-    expect(await (await fetch(`${url}/hello`)).text()).toEqual("Hello World")
+    let res = await fetch(`${url}/hello`)
+
+    expect(await res.text()).toEqual("Hello World")
+    // expect(res.headers.get('X-Test')).toEqual('123')
 
     expect(await (await fetch(`${url}/json`)).json()).toEqual({
       itIs: "json",

@@ -1,6 +1,6 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import type {Express, Request, Response } from 'express-serve-static-core' 
+import type { Express, Request, RequestHandler, Response } from 'express-serve-static-core'
 import { Server } from "http"
 
 export type { Response, Request, Express, Server }
@@ -19,10 +19,11 @@ export type httpResultPrimaryTypes =
 
 export type httpGetHandler =
   | httpResultPrimaryTypes
+  | RequestHandler
   | ((info: {
-      res: Response
-      req: Request
-    }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
+    res: Response
+    req: Request
+  }) => Promise<httpResultPrimaryTypes> | httpResultPrimaryTypes)
 
 export type httpInterface = {
   /** Express app */
@@ -32,28 +33,28 @@ export type httpInterface = {
   http: Server
 
   /** GET */
-  get: (path: httpPaths, handler: httpGetHandler) => void
+  get: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** POST */
-  post: (path: httpPaths, handler: httpGetHandler) => void
+  post: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** PUT */
-  put: (path: httpPaths, handler: httpGetHandler) => void
+  put: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** DELETE */
-  delete: (path: httpPaths, handler: httpGetHandler) => void
+  delete: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** GET */
-  GET: (path: httpPaths, handler: httpGetHandler) => void
+  GET: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** POST */
-  POST: (path: httpPaths, handler: httpGetHandler) => void
+  POST: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** PUT */
-  PUT: (path: httpPaths, handler: httpGetHandler) => void
+  PUT: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** DELETE */
-  DELETE: (path: httpPaths, handler: httpGetHandler) => void
+  DELETE: (path: httpPaths, ...handlers: httpGetHandler[]) => void
 
   /** @deprecated */
   addStatic: (path: httpPaths, fsPath: string) => void

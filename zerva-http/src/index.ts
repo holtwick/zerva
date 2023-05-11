@@ -11,6 +11,7 @@ import httpsModule from "https"
 import { AddressInfo } from "net"
 import { isLocalHost, isString, Logger, LogLevelInfo, promisify, valueToBoolean } from "zeed"
 import { Express, httpGetHandler, httpHandlerModes, httpInterface, httpPaths, Request, Response, Server } from "./types"
+import { NextFunction, RequestHandler } from "express-serve-static-core"
 
 export * from "./types"
 
@@ -174,46 +175,52 @@ export function useHttp(config?: {
   function smartRequestHandler(
     mode: httpHandlerModes,
     path: httpPaths,
-    handler: httpGetHandler
+    handlers: httpGetHandler[]
   ): void {
     if (isString(path) && !path.startsWith("/")) {
       path = `/${path}`
     }
     log(`register ${mode.toUpperCase()} ${path}`)
-    app[mode](path, async (req: Request, res: Response) => {
-      log(`${mode.toUpperCase()} ${path}`)
-      log(`headers =`, req.headers)
 
-      let suffix
-      if (isString(path)) {
-        suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-        if (suffix) {
-          res.type(suffix ?? "application/octet-stream")
+    for (const handler of handlers) {
+      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
+        log(`${mode.toUpperCase()} ${path}`)
+        log(`headers =`, req.headers)
+
+        let suffix
+        if (isString(path)) {
+          suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
+          if (suffix) {
+            res.type(suffix ?? "application/octet-stream")
+          }
         }
-      }
 
-      let result: any = handler
-      if (typeof handler === "function") {
-        result = await promisify(handler({ res, req }))
-      }
+        let result: any = handler
+        if (typeof handler === "function") {
+          let reqX = req as any
+          reqX.req = req
+          //  result = await promisify(handler({ req, res }))
+          result = await promisify(handler(reqX, res, next))
+        }
 
-      if (result != null) {
-        if (typeof result === "number") {
-          res.sendStatus(result) // error code
-        } else {
-          if (typeof result === "string") {
-            if (!suffix) {
-              if (result.startsWith("<")) {
-                res.set("Content-Type", "text/html; charset=utf-8")
-              } else {
-                res.set("Content-Type", "text/plain; charset=utf-8")
+        if (result != null) {
+          if (typeof result === "number") {
+            res.sendStatus(result) // error code
+          } else {
+            if (typeof result === "string") {
+              if (!suffix) {
+                if (result.startsWith("<")) {
+                  res.set("Content-Type", "text/html; charset=utf-8")
+                } else {
+                  res.set("Content-Type", "text/plain; charset=utf-8")
+                }
               }
             }
+            res.send(result)
           }
-          res.send(result)
         }
-      }
-    })
+      })
+    }
   }
 
   function addStatic(path: httpPaths, fsPath: string): void {
@@ -221,20 +228,21 @@ export function useHttp(config?: {
     app.use(path, express.static(fsPath))
   }
 
-  function GET(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("get", path, handler)
+
+  function GET(path: httpPaths, ...handlers: httpGetHandler[]) {
+    return smartRequestHandler("get", path, handlers)
   }
 
-  function POST(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("post", path, handler)
+  function POST(path: httpPaths, ...handlers: httpGetHandler[]) {
+    return smartRequestHandler("post", path, handlers)
   }
 
-  function PUT(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("put", path, handler)
+  function PUT(path: httpPaths, ...handlers: httpGetHandler[]) {
+    return smartRequestHandler("put", path, handlers)
   }
 
-  function DELETE(path: httpPaths, handler: httpGetHandler) {
-    return smartRequestHandler("delete", path, handler)
+  function DELETE(path: httpPaths, ...handlers: httpGetHandler[]) {
+    return smartRequestHandler("delete", path, handlers)
   }
 
   on("serveInit", async () => {
