@@ -1,23 +1,23 @@
 {
   "name": "@zerva/bin",
-  "type": "module",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "description": "🌱 Zerva Command Line Tool",
-  "author": {
-    "name": "Dirk Holtwick",
-    "email": "dirk.holtwick@gmail.com",
-    "url": "https://holtwick.de"
-  },
-  "license": "MIT",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
   "keywords": [
     "server",
     "typescript",
     "event"
   ],
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "type": "module",
   "bin": {
     "zerva": "bin.cjs"
   },
@@ -26,16 +26,16 @@
     "icon.png"
   ],
   "scripts": {
-    "build": "esbuild src/index.ts --platform=node --target=node10.4 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "build": "esbuild src/index.ts --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "dbld": "pnpm run build && node ./bin.cjs --esm demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
+    "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs",
+    "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs --esm demo/zerva.ts -d --loader=.md:text --define=TEST:false",
     "global": "pnpm -g ln",
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "start": "pnpm run watch",
-    "test": "echo todo",
-    "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs --esm demo/zerva.ts -d --loader=.md:text --define=TEST:false",
-    "dbld": "pnpm run build && node ./bin.cjs --esm demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
-    "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs"
+    "start": "esbuild src/index.ts  --watch --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs",
+    "test": "echo todo"
   },
   "dependencies": {
     "@types/node": "^20.1.2",
@@ -43,5 +43,8 @@
     "esbuild": "^0.17.18",
     "esbuild-plugin-yaml": "^0.0.1",
     "zeed": "^0.10.24"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -6,14 +6,25 @@ const log: LoggerInterface = Logger('demo')
 
 log('demo')
 
+let ctr = 0
+
 onStart(() => {
   log('start')
-  setInterval(() => log('do ...'), 1000)
+
+  function next() {
+    setTimeout(() => {
+      log('do ...', ++ctr)
+      if (ctr < 5)
+        next()
+    }, 1000)
+  }
+
+  next()
 })
 
 onStop(async () => {
   log('stop')
-  await sleep(1000)
+  await sleep(2000)
   log('stop done')
 })
 
