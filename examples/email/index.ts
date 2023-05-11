@@ -21,7 +21,7 @@ log.info('email transport', JSON.stringify(transport, null, 2))
 
 useEmail({ transport })
 
-emit('emailSend', {
+void emit('emailSend', {
   to: valueToString(process.env.EMAIL_TO, 'example@example.com'),
 })
 

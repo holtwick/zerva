@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
@@ -11,8 +12,7 @@ async function main() {
 
   if (config.help) {
     console.info(
-      `usage: ${
-        process.argv?.[1]?.trim()?.toLocaleLowerCase() || ''
+      `usage: ${process.argv?.[1]?.trim()?.toLocaleLowerCase() || ''
       } [options] <entryFile>
 
 If started without arguments, the entry file is searched in default locations and the

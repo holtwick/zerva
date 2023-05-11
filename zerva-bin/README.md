@@ -7,11 +7,13 @@
 In your `package.json` you might want to add these lines:
 
 ```json
-"scripts": {
-  "start": "zerva",
-  "build": "zerva build",
-  "serve": "node dist/main.cjs"
-},
+{
+  "scripts": {
+    "start": "zerva",
+    "build": "zerva build",
+    "serve": "node dist/main.cjs"
+  }
+}
 ```
 
 Zerva uses [esbuild](https://esbuild.github.io) to create both the development server code and the production code. You can take advantage of conditional building using [defines](https://esbuild.github.io/api/#define). This can be used to have code that avoids certain imports or otherwise unneed stuff in production mode. I.e. in your code you can do stuff like this:

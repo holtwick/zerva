@@ -27,19 +27,19 @@ on('httpInit', ({ get }) => {
   const event = suid()
 
   get('/trackEvent', ({ req }) => {
-    emit(
+    void emit(
       'trackEvent',
       req,
       'sample',
-      JSON.stringify({ event: 'event', os: event }),
+      { event: 'event', os: event },
     )
     return event
   })
 
   get('/trackPageView', ({ req }) => {
-    emit('trackPageView', req, `/${event}`)
+    void emit('trackPageView', req, `/${event}`)
     return event
   })
 })
 
-serve()
+void serve()

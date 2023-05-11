@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
 import { existsSync } from 'node:fs'

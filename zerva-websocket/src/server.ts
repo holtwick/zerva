@@ -2,6 +2,7 @@
 
 import '@zerva/http'
 import { parse } from 'node:url'
+import type { Buffer } from 'node:buffer'
 import { assertModules, emit, on, onInit, once, register } from '@zerva/core'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
@@ -78,7 +79,7 @@ export class WebsocketNodeConnection extends Channel {
       isAlive = true
     })
 
-    ws.on('message', (data: ArrayBuffer, isBinary: boolean) => {
+    ws.on('message', async (data: ArrayBuffer, isBinary: boolean) => {
       try {
         this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
 
@@ -89,7 +90,7 @@ export class WebsocketNodeConnection extends Channel {
           this.postMessage(pongMessage)
         }
         else {
-          this.emit('message', { data })
+          await this.emit('message', { data })
         }
       }
       catch (error) {
@@ -103,8 +104,8 @@ export class WebsocketNodeConnection extends Channel {
       ws.close()
       if (this.isConnected) {
         this.isConnected = false
-        this.emit('close')
-        emit('webSocketDisconnect', {
+        await this.emit('close')
+        await emit('webSocketDisconnect', {
           channel: this as any,
           error,
         })
@@ -123,7 +124,7 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
-    emit('webSocketConnect', {
+    void emit('webSocketConnect', {
       channel: this as any,
       dispose: this.dispose,
     })
@@ -145,9 +146,9 @@ export class WebsocketNodeConnection extends Channel {
     }
   }
 
-  async close() {
+  close() {
     this.log('trigger close')
-    await this.dispose()
+    this.dispose.sync()
     this.ws.close()
   }
 }
@@ -213,7 +214,7 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       http.off('upgrade', handleUpgrade)
 
       for (const conn of pool.values())
-        await conn.close()
+        conn.close()
       pool.clear()
 
       await new Promise(resolve => wss.close(resolve))

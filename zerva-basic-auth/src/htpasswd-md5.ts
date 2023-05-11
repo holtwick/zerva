@@ -140,7 +140,7 @@ export function createEntry(password: string, salt?: string) {
 
 export function useHtpasswd(content: string) {
   const cache = new Map()
-  const entries = Object.fromEntries(content.split(/[\n\r]+/gim).map(line => line.split(':', 2)).filter(v => v?.length == 2))
+  const entries = Object.fromEntries(content.split(/[\n\r]+/gim).map(line => line.split(':', 2)).filter(v => v?.length === 2))
 
   function validate(user: string, password: string): boolean {
     const key = `${user}:${password}`

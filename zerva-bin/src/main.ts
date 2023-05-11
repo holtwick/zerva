@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { ChildProcess } from 'node:child_process'
 import { spawn } from 'node:child_process'
 import { chmod } from 'node:fs/promises'
@@ -16,7 +17,7 @@ export async function runMain(config: ZervaConf) {
   async function stopNode() {
     if (zervaNodeProcess) {
       console.log('Zerva: Stopping app\n')
-      new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
+      await new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
       zervaNodeProcess.kill('SIGTERM')
       // p.kill("SIGKILL")
       zervaNodeProcess = undefined
@@ -49,6 +50,7 @@ export async function runMain(config: ZervaConf) {
         },
       },
     )
+
     console.info('Zerva: Starting app')
     zervaNodeProcess.on('error', (err) => {
       console.error('Node process error:', err)
@@ -102,7 +104,7 @@ export async function runMain(config: ZervaConf) {
         build.onEnd((result) => {
           if (result.errors?.length > 0) {
             console.log(`build ended with ${result.errors.length} errors`)
-            notifyError(result.errors?.[0])
+            void notifyError(result.errors?.[0])
             return
           }
 
@@ -110,7 +112,7 @@ export async function runMain(config: ZervaConf) {
             chmodSync(config.outfile, 0o755)
           }
           catch (err) { }
-          startNode()
+          void startNode()
         })
 
         build.onDispose(stopNode)
@@ -150,24 +152,8 @@ export async function runMain(config: ZervaConf) {
     } as any,
     minify: config.build,
     external: config.build
-      ? [
-        //
-        'esbuild',
-        'fs',
-        'fsevents',
-        'notifier',
-        'node-notifier',
-        ...config.external,
-      ] : [
-        //
-        'esbuild',
-        'fs',
-        'fsevents',
-        'notifier',
-        'node-notifier',
-        'vite',
-        ...config.external,
-      ],
+      ? ['esbuild', 'fs', 'fsevents', 'notifier', 'node-notifier', ...config.external]
+      : ['esbuild', 'fs', 'fsevents', 'notifier', 'node-notifier', 'vite', ...config.external],
     ...config.esbuild,
   }
 
@@ -192,9 +178,9 @@ export async function runMain(config: ZervaConf) {
       catch (err) { }
 
       console.info(`Zerva: Building to "${toHumanReadableFilePath(config.outfile)}" succeeded.`)
-      buildContext.dispose()
+      await buildContext.dispose()
     })
     .catch((error: any) => {
-      notifyError(error)
+      void notifyError(error)
     })
 }

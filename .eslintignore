@@ -5,6 +5,8 @@ _archive
 *.log
 # *.spec.*
 *.wasm.js
+*.mjs
+*.cjs
 bg.jpg
 build
 coverage
@@ -32,3 +34,5 @@ www
 yarn-error.log
 vite.config.ts
 vitest*
+zerva-vite/ssr-vue/*
+examples/vite-ssr/*

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import '@zerva/http'
@@ -48,7 +50,7 @@ export function useViteSsr(config: Config) {
         },
       })
       app.use(vite.middlewares)
-      app.use('*', async (req, res) => {
+      app.use('*', async (req: any, res: any) => {
         const url = req.originalUrl
         log(`handle ${url}`)
 
@@ -84,7 +86,7 @@ export function useViteSsr(config: Config) {
       const manifest = require('./dist/client/ssr-manifest.json')
       const { render } = require('./dist/server/entry-server')
 
-      app.use('*', async (req, res) => {
+      app.use('*', async (req: any, res: any) => {
         const url = req.originalUrl
         log(`prod handle ${url}`)
 
