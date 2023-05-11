@@ -44,4 +44,4 @@ on('httpInit', ({ get }) => {
   })
 })
 
-serve()
+void serve()

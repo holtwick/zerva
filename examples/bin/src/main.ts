@@ -26,4 +26,4 @@ on('httpInit', ({ addStatic }) => {
   addStatic('/public', 'public')
 })
 
-serve()
+void serve()

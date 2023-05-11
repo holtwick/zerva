@@ -68,7 +68,6 @@ export function useVite(config?: { root?: string; www?: string }) {
       const multiInputCache: Record<string, string> = {}
 
       // Map dynamic routes to index.html
-      // @ts-expect-error
       app?.get(/.*/, (req: any, res: any) => {
         let path: string | undefined = multiInputCache[req.path]
         if (!path) {

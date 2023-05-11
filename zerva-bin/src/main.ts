@@ -9,8 +9,6 @@ import { yamlPlugin } from 'esbuild-plugin-yaml'
 import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
 
-// @ts-expect-error
-
 export async function runMain(config: ZervaConf) {
   let zervaNodeProcess: ChildProcess | undefined
   let zervaNodeProcessDidEndPromise: ((value?: unknown) => void) | undefined
@@ -80,9 +78,6 @@ export async function runMain(config: ZervaConf) {
     }
     catch (err) { }
   }
-
-  // @ts-expect-error
-  // notifyError("TEST")
 
   function toHumanReadableFilePath(path: string) {
     const p = normalize(path)
@@ -157,22 +152,22 @@ export async function runMain(config: ZervaConf) {
     external: config.build
       ? [
         //
-          'esbuild',
-          'fs',
-          'fsevents',
-          'notifier',
-          'node-notifier',
-          ...config.external,
-        ] : [
+        'esbuild',
+        'fs',
+        'fsevents',
+        'notifier',
+        'node-notifier',
+        ...config.external,
+      ] : [
         //
-          'esbuild',
-          'fs',
-          'fsevents',
-          'notifier',
-          'node-notifier',
-          'vite',
-          ...config.external,
-        ],
+        'esbuild',
+        'fs',
+        'fsevents',
+        'notifier',
+        'node-notifier',
+        'vite',
+        ...config.external,
+      ],
     ...config.esbuild,
   }
 

@@ -13,7 +13,8 @@ describe('http', () => {
   beforeAll(async () => {
     useHttp({ port })
 
-    on('httpInit', ({ get, post, addStatic }) => {
+    on('httpInit', (info) => {
+      const { get, post, addStatic } = info
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
@@ -23,7 +24,7 @@ describe('http', () => {
         next()
       }
 
-      get('/hello', middleware, 'Hello World')
+      info.get('/hello', middleware, 'Hello World')
       get('/json', { itIs: 'json', v: 1 })
       get('/test2', ({ req }) => {
         req.protocol = 'xxx'

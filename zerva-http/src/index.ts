@@ -12,7 +12,7 @@ import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
 import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
 import type { NextFunction } from 'express-serve-static-core'
-import type { Express, Request, Response, Server, httpGetHandler, httpHandlerModes, httpInterface, httpPaths } from './types'
+import type { Express, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
 
@@ -61,7 +61,7 @@ export function useHttp(config?: {
   /** Open a browser */
   openBrowser?: boolean
 
-}): httpInterface {
+}): zervaHttpInterface {
   register(name, [])
 
   const {
@@ -175,9 +175,9 @@ export function useHttp(config?: {
   })
 
   function smartRequestHandler(
-    mode: httpHandlerModes,
-    path: httpPaths,
-    handlers: httpGetHandler[],
+    mode: zervaHttpHandlerModes,
+    path: zervaHttpPaths,
+    handlers: zervaHttpGetHandler[],
   ): void {
     if (isString(path) && !path.startsWith('/'))
       path = `/${path}`
@@ -225,24 +225,24 @@ export function useHttp(config?: {
     }
   }
 
-  function addStatic(path: httpPaths, fsPath: string): void {
+  function addStatic(path: zervaHttpPaths, fsPath: string): void {
     log(`add static ${path} => ${fsPath}`)
     app.use(path, express.static(fsPath))
   }
 
-  function GET(path: httpPaths, ...handlers: httpGetHandler[]) {
+  function GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
     return smartRequestHandler('get', path, handlers)
   }
 
-  function POST(path: httpPaths, ...handlers: httpGetHandler[]) {
+  function POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
     return smartRequestHandler('post', path, handlers)
   }
 
-  function PUT(path: httpPaths, ...handlers: httpGetHandler[]) {
+  function PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
     return smartRequestHandler('put', path, handlers)
   }
 
-  function DELETE(path: httpPaths, ...handlers: httpGetHandler[]) {
+  function DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
     return smartRequestHandler('delete', path, handlers)
   }
 
