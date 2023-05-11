@@ -14,7 +14,7 @@ import type { ZervaConf } from './config'
 
 export async function runMain(config: ZervaConf) {
   let zervaNodeProcess: ChildProcess | undefined
-  let zervaNodeProcessDidEndPromise: ((value?: unknown) => void) | undefined
+  // let zervaNodeProcessDidEndPromise: ((value?: unknown) => void) | undefined
 
   async function stopNode() {
     // console.log(`Zerva: Trigger stopping app ${zervaNodeProcess}\n`)
@@ -23,7 +23,7 @@ export async function runMain(config: ZervaConf) {
       console.log('Zerva: Stopping app\n')
 
       // sic!
-      const _ = new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
+      // const _ = new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
 
       zervaNodeProcess.kill('SIGTERM')
       // p.kill("SIGKILL")
@@ -62,13 +62,13 @@ export async function runMain(config: ZervaConf) {
     zervaNodeProcess.on('error', (err) => {
       console.error('Node process error:', err)
     })
-    zervaNodeProcess.on('close', (code) => {
-      // console.info('Zerva: Node process close with code:', code)
-      if (zervaNodeProcessDidEndPromise) {
-        zervaNodeProcessDidEndPromise()
-        zervaNodeProcessDidEndPromise = undefined
-      }
-    })
+    // zervaNodeProcess.on('close', (code) => {
+    // console.info('Zerva: Node process close with code:', code)
+    // if (zervaNodeProcessDidEndPromise) {
+    //   zervaNodeProcessDidEndPromise()
+    //   zervaNodeProcessDidEndPromise = undefined
+    // }
+    // })
     // zervaNodeProcess.on("exit", () => {
     //   console.info("Zerva: Node process exit.")
     // })
