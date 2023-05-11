@@ -13,21 +13,41 @@ import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
 
 export async function runMain(config: ZervaConf) {
+  //
+  // Forced exit like CTRL-c
+  //
+
   let zervaNodeProcess: ChildProcess | undefined
-  // let zervaNodeProcessDidEndPromise: ((value?: unknown) => void) | undefined
+
+  // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
+  const signals: any = {
+    SIGHUP: 1,
+    SIGINT: 2,
+    SIGTERM: 15,
+  }
+
+  Object.keys(signals).forEach((signal) => {
+    process.on(signal, () => {
+      console.log(`Zerva: Process received a ${signal} signal`)
+
+      void stopNode()
+
+      // Not elegant, but working for now:)
+      setInterval(() => {
+        if (zervaNodeProcess == null)
+          process.exit(128 + (+signals[signal] ?? 0))
+      }, 200)
+    })
+  })
+
+  //
+  // Sub process running node
+  //
 
   async function stopNode() {
-    // console.log(`Zerva: Trigger stopping app ${zervaNodeProcess}\n`)
-
     if (zervaNodeProcess) {
       console.log('Zerva: Stopping app\n')
-
-      // sic!
-      // const _ = new Promise(resolve => (zervaNodeProcessDidEndPromise = resolve))
-
       zervaNodeProcess.kill('SIGTERM')
-      // p.kill("SIGKILL")
-      zervaNodeProcess = undefined
     }
   }
 
@@ -60,17 +80,17 @@ export async function runMain(config: ZervaConf) {
 
     console.info('Zerva: Starting app')
     zervaNodeProcess.on('error', (err) => {
-      console.error('Node process error:', err)
+      console.error('Zerva: Node process error:', err)
     })
-    // zervaNodeProcess.on('close', (code) => {
-    // console.info('Zerva: Node process close with code:', code)
-    // if (zervaNodeProcessDidEndPromise) {
-    //   zervaNodeProcessDidEndPromise()
-    //   zervaNodeProcessDidEndPromise = undefined
-    // }
+    zervaNodeProcess.on('close', (code) => {
+      console.info('Zerva: Node process close with code:', code)
+      zervaNodeProcess = undefined
+    })
+    // zervaNodeProcess.on('exit', () => {
+    //   console.info('Zerva: Node process exit.')
     // })
-    // zervaNodeProcess.on("exit", () => {
-    //   console.info("Zerva: Node process exit.")
+    // zervaNodeProcess.on('disconnect', () => {
+    //   console.info('Zerva: Node process disconnect.')
     // })
   }
 
@@ -131,7 +151,7 @@ export async function runMain(config: ZervaConf) {
   const buildConfig: BuildOptions = {
     bundle: true,
     platform: 'node',
-    target: 'node16',
+    target: 'node18',
     format: config.esm ? 'esm' : 'cjs',
     entryPoints: [config.entry],
     legalComments: 'none',

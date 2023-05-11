@@ -80,13 +80,21 @@ const signals: any = {
   SIGTERM: 15,
 }
 
+let isPerformingExit = false
+
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
-    log(`Process received a ${signal} signal`)
-    serveStop().then(() => {
-      process.exit(128 + (+signals[signal] ?? 0))
-    }).catch((err) => {
-      log.error(`Error on srveStop: ${err}`)
-    })
+    if (!isPerformingExit) {
+      isPerformingExit = true
+      log(`Process received a ${signal} signal`)
+      serveStop().then(() => {
+        process.exit(128 + (+signals[signal] ?? 0))
+      }).catch((err) => {
+        log.error(`Error on srveStop: ${err}`)
+      })
+    }
+    else {
+      log(`Ignoring: Process received a ${signal} signal`)
+    }
   })
 })
