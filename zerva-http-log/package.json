@@ -37,6 +37,8 @@
     "build:tsup": "tsup src/index.ts",
     "check": "vue-tsc --noEmit -p ./tsconfig.json",
     "clean": "rm -rf dist www",
+    "dbld": "zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
+    "drun": "ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
