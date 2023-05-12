@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "description": "🌱 Zerva Express HTTP",
   "keywords": [
     "server",
@@ -37,6 +37,8 @@
     "build:tsup": "tsup src/index.ts",
     "check": "vue-tsc --noEmit -p ./tsconfig.json",
     "clean": "rm -rf dist www",
+    "dbld": "zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
+    "drun": "ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm test && pnpm run build",
@@ -59,6 +61,7 @@
     "zeed": "^0.10.24"
   },
   "devDependencies": {
+    "@zerva/bin": "workspace:*",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"

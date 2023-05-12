@@ -5,7 +5,7 @@ const fg = require('fast-glob')
 async function main() {
   const { default: sortPackageJson } = await import('sort-package-json')
 
-  for (const name of fg.sync(['!**/node_modules', '*/**/package.json'])) {
+  for (const name of fg.sync(['!**/node_modules', '*/package.json'])) {
     // Skip by path
     if (name.includes('node_modules/'))
       continue
@@ -14,22 +14,21 @@ async function main() {
     console.log(name)
 
     let content = fs.readFileSync(name, 'utf8')
-    let package = JSON.parse(content)
+    let pkg = JSON.parse(content)
 
     // Skip by name
-    if (['@zerva/docker', '@zerva/bin'].includes(package.name))
+    if (['@zerva/docker', '@zerva/bin'].includes(pkg.name))
       continue
 
-    if (package.name.startsWith('@zerva/')) {
-      package.scripts.reset
-        = 'rm -rf node_modules pnpm-lock.yaml dist dist_www www'
+    if (pkg.name.startsWith('@zerva/')) {
+      pkg.scripts.reset = 'rm -rf node_modules pnpm-lock.yaml dist dist_www www'
     }
 
-    delete package.engines
-    delete package.sideEffects
+    delete pkg.engines
+    delete pkg.sideEffects
 
-    package = {
-      ...package,
+    pkg = {
+      ...pkg,
       ...{
         // sideEffects: false,
         author: {
@@ -54,15 +53,13 @@ async function main() {
       const tests = fg.sync(['!**/node_modules', pattern])
       const hasTests = tests.length > 0
 
-      console.log(
-        `  Package ${package.name} browser=${hasBrowserCode} tests=${hasTests}`,
-      )
+      console.log(`  Package ${pkg.name} browser=${hasBrowserCode} tests=${hasTests}`)
 
       const tsup = `tsup src/index.ts${hasBrowserCode ? ' src/index.browser.ts ' : ''
         }`
 
-      package = {
-        ...package,
+      pkg = {
+        ...pkg,
         ...{
           type: 'module',
           exports: {
@@ -96,6 +93,8 @@ async function main() {
             'clean': 'rm -rf dist www',
             'lint': 'eslint .',
             'lint:fix': 'eslint . --fix',
+            'dbld': 'zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs',
+            'drun': 'ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts',
           },
           engines: {
             node: '>=18.0.0',
@@ -105,11 +104,10 @@ async function main() {
     }
 
     // Reset for all
-    package.scripts.reset
-      = 'rm -rf node_modules pnpm-lock.yaml dist dist_www www'
+    pkg.scripts.reset = 'rm -rf node_modules pnpm-lock.yaml dist dist_www www'
 
-    package = sortPackageJson(package)
-    content = `${JSON.stringify(package, null, 2)}\n` // trailing \n also from pnpm etc.
+    pkg = sortPackageJson(pkg)
+    content = `${JSON.stringify(pkg, null, 2)}\n` // trailing \n also from pnpm etc.
     fs.writeFileSync(name, content, 'utf8')
   }
 }

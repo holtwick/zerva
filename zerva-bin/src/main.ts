@@ -17,6 +17,10 @@ export async function runMain(config: ZervaConf) {
   // Forced exit like CTRL-c
   //
 
+  const keepAlive = setInterval(() => {
+    // console.log('Zerva: Keep alive')
+  }, 1000)
+
   let zervaNodeProcess: ChildProcess | undefined
   let zervaNodeProcessDidEndPromise: Promise<number> | undefined
   let zervaNodeProcessDidEndResolve: (value: number) => void | undefined
@@ -37,7 +41,8 @@ export async function runMain(config: ZervaConf) {
       console.log(`\n\nZerva: Received a ${signal} signal`)
 
       stopNode().then(() => {
-        process.exit(128 + (+signals[signal] ?? 0))
+        // process.exit(128 + (+signals[signal] ?? 0))
+        clearInterval(keepAlive)
       }).catch((err) => {
         console.error('Zerva: Exit error', err)
       })
