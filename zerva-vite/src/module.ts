@@ -47,6 +47,11 @@ export function useVite(config?: { root?: string; www?: string }) {
       })
 
       app?.use(vite.middlewares)
+
+      on('httpStop', async () => {
+        log('vite close')
+        await vite.close()
+      })
     }
     else {
       // eslint-disable-next-line no-console

@@ -42,6 +42,7 @@ export async function runMain(config: ZervaConf) {
 
       stopNode().then(() => {
         // process.exit(128 + (+signals[signal] ?? 0))
+        // process.exit(0)
         clearInterval(keepAlive)
       }).catch((err) => {
         console.error('Zerva: Exit error', err)
