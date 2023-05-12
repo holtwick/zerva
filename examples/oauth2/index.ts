@@ -32,8 +32,10 @@ log('start')
 setupEnv()
 
 useHttp({
-  noExtras: true,
+  // noExtras: true,
 })
+
+on('serveStop', () => log('done'))
 
 const callbackPath = '/auth/callback'
 
