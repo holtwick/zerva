@@ -55,6 +55,7 @@
     "zeed": "^0.10.24"
   },
   "devDependencies": {
+    "@zerva/bin": "workspace:*",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   },
