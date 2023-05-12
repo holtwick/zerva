@@ -1,6 +1,6 @@
 {
   "name": "@zerva/basic-auth",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "🌱 Zerva useBasicAuth",
   "keywords": [
     "server",

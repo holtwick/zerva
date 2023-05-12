@@ -9,7 +9,7 @@ import {
 } from 'zeed'
 import { ZContext } from './types'
 
-const log = Logger('zerva:context', 'info')
+const log = Logger('zerva:context')
 
 // Others would probably call it "hub" or "bus"...
 

@@ -1,6 +1,6 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
@@ -23,7 +23,7 @@
     "@antfu/eslint-config": "^0.38.6",
     "@antfu/ni": "^0.21.3",
     "@types/jest": "^29.5.1",
-    "@types/node": "^20.1.2",
+    "@types/node": "^20.1.3",
     "bumpp": "^9.1.0",
     "eslint": "^8.40.0",
     "fast-glob": "^3.2.12",

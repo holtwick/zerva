@@ -12,6 +12,8 @@ interface AuthInfo {
   state?: string
   timestamp?: number
   access_token?: string
+
+  /** The “expires_in” value is the number of seconds that the access token will be valid. */
   refresh_token?: string
   expires_in?: number
   token_type?: string
@@ -32,8 +34,10 @@ log('start')
 setupEnv()
 
 useHttp({
-  noExtras: true,
+  // noExtras: true,
 })
+
+on('serveStop', () => log('done'))
 
 const callbackPath = '/auth/callback'
 
@@ -81,11 +85,12 @@ on('httpInit', (info) => {
 
   onGET(
     '/',
-    `<p>
+    req => `<p>
       Not protected.
     </p>
     <p>
       <a href="/protected">But this one is with test:test</a>.
+      <pre>${JSON.stringify(req.session.authInfo, null, 2)}</pre>
     </p>`,
   )
 
@@ -153,20 +158,8 @@ on('httpInit', (info) => {
     // res.redirect(301, uri)
   })
 
-  // function getAuthInfo(req: HttpRequest): AuthInfo {
-  //   if (req.session.authInfo == null) {
-  //     req.session.authInfo = {
-  //       id: uuid(),
-  //     }
-  //     req.session.save()
-  //   }
-  //   log('getAuthInfo', req.session.id, req.session.authInfo)
-  //   return req.session.authInfo
-  // }
-
   function oauth2(req: HttpRequest, res: HttpResponse, next: HttpNextFunction) {
     log('middleware oauth')
-    // const authInfo = getAuthInfo(req)
     if (req.session.authInfo?.access_token)
       next()
     res.redirect('/login')
