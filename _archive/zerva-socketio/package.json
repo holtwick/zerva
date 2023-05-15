@@ -54,7 +54,7 @@
     "engine.io": "^6.4.2",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
-    "zeed": "^0.10.23"
+    "zeed": "^0.10.24"
   },
   "engines": {
     "node": ">=18.0.0"

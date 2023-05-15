@@ -23,7 +23,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/socketio": "workspace:*",
-    "zeed": "^0.10.23",
+    "zeed": "^0.10.24",
     "zerva": "^0.5.8"
   }
 }
