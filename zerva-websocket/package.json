@@ -40,7 +40,7 @@
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts src/index.browser.ts ",
     "check": "vue-tsc --noEmit -p ./tsconfig.json",
-    "clean": "rm -rf dist www node_modules pnpm-lock.yaml .out*",
+    "clean": "rm -rf dist www",
     "dbld": "zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
     "drun": "ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts",
     "lint": "eslint .",
