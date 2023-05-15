@@ -34,9 +34,7 @@ export function useViteSsr(config: Config) {
   const { root, cache: shouldUseCache = true } = config
   const rootPath = toPath(root)
 
-  const isProd
-    = valueToBoolean(process.env.ZERVA_PRODUCTION)
-    || process.env.NODE_MODE === 'production'
+  const isProd = valueToBoolean(process.env.ZERVA_PRODUCTION) || process.env.NODE_MODE === 'production'
 
   on('httpWillStart', async ({ app }) => {
     log.info(`isProd=${isProd}`)
