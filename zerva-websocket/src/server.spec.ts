@@ -1,9 +1,9 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { createPromise, emit, on, serve, setContext } from '@zerva/core'
+import { emit, on, serve, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
-import { Logger, sleep, useMessageHub, uuid } from 'zeed'
+import { Logger, createPromise, sleep, useMessageHub, uuid } from 'zeed'
 import { WebSocketConnection } from './connection'
 import { useWebSocket } from './server'
 import { webSocketPath } from './types'
