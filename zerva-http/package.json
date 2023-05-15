@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http",
-  "version": "0.26.2",
+  "version": "0.26.5",
   "description": "🌱 Zerva Express HTTP",
   "keywords": [
     "server",
