@@ -50,7 +50,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "express-openid-connect": "^2.16.0",
-    "zeed": "^0.10.24"
+    "zeed": "^0.10.29"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
