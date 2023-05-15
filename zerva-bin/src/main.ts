@@ -97,8 +97,8 @@ export async function runMain(config: ZervaConf) {
       {
         cwd,
         stdio: 'inherit',
-        detached: false,
-        shell: true,
+        detached: true,
+        shell: false,
         killSignal: 'SIGKILL',
         env: {
           ...process.env,
