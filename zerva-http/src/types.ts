@@ -89,5 +89,6 @@ declare global {
       address: string
     }): void
     httpStop(): void
+    httpDidStop(): void
   }
 }

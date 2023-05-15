@@ -93,6 +93,7 @@ Object.keys(signals).forEach((signal) => {
       log(`Process received a ${signal} signal`)
       serveStop().then(() => {
         // process.exit(128 + (+signals[signal] ?? 0))
+        process.exit(0)
       }).catch((err) => {
         log.error(`Error on srveStop: ${err}`)
       })
