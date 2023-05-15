@@ -23,17 +23,17 @@
   },
   "dependencies": {
     "@vueuse/head": "^1.1.26",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
-    "zeed": "^0.10.23"
+    "vue": "^3.3.2",
+    "vue-router": "^4.2.0",
+    "zeed": "^0.10.29"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.1",
+    "@vitejs/plugin-vue": "^4.2.3",
     "compression": "^1.7.4",
     "serve-static": "^1.15.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.5",
-    "vue-tsc": "^1.6.4",
+    "vue-tsc": "^1.6.5",
     "zeed-dom": "^0.10.4",
     "zerva": "^0.5.8"
   }

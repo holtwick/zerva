@@ -1,9 +1,11 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import '@zerva/http'
+
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { Logger, on, register, toHumanReadableFilePath, toPath } from '@zerva/core'
+import { Logger, toHumanReadableFilePath, toPath } from 'zeed'
+import { on, register } from '@zerva/core'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 const name = 'vite'

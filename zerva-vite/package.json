@@ -1,6 +1,6 @@
 {
   "name": "@zerva/vite",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "description": "🌱 Zerva and Vite",
   "keywords": [
     "server",
@@ -52,7 +52,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "vite": "^4.3.5",
-    "zeed": "^0.10.24"
+    "zeed": "^0.10.29"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
