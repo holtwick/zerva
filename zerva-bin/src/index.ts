@@ -15,6 +15,9 @@ async function main() {
       `usage: ${process.argv?.[1]?.trim()?.toLocaleLowerCase() || ''
       } [options] <entryFile>
 
+Node:    ${process.argv?.[0] ?? '-'}
+Version: ${config.version}
+
 If started without arguments, the entry file is searched in default locations and the
 debug server will be started. The files will be watched for changes and the debug server
 is restarted on every update.

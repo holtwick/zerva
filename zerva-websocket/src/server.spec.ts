@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve, setContext } from '@zerva/core'
+import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
 import { Logger, createPromise, sleep, useMessageHub, uuid } from 'zeed'
@@ -48,9 +48,7 @@ describe('module', () => {
     await promise
   })
 
-  afterAll(async () => {
-    await emit('serveStop')
-  })
+  afterAll(serveStop)
 
   // it("should connect", () =>
   //   new Promise((done) => {

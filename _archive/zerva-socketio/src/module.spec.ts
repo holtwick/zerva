@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, serve } from '@zerva/core'
+import { emit, serve, serveStop } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { io } from 'socket.io-client'
 import { lazyListener } from 'zeed'
@@ -17,9 +17,7 @@ describe('Socket', () => {
     await serve()
   })
 
-  afterAll(async () => {
-    await emit('serveStop')
-  })
+  afterAll(serveStop)
 
   it('should connect', async () => {
     const socket = io(url, {

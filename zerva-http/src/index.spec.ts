@@ -1,6 +1,6 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import { emit, on, serve } from '@zerva/core'
+import { on, serve, serveStop } from '@zerva/core'
 import { Logger, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson } from 'zeed'
 import type { zervaHttpInterface } from '.'
 import { useHttp } from '.'
@@ -43,9 +43,7 @@ describe('http', () => {
     await serve()
   })
 
-  afterAll(async () => {
-    await emit('serveStop')
-  })
+  afterAll(serveStop)
 
   it('should connect typed', async () => {
     const res = await fetch(`${url}/hello`)

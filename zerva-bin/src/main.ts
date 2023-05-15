@@ -55,7 +55,12 @@ export async function runMain(config: ZervaConf) {
   //
 
   async function stopNode() {
-    if (zervaNodeProcess) {
+    // console.info('Zerva: stopNode called')
+
+    if (zervaNodeProcessDidEndPromise) {
+      await zervaNodeProcessDidEndPromise
+    }
+    else if (zervaNodeProcess) {
       zervaNodeProcessDidEndPromise = new Promise(resolve => zervaNodeProcessDidEndResolve = resolve)
 
       if (config.debug)
@@ -70,7 +75,7 @@ export async function runMain(config: ZervaConf) {
         console.log('Zerva: Stopped app\n')
     }
     zervaNodeProcessDidEndPromise = undefined
-    zervaNodeProcessDidEndPromise = undefined
+    // console.info('Zerva: stopNode done')
   }
 
   async function startNode() {
@@ -92,6 +97,9 @@ export async function runMain(config: ZervaConf) {
       {
         cwd,
         stdio: 'inherit',
+        detached: false,
+        shell: true,
+        killSignal: 'SIGKILL',
         env: {
           ...process.env,
           ZERVA_MODE: 'development',
@@ -105,8 +113,8 @@ export async function runMain(config: ZervaConf) {
       console.error('Zerva: Node process error:', err)
     })
     zervaNodeProcess.on('close', (code) => {
-      if (config.debug)
-        console.info('Zerva: Node process close with code:', code)
+      // if (config.debug)
+      console.info('Zerva: Node process close with code:', code)
       if (zervaNodeProcessDidEndResolve)
         zervaNodeProcessDidEndResolve(code ?? 0)
       zervaNodeProcess = undefined

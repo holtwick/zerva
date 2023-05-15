@@ -1,7 +1,7 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { Logger } from 'zeed'
-import { emit, on } from './context'
+import { emit, getContext, on } from './context'
 
 const log = Logger('zerva:serve')
 
@@ -10,12 +10,14 @@ declare global {
     serveInit(): void
     serveStart(): void
     serveStop(): void
+    serveDispose(): void
   }
 }
 
 // todo context sensitive?
 let serverStarted = false
 let serverRunning = false
+let serverStoping = false
 
 // Shortcuts
 
@@ -32,20 +34,33 @@ export function onStop(handler: () => void) {
 }
 
 export async function serveStop() {
-  if (serverRunning) {
-    serverRunning = false
-    await emit('serveStop')
+  // log('serveStop called')
+  if (serverStoping) {
+    await new Promise(resolve => getContext().once('serveDispose', () => resolve(true)))
   }
+  else if (serverRunning) {
+    serverRunning = false
+    serverStoping = true
+    await emit('serveStop')
+    serverStoping = false
+    await emit('serveDispose')
+  }
+  // log('serveStop done')
 }
 
 on('serveStart', () => serverRunning = true)
-on('serveStop', () => serverRunning = false)
+
+on('serveStop', () => {
+  if (serverRunning)
+    throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
+  // serverRunning = false
+})
 
 /**
- * A simple context to serve modules. Most modules listen to the evnts emitted by it.
- *
- * @param fn Call your modules in here to add them to the context
- */
+   * A simple context to serve modules. Most modules listen to the evnts emitted by it.
+   *
+   * @param fn Call your modules in here to add them to the context
+   */
 export async function serve(fn?: () => void) {
   log('serve')
   serverStarted = true
@@ -86,6 +101,8 @@ const signals: any = {
 
 let isPerformingExit = false
 
+// on('serveDispose', () => process.exit(0))
+
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     if (!isPerformingExit) {
@@ -93,6 +110,7 @@ Object.keys(signals).forEach((signal) => {
       log(`Process received a ${signal} signal`)
       serveStop().then(() => {
         // process.exit(128 + (+signals[signal] ?? 0))
+        // log('Process EXIT')
         process.exit(0)
       }).catch((err) => {
         log.error(`Error on srveStop: ${err}`)
