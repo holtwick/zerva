@@ -50,7 +50,13 @@ export function useVite(config?: { root?: string; www?: string }) {
 
       on('httpStop', async () => {
         log('vite close')
-        await vite.close()
+        try {
+          await vite.close()
+          await vite.ws?.close()
+        }
+        catch (err) {
+
+        }
       })
     }
     else {

@@ -8,7 +8,11 @@ const log: LoggerInterface = Logger('demo')
 
 log('demo')
 
-useHttp()
+useHttp({
+  port: 3000,
+  openBrowser: true,
+})
+
 useVite()
 
 onStop(() => {

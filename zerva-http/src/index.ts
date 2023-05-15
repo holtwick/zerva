@@ -270,7 +270,8 @@ export function useHttp(config?: {
 
   on('serveStop', async () => {
     await emit('httpStop')
-    return new Promise(resolve => server.close(resolve as any))
+    await new Promise(resolve => server.close(resolve as any))
+    await emit('httpDidStop')
   })
 
   on('serveStart', async () => {
