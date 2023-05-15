@@ -27,6 +27,7 @@
   ],
   "scripts": {
     "build": "esbuild src/index.ts --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "clean": "rm -rf dist node_modules pnpm-lock.yaml .out*",
     "dbld": "pnpm run build && node ./bin.cjs --esm demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
     "ddeno": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --unstable --allow-read --allow-write=./ --allow-env dist/main.mjs",
     "drun": "pnpm run build && ZEED=* ZEED_COLOR=1 node ./bin.cjs --esm demo/zerva.ts -d --loader=.md:text --define=TEST:false",

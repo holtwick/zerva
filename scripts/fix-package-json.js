@@ -90,7 +90,7 @@ async function main() {
               : 'echo \'NO TESTS AVAILABLE\'',
             'watch': `${tsup} --watch`,
             'check': 'vue-tsc --noEmit -p ./tsconfig.json',
-            'clean': 'rm -rf dist www',
+            'clean': 'rm -rf dist www node_modules pnpm-lock.yaml .out*',
             'lint': 'eslint .',
             'lint:fix': 'eslint . --fix',
             'dbld': 'zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs',
