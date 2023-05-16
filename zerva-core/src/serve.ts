@@ -21,14 +21,17 @@ let serverStoping = false
 
 // Shortcuts
 
+/** @deprecated */
 export function onInit(handler: () => void) {
   on('serveInit', handler)
 }
 
+/** @deprecated */
 export function onStart(handler: () => void) {
   on('serveStart', handler)
 }
 
+/** @deprecated */
 export function onStop(handler: () => void) {
   on('serveStop', handler)
 }
@@ -48,18 +51,25 @@ export async function serveStop() {
   // log('serveStop done')
 }
 
-on('serveStart', () => serverRunning = true)
+on('serveStart', () => {
+  serverRunning = true
+})
 
 on('serveStop', () => {
-  if (!serverStoping)
-    throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
+  if (serverStoping !== true) {
+    // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
+    log.warn('You should call `serveStop` instead of emitting `serveStop`!')
+
+    // eslint-disable-next-line no-console
+    console.trace()
+  }
 })
 
 /**
-   * A simple context to serve modules. Most modules listen to the evnts emitted by it.
-   *
-   * @param fn Call your modules in here to add them to the context
-   */
+ * A simple context to serve modules. Most modules listen to the evnts emitted by it.
+ *
+ * @param fn Call your modules in here to add them to the context
+ */
 export async function serve(fn?: () => void) {
   log('serve')
   serverStarted = true
