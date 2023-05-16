@@ -13,118 +13,144 @@ import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
 
 export async function runMain(config: ZervaConf) {
-  //
-  // Forced exit like CTRL-c
-  //
+  const plugins = [
+    yamlPlugin({}),
+  ]
 
-  const keepAlive = setInterval(() => {
-    // console.log('Zerva: Keep alive')
-  }, 1000)
+  if (!config.build) {
+    //
+    // Forced exit like CTRL-c
+    //
+    const keepAlive = setInterval(() => {
+      // console.log('Zerva: Keep alive')
+    }, 1000)
 
-  let zervaNodeProcess: ChildProcess | undefined
-  let zervaNodeProcessDidEndPromise: Promise<number> | undefined
-  let zervaNodeProcessDidEndResolve: (value: number) => void | undefined
+    let zervaNodeProcess: ChildProcess | undefined
+    let zervaNodeProcessDidEndPromise: Promise<number> | undefined
+    let zervaNodeProcessDidEndResolve: (value: number) => void | undefined
 
-  // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
-  const signals: any = {
-    SIGHUP: 1,
-    SIGINT: 2,
-    SIGTERM: 15,
-  }
+    // NOTE: although it is tempting, the SIGKILL signal (9) cannot be intercepted and handled
+    const signals: any = {
+      SIGHUP: 1,
+      SIGINT: 2,
+      SIGTERM: 15,
+    }
 
-  Object.keys(signals).forEach((signal) => {
-    process.on(signal, () => {
-      // Already in the process of finishing
-      if (zervaNodeProcessDidEndPromise)
-        return
+    Object.keys(signals).forEach((signal) => {
+      process.on(signal, () => {
+        // Already in the process of finishing
+        if (zervaNodeProcessDidEndPromise)
+          return
 
-      console.log(`\n\nZerva: Received a ${signal} signal`)
+        console.log(`\n\nZerva: Received a ${signal} signal`)
 
-      stopNode().then(() => {
-        // process.exit(128 + (+signals[signal] ?? 0))
-        // process.exit(0)
-        clearInterval(keepAlive)
-      }).catch((err) => {
-        console.error('Zerva: Exit error', err)
+        stopNode().then(() => {
+          // process.exit(128 + (+signals[signal] ?? 0))
+          // process.exit(0)
+          clearInterval(keepAlive)
+        }).catch((err) => {
+          console.error('Zerva: Exit error', err)
+        })
       })
     })
-  })
 
-  //
-  // Sub process running node
-  //
+    //
+    // Sub process running node
+    //
 
-  async function stopNode() {
-    // console.info('Zerva: stopNode called')
+    async function stopNode() {
+      // console.info('Zerva: stopNode called')
 
-    if (zervaNodeProcessDidEndPromise) {
-      await zervaNodeProcessDidEndPromise
+      if (zervaNodeProcessDidEndPromise) {
+        await zervaNodeProcessDidEndPromise
+      }
+      else if (zervaNodeProcess) {
+        zervaNodeProcessDidEndPromise = new Promise(resolve => zervaNodeProcessDidEndResolve = resolve)
+
+        if (config.debug)
+          console.log('Zerva: Will stop node process')
+
+        zervaNodeProcess.kill('SIGTERM')
+        await zervaNodeProcessDidEndPromise
+
+        if (config.debug)
+          console.log('Zerva: Did stop node process\n')
+        else
+          console.log('Zerva: Stopped app\n')
+      }
+      zervaNodeProcessDidEndPromise = undefined
+      // console.info('Zerva: stopNode done')
     }
-    else if (zervaNodeProcess) {
-      zervaNodeProcessDidEndPromise = new Promise(resolve => zervaNodeProcessDidEndResolve = resolve)
+
+    async function startNode() {
+      await stopNode()
+
+      const cwd = process.cwd()
+      const nodeArgs = [
+        '--enable-source-maps',
+        ...config.node,
+        config.outfile,
+      ]
 
       if (config.debug)
-        console.log('Zerva: Will stop node process')
+        console.info(`Zerva: Spawn node in ${cwd} with args:`, nodeArgs)
 
-      zervaNodeProcess.kill('SIGTERM')
-      await zervaNodeProcessDidEndPromise
-
-      if (config.debug)
-        console.log('Zerva: Did stop node process\n')
-      else
-        console.log('Zerva: Stopped app\n')
-    }
-    zervaNodeProcessDidEndPromise = undefined
-    // console.info('Zerva: stopNode done')
-  }
-
-  async function startNode() {
-    await stopNode()
-
-    const cwd = process.cwd()
-    const nodeArgs = [
-      '--enable-source-maps',
-      ...config.node,
-      config.outfile,
-    ]
-
-    if (config.debug)
-      console.info(`Zerva: Spawn node in ${cwd} with args:`, nodeArgs)
-
-    zervaNodeProcess = spawn(
-      process.execPath,
-      nodeArgs,
-      {
-        cwd,
-        stdio: 'inherit',
-        detached: true,
-        shell: false,
-        killSignal: 'SIGKILL',
-        env: {
-          ...process.env,
-          ZERVA_MODE: 'development',
-          ZERVA_VERSION: config.version,
+      zervaNodeProcess = spawn(
+        process.execPath,
+        nodeArgs,
+        {
+          cwd,
+          stdio: 'inherit',
+          detached: true,
+          shell: false,
+          killSignal: 'SIGKILL',
+          env: {
+            ...process.env,
+            ZERVA_MODE: 'development',
+            ZERVA_VERSION: config.version,
+          },
         },
-      },
-    )
+      )
 
-    console.info('\nZerva: Starting app')
-    zervaNodeProcess.on('error', (err) => {
-      console.error('Zerva: Node process error:', err)
-    })
-    zervaNodeProcess.on('close', (code) => {
-      // if (config.debug)
-      console.info('Zerva: Node process close with code:', code)
-      if (zervaNodeProcessDidEndResolve)
-        zervaNodeProcessDidEndResolve(code ?? 0)
-      zervaNodeProcess = undefined
-    })
-    // zervaNodeProcess.on('exit', () => {
-    //   console.info('Zerva: Node process exit.')
-    // })
-    // zervaNodeProcess.on('disconnect', () => {
-    //   console.info('Zerva: Node process disconnect.')
-    // })
+      console.info('\nZerva: Starting app')
+      zervaNodeProcess.on('error', (err) => {
+        console.error('Zerva: Node process error:', err)
+      })
+      zervaNodeProcess.on('close', (code) => {
+        // if (config.debug)
+        console.info('Zerva: Node process exits with code:', code)
+        if (zervaNodeProcessDidEndResolve)
+          zervaNodeProcessDidEndResolve(code ?? 0)
+        zervaNodeProcess = undefined
+      })
+      // zervaNodeProcess.on('exit', () => {
+      //   console.info('Zerva: Node process exit.')
+      // })
+      // zervaNodeProcess.on('disconnect', () => {
+      //   console.info('Zerva: Node process disconnect.')
+      // })
+    }
+
+    plugins.push({
+      name: 'zerva-rebuild',
+      setup(build) {
+        build.onStart(stopNode)
+        build.onEnd((result) => {
+          if (result.errors?.length > 0) {
+            console.log(`build ended with ${result.errors.length} errors`)
+            void notifyError(result.errors?.[0])
+            return
+          }
+          try {
+            chmodSync(config.outfile, 0o755)
+          }
+          catch (err) { }
+
+          void startNode()
+        })
+        build.onDispose(stopNode)
+      },
+    } as Plugin)
   }
 
   async function notifyError(error: any) {
@@ -151,32 +177,6 @@ export async function runMain(config: ZervaConf) {
   }
 
   console.info(`Zerva: Building from "${toHumanReadableFilePath(config.entry)}"`)
-
-  const plugins = [
-    yamlPlugin({}),
-  ]
-
-  if (!config.build) {
-    plugins.push({
-      name: 'zerva-rebuild',
-      setup(build) {
-        build.onStart(stopNode)
-        build.onEnd((result) => {
-          if (result.errors?.length > 0) {
-            console.log(`build ended with ${result.errors.length} errors`)
-            void notifyError(result.errors?.[0])
-            return
-          }
-          try {
-            chmodSync(config.outfile, 0o755)
-          }
-          catch (err) { }
-          void startNode()
-        })
-        build.onDispose(stopNode)
-      },
-    } as Plugin)
-  }
 
   // Started from command line
   const buildConfig: BuildOptions = {
