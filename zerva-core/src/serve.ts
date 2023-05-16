@@ -51,9 +51,8 @@ export async function serveStop() {
 on('serveStart', () => serverRunning = true)
 
 on('serveStop', () => {
-  if (serverRunning)
+  if (!serverStoping)
     throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
-  // serverRunning = false
 })
 
 /**
