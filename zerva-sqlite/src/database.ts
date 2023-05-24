@@ -11,7 +11,7 @@ export type SqliteOptions = BetterSqlite3.Options
 export type SqliteRunResult = BetterSqlite3.RunResult
 
 // https://www.sqlite.org/datatype3.html
-const affinity = {
+const _affinity = {
   integer: 'integer',
   int: 'integer',
 
@@ -33,10 +33,12 @@ const affinity = {
   datetime: 'numeric',
 }
 
-export type ColTypes = keyof typeof affinity
+export type SqliteColTypes = keyof typeof _affinity
 
-export interface TableColsDefinition {
-  [key: string]: ColTypes // | ComplexType
+const affinity = _affinity as Record<string, string>
+
+export type SqliteTableColsDefinition<T, K extends keyof T = keyof T> = {
+  [key in K]: SqliteColTypes
 }
 
 /** Escape for .dump() */
@@ -58,11 +60,14 @@ export function useSqliteTable<
 >(
   db: SqliteDatabase,
   tableName: string,
-  fields: TableColsDefinition,
+  fields: SqliteTableColsDefinition<ColType>,
   primaryKeyName = 'id',
 ) {
   const statementsCache: Record<string, SqliteStatement> = {}
 
+  function getAffinity(name: any) {
+    return affinity[String(name)] ?? 'text'
+  }
   // Check current state
   const _tableInfoStatement = db.prepare(`PRAGMA table_info(${tableName})`)
   const info = () => _tableInfoStatement.all()
@@ -72,7 +77,7 @@ export function useSqliteTable<
     // Create table https://www.sqlite.org/lang_createtable.html
     const fieldsList = [`${primaryKeyName} INTEGER PRIMARY KEY AUTOINCREMENT`]
     for (const [field, colType] of Object.entries(fields))
-      fieldsList.push(`${field} ${affinity[colType] ?? 'text'}`)
+      fieldsList.push(`${field} ${getAffinity(colType)}`)
     db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(', ')})`)
   }
   else {
@@ -81,7 +86,7 @@ export function useSqliteTable<
     if (missingFields.length > 0) {
       const fieldsList = []
       for (const field of missingFields)
-        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${affinity[fields[field]] ?? 'text'}`)
+        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((fields as any)[field])}`)
       db.exec(fieldsList.join('; '))
     }
   }
@@ -108,10 +113,12 @@ export function useSqliteTable<
   }
 
   /** Query `value` of a certain `field` */
-  function getByField(name: ColName, value: any): ColFullType {
-    const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=? LIMIT 1`
-    // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
-    return prepare(sql).get(value)
+  function getByField(name: ColName, value: any): ColFullType | undefined {
+    if (value != null) {
+      const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=? LIMIT 1`
+      // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
+      return prepare(sql).get(value)
+    }
   }
 
   function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: ColName | ColName[]) {
@@ -142,7 +149,7 @@ export function useSqliteTable<
     }
   }
 
-  function findOne(cols: Partial<ColFullType>): ColFullType {
+  function findOne(cols: Partial<ColFullType>): ColFullType | undefined {
     const { statement, values } = findPrepare(cols, 1)
     return statement.get(values)
   }
@@ -155,8 +162,9 @@ export function useSqliteTable<
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
 
   /** Query row with `id`  */
-  function get(id: number | string): ColFullType {
-    return _getStatement.get(id)
+  function get(id: number | string): ColFullType | undefined {
+    if (id != null)
+      return _getStatement.get(id)
   }
 
   function normalizeValue(value: any) {
@@ -295,7 +303,7 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     return db.transaction(fn) as any
   }
 
-  function table<T>(tableName: string, fields: TableColsDefinition) {
+  function table<T>(tableName: string, fields: SqliteTableColsDefinition<T>) {
     return useSqliteTable<T>(db, tableName, fields)
   }
 
