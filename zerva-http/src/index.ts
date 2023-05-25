@@ -205,6 +205,12 @@ export function useHttp(config?: {
         }
 
         if (result != null) {
+          // [500, 'my error message'] or [404, {error: 'not found'}]
+          if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
+            res.sendStatus(result[0])
+            result = result[1]
+          }
+
           if (typeof result === 'number') {
             res.sendStatus(result) // error code
           }
