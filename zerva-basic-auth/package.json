@@ -1,6 +1,6 @@
 {
   "name": "@zerva/basic-auth",
-  "version": "0.28.1",
+  "version": "0.29.0",
   "description": "🌱 Zerva useBasicAuth",
   "keywords": [
     "server",
@@ -51,7 +51,7 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.10.29"
+    "zeed": "^0.10.30"
   },
   "devDependencies": {
     "tsup": "^6.7.0",

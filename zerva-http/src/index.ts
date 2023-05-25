@@ -192,7 +192,7 @@ export function useHttp(config?: {
         log(`${mode.toUpperCase()} ${path}`)
         log('headers =', req.headers)
 
-        // todo
+        // todo maybe later?
         if (suffix)
           res.type(suffix ?? 'application/octet-stream')
 
@@ -200,25 +200,30 @@ export function useHttp(config?: {
         if (typeof handler === 'function') {
           const reqX = req as any
           reqX.req = req
-          //  result = await promisify(handler({ req, res }))
           result = await promisify(handler(reqX, res, next))
         }
 
         if (result != null) {
+          // [500, 'my error message'] or [404, {error: 'not found'}]
+          if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
+            res.status(result[0])
+            result = result[1]
+          }
+
           if (typeof result === 'number') {
-            res.sendStatus(result) // error code
+            res.status(result).send(String(result)) // error code
+            return
           }
-          else {
-            if (typeof result === 'string') {
-              if (!suffix) {
-                if (result.startsWith('<'))
-                  res.set('Content-Type', 'text/html; charset=utf-8')
-                else
-                  res.set('Content-Type', 'text/plain; charset=utf-8')
-              }
+
+          if (typeof result === 'string') {
+            if (!suffix) {
+              if (result.startsWith('<'))
+                res.set('Content-Type', 'text/html; charset=utf-8')
+              else
+                res.set('Content-Type', 'text/plain; charset=utf-8')
             }
-            res.send(result)
           }
+          res.send(result)
         }
       })
     }

@@ -1,7 +1,7 @@
 // (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import { Logger } from 'zeed'
-import { emit, on } from './context'
+import { emit, getContext, on } from './context'
 
 const log = Logger('zerva:serve')
 
@@ -10,36 +10,60 @@ declare global {
     serveInit(): void
     serveStart(): void
     serveStop(): void
+    serveDispose(): void
   }
 }
 
 // todo context sensitive?
 let serverStarted = false
 let serverRunning = false
+let serverStoping = false
 
 // Shortcuts
 
+/** @deprecated */
 export function onInit(handler: () => void) {
   on('serveInit', handler)
 }
 
+/** @deprecated */
 export function onStart(handler: () => void) {
   on('serveStart', handler)
 }
 
+/** @deprecated */
 export function onStop(handler: () => void) {
   on('serveStop', handler)
 }
 
 export async function serveStop() {
-  if (serverRunning) {
-    serverRunning = false
-    await emit('serveStop')
+  // log('serveStop called')
+  if (serverStoping) {
+    await new Promise(resolve => getContext().once('serveDispose', () => resolve(true)))
   }
+  else if (serverRunning) {
+    serverRunning = false
+    serverStoping = true
+    await emit('serveStop')
+    serverStoping = false
+    await emit('serveDispose')
+  }
+  // log('serveStop done')
 }
 
-on('serveStart', () => serverRunning = true)
-on('serveStop', () => serverRunning = false)
+on('serveStart', () => {
+  serverRunning = true
+})
+
+on('serveStop', () => {
+  if (serverStoping !== true) {
+    // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
+    log.warn('You should call `serveStop` instead of emitting `serveStop`!')
+
+    // eslint-disable-next-line no-console
+    console.trace()
+  }
+})
 
 /**
  * A simple context to serve modules. Most modules listen to the evnts emitted by it.
@@ -86,6 +110,8 @@ const signals: any = {
 
 let isPerformingExit = false
 
+// on('serveDispose', () => process.exit(0))
+
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     if (!isPerformingExit) {
@@ -93,6 +119,7 @@ Object.keys(signals).forEach((signal) => {
       log(`Process received a ${signal} signal`)
       serveStop().then(() => {
         // process.exit(128 + (+signals[signal] ?? 0))
+        // log('Process EXIT')
         process.exit(0)
       }).catch((err) => {
         log.error(`Error on srveStop: ${err}`)

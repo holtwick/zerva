@@ -1,6 +1,6 @@
 {
   "name": "@zerva/email",
-  "version": "0.28.1",
+  "version": "0.29.0",
   "description": "🌱 Zerva send email service",
   "keywords": [
     "server",
@@ -49,14 +49,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/nodemailer": "^6.4.7",
+    "@types/nodemailer": "^6.4.8",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "nodemailer": "^6.9.2",
-    "zeed": "^0.10.29"
+    "zeed": "^0.10.30"
   },
   "devDependencies": {
-    "@types/node": "^20.1.4",
+    "@types/node": "^20.2.3",
     "tsup": "^6.7.0"
   },
   "engines": {
