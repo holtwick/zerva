@@ -288,8 +288,8 @@ describe('database.spec', () => {
     expect(sqlDump).toMatchInlineSnapshot(`
       "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, amount real, note text);
       INSERT INTO test (id, name, age, active, amount, note) VALUES(3, 'An''na', 20, 1, NULL, NULL);
-      CREATE UNIQUE INDEX idx_name ON test (name);
-      CREATE UNIQUE INDEX idx_name_age ON test (name, age)"
+      CREATE UNIQUE INDEX idx_test_name ON test (name);
+      CREATE UNIQUE INDEX idx_test_name_age ON test (name, age)"
     `)
 
     // let x = `
@@ -309,14 +309,14 @@ describe('database.spec', () => {
       [
         "PRAGMA table_info(test)",
         "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric)",
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_name ON test (name)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_test_name ON test (name)",
         "INSERT INTO test (active, age, id, name) VALUES(1.0, 49.0, NULL, 'Dirk')",
         "INSERT INTO test (active, age, id, name) VALUES(0.0, 50.0, NULL, 'Dirk')",
         "SELECT count(id) AS count FROM test",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "INSERT INTO test (active, age, name) VALUES(0.0, 50.0, 'Dirk') ON CONFLICT(name) DO UPDATE SET active=0.0, age=50.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_name_age ON test (name, age)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_test_name_age ON test (name, age)",
         "INSERT INTO test (active, age, id, name) VALUES(1.0, 50.0, 1.0, 'Dirk') ON CONFLICT(name, age) DO UPDATE SET active=1.0, age=50.0, id=1.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "INSERT INTO test (active, age, name) VALUES(1.0, 20.0, 'An''na') ON CONFLICT(name) DO UPDATE SET active=1.0, age=20.0, name='An''na'",

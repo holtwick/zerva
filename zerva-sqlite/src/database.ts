@@ -259,13 +259,13 @@ export function useSqliteTable<
     return prepare(`SELECT count(id) AS count FROM ${tableName} `).get().count
   }
 
-  /** Create index `idx_field` of column `field` if not exists. */
+  /** Create index `idx_table_field` of column `field` if not exists. */
   function index(col: ColName | ColName[], indexName?: string, unique?: boolean): SqliteRunResult {
     const fields = isArray(col) ? col : [col]
-    return prepare(`CREATE ${unique === true ? 'UNIQUE ' : ''}INDEX IF NOT EXISTS ${indexName ?? `idx_${fields.map(r => String(r)).join('_')}`} ON ${tableName} (${fields.map(r => String(r)).join(', ')})`).run()
+    return prepare(`CREATE ${unique === true ? 'UNIQUE ' : ''}INDEX IF NOT EXISTS ${indexName ?? `idx_${tableName}_${fields.map(r => String(r)).join('_')}`} ON ${tableName} (${fields.map(r => String(r)).join(', ')})`).run()
   }
 
-  /** Create index `idx_field` of column `field` if not exists. */
+  /** Create unique index `idx_table_field` of column `field` if not exists. */
   function indexUnique(col: ColName | ColName[], indexName?: string): SqliteRunResult {
     return index(col, indexName, true)
   }
