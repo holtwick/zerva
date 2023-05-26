@@ -1,5 +1,6 @@
 import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
+import type { SqliteTableDefault } from './database'
 import { useSqliteDatabase } from './database'
 
 const log = Logger('test')
@@ -22,11 +23,13 @@ describe('database.spec', () => {
       },
     })
 
-    const table = db.table<{
+    interface MyTable extends SqliteTableDefault {
       name: string
       age: number
       active: boolean
-    }>('test', {
+    }
+
+    const table = db.table<MyTable>('test', {
       name: 'text',
       age: 'integer',
       active: 'boolean',

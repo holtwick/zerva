@@ -68,7 +68,9 @@ export interface SqliteTableDefault {
 
 /** Only use via `useSqliteDatabase`! */
 export function useSqliteTable<
-  ColType, ColFullType = ColType & SqliteTableDefault,
+  ColType,
+  ColFullType = ColType & SqliteTableDefault,
+  ColTypeInsert = Omit<ColType, 'id' | 'updated' | 'created'> & Partial<SqliteTableDefault>,
   ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
@@ -202,7 +204,7 @@ export function useSqliteTable<
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (created, updated, ${sortedFields.join(', ')}) VALUES(?, ?, ${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: ColType): number | undefined {
+  function insert(obj: ColTypeInsert): number | undefined {
     try {
       const now = getNow()
       return _insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid
