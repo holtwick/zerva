@@ -52,7 +52,14 @@ export function escapeSQLValueSingleQuotes(value: any) {
   return `'${String(value).replace(/\'/gim, '\'\'')}'`
 }
 
-interface ColManagedType {
+/**
+ * Basic fields of every table with
+ *
+ * - `id` as incrementing primary key
+ * - `created` in miliseconds
+ * - `updated` in miliseconds
+ */
+export interface SqliteTableDefault {
   id: number
   created: number
   updated: number
@@ -61,8 +68,7 @@ interface ColManagedType {
 /** Only use via `useSqliteDatabase`! */
 export function useSqliteTable<
   ColType,
-  ColFullType = ColType & ColManagedType, // { id: number },
-  ColName = keyof ColFullType,
+  ColFullType = ColType & SqliteTableDefault, ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
   tableName: string,
