@@ -37,6 +37,7 @@ export type SqliteColTypes = keyof typeof _affinity
 
 const affinity = _affinity as Record<string, string>
 
+/** Redefine accoring to interface to create correct field types */
 export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
   [key in K]: SqliteColTypes
 }
@@ -67,14 +68,14 @@ export interface SqliteTableDefault {
 
 /** Only use via `useSqliteDatabase`! */
 export function useSqliteTable<
-  ColType,
-  ColFullType = ColType & SqliteTableDefault, ColName = keyof ColFullType,
+  ColType, ColFullType = ColType & SqliteTableDefault,
+  ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
   tableName: string,
   fields: SqliteTableColsDefinition<ColType>,
-  primaryKeyName = 'id',
 ) {
+  const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
 
   function getAffinity(name: any) {
@@ -175,9 +176,9 @@ export function useSqliteTable<
     return statement.get(values)
   }
 
-  function findAll(cols?: Partial<ColFullType>, orderBy?: ColName | ColName[]): ColFullType {
+  function findAll(cols?: Partial<ColFullType>, orderBy?: ColName | ColName[]): ColFullType[] {
     const { statement, values } = findPrepare(cols, undefined, orderBy)
-    return statement.all(values)
+    return statement.all(values) ?? []
   }
 
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
@@ -277,7 +278,7 @@ export function useSqliteTable<
   }
 
   /** Get all rows and `orderBy` */
-  function all(orderBy = 'id'): ColType[] {
+  function all(orderBy = 'id'): ColFullType[] {
     return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all()
   }
 

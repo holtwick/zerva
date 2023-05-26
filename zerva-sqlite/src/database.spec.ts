@@ -54,7 +54,10 @@ describe('database.spec', () => {
 
     expect(count).toBe(1)
 
-    expect(table.get(1)).toMatchInlineSnapshot(`
+    const row1 = table.get(1)
+    const id1: number = row1!.id
+    expect(id1).toBe(1)
+    expect(row1).toMatchInlineSnapshot(`
       {
         "active": 1,
         "age": 49,
