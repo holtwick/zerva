@@ -37,7 +37,7 @@ export type SqliteColTypes = keyof typeof _affinity
 
 const affinity = _affinity as Record<string, string>
 
-export type SqliteTableColsDefinition<T, K extends keyof T = keyof T> = {
+export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
   [key in K]: SqliteColTypes
 }
 
