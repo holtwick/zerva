@@ -120,7 +120,7 @@ export function useSqliteTable<
   //
 
   /** Prepare statement and cache it. */
-  function prepare(value: string): SqliteStatement {
+  function prepare(value: string): never | SqliteStatement {
     value = value.trim()
     let stmt = statementsCache[value]
     if (stmt == null) {
@@ -231,7 +231,7 @@ export function useSqliteTable<
   }
 
   /** On UNIQUE or PRIMARY indexes we can update values or insert a new row, if index values were not yet set. */
-  function upsert(colName: ColName | ColName[], obj: Partial<ColFullType>) {
+  function upsert(colName: ColName | ColName[], obj: Partial<ColFullType>): never | SqliteRunResult {
     const colNames = isArray(colName) ? colName : [colName]
 
     for (const row of colNames) {
