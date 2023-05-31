@@ -47,14 +47,14 @@
   },
   "dependencies": {
     "better-sqlite3": "^8.4.0",
-    "zeed": "^0.10.30"
+    "zeed": "^0.11.1"
   },
   "devDependencies": {
     "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
-    "vitest": "^0.31.1"
+    "vitest": "^0.31.2"
   },
   "engines": {
     "node": ">=18.0.0"

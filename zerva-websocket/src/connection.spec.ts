@@ -9,7 +9,7 @@ import { useWebSocket } from './server'
 import { webSocketPath } from './types'
 
 // @ts-expect-error xxx
-global.WebSocket = WebSocket
+globalThis.WebSocket = WebSocket
 
 // const log = Logger("test:module")
 
