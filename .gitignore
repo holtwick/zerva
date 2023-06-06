@@ -93,3 +93,5 @@ zerva-bin/bin.cjs
 .vscode
 
 # _archive
+
+*.sqlite
