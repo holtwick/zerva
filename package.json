@@ -1,23 +1,24 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.29.1",
+  "version": "0.30.0",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "check": "vue-tsc --noEmit -p tsconfig.json",
     "clean": "pnpm -r --filter=@zerva/* run clean",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "fix": "node scripts/fix-package-json.js",
     "preinstall": "npx only-allow pnpm",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prune": "pnpm store prune",
     "prepublish": "npx only-allow pnpm",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
+    "rebuild": "pnpm -r rebuild",
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
     "test": "pnpm -r --filter=@zerva/* test",
-    "update": "pnpm -r update -i --latest",
-    "rebuild": "pnpm -r rebuild"
+    "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
