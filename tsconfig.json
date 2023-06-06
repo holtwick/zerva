@@ -32,10 +32,11 @@
     ]
   },
   "exclude": [
-    "*/node_modules",
-    "*/ssr-vue",
-    "*/dist",
-    "*/www"
+    "**/node_modules",
+    "**/ssr-vue",
+    "**/dist",
+    "**/dist_www",
+    "**/www"
   ],
   "include": [
     "**/*.ts",

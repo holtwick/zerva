@@ -304,9 +304,11 @@ export function useHttp(config?: {
       const { port, family, address } = server.address() as AddressInfo
       const host = isLocalHost(address) ? 'localhost' : address
       const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
-      if (showServerInfo)
-        // eslint-disable-next-line no-console
+      if (showServerInfo) {
+        console.info(`\nZerva: *********************************************************`)
         console.info(`Zerva: Open page at ${url}`)
+        console.info(`Zerva: *********************************************************\n`)
+      }
 
       void emit('httpRunning', { port, family, address, http: server })
 

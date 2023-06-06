@@ -1,6 +1,6 @@
 // @ts-expect-error xxx
 import BetterSqlite3 from 'better-sqlite3'
-import { Logger, arrayMinus, arraySorted, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
+import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
 import './better-sqlite3'
 
 const log = Logger('sqlite')
@@ -37,7 +37,8 @@ export type SqliteColTypes = keyof typeof _affinity
 
 const affinity = _affinity as Record<string, string>
 
-export type SqliteTableColsDefinition<T, K extends keyof T = keyof T> = {
+/** Redefine accoring to interface to create correct field types */
+export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
   [key in K]: SqliteColTypes
 }
 
@@ -52,41 +53,64 @@ export function escapeSQLValueSingleQuotes(value: any) {
   return `'${String(value).replace(/\'/gim, '\'\'')}'`
 }
 
+/**
+ * Basic fields of every table with
+ *
+ * - `id` as incrementing primary key
+ * - `created` in miliseconds
+ * - `updated` in miliseconds
+ */
+export interface SqliteTableDefault {
+  id: number
+  created: number
+  updated: number
+}
+
 /** Only use via `useSqliteDatabase`! */
 export function useSqliteTable<
   ColType,
-  ColFullType = ColType & { id: number },
+  ColFullType = ColType & SqliteTableDefault,
+  ColTypeInsert = Omit<ColType, 'id' | 'updated' | 'created'> & Partial<SqliteTableDefault>,
   ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
   tableName: string,
   fields: SqliteTableColsDefinition<ColType>,
-  primaryKeyName = 'id',
 ) {
+  const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
 
   function getAffinity(name: any) {
     return affinity[String(name)] ?? 'text'
   }
+
   // Check current state
   const _tableInfoStatement = db.prepare(`PRAGMA table_info(${tableName})`)
   const info = () => _tableInfoStatement.all()
   const state = info()
 
+  const creationFields = {
+    ...fields,
+    updated: 'integer',
+    created: 'integer',
+  }
+
   if (state == null || state.length <= 0) {
     // Create table https://www.sqlite.org/lang_createtable.html
-    const fieldsList = [`${primaryKeyName} INTEGER PRIMARY KEY AUTOINCREMENT`]
-    for (const [field, colType] of Object.entries(fields))
+    const fieldsList = [
+      `${primaryKeyName} INTEGER PRIMARY KEY AUTOINCREMENT`,
+    ]
+    for (const [field, colType] of Object.entries(creationFields))
       fieldsList.push(`${field} ${getAffinity(colType)}`)
     db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(', ')})`)
   }
   else {
     // Update table https://www.sqlite.org/lang_altertable.html
-    const missingFields = arrayMinus(Object.keys(fields), state.map((col: any) => col.name))
+    const missingFields = arrayMinus(Object.keys(creationFields), state.map((col: any) => col.name))
     if (missingFields.length > 0) {
       const fieldsList = []
       for (const field of missingFields)
-        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((fields as any)[field])}`)
+        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((creationFields as any)[field])}`)
       db.exec(fieldsList.join('; '))
     }
   }
@@ -96,7 +120,7 @@ export function useSqliteTable<
   //
 
   /** Prepare statement and cache it. */
-  function prepare(value: string): SqliteStatement {
+  function prepare(value: string): never | SqliteStatement {
     value = value.trim()
     let stmt = statementsCache[value]
     if (stmt == null) {
@@ -121,7 +145,7 @@ export function useSqliteTable<
     }
   }
 
-  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: ColName | ColName[]) {
+  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: OrderByMany<string>) {
     const fields = []
     const values = []
     if (cols) {
@@ -154,9 +178,12 @@ export function useSqliteTable<
     return statement.get(values)
   }
 
-  function findAll(cols?: Partial<ColFullType>, orderBy?: ColName | ColName[]): ColFullType {
+  type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
+  type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
+
+  function findAll(cols?: Partial<ColFullType>, orderBy?: OrderByMany<string>): ColFullType[] {
     const { statement, values } = findPrepare(cols, undefined, orderBy)
-    return statement.all(values)
+    return statement.all(values) ?? []
   }
 
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
@@ -175,12 +202,15 @@ export function useSqliteTable<
     return value
   }
 
-  const _insertStatement = db.prepare(`INSERT INTO ${tableName} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(_ => '?').join(', ')})`)
+  const getNow = globalThis.TEST ? () => 0 : getTimestamp
+
+  const _insertStatement = db.prepare(`INSERT INTO ${tableName} (created, updated, ${sortedFields.join(', ')}) VALUES(?, ?, ${sortedFields.map(_ => '?').join(', ')})`)
 
   /** Insert `obj` */
-  function insert(obj: ColType): number | undefined {
+  function insert(obj: ColTypeInsert): number | undefined {
     try {
-      return _insertStatement.run(sortedFields.map(field => normalizeValue((obj as any)[field]))).lastInsertRowid
+      const now = getNow()
+      return _insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid
     }
     catch (err) {
       log('insert err', err)
@@ -197,13 +227,14 @@ export function useSqliteTable<
         values.push(normalizeValue((obj as any)[field]))
       }
     }
+    const now = getNow()
     return prepare(
-      `UPDATE ${tableName} SET ${fields.join(', ')} WHERE id=? LIMIT 1`,
-    ).run([...values, id])
+      `UPDATE ${tableName} SET updated=?, ${fields.join(', ')} WHERE id=? LIMIT 1`,
+    ).run([now, ...values, id])
   }
 
   /** On UNIQUE or PRIMARY indexes we can update values or insert a new row, if index values were not yet set. */
-  function upsert(colName: ColName | ColName[], obj: Partial<ColFullType>) {
+  function upsert(colName: ColName | ColName[], obj: Partial<ColFullType>): never | SqliteRunResult {
     const colNames = isArray(colName) ? colName : [colName]
 
     for (const row of colNames) {
@@ -224,9 +255,10 @@ export function useSqliteTable<
     const placeholders = fields.map(_ => '?').join(', ')
     const fieldsUpdate = fields.map(field => `${field}=?`).join(', ')
 
+    const now = getNow()
     return prepare(
-      `INSERT INTO ${tableName} (${fieldNames}) VALUES(${placeholders}) ON CONFLICT(${colNames.map(r => String(r)).join(', ')}) DO UPDATE SET ${fieldsUpdate}`,
-    ).run([...values, ...values])
+      `INSERT INTO ${tableName} (created, updated, ${fieldNames}) VALUES(?, ?, ${placeholders}) ON CONFLICT(${colNames.map(r => String(r)).join(', ')}) DO UPDATE SET updated=?, ${fieldsUpdate}`,
+    ).run([now, now, ...values, now, ...values])
   }
 
   /** Update multiple fields `where` condition */
@@ -239,7 +271,8 @@ export function useSqliteTable<
         values.push((obj as any)[field])
       }
     }
-    return prepare(`UPDATE ${tableName} SET ${fields.join(', ')} WHERE ${where} `).run(values)
+    const now = getNow()
+    return prepare(`UPDATE ${tableName} SET updated=?, ${fields.join(', ')} WHERE ${where} `).run([now, ...values])
   }
 
   const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id =? `)
@@ -250,7 +283,7 @@ export function useSqliteTable<
   }
 
   /** Get all rows and `orderBy` */
-  function all(orderBy = 'id'): ColType[] {
+  function all(orderBy = 'id'): ColFullType[] {
     return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all()
   }
 

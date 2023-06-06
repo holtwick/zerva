@@ -1,6 +1,5 @@
 import { emit, on, register } from '@zerva/core'
 import { Logger, cloneObject } from 'zeed'
-import '@zerva/http'
 
 const log = Logger('counter')
 
@@ -14,12 +13,12 @@ export function useCounter() {
   log.info('use counter')
   register('counter', ['http'])
   let counter = 0
-  on('httpInit', ({ onGET }) => {
-    onGET(['/', '/tick'], async () => {
+  on('httpInit', ({ get }) => {
+    get('/counter', async () => {
       await emit('counterIncrement', ++counter)
       return `<div>Counter ${counter}.<br><br>Reload page to increase counter.</div>`
     })
-    onGET('/demo.json', async ({ req }) => {
+    get('/demo.json', async ({ req }) => {
       await emit('counterIncrement', ++counter)
       return {
         headers: cloneObject(req.headers),
@@ -28,7 +27,7 @@ export function useCounter() {
         query: req.query,
       }
     })
-    onGET('/demo.txt', async () => {
+    get('/demo.txt', async () => {
       await emit('counterIncrement', ++counter)
       return `Counter ${counter}`
     })

@@ -1,8 +1,11 @@
 import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
+import type { SqliteTableDefault } from './database'
 import { useSqliteDatabase } from './database'
 
 const log = Logger('test')
+
+globalThis.TEST = true
 
 describe('database.spec', () => {
   it('should do common stuff', async () => {
@@ -20,11 +23,13 @@ describe('database.spec', () => {
       },
     })
 
-    const table = db.table<{
+    interface MyTable extends SqliteTableDefault {
       name: string
       age: number
       active: boolean
-    }>('test', {
+    }
+
+    const table = db.table<MyTable>('test', {
       name: 'text',
       age: 'integer',
       active: 'boolean',
@@ -52,12 +57,17 @@ describe('database.spec', () => {
 
     expect(count).toBe(1)
 
-    expect(table.get(1)).toMatchInlineSnapshot(`
+    const row1 = table.get(1)
+    const id1: number = row1!.id
+    expect(id1).toBe(1)
+    expect(row1).toMatchInlineSnapshot(`
       {
         "active": 1,
         "age": 49,
+        "created": 0,
         "id": 1,
         "name": "Dirk",
+        "updated": 0,
       }
     `)
 
@@ -71,8 +81,10 @@ describe('database.spec', () => {
       {
         "active": 0,
         "age": 50,
+        "created": 0,
         "id": 1,
         "name": "Dirk",
+        "updated": 0,
       }
     `)
 
@@ -89,8 +101,10 @@ describe('database.spec', () => {
       {
         "active": 1,
         "age": 50,
+        "created": 0,
         "id": 1,
         "name": "Dirk",
+        "updated": 0,
       }
     `)
 
@@ -110,8 +124,10 @@ describe('database.spec', () => {
       {
         "active": 1,
         "age": 50,
+        "created": 0,
         "id": 1,
         "name": "Diego",
+        "updated": 0,
       }
     `)
 
@@ -119,8 +135,10 @@ describe('database.spec', () => {
       {
         "active": 1,
         "age": 50,
+        "created": 0,
         "id": 1,
         "name": "Diego",
+        "updated": 0,
       }
     `)
 
@@ -141,9 +159,11 @@ describe('database.spec', () => {
         "active": 1,
         "age": 50,
         "amount": null,
+        "created": 0,
         "id": 1,
         "name": "Diego",
         "note": null,
+        "updated": 0,
       }
     `)
 
@@ -157,9 +177,11 @@ describe('database.spec', () => {
         "active": 1,
         "age": 50,
         "amount": 1.23,
+        "created": 0,
         "id": 1,
         "name": "Diego",
         "note": "it is working!",
+        "updated": 0,
       }
     `)
     expect(table.get(1)).toMatchInlineSnapshot(`
@@ -167,9 +189,11 @@ describe('database.spec', () => {
         "active": 1,
         "age": 50,
         "amount": 1.23,
+        "created": 0,
         "id": 1,
         "name": "Diego",
         "note": "it is working!",
+        "updated": 0,
       }
     `)
 
@@ -181,17 +205,21 @@ describe('database.spec', () => {
           "active": 1,
           "age": 50,
           "amount": 1.23,
+          "created": 0,
           "id": 1,
           "name": "Diego",
           "note": "it is working!",
+          "updated": 0,
         },
         {
           "active": 1,
           "age": 20,
           "amount": null,
+          "created": 0,
           "id": 3,
           "name": "An'na",
           "note": null,
+          "updated": 0,
         },
       ]
     `)
@@ -199,15 +227,17 @@ describe('database.spec', () => {
     expect(table.findAll({
       age: 20,
       active: true,
-    })).toMatchInlineSnapshot(`
+    }, ['id desc', 'created'])).toMatchInlineSnapshot(`
       [
         {
           "active": 1,
           "age": 20,
           "amount": null,
+          "created": 0,
           "id": 3,
           "name": "An'na",
           "note": null,
+          "updated": 0,
         },
       ]
     `)
@@ -220,9 +250,11 @@ describe('database.spec', () => {
         "active": 1,
         "age": 50,
         "amount": 1.23,
+        "created": 0,
         "id": 1,
         "name": "Diego",
         "note": "it is working!",
+        "updated": 0,
       }
     `)
 
@@ -267,13 +299,29 @@ describe('database.spec', () => {
         {
           "cid": 4,
           "dflt_value": null,
+          "name": "updated",
+          "notnull": 0,
+          "pk": 0,
+          "type": "INTEGER",
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "created",
+          "notnull": 0,
+          "pk": 0,
+          "type": "INTEGER",
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
           "name": "amount",
           "notnull": 0,
           "pk": 0,
           "type": "REAL",
         },
         {
-          "cid": 5,
+          "cid": 7,
           "dflt_value": null,
           "name": "note",
           "notnull": 0,
@@ -286,8 +334,8 @@ describe('database.spec', () => {
     const sqlDump = db.dump()
 
     expect(sqlDump).toMatchInlineSnapshot(`
-      "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, amount real, note text);
-      INSERT INTO test (id, name, age, active, amount, note) VALUES(3, 'An''na', 20, 1, NULL, NULL);
+      "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, updated integer, created integer, amount real, note text);
+      INSERT INTO test (id, name, age, active, updated, created, amount, note) VALUES(3, 'An''na', 20, 1, 0, 0, NULL, NULL);
       CREATE UNIQUE INDEX idx_test_name ON test (name);
       CREATE UNIQUE INDEX idx_test_name_age ON test (name, age)"
     `)
@@ -308,31 +356,31 @@ describe('database.spec', () => {
     expect(sql).toMatchInlineSnapshot(`
       [
         "PRAGMA table_info(test)",
-        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric)",
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, updated integer, created integer)",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_test_name ON test (name)",
-        "INSERT INTO test (active, age, id, name) VALUES(1.0, 49.0, NULL, 'Dirk')",
-        "INSERT INTO test (active, age, id, name) VALUES(0.0, 50.0, NULL, 'Dirk')",
+        "INSERT INTO test (created, updated, active, age, id, name) VALUES(0.0, 0.0, 1.0, 49.0, NULL, 'Dirk')",
+        "INSERT INTO test (created, updated, active, age, id, name) VALUES(0.0, 0.0, 0.0, 50.0, NULL, 'Dirk')",
         "SELECT count(id) AS count FROM test",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
-        "INSERT INTO test (active, age, name) VALUES(0.0, 50.0, 'Dirk') ON CONFLICT(name) DO UPDATE SET active=0.0, age=50.0, name='Dirk'",
+        "INSERT INTO test (created, updated, active, age, name) VALUES(0.0, 0.0, 0.0, 50.0, 'Dirk') ON CONFLICT(name) DO UPDATE SET updated=0.0, active=0.0, age=50.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_test_name_age ON test (name, age)",
-        "INSERT INTO test (active, age, id, name) VALUES(1.0, 50.0, 1.0, 'Dirk') ON CONFLICT(name, age) DO UPDATE SET active=1.0, age=50.0, id=1.0, name='Dirk'",
+        "INSERT INTO test (created, updated, active, age, id, name) VALUES(0.0, 0.0, 1.0, 50.0, 1.0, 'Dirk') ON CONFLICT(name, age) DO UPDATE SET updated=0.0, active=1.0, age=50.0, id=1.0, name='Dirk'",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
-        "INSERT INTO test (active, age, name) VALUES(1.0, 20.0, 'An''na') ON CONFLICT(name) DO UPDATE SET active=1.0, age=20.0, name='An''na'",
+        "INSERT INTO test (created, updated, active, age, name) VALUES(0.0, 0.0, 1.0, 20.0, 'An''na') ON CONFLICT(name) DO UPDATE SET updated=0.0, active=1.0, age=20.0, name='An''na'",
         "SELECT count(id) AS count FROM test",
-        "UPDATE test SET name='Diego' WHERE id=1.0 LIMIT 1",
+        "UPDATE test SET updated=0.0, name='Diego' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE name='Diego' LIMIT 1",
         "PRAGMA table_info(test)",
         "ALTER TABLE test ADD COLUMN amount real;",
         "ALTER TABLE test ADD COLUMN note text",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
-        "UPDATE test SET amount=1.23, note='it is working!' WHERE id=1.0 LIMIT 1",
+        "UPDATE test SET updated=0.0, amount=1.23, note='it is working!' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test ORDER BY id",
-        "SELECT * FROM test WHERE active=1.0 AND age=20.0",
+        "SELECT * FROM test WHERE active=1.0 AND age=20.0 ORDER BY id desc, created",
         "SELECT * FROM test WHERE active=1.0 AND age=50.0 LIMIT 1",
         "DELETE FROM test WHERE id =1.0 ",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
