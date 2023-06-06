@@ -145,7 +145,7 @@ export function useSqliteTable<
     }
   }
 
-  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: ColName | ColName[]) {
+  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: OrderByMany<string>) {
     const fields = []
     const values = []
     if (cols) {
@@ -178,7 +178,10 @@ export function useSqliteTable<
     return statement.get(values)
   }
 
-  function findAll(cols?: Partial<ColFullType>, orderBy?: ColName | ColName[]): ColFullType[] {
+  type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
+  type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
+
+  function findAll(cols?: Partial<ColFullType>, orderBy?: OrderByMany<string>): ColFullType[] {
     const { statement, values } = findPrepare(cols, undefined, orderBy)
     return statement.all(values) ?? []
   }

@@ -227,7 +227,7 @@ describe('database.spec', () => {
     expect(table.findAll({
       age: 20,
       active: true,
-    })).toMatchInlineSnapshot(`
+    }, ['id desc', 'created'])).toMatchInlineSnapshot(`
       [
         {
           "active": 1,
@@ -380,7 +380,7 @@ describe('database.spec', () => {
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test ORDER BY id",
-        "SELECT * FROM test WHERE active=1.0 AND age=20.0",
+        "SELECT * FROM test WHERE active=1.0 AND age=20.0 ORDER BY id desc, created",
         "SELECT * FROM test WHERE active=1.0 AND age=50.0 LIMIT 1",
         "DELETE FROM test WHERE id =1.0 ",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
