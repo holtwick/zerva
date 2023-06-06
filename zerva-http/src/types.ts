@@ -1,9 +1,13 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import type { Server } from 'node:http'
-import type { Express, NextFunction as HttpNextFunction, Request as HttpRequest, RequestHandler as HttpRequestHandler, Response as HttpResponse } from 'express-serve-static-core'
+import type { Express, NextFunction, Request, RequestHandler, Response } from 'express'
 
-export type { HttpResponse, HttpRequest, Express, Server, HttpRequestHandler, HttpNextFunction }
+export type HttpRequest = Request
+export type HttpResponse = Response
+export type HttpNextFunction = NextFunction
+export type HttpRequestHandler = RequestHandler
+export type { Express, Server }
 
 export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
