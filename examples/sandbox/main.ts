@@ -1,7 +1,8 @@
+import { Logger } from 'zeed'
 import * as zz from '@zerva/core'
 import { useHttp } from '@zerva/http'
 
-const log = zz.Logger('sandbox')
+const log = Logger('sandbox')
 
 declare global {
   interface ZContextEvents {

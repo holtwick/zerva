@@ -1,5 +1,7 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+/* eslint-disable no-console */
+
 import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
@@ -305,9 +307,9 @@ export function useHttp(config?: {
       const host = isLocalHost(address) ? 'localhost' : address
       const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
       if (showServerInfo) {
-        console.info(`\nZerva: *********************************************************`)
+        console.info('\nZerva: *********************************************************')
         console.info(`Zerva: Open page at ${url}`)
-        console.info(`Zerva: *********************************************************\n`)
+        console.info('Zerva: *********************************************************\n')
       }
 
       void emit('httpRunning', { port, family, address, http: server })
@@ -320,7 +322,7 @@ export function useHttp(config?: {
               ? 'start'
               : 'xdg-open'
         const cmd = `${start} ${url}`
-        // eslint-disable-next-line no-console
+
         console.info(`Zerva: Open browser with: ${cmd}`)
         import('node:child_process').then(m => m.exec(cmd)).catch(err => log.error('Cannot start child process', err))
       }

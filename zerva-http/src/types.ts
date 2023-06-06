@@ -17,13 +17,25 @@ export type zervaHttpResultPrimaryTypes =
   | object
   | void
 
+// type zervaRegularMiddleware = (req: HttpRequest, res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes
+
+// type zervaCompactMiddleware = ((info: {
+//   res: HttpResponse
+//   req: HttpRequest
+// }) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
+
+// export type zervaHttpGetHandler =
+//   | zervaHttpResultPrimaryTypes
+//   | zervaCompactMiddleware
+//   | zervaRegularMiddleware
+
 export type zervaHttpGetHandler =
   | zervaHttpResultPrimaryTypes
-  // | HttpRequestHandler
-  | ((info: HttpRequest & {
+  | ((info: (HttpRequest & {
     res: HttpResponse
     req: HttpRequest
-  }, res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
+  }), res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
+// | HttpRequestHandler
 
 export interface zervaHttpInterface {
   /** Express app */

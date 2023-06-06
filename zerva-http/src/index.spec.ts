@@ -2,7 +2,6 @@
 
 import { on, serve, serveStop } from '@zerva/core'
 import { Logger, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson } from 'zeed'
-import type { zervaHttpInterface } from '.'
 import { useHttp } from '.'
 
 const log = Logger('test-http')
@@ -15,7 +14,7 @@ describe('http', () => {
     useHttp({ port })
 
     on('httpInit', (info) => {
-      const { onGET, onPOST, STATIC } = info as zervaHttpInterface
+      const { onGET, onPOST, STATIC } = info
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
