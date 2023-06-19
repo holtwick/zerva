@@ -2,7 +2,7 @@
 
 import type { Channel, UseDispose } from 'zeed'
 
-export {}
+export { }
 
 export const webSocketPath = '/zerva-websocket'
 

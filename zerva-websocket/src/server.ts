@@ -12,6 +12,12 @@ import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsRead
 
 const moduleName = 'websocket'
 
+declare module 'ws' {
+  interface WebSocket {
+    isAlive?: boolean
+  }
+}
+
 interface ZWebSocketConfig {
   path?: string
   pingInterval?: number
@@ -181,8 +187,10 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
 
     const pool = new Map<string, WebsocketNodeConnection>()
 
-    wss.on('connection', (ws) => {
+    wss.on('connection', (ws: WebSocket) => {
       log.info('onconnection')
+
+      // @ts-expect-error Strange... see types.ts
       ws.isAlive = true
 
       const conn = new WebsocketNodeConnection(ws, config)
