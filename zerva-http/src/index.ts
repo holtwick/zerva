@@ -13,7 +13,7 @@ import express from 'express'
 import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
 import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
-import type { Express, HttpNextFunction, HttpRequest, HttpResponse, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
+import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
 
@@ -190,7 +190,7 @@ export function useHttp(config?: {
       suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
     for (const handler of handlers) {
-      app[mode](path, async (req: HttpRequest, res: HttpResponse, next: HttpNextFunction) => {
+      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
         log(`${mode.toUpperCase()} ${path}`)
         log('headers =', req.headers)
 

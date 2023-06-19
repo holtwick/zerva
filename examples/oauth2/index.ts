@@ -1,11 +1,11 @@
 // Simple demo for node and CommonJS loading
 
 import { on, serve } from '@zerva/core'
+import type { NextFunction, Request, Response, zervaHttpInterface } from '@zerva/http'
 import { useHttp } from '@zerva/http'
+import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
 import { Logger, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
-import session from 'express-session'
-import type { HttpNextFunction, HttpRequest, HttpResponse, zervaHttpInterface } from '@zerva/http'
 
 interface AuthInfo {
   uuid?: string
@@ -158,7 +158,7 @@ on('httpInit', (info) => {
     // res.redirect(301, uri)
   })
 
-  function oauth2(req: HttpRequest, res: HttpResponse, next: HttpNextFunction) {
+  function oauth2(req: Request, res: Response, next: NextFunction) {
     log('middleware oauth')
     if (req.session.authInfo?.access_token)
       next()

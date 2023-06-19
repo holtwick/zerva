@@ -1,9 +1,10 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import type { Server } from 'node:http'
-import type { Express, NextFunction as HttpNextFunction, Request as HttpRequest, RequestHandler as HttpRequestHandler, Response as HttpResponse } from 'express-serve-static-core'
+import type { Express, NextFunction, Request, RequestHandler, Response } from 'express'
 
-export type { HttpResponse, HttpRequest, Express, Server, HttpRequestHandler, HttpNextFunction }
+export type { Server }
+export type { Express, NextFunction, Request, RequestHandler, Response }
 
 export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
@@ -17,25 +18,12 @@ export type zervaHttpResultPrimaryTypes =
   | object
   | void
 
-// type zervaRegularMiddleware = (req: HttpRequest, res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes
-
-// type zervaCompactMiddleware = ((info: {
-//   res: HttpResponse
-//   req: HttpRequest
-// }) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
-
-// export type zervaHttpGetHandler =
-//   | zervaHttpResultPrimaryTypes
-//   | zervaCompactMiddleware
-//   | zervaRegularMiddleware
-
 export type zervaHttpGetHandler =
   | zervaHttpResultPrimaryTypes
-  | ((info: (HttpRequest & {
-    res: HttpResponse
-    req: HttpRequest
-  }), res: HttpResponse, next: HttpNextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
-// | HttpRequestHandler
+  | ((info: (Request & {
+    res: Response
+    req: Request
+  }), res: Response, next: NextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
 
 export interface zervaHttpInterface {
   /** Express app */
