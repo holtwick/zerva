@@ -122,6 +122,8 @@ export class WebsocketNodeConnection extends Channel {
         await this.emit('close')
         await emit('webSocketDisconnect', {
           channel: this as any,
+          name: config.name,
+          path: config.path,
           error,
         })
       }
@@ -141,6 +143,8 @@ export class WebsocketNodeConnection extends Channel {
 
     void emit('webSocketConnect', {
       channel: this as any,
+      name: config.name,
+      path: config.path,
       dispose: this.dispose,
     })
   }

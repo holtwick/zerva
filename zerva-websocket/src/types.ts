@@ -16,10 +16,26 @@ export const wsReadyStateOpen = 1
 export const wsReadyStateClosing = 2
 export const wsReadyStateClosed = 3
 
+/** Tell multiple channels apart  */
+export type WebsocketChannel = Channel & {
+  name: string
+  path: string
+}
+
 declare global {
   interface ZContextEvents {
-    webSocketConnect(info: { channel: Channel; dispose: UseDispose }): void
-    webSocketDisconnect(info: { error?: Error; channel: Channel }): void
+    webSocketConnect(info: {
+      channel: WebsocketChannel
+      name?: string
+      path?: string
+      dispose: UseDispose
+    }): void
+    webSocketDisconnect(info: {
+      channel: WebsocketChannel
+      name?: string
+      path?: string
+      error?: Error
+    }): void
   }
 }
 
