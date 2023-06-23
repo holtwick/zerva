@@ -40,6 +40,8 @@ declare global {
 }
 
 export function getWebsocketUrlFromLocation(path: string = webSocketPath) {
+  if (!path.startsWith('/'))
+    path = `/${path}`
   return `ws${location.protocol.substring(4)}//${location.host}${path}`
 }
 
