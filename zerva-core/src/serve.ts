@@ -21,17 +21,17 @@ let serverStoping = false
 
 // Shortcuts
 
-/** @deprecated */
+/** @deprecated use `on('serveInit', handler)` */
 export function onInit(handler: () => void) {
   on('serveInit', handler)
 }
 
-/** @deprecated */
+/** @deprecated use `on('serveStart', handler)` */
 export function onStart(handler: () => void) {
   on('serveStart', handler)
 }
 
-/** @deprecated */
+/** @deprecated use `on('serveStop', handler)` */
 export function onStop(handler: () => void) {
   on('serveStop', handler)
 }

@@ -4,7 +4,8 @@ import type { Channel, UseDispose } from 'zeed'
 
 export { }
 
-export const webSocketPath = '/zerva-websocket'
+export const websocketName = 'zerva-websocket'
+export const webSocketPath = `/${websocketName}`
 
 // https://developer.mozilla.org/de/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#pings_and_pongs_the_heartbeat_of_websockets
 export const pingMessage = new Uint8Array([0x9])
@@ -23,7 +24,7 @@ declare global {
 }
 
 export function getWebsocketUrlFromLocation(path: string = webSocketPath) {
-  return `ws${location.protocol.substr(4)}//${location.host}${path}`
+  return `ws${location.protocol.substring(4)}//${location.host}${path}`
 }
 
 declare module 'ws' {
