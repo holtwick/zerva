@@ -3,12 +3,12 @@
 import '@zerva/http'
 import { parse } from 'node:url'
 import type { Buffer } from 'node:buffer'
-import { assertModules, emit, on, onInit, once, register } from '@zerva/core'
+import { assertModules, emit, on, once, register } from '@zerva/core'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, Logger, equalBinary, uname, useDispose } from 'zeed'
-import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
 
@@ -19,6 +19,7 @@ declare module 'ws' {
 }
 
 interface ZWebSocketConfig {
+  name?: string
   path?: string
   pingInterval?: number
   logLevel?: LogLevelAliasType
@@ -43,6 +44,10 @@ function safeType(data: any): string {
 export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
 
+  public config: ZWebSocketConfig
+  public name: string
+  public path: string
+
   // After close this will be false
   public isConnected = true
 
@@ -52,6 +57,10 @@ export class WebsocketNodeConnection extends Channel {
 
   constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
     super()
+
+    this.config = config
+    this.name = config.name!
+    this.path = config.path!
 
     this.ws = ws
     this.ws.binaryType = 'arraybuffer'
@@ -113,6 +122,8 @@ export class WebsocketNodeConnection extends Channel {
         await this.emit('close')
         await emit('webSocketDisconnect', {
           channel: this as any,
+          name: config.name,
+          path: config.path,
           error,
         })
       }
@@ -132,6 +143,8 @@ export class WebsocketNodeConnection extends Channel {
 
     void emit('webSocketConnect', {
       channel: this as any,
+      name: config.name,
+      path: config.path,
       dispose: this.dispose,
     })
   }
@@ -166,15 +179,18 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
 
   register(moduleName)
 
-  onInit(() => {
+  on('serveInit', () => {
     assertModules('http')
   })
 
-  on('httpInit', ({ http }) => {
-    let path = config.path ?? webSocketPath
-    if (!path.startsWith('/'))
-      path = `/${path}`
+  config.name ??= websocketName
 
+  let path = config.path ?? config.name
+  if (!path.startsWith('/'))
+    path = `/${path}`
+  config.path = path
+
+  on('httpInit', ({ http }) => {
     log(`init path=${path}`)
 
     // https://github.com/websockets/ws

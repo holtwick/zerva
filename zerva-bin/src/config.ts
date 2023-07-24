@@ -6,6 +6,7 @@
 
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import process from 'node:process'
 import { arrayRemoveElement, parseArgs } from 'zeed'
 import { entryCandidates } from './static'
 
@@ -68,7 +69,7 @@ export function getConfig(): ZervaConf {
       help: ['h', '?'],
     },
     booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm'],
-    listArgs: ['external', 'loader', 'define', 'esbuild', 'node'],
+    listArgs: ['external', 'loader', 'define', 'esbuild', 'node', 'lightningcss'],
   })
 
   config.debug = !!args.debug

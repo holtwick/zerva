@@ -4,6 +4,7 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
 
 import { existsSync } from 'node:fs'
+import process from 'node:process'
 import { runMain } from './main'
 import { getConfig } from './config'
 

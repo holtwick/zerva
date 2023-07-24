@@ -2,6 +2,7 @@ import '@zerva/http'
 
 import { createWriteStream } from 'node:fs'
 import { resolve } from 'node:path'
+import process from 'node:process'
 import { ensureFolder } from 'zeed'
 import { on } from '@zerva/core'
 import morgan from 'morgan'
