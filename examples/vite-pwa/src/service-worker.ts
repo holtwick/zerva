@@ -1,5 +1,8 @@
 /// <reference lib="webworker" />
 
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-console */
+
 // // Give TypeScript the correct global.
 // declare const self: ServiceWorkerGlobalScope
 // declare type ExtendableEvent = any

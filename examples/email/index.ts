@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { emit } from '@zerva/core'
 import { useEmail } from '@zerva/email'
 import { Logger, setupEnv, valueToInteger, valueToString } from 'zeed'

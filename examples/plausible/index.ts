@@ -1,5 +1,6 @@
 // Simple demo for node and CommonJS loading
 
+import process from 'node:process'
 import { emit, on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { usePlausible } from '@zerva/plausible'
