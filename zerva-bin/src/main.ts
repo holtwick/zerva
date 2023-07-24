@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process'
 import { chmod } from 'node:fs/promises'
 import { normalize } from 'node:path'
 import { chmodSync } from 'node:fs'
+import process from 'node:process'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
@@ -11,6 +12,15 @@ import { yamlPlugin } from 'esbuild-plugin-yaml'
 // @ts-expect-error xxx
 import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
+
+const DEFAULT_EXCLUDE = [
+  'fs', // todo required?
+  'fsevents',
+  'notifier',
+  'node-notifier',
+  'esbuild', // via vite
+  'lightningcss', // via vite
+]
 
 export async function runMain(config: ZervaConf) {
   const plugins = [
@@ -210,8 +220,8 @@ export async function runMain(config: ZervaConf) {
     } as any,
     minify: config.build,
     external: config.build
-      ? ['esbuild', 'fs', 'fsevents', 'notifier', 'node-notifier', ...config.external]
-      : ['esbuild', 'fs', 'fsevents', 'notifier', 'node-notifier', 'vite', ...config.external],
+      ? [...DEFAULT_EXCLUDE, ...config.external]
+      : [...DEFAULT_EXCLUDE, 'vite', ...config.external],
     ...config.esbuild,
   }
 

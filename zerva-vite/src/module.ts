@@ -4,6 +4,7 @@ import '@zerva/http'
 
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import process from 'node:process'
 import { Logger, toHumanReadableFilePath, toPath } from 'zeed'
 import { on, register } from '@zerva/core'
 import { zervaMultiPageAppIndexRouting } from './multi'
