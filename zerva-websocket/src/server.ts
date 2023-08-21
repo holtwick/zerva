@@ -87,7 +87,10 @@ export class WebsocketNodeConnection extends Channel {
         ws.ping()
       }, pingInterval)
 
-      this.dispose.add(() => clearInterval(heartbeatInterval))
+      this.dispose.add(() => {
+        heartbeatInterval.unref()
+        clearInterval(heartbeatInterval)
+      })
     }
 
     ws.on('pong', () => {
