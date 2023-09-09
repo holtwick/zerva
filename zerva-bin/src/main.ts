@@ -99,18 +99,38 @@ export async function runMain(config: ZervaConf) {
       await stopNode()
 
       const cwd = process.cwd()
-      const nodeArgs = [
+
+      let spawnExec = process.execPath
+      let spawnArgs = [
         '--enable-source-maps',
         ...config.node,
         config.outfile,
       ]
 
+      if (config.bun) {
+        spawnExec = 'bun'
+        spawnArgs = [
+          'run',
+          config.outfile,
+        ]
+      }
+      else if (config.deno) {
+        spawnExec = 'deno'
+        spawnArgs = [
+          'run',
+          '--unstable',
+          '--allow-read',
+          '--allow-write=./',
+          '--allow-env',
+          config.outfile]
+      }
+
       if (config.debug)
-        console.info(`Zerva: Spawn node in ${cwd} with args:`, nodeArgs)
+        console.info(`Zerva: Spawn ${spawnExec} in ${cwd} with args:`, spawnArgs)
 
       zervaNodeProcess = spawn(
-        process.execPath,
-        nodeArgs,
+        spawnExec,
+        spawnArgs,
         {
           cwd,
           stdio: 'inherit',
