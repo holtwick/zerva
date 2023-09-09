@@ -1,13 +1,13 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
 import '@zerva/http'
-import { parse } from 'node:url'
 import type { Buffer } from 'node:buffer'
-import { assertModules, emit, on, once, register } from '@zerva/core'
+import { URL } from 'node:url'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, Logger, equalBinary, uname, useDispose } from 'zeed'
+import { assertModules, emit, on, once, register } from '@zerva/core'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
@@ -220,7 +220,17 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
     })
 
     function handleUpgrade(request: any, socket: any, head: Buffer) {
-      const { pathname } = parse(request.url)
+      let pathname = ''
+      if (request.url?.startsWith('/')) {
+        pathname = request.url
+      } else {
+        try {
+          pathname = new URL(request.url).pathname
+        } catch (err) {
+          log.warn(`pathname of url '${request.url}' error:`, err)
+        }
+      }
+
       log('onupgrade', pathname, path)
       if (pathname === path) {
         wss.handleUpgrade(request, socket, head, (ws: any) => {
