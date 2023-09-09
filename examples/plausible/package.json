@@ -24,6 +24,6 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/plausible": "workspace:*",
-    "zeed": "^0.11.3"
+    "zeed": "^0.13.4"
   }
 }

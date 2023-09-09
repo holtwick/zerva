@@ -49,15 +49,15 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.11.3"
+    "zeed": "^0.13.4"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.3",
-    "@types/node": "^20.4.4",
+    "@types/jest": "^29.5.4",
+    "@types/node": "^20.6.0",
     "@zerva/bin": "workspace:*",
-    "tsup": "^7.1.0",
-    "typescript": "^5.1.6",
-    "vitest": "^0.33.0"
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.4"
   },
   "engines": {
     "node": ">=18.0.0"
