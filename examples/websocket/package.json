@@ -24,13 +24,13 @@
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
     "@zerva/websocket": "workspace:*",
-    "vue": "^3.3.2",
-    "zeed": "^0.11.3"
+    "vue": "^3.3.4",
+    "zeed": "^0.13.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^4.3.4",
     "@vue/compiler-sfc": "^3.3.4",
     "@zerva/bin": "workspace:*",
-    "vite": "^4.4.7"
+    "vite": "^4.4.9"
   }
 }

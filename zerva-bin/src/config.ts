@@ -13,6 +13,8 @@ import { entryCandidates } from './static'
 export interface ZervaConf {
   version: string
   build: boolean
+  bun: boolean
+  deno: boolean
   outfile: string
   metafile: boolean
   help: boolean
@@ -32,6 +34,8 @@ export interface ZervaConf {
 export function getConfig(): ZervaConf {
   const config: Partial<ZervaConf> = {
     build: false,
+    bun: false,
+    deno: false,
     help: false,
     esm: false,
     version: '',
@@ -68,7 +72,7 @@ export function getConfig(): ZervaConf {
       esm: ['e'],
       help: ['h', '?'],
     },
-    booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm'],
+    booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm', 'bun', 'deno'],
     listArgs: ['external', 'loader', 'define', 'esbuild', 'node', 'lightningcss'],
   })
 
@@ -81,6 +85,8 @@ export function getConfig(): ZervaConf {
   config.node = args.node ?? []
   config.build = args.build ?? args._.includes('build')
   config.esm = args.esm
+  config.bun = args.bun
+  config.deno = args.deno
   config.loader = Object.fromEntries(
     (args.loader ?? []).map((s: string) => s.split(':', 2)),
   )

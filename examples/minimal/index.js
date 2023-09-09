@@ -1,5 +1,6 @@
 // Simple demo for node and CommonJS loading
 
+import process from 'node:process'
 import { on, register, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { Logger, setupEnv } from 'zeed'

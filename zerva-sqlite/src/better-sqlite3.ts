@@ -70,9 +70,7 @@ declare namespace BetterSqlite3 {
     open: boolean
     inTransaction: boolean
 
-    prepare<BindParameters extends any[] | {} = any[]>(
-      source: string,
-    ): BindParameters extends any[] ? Statement<BindParameters> : Statement<[BindParameters]>
+    prepare<BindParameters extends any[] | object = any[]>(source: string,): BindParameters extends any[] ? Statement<BindParameters> : Statement<[BindParameters]>
     transaction<F extends VariableArgFunction>(fn: F): Transaction<F>
     exec(source: string): this
     pragma(source: string, options?: Database.PragmaOptions): any
@@ -149,7 +147,7 @@ declare namespace Database {
   }
 
   type SqliteError = typeof SqliteError
-  type Statement<BindParameters extends any[] | {} = any[]> = BindParameters extends any[]
+  type Statement<BindParameters extends any[] | object = any[]> = BindParameters extends any[]
     ? BetterSqlite3.Statement<BindParameters>
     : BetterSqlite3.Statement<[BindParameters]>
   type ColumnDefinition = BetterSqlite3.ColumnDefinition

@@ -20,7 +20,7 @@ export function useVite(config?: { root?: string; www?: string }) {
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
 
-  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
+  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
 
   if (isDevMode) {
     if (!existsSync(rootPath))

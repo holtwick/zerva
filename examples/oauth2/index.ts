@@ -1,5 +1,6 @@
 // Simple demo for node and CommonJS loading
 
+import process from 'node:process'
 import { on, serve } from '@zerva/core'
 import type { NextFunction, Request, Response, zervaHttpInterface } from '@zerva/http'
 import { useHttp } from '@zerva/http'

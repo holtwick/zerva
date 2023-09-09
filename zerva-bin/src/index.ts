@@ -33,6 +33,8 @@ is restarted on every update.
 --define=key:value  Text replacement before compiling (see esbuild)
 --esbuild=key:value Additional esbuild configs
 --node=arg          Command line argument to be added to node execution
+--bun               Execute with bun.sh
+--deno              Execute with deno.com
 `,
     )
     return

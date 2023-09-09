@@ -1,6 +1,6 @@
 {
   "name": "@zerva/http-log",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "🌱 Zerva module template",
   "keywords": [
     "server",
@@ -49,17 +49,17 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/morgan": "^1.9.4",
+    "@types/morgan": "^1.9.5",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.1.1",
-    "zeed": "^0.11.3"
+    "zeed": "^0.13.4"
   },
   "devDependencies": {
-    "tsup": "^7.1.0",
-    "typescript": "^5.1.6",
-    "vite": "^4.4.7"
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9"
   },
   "engines": {
     "node": ">=18.0.0"

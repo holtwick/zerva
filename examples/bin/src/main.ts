@@ -1,6 +1,8 @@
 // Simple demo for node and CommonJS loading
 
-import { Logger, on, serve, valueToInteger } from '@zerva/core'
+import process from 'node:process'
+import { Logger, valueToInteger } from 'zeed'
+import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useCounter } from './module'
 
