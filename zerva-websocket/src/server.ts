@@ -219,23 +219,13 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       pool.set(id, conn)
     })
 
-    function handleUpgrade(request: any, socket: any, head: Buffer) {
-      let pathname = ''
-      if (request.url?.startsWith('/')) {
-        pathname = request.url
-      } else {
-        try {
-          pathname = new URL(request.url).pathname
-        } catch (err) {
-          log.warn(`pathname of url '${request.url}' error:`, err)
-        }
-      }
-
+    function handleUpgrade(req: any, socket: any, head: Buffer) {
+      const { pathname } = new URL(req.url, 'https://example.com')
       log('onupgrade', pathname, path)
       if (pathname === path) {
-        wss.handleUpgrade(request, socket, head, (ws: any) => {
+        wss.handleUpgrade(req, socket, head, (ws: any) => {
           log('upgrade connection')
-          wss.emit('connection', ws, request)
+          wss.emit('connection', ws, req)
         })
 
         // } else {
