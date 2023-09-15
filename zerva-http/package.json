@@ -58,7 +58,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
-    "zeed": "^0.13.4"
+    "zeed": "^0.13.10"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
