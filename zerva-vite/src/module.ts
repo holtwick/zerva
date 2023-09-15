@@ -12,15 +12,24 @@ import { zervaMultiPageAppIndexRouting } from './multi'
 const name = 'vite'
 const log = Logger(`zerva:${name}`)
 
-export function useVite(config?: { root?: string; www?: string }) {
+export function useVite(config?: {
+  root?: string
+  www?: string
+  mode?: string
+}) {
   log.info(`use ${name} ${process.env.ZERVA}`)
   register(name, ['http'])
 
-  const { root = process.cwd(), www = './dist_www' } = config ?? {}
+  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
+
+  const {
+    root = process.cwd(),
+    www = './dist_www',
+    mode = process.env.MODE || (isDevMode ? 'development' : 'production'),
+  } = config ?? {}
+
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
-
-  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
 
   if (isDevMode) {
     if (!existsSync(rootPath))
@@ -42,6 +51,7 @@ export function useVite(config?: { root?: string; www?: string }) {
       const { createServer } = await import('vite')
 
       const vite = await createServer({
+        mode,
         root: rootPath,
         server: {
           middlewareMode: true,
