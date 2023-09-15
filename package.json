@@ -24,7 +24,7 @@
     "@antfu/eslint-config": "^0.42.0",
     "@antfu/ni": "^0.21.8",
     "@types/jest": "^29.5.4",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.1",
     "bumpp": "^9.2.0",
     "eslint": "^8.49.0",
     "fast-glob": "^3.3.1",

@@ -53,12 +53,12 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.1",
     "@types/ws": "^8.5.5",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.14.1",
-    "zeed": "^0.13.10"
+    "zeed": "^0.13.11"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",

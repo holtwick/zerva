@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^8.6.0",
-    "zeed": "^0.13.10"
+    "zeed": "^0.13.11"
   },
   "devDependencies": {
     "tsup": "^7.2.0",

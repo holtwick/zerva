@@ -52,7 +52,7 @@
     "@types/request-ip": "^0.0.38",
     "@zerva/core": "workspace:*",
     "request-ip": "^3.3.0",
-    "zeed": "^0.13.10"
+    "zeed": "^0.13.11"
   },
   "engines": {
     "node": ">=18.0.0"
