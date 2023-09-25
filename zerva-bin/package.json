@@ -8,11 +8,11 @@
     "zerva": "bin.cjs"
   },
   "dependencies": {
-    "@types/node": "^20.6.1",
+    "@types/node": "^20.6.5",
     "display-notification": "^3.0.0",
     "esbuild": "^0.19.3",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.13.11"
+    "zeed": "^0.13.13"
   },
   "description": "🌱 Zerva Command Line Tool",
   "engines": {
