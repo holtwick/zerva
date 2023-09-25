@@ -8,7 +8,7 @@ import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, Logger, equalBinary, uname, useDispose } from 'zeed'
 import { assertModules, emit, on, once, register } from '@zerva/core'
-import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
+import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
 

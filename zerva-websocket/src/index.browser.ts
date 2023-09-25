@@ -1,2 +1,2 @@
-export * from './_types'
+export * from './types'
 export * from './connection'

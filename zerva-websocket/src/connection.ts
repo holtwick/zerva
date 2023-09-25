@@ -1,7 +1,7 @@
 /* eslint-disable n/prefer-global/process */
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
 import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useEventListener } from 'zeed'
-import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from '@zerva/websocket'
+import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 // See lib0 and y-websocket for initial implementation
 
