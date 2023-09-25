@@ -1,7 +1,7 @@
 /* eslint-disable n/prefer-global/process */
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
 import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useEventListener } from 'zeed'
-import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from '@zerva/websocket'
 
 // See lib0 and y-websocket for initial implementation
 
@@ -47,11 +47,11 @@ export class WebSocketConnection extends Channel {
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
     if (isBrowser()) {
-      this.dispose.add(useEventListener(window, 'beforeunload', () => this.close()))
+      this.dispose.add(useEventListener(window, 'beforeunload', () => this.dispose()))
       this.dispose.add(useEventListener(window, 'focus', () => this.ping()))
     }
     else if (typeof process !== 'undefined') {
-      this.dispose.add(useEventListener(process, 'exit', () => this.close()))
+      this.dispose.add(useEventListener(process, 'exit', () => this.dispose()))
     }
 
     this.dispose.add(() => this.disconnect())
@@ -72,8 +72,7 @@ export class WebSocketConnection extends Channel {
     else {
       this.log.warn(`connection state issue, readyState=${this.ws?.readyState}`)
     }
-    this.ws?.close()
-    this._connect()
+    this._reconnect()
   }
 
   // Send a ping. If it fails, try to reconnect immediately
@@ -83,19 +82,21 @@ export class WebSocketConnection extends Channel {
   }
 
   disconnect() {
-    this.log('disconnect')
+    this.log('disconnect', this.ws)
     clearTimeout(this.pingTimeout)
     clearTimeout(this.reconnectTimout)
     this.shouldConnect = false
     if (this.ws != null) {
       this.ws?.close()
       this.ws = undefined
+      void this.emit('disconnect') // todo see also onclose ???
     }
   }
 
-  // close() {
-  //   this.dispose()
-  // }
+  _reconnect() {
+    this.ws?.close()
+    this._connect()
+  }
 
   _connect() {
     const {
@@ -137,6 +138,7 @@ export class WebSocketConnection extends Channel {
       })
 
       const onclose = (error?: any) => {
+        this.log('onclose', error, this.ws)
         clearTimeout(this.pingTimeout)
 
         if (this.ws != null) {
@@ -144,7 +146,8 @@ export class WebSocketConnection extends Channel {
 
           if (error)
             this.log.warn('onclose with error')
-          else this.log('onclose')
+          else
+            this.log('onclose')
 
           if (this.isConnected) {
             this.isConnected = false
@@ -175,8 +178,8 @@ export class WebSocketConnection extends Channel {
       ws.addEventListener('close', () => onclose())
       ws.addEventListener('error', (error: any) => onclose(error))
       ws.addEventListener('open', () => {
-        this.log('onopen')
-        if (this.ws === ws) {
+        this.log('onopen') // , this.ws, ws)
+        if (this.ws?.url === ws.url) {
           this.lastMessageReceived = getTimestamp()
           this.isConnected = true
           this.unsuccessfulReconnects = 0
@@ -188,6 +191,9 @@ export class WebSocketConnection extends Channel {
             )
           }
           void this.emit('connect')
+        }
+        else {
+          this.log.warn('onopen connections do not match', this.ws, ws)
         }
       })
     }
