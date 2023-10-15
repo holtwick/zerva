@@ -10,7 +10,6 @@ const default_maxReconnectTimeout = 2500
 const default_messageReconnectTimeout = 30000
 
 export interface WebSocketConnectionOptions {
-  // buffer?: boolean
   logLevel?: LogLevelAliasType
   path?: string
   reconnectTimeoutBase?: number
