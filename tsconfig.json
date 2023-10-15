@@ -36,7 +36,10 @@
     "**/ssr-vue",
     "**/dist",
     "**/dist_www",
-    "**/www"
+    "**/www",
+    "node_modules/**",
+    "**/_archive/**",
+    "_archive/**"
   ],
   "include": [
     "**/*.ts",

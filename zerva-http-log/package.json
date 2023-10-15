@@ -49,17 +49,17 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/morgan": "^1.9.5",
+    "@types/morgan": "^1.9.6",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.1.1",
-    "zeed": "^0.13.13"
+    "zeed": "^0.13.20"
   },
   "devDependencies": {
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "vite": "^4.4.11"
   },
   "engines": {
     "node": ">=18.0.0"
