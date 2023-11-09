@@ -21,20 +21,20 @@
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "1.0.0-beta.27",
+    "@antfu/eslint-config": "1.1.0",
     "@antfu/ni": "^0.21.8",
-    "@types/jest": "^29.5.5",
-    "@types/node": "^20.8.6",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
     "bumpp": "^9.2.0",
-    "eslint": "^8.51.0",
-    "fast-glob": "^3.3.1",
+    "eslint": "^8.53.0",
+    "fast-glob": "^3.3.2",
     "only-allow": "^1.2.1",
     "sort-package-json": "^2.6.0",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11",
+    "vite": "^4.5.0",
     "vitest": "^0.34.6",
-    "vue-tsc": "^1.8.19"
+    "vue-tsc": "^1.8.22"
   },
   "engines": {
     "node": ">=18.0.0"

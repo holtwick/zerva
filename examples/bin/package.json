@@ -28,6 +28,6 @@
     "@zerva/http": "workspace:*"
   },
   "dependencies": {
-    "zeed": "^0.13.20"
+    "zeed": "^0.14.2"
   }
 }

@@ -23,16 +23,16 @@
     "vite_serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.4",
-    "zeed": "^0.13.20"
+    "vue": "^3.3.8",
+    "zeed": "^0.14.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.4.0",
+    "@vitejs/plugin-vue": "^4.4.1",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "vite": "^4.5.0"
   }
 }
