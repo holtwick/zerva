@@ -51,5 +51,5 @@
     "test": "echo todo"
   },
   "type": "module",
-  "version": "0.38.1"
+  "version": "0.38.2"
 }
