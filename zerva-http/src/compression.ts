@@ -7,7 +7,7 @@
  * MIT Licensed
  */
 
-import accepts from 'accepts'
+import accepts from './accepts'
 import bytes from 'bytes'
 import compressible from 'compressible'
 import onHeaders from 'on-headers'
