@@ -21,7 +21,7 @@
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "1.1.0",
+    "@antfu/eslint-config": "^2.0.0",
     "@antfu/ni": "^0.21.8",
     "@types/jest": "^29.5.8",
     "@types/node": "^20.9.0",

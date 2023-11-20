@@ -1,4 +1,5 @@
-/* eslint-disable n/prefer-global/process */
+/* eslint-disable node/prefer-global/process */
+
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
 import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useEventListener } from 'zeed'
 import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
