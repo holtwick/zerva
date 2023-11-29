@@ -14,21 +14,21 @@ export default defineConfig({
         type: 'module',
       },
 
-      srcDir: "src",
-      filename: "service-worker.ts",
+      srcDir: 'src',
+      filename: 'service-worker.ts',
 
-      strategies: "injectManifest",
+      strategies: 'injectManifest',
       injectRegister: false,
 
       manifest: {
-        name: 'pwa-demo'
-      }
+        name: 'pwa-demo',
+      },
 
       // manifest: false,
       // injectManifest: {
       //   injectionPoint: null,
       // },
-    })
+    }),
   ],
   build: {
     outDir: './dist_www',

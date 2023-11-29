@@ -1,4 +1,3 @@
-/* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable ts/no-namespace */
 /* eslint-disable @typescript-eslint/no-namespace */
 // Type definitions for better-sqlite3 7.6

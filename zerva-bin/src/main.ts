@@ -239,7 +239,7 @@ const __dirname = (await import("node:path")).dirname(__filename)`
     },
     plugins,
     banner: {
-      js: banner
+      js: banner,
     },
     define: {
       // ZERVA_MODE: buildMode ? "production" : "development",

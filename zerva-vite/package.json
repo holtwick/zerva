@@ -1,29 +1,29 @@
 {
   "name": "@zerva/vite",
+  "type": "module",
   "version": "0.38.0",
   "description": "🌱 Zerva and Vite",
-  "keywords": [
-    "server",
-    "typescript",
-    "event"
-  ],
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
   "exports": {
     ".": {
       "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "default": "./dist/index.js",
-      "node": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "node": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
@@ -32,6 +32,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
@@ -48,6 +51,9 @@
     "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "tsup src/index.ts --watch"
   },
+  "peerDependencies": {
+    "vite": ">=3.0.0"
+  },
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
@@ -58,11 +64,5 @@
     "@zerva/bin": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "^5.3.2"
-  },
-  "peerDependencies": {
-    "vite": ">=3.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }

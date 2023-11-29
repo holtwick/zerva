@@ -1,15 +1,15 @@
 {
   "name": "vite-pwa",
   "version": "0.0.0",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
   },
   "scripts": {
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",

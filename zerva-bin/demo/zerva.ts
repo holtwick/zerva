@@ -18,7 +18,6 @@ if (TEST)
 else
   console.log('no test')
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 function catchSome() {
   throw new Error('fake')
 }
