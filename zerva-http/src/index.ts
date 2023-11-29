@@ -8,12 +8,12 @@ import httpsModule from 'node:https'
 import type { AddressInfo } from 'node:net'
 import process from 'node:process'
 import { emit, on, register } from '@zerva/core'
-import { compressionMiddleware } from './compression'
 import corsDefault from 'cors'
 import express from 'express'
 import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
 import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
+import { compressionMiddleware } from './compression'
 import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
@@ -137,10 +137,10 @@ export function useHttp(config?: {
             const type = req.headers['content-type']?.toLowerCase()
             return (
               type?.startsWith('application/')
-              && ![
-                'application/json',
-                'application/x-www-form-urlencoded',
-              ].includes(type)
+                && ![
+                  'application/json',
+                  'application/x-www-form-urlencoded',
+                ].includes(type)
             )
           },
         }),

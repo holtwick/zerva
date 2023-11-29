@@ -1,27 +1,14 @@
 {
+  "name": "@zerva/bin",
+  "type": "module",
+  "version": "0.38.2",
+  "description": "🌱 Zerva Command Line Tool",
   "author": {
     "email": "dirk.holtwick@gmail.com",
     "name": "Dirk Holtwick",
     "url": "https://holtwick.de"
   },
-  "bin": {
-    "zerva": "bin.cjs"
-  },
-  "dependencies": {
-    "@types/node": "^20.9.0",
-    "display-notification": "^3.0.0",
-    "esbuild": "^0.19.5",
-    "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.14.2"
-  },
-  "description": "🌱 Zerva Command Line Tool",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "files": [
-    "bin.cjs",
-    "icon.png"
-  ],
+  "license": "MIT",
   "funding": {
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
@@ -31,8 +18,16 @@
     "typescript",
     "event"
   ],
-  "license": "MIT",
-  "name": "@zerva/bin",
+  "bin": {
+    "zerva": "bin.cjs"
+  },
+  "files": [
+    "bin.cjs",
+    "icon.png"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "esbuild src/index.ts --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "dbld-bun": "pnpm run build && node ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 bun run dist/main.mjs",
@@ -50,6 +45,11 @@
     "start": "esbuild src/index.ts  --watch --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs",
     "test": "echo todo"
   },
-  "type": "module",
-  "version": "0.38.2"
+  "dependencies": {
+    "@types/node": "^20.10.0",
+    "display-notification": "^3.0.0",
+    "esbuild": "^0.19.8",
+    "esbuild-plugin-yaml": "^0.0.1",
+    "zeed": "^0.15.4"
+  }
 }

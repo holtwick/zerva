@@ -1,7 +1,7 @@
 /* eslint-disable node/prefer-global/process */
 
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
-import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useEventListener } from 'zeed'
+import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
 import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 // See lib0 and y-websocket for initial implementation
@@ -33,6 +33,8 @@ export class WebSocketConnection extends Channel {
   private reconnectTimout: any
   private pingTimeout: any
   private log: LoggerInterface
+
+  dispose = useDispose()
 
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()

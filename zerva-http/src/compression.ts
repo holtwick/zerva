@@ -7,64 +7,60 @@
  * MIT Licensed
  */
 
-import accepts from './accepts'
+import zlib from 'node:zlib'
+import type { IncomingMessage } from 'node:http'
+import type { Readable } from 'node:stream'
+import { Buffer } from 'node:buffer'
 import bytes from 'bytes'
 import compressible from 'compressible'
 import onHeaders from 'on-headers'
 import vary from 'vary'
-import zlib from 'zlib'
-import { IncomingMessage } from 'http'
-import { Readable } from 'stream'
-import { Buffer } from 'node:buffer'
+import accepts from './accepts'
 
-var cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/
+const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/
 
 /**
  * Compress response data with gzip / deflate.
  *
- * @param {Object} [options]
+ * @param {object} [options]
  * @return {Function} middleware
  * @public
  */
 
 export function compressionMiddleware(options: any = {}) {
-  var opts = options || {}
+  const opts = options || {}
 
   // options
-  var filter = opts.filter || shouldCompress
-  var threshold = bytes.parse(opts.threshold)
+  const filter = opts.filter || shouldCompress
+  let threshold = bytes.parse(opts.threshold)
 
-  if (threshold == null) {
+  if (threshold == null)
     threshold = 1024
-  }
 
   return function compression(req: IncomingMessage, res: any, next: () => void) {
-    var ended = false
-    var length: number
-    var listeners: any = []
-    var stream: zlib.Gzip
+    let ended = false
+    let length: number
+    let listeners: any = []
+    let stream: zlib.Gzip
 
-    var _end = res.end
-    var _on = res.on
-    var _write = res.write
+    const _end = res.end
+    const _on = res.on
+    const _write = res.write
 
     // flush
     res.flush = function flush() {
-      if (stream) {
+      if (stream)
         stream.flush()
-      }
     }
 
     // proxy
 
     res.write = function write(chunk: any, encoding: any) {
-      if (ended) {
+      if (ended)
         return false
-      }
 
-      if (!this._header) {
+      if (!this._header)
         this._implicitHeader()
-      }
 
       return stream
         ? stream.write(toBuffer(chunk, encoding))
@@ -72,22 +68,19 @@ export function compressionMiddleware(options: any = {}) {
     }
 
     res.end = function end(chunk: any, encoding: any) {
-      if (ended) {
+      if (ended)
         return false
-      }
 
       if (!this._header) {
         // estimate the length
-        if (!this.getHeader('Content-Length')) {
+        if (!this.getHeader('Content-Length'))
           length = chunkLength(chunk, encoding)
-        }
 
         this._implicitHeader()
       }
 
-      if (!stream) {
+      if (!stream)
         return _end.call(this, chunk, encoding)
-      }
 
       // mark ended
       ended = true
@@ -99,13 +92,11 @@ export function compressionMiddleware(options: any = {}) {
     }
 
     res.on = function on(type: string, listener: any) {
-      if (!listeners || type !== 'drain') {
+      if (!listeners || type !== 'drain')
         return _on.call(this, type, listener)
-      }
 
-      if (stream) {
+      if (stream)
         return stream.on(type, listener)
-      }
 
       // buffer listeners for future stream
       listeners.push([type, listener])
@@ -113,12 +104,12 @@ export function compressionMiddleware(options: any = {}) {
       return this
     }
 
-    function nocompress(msg: string) {
+    function nocompress(_msg: string) {
       addListeners(res, _on, listeners)
       listeners = null
     }
 
-    onHeaders(res, function onResponseHeaders() {
+    onHeaders(res, () => {
       // determine if request is filtered
       if (!filter(req, res)) {
         nocompress('filtered')
@@ -140,7 +131,7 @@ export function compressionMiddleware(options: any = {}) {
         return
       }
 
-      var encoding = res.getHeader('Content-Encoding') || 'identity'
+      const encoding = res.getHeader('Content-Encoding') || 'identity'
 
       // already encoded
       if (encoding !== 'identity') {
@@ -155,13 +146,12 @@ export function compressionMiddleware(options: any = {}) {
       }
 
       // compression method
-      var accept = accepts(req)
-      var method = accept.encoding(['gzip', 'deflate', 'identity'])
+      const accept = accepts(req)
+      let method = accept.encoding(['gzip', 'deflate', 'identity'])
 
       // we really don't prefer deflate
-      if (method === 'deflate' && accept.encoding(['gzip'])) {
+      if (method === 'deflate' && accept.encoding(['gzip']))
         method = accept.encoding(['gzip', 'identity'])
-      }
 
       // negotiation failed
       if (!method || method === 'identity') {
@@ -169,7 +159,7 @@ export function compressionMiddleware(options: any = {}) {
         return
       }
 
-      // compression stream      
+      // compression stream
       stream = method === 'gzip'
         ? zlib.createGzip(opts)
         : zlib.createDeflate(opts)
@@ -182,17 +172,16 @@ export function compressionMiddleware(options: any = {}) {
       res.removeHeader('Content-Length')
 
       // compression
-      stream.on('data', function onStreamData(chunk) {
-        if (_write.call(res, chunk) === false) {
+      stream.on('data', (chunk) => {
+        if (_write.call(res, chunk) === false)
           stream.pause()
-        }
       })
 
-      stream.on('end', function onStreamEnd() {
+      stream.on('end', () => {
         _end.call(res)
       })
 
-      _on.call(res, 'drain', function onResponseDrain() {
+      _on.call(res, 'drain', () => {
         stream.resume()
       })
     })
@@ -206,10 +195,9 @@ export function compressionMiddleware(options: any = {}) {
  * @private
  */
 
-function addListeners(stream: zlib.Gzip, on: { (event: "close", listener: () => void): zlib.Gzip; (event: "data", listener: (chunk: any) => void): zlib.Gzip; (event: "drain", listener: () => void): zlib.Gzip; (event: "end", listener: () => void): zlib.Gzip; (event: "error", listener: (err: Error) => void): zlib.Gzip; (event: "finish", listener: () => void): zlib.Gzip; (event: "pause", listener: () => void): zlib.Gzip; (event: "pipe", listener: (src: Readable) => void): zlib.Gzip; (event: "readable", listener: () => void): zlib.Gzip; (event: "resume", listener: () => void): zlib.Gzip; (event: "unpipe", listener: (src: Readable) => void): zlib.Gzip; (event: string | symbol, listener: (...args: any[]) => void): zlib.Gzip; apply?: any }, listeners: string | any[]) {
-  for (var i = 0; i < listeners.length; i++) {
+function addListeners(stream: zlib.Gzip, on: { (event: 'close', listener: () => void): zlib.Gzip, (event: 'data', listener: (chunk: any) => void): zlib.Gzip, (event: 'drain', listener: () => void): zlib.Gzip, (event: 'end', listener: () => void): zlib.Gzip, (event: 'error', listener: (err: Error) => void): zlib.Gzip, (event: 'finish', listener: () => void): zlib.Gzip, (event: 'pause', listener: () => void): zlib.Gzip, (event: 'pipe', listener: (src: Readable) => void): zlib.Gzip, (event: 'readable', listener: () => void): zlib.Gzip, (event: 'resume', listener: () => void): zlib.Gzip, (event: 'unpipe', listener: (src: Readable) => void): zlib.Gzip, (event: string | symbol, listener: (...args: any[]) => void): zlib.Gzip, apply?: any }, listeners: string | any[]) {
+  for (let i = 0; i < listeners.length; i++)
     on.apply(stream, listeners[i])
-  }
 }
 
 /**
@@ -217,9 +205,8 @@ function addListeners(stream: zlib.Gzip, on: { (event: "close", listener: () => 
  */
 
 function chunkLength(chunk: any, encoding: string | undefined) {
-  if (!chunk) {
+  if (!chunk)
     return 0
-  }
 
   return !Buffer.isBuffer(chunk)
     ? Buffer.byteLength(chunk, encoding as any)
@@ -232,11 +219,10 @@ function chunkLength(chunk: any, encoding: string | undefined) {
  */
 
 function shouldCompress(req: any, res: { getHeader: (arg0: string) => any }) {
-  var type = res.getHeader('Content-Type')
+  const type = res.getHeader('Content-Type')
 
-  if (type === undefined || !compressible(type)) {
+  if (type === undefined || !compressible(type))
     return false
-  }
 
   return true
 }
@@ -247,12 +233,12 @@ function shouldCompress(req: any, res: { getHeader: (arg0: string) => any }) {
  */
 
 function shouldTransform(req: any, res: { getHeader: (arg0: string) => any }) {
-  var cacheControl = res.getHeader('Cache-Control')
+  const cacheControl = res.getHeader('Cache-Control')
 
   // Don't compress for Cache-Control: no-transform
   // https://tools.ietf.org/html/rfc7234#section-5.2.2.4
-  return !cacheControl ||
-    !cacheControlNoTransformRegExp.test(cacheControl)
+  return !cacheControl
+    || !cacheControlNoTransformRegExp.test(cacheControl)
 }
 
 /**

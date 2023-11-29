@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
-    "zeed": "^0.14.2"
+    "zeed": "^0.15.4"
   },
   "devDependencies": {
     "@types/request-ip": "^0.0.41",

@@ -51,15 +51,15 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.14.2"
+    "zeed": "^0.15.4"
   },
   "devDependencies": {
     "@types/morgan": "^1.9.9",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.1.1",
-    "tsup": "^7.2.0",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.4"
   },
   "engines": {
     "node": ">=18.0.0"

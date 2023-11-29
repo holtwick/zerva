@@ -22,6 +22,6 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.14.2"
+    "zeed": "^0.15.4"
   }
 }
