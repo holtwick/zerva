@@ -1,25 +1,25 @@
 {
   "name": "@zerva/sqlite",
-  "version": "0.38.0",
+  "type": "module",
+  "version": "0.39.0",
   "private": false,
   "description": "",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
   "exports": {
     ".": {
       "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "default": "./dist/index.js",
-      "node": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "node": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
@@ -29,6 +29,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
@@ -47,16 +50,13 @@
   },
   "dependencies": {
     "better-sqlite3": "^9.1.1",
-    "zeed": "^0.14.2"
+    "zeed": "^0.15.4"
   },
   "devDependencies": {
-    "tsup": "^7.2.0",
-    "tsx": "^4.0.0",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0",
+    "tsup": "^8.0.1",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.4",
     "vitest": "^0.34.6"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }

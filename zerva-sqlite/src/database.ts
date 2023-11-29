@@ -1,7 +1,6 @@
 // @ts-expect-error xxx
 import BetterSqlite3 from 'better-sqlite3'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
-import './better-sqlite3'
 
 const log = Logger('sqlite')
 
@@ -150,7 +149,7 @@ export function useSqliteTable<
     const values = []
     if (cols) {
       for (const field of sortedFields) {
-        if (field in cols ?? {}) {
+        if (field in cols) {
           fields.push(`${field}=?`)
           values.push(normalizeValue((cols as any)[field]))
         }

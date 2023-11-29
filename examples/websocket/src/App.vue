@@ -14,7 +14,6 @@ let counter = 0
 
 const channel = new WebSocketConnection()
 
-// eslint-disable-next-line no-constant-condition
 if (true) {
   channel.on('message', (msg) => {
     pushedFeedback.value = msg.data

@@ -97,7 +97,7 @@ export class WebsocketNodeConnection extends Channel {
       isAlive = true
     })
 
-    ws.on('message', async (data: ArrayBuffer, isBinary: boolean) => {
+    ws.on('message', async (data: ArrayBuffer) => {
       try {
         this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
 
@@ -155,8 +155,8 @@ export class WebsocketNodeConnection extends Channel {
   postMessage(data: any): void {
     if (
       this.ws.readyState != null
-      && this.ws.readyState !== wsReadyStateConnecting
-      && this.ws.readyState !== wsReadyStateOpen
+        && this.ws.readyState !== wsReadyStateConnecting
+        && this.ws.readyState !== wsReadyStateOpen
     )
       this.close()
 

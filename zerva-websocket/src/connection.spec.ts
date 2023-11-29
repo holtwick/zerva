@@ -50,6 +50,6 @@ describe('connection', () => {
     const msg = await waitOn(channel, 'message')
     expect(Uint8ArrayToString(msg.data)).toMatchInlineSnapshot('"Hello World"')
 
-    channel.close()
+    channel.dispose()
   }, 5000)
 })

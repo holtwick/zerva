@@ -1,29 +1,29 @@
 {
   "name": "@zerva/core",
-  "version": "0.38.0",
+  "type": "module",
+  "version": "0.39.0",
   "description": "🌱 Simple event driven server",
-  "keywords": [
-    "server",
-    "typescript",
-    "event"
-  ],
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
   },
-  "type": "module",
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
   "exports": {
     ".": {
       "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "default": "./dist/index.js",
-      "node": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "node": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
@@ -32,6 +32,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "pnpm run clean && pnpm run build:tsup",
     "build:tsup": "tsup src/index.ts",
@@ -49,17 +52,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.14.2"
+    "zeed": "^0.15.4"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.9.0",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^20.10.0",
     "@zerva/bin": "workspace:*",
-    "tsup": "^7.2.0",
-    "typescript": "^5.2.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2",
     "vitest": "^0.34.6"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }

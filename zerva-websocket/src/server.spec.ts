@@ -106,7 +106,7 @@ describe('module', () => {
       expect(err.message).toBe('fakeError')
     }
 
-    channel.close()
+    channel.dispose()
   })
 
   it('should ping', async () => {
@@ -117,6 +117,6 @@ describe('module', () => {
     await sleep(2000)
     // 2000 / 600 = 3.333...
     expect(channel.pingCount).toBe(3)
-    channel.close()
+    channel.dispose()
   }, 5000)
 })

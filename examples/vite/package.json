@@ -1,15 +1,15 @@
 {
   "name": "vite-project",
   "version": "0.0.0",
-  "funding": {
-    "type": "GitHub Sponsors ❤",
-    "url": "https://github.com/sponsors/holtwick"
-  },
-  "license": "MIT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
     "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
   },
   "scripts": {
     "build": "pnpm run clean && zerva build src/zerva/index.ts && vite build",
@@ -23,16 +23,16 @@
     "vite_serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.8"
+    "vue": "^3.3.9"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.4.1",
+    "@vitejs/plugin-vue": "^4.5.0",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0",
-    "zeed": "^0.14.2"
+    "typescript": "^5.3.2",
+    "vite": "^5.0.4",
+    "zeed": "^0.15.4"
   }
 }
