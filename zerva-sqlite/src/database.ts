@@ -1,5 +1,6 @@
 // @ts-expect-error xxx
 import BetterSqlite3 from 'better-sqlite3'
+import type { UseDispose } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
 
 const log = Logger('sqlite')
@@ -322,7 +323,7 @@ export function useSqliteTable<
 }
 
 export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
-  const dispose = useDispose()
+  const dispose: any = useDispose()
 
   if (!name.includes('.') && name !== ':memory:')
     name += '.sqlite'
