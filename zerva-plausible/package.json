@@ -1,7 +1,7 @@
 {
   "name": "@zerva/plausible",
   "type": "module",
-  "version": "0.40.1",
+  "version": "0.40.2",
   "description": "🌱 Zerva module template",
   "author": {
     "name": "Dirk Holtwick",
@@ -52,11 +52,9 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@zerva/core": "workspace:*",
-    "zeed": "^0.16.2"
-  },
-  "devDependencies": {
     "@types/request-ip": "^0.0.41",
-    "request-ip": "^3.3.0"
+    "@zerva/core": "workspace:*",
+    "request-ip": "^3.3.0",
+    "zeed": "^0.16.2"
   }
 }
