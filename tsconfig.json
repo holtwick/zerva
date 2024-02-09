@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "baseUrl": ".",
-    "declaration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "target": "ES2022",
     "jsx": "preserve",
+    "baseUrl": ".",
     // "lib": [
     //   "ESNext",
     //   "DOM",
@@ -20,17 +16,26 @@
         "src/*"
       ]
     },
-    "preserveSymlinks": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "target": "ES2022",
     "types": [
       "node",
       "vitest/globals"
-    ]
+    ],
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "declaration": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "preserveSymlinks": true
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.vue"
+  ],
   "exclude": [
     "**/node_modules",
     "**/ssr-vue",
@@ -39,11 +44,8 @@
     "**/www",
     "node_modules/**",
     "**/_archive/**",
-    "_archive/**"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.vue"
+    "_archive/**",
+    "**/*.md/*",
+    "**/*.md"
   ]
 }

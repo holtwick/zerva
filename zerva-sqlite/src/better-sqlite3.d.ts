@@ -1,5 +1,3 @@
-/* eslint-disable ts/no-namespace */
-/* eslint-disable @typescript-eslint/no-namespace */
 // Type definitions for better-sqlite3 7.6
 // Project: https://github.com/JoshuaWise/better-sqlite3
 // Definitions by: Ben Davies <https://github.com/Morfent>
@@ -27,16 +25,16 @@ interface Statement<BindParameters extends any[]> {
   reader: boolean
   busy: boolean
 
-  run(...params: BindParameters): Database.RunResult
-  get(...params: BindParameters): any
-  all(...params: BindParameters): any[]
-  iterate(...params: BindParameters): IterableIterator<any>
-  pluck(toggleState?: boolean): this
-  expand(toggleState?: boolean): this
-  raw(toggleState?: boolean): this
-  bind(...params: BindParameters): this
-  columns(): ColumnDefinition[]
-  safeIntegers(toggleState?: boolean): this
+  run: (...params: BindParameters) => Database.RunResult
+  get: (...params: BindParameters) => any
+  all: (...params: BindParameters) => any[]
+  iterate: (...params: BindParameters) => IterableIterator<any>
+  pluck: (toggleState?: boolean) => this
+  expand: (toggleState?: boolean) => this
+  raw: (toggleState?: boolean) => this
+  bind: (...params: BindParameters) => this
+  columns: () => ColumnDefinition[]
+  safeIntegers: (toggleState?: boolean) => this
 }
 
 interface ColumnDefinition {
@@ -49,10 +47,10 @@ interface ColumnDefinition {
 
 interface Transaction<F extends VariableArgFunction> {
   (...params: ArgumentTypes<F>): ReturnType<F>
-  default(...params: ArgumentTypes<F>): ReturnType<F>
-  deferred(...params: ArgumentTypes<F>): ReturnType<F>
-  immediate(...params: ArgumentTypes<F>): ReturnType<F>
-  exclusive(...params: ArgumentTypes<F>): ReturnType<F>
+  default: (...params: ArgumentTypes<F>) => ReturnType<F>
+  deferred: (...params: ArgumentTypes<F>) => ReturnType<F>
+  immediate: (...params: ArgumentTypes<F>) => ReturnType<F>
+  exclusive: (...params: ArgumentTypes<F>) => ReturnType<F>
 }
 
 interface VirtualTableOptions {
@@ -70,20 +68,19 @@ interface Database {
   open: boolean
   inTransaction: boolean
 
-  prepare<BindParameters extends any[] | object = any[]>(source: string,): BindParameters extends any[] ? Statement<BindParameters> : Statement<[BindParameters]>
-  transaction<F extends VariableArgFunction>(fn: F): Transaction<F>
-  exec(source: string): this
-  pragma(source: string, options?: Database.PragmaOptions): any
-  function(name: string, cb: (...params: any[]) => any): this
-  function(name: string, options: Database.RegistrationOptions, cb: (...params: any[]) => any): this
-  aggregate(name: string, options: Database.AggregateOptions): this
-  loadExtension(path: string): this
-  close(): this
-  defaultSafeIntegers(toggleState?: boolean): this
-  backup(destinationFile: string, options?: Database.BackupOptions): Promise<Database.BackupMetadata>
-  table(name: string, options: VirtualTableOptions): this
-  unsafeMode(unsafe?: boolean): this
-  serialize(options?: Database.SerializeOptions): Buffer
+  prepare: <BindParameters extends any[] | object = any[]>(source: string,) => BindParameters extends any[] ? Statement<BindParameters> : Statement<[BindParameters]>
+  transaction: <F extends VariableArgFunction>(fn: F) => Transaction<F>
+  exec: (source: string) => this
+  pragma: (source: string, options?: Database.PragmaOptions) => any
+  function: ((name: string, cb: (...params: any[]) => any) => this) & ((name: string, options: Database.RegistrationOptions, cb: (...params: any[]) => any) => this)
+  aggregate: (name: string, options: Database.AggregateOptions) => this
+  loadExtension: (path: string) => this
+  close: () => this
+  defaultSafeIntegers: (toggleState?: boolean) => this
+  backup: (destinationFile: string, options?: Database.BackupOptions) => Promise<Database.BackupMetadata>
+  table: (name: string, options: VirtualTableOptions) => this
+  unsafeMode: (unsafe?: boolean) => this
+  serialize: (options?: Database.SerializeOptions) => Buffer
 }
 
 interface DatabaseConstructor {

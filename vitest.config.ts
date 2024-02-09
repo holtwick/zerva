@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/process */
 /// <reference types="vitest" />
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'

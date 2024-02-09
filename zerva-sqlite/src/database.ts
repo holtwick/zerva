@@ -1,6 +1,5 @@
 // @ts-expect-error xxx
 import BetterSqlite3 from 'better-sqlite3'
-import type { UseDispose } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
 
 const log = Logger('sqlite')
