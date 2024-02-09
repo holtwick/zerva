@@ -1,5 +1,3 @@
-// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import '@zerva/http'
 
 import { existsSync } from 'node:fs'
@@ -40,7 +38,7 @@ export function useVite(config?: {
       log.error(`web files do not exist at ${wwwPath}`)
   }
 
-  on('httpWillStart', async ({ addStatic, app }) => {
+  on('httpWillStart', async ({ STATIC, app }) => {
     if (isDevMode) {
       // eslint-disable-next-line no-console
       console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
@@ -76,7 +74,7 @@ export function useVite(config?: {
       // eslint-disable-next-line no-console
       console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
       // log.info(`serving static files at ${wwwPath}}`)
-      addStatic('', wwwPath)
+      STATIC('', wwwPath)
 
       const multiInputCache: Record<string, string> = {}
 

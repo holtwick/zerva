@@ -7,21 +7,23 @@ import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import type { AddressInfo } from 'node:net'
 import process from 'node:process'
-import { emit, on, register } from '@zerva/core'
+import type { LogConfig } from '@zerva/core'
+import { LoggerFromConfig, emit, on, register } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
-import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
+import { LogLevelInfo, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
 import { compressionMiddleware } from './compression'
 import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
 
 const name = 'http'
-const log = Logger(`zerva:${name}`, LogLevelInfo) // todo let the coder decide
 
 export function useHttp(config?: {
+  log?: LogConfig
+
   host?: string
   port?: number
   sslCrt?: string
@@ -65,6 +67,8 @@ export function useHttp(config?: {
 
 }): zervaHttpInterface {
   register(name, [])
+
+  const log = LoggerFromConfig(config?.log, name, LogLevelInfo)
 
   const {
     sslKey,
