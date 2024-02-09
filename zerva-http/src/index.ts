@@ -19,7 +19,7 @@ import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHand
 
 export * from './types'
 
-const name = 'http'
+const moduleName = 'http'
 
 export function useHttp(config?: {
   log?: LogConfig
@@ -66,9 +66,9 @@ export function useHttp(config?: {
   openBrowser?: boolean
 
 }): zervaHttpInterface {
-  register(name, [])
+  register(moduleName, [])
 
-  const log = LoggerFromConfig(config?.log, name, LogLevelInfo)
+  const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
 
   const {
     sslKey,

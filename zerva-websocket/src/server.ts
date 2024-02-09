@@ -6,8 +6,9 @@ import { URL } from 'node:url'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, Logger, equalBinary, uname, useDispose } from 'zeed'
-import { assertModules, emit, on, once, register } from '@zerva/core'
+import { Channel, LogLevelInfo, LogLevelWarn, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
+import type { LogConfig } from '@zerva/core'
+import { LoggerFromConfig, assertModules, emit, on, once, register } from '@zerva/core'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
@@ -19,9 +20,13 @@ declare module 'ws' {
 }
 
 interface ZWebSocketConfig {
+  log?: LogConfig
+  debug?: boolean
   name?: string
   path?: string
   pingInterval?: number
+
+  /** @deprecated use log */
   logLevel?: LogLevelAliasType
 }
 
@@ -55,7 +60,7 @@ export class WebsocketNodeConnection extends Channel {
 
   private log: LoggerInterface
 
-  constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
+  constructor(ws: WebSocket, config: ZWebSocketConfig = {}, log?: LoggerInterface) {
     super()
 
     this.config = config
@@ -65,9 +70,12 @@ export class WebsocketNodeConnection extends Channel {
     this.ws = ws
     this.ws.binaryType = 'arraybuffer'
 
-    const id = uname(moduleName)
-    this.log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
-    this.log.info('new connection', id)
+    const id = config.debug === true ? uname(moduleName) : uuid()
+
+    // this.log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
+    this.log = log ? log.extend(id) : Logger(moduleName, false)
+
+    this.log('new connection', id)
 
     const { pingInterval = 30000 } = config
 
@@ -76,7 +84,7 @@ export class WebsocketNodeConnection extends Channel {
 
     // Will ensure that we don't loose the connection due to inactivity
     if (pingInterval > 0) {
-      this.log.info('Heartbeat interval', pingInterval)
+      this.log('Heartbeat interval', pingInterval)
 
       const heartbeatInterval = setInterval(() => {
         if (isAlive === false) {
@@ -133,7 +141,7 @@ export class WebsocketNodeConnection extends Channel {
     })
 
     ws.on('close', async () => {
-      this.log.info('onclose')
+      this.log('onclose')
       await this.dispose()
       if (this.isConnected) {
         this.isConnected = false
@@ -176,7 +184,7 @@ export class WebsocketNodeConnection extends Channel {
 }
 
 export function useWebSocket(config: ZWebSocketConfig = {}) {
-  const log = Logger(moduleName)
+  const log = LoggerFromConfig(config?.log ?? true, moduleName, config.logLevel ?? LogLevelInfo)
 
   log('setup')
 

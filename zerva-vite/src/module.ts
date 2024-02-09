@@ -3,20 +3,22 @@ import '@zerva/http'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { Logger, toHumanReadableFilePath, toPath } from 'zeed'
-import { on, register } from '@zerva/core'
+import { LoggerFromConfig, on, register } from '@zerva/core'
+import type { LogConfig } from '@zerva/core'
+import { LogLevelInfo, toHumanReadableFilePath, toPath } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
-const name = 'vite'
-const log = Logger(`zerva:${name}`)
+const moduleName = 'vite'
 
 export function useVite(config?: {
+  log?: LogConfig
   root?: string
   www?: string
   mode?: string
 }) {
-  log.info(`use ${name} ${process.env.ZERVA}`)
-  register(name, ['http'])
+  const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
+  log(`use ${moduleName} ${process.env.ZERVA}`)
+  register(moduleName, ['http'])
 
   const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
 
