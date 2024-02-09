@@ -1,6 +1,6 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.41.0",
+  "version": "0.41.1",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
