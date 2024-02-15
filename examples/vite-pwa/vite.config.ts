@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue'
-import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -34,4 +33,4 @@ export default defineConfig({
     outDir: './dist_www',
     sourcemap: true,
   },
-}) as UserConfig
+})

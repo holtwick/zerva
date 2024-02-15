@@ -6,7 +6,7 @@ import { URL } from 'node:url'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, LogLevelInfo, LogLevelWarn, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
+import { Channel, LogLevelInfo, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
 import type { LogConfig } from '@zerva/core'
 import { LoggerFromConfig, assertModules, emit, on, once, register } from '@zerva/core'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
@@ -163,8 +163,8 @@ export class WebsocketNodeConnection extends Channel {
   postMessage(data: any): void {
     if (
       this.ws.readyState != null
-        && this.ws.readyState !== wsReadyStateConnecting
-        && this.ws.readyState !== wsReadyStateOpen
+      && this.ws.readyState !== wsReadyStateConnecting
+      && this.ws.readyState !== wsReadyStateOpen
     )
       this.close()
 

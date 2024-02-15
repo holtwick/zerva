@@ -2,7 +2,7 @@ import { Emitter, uname } from 'zeed'
 
 declare global {
   interface ZContextEvents {
-    close(): void
+    close: () => void
   }
 
   interface ZeedGlobalContext {

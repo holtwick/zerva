@@ -1,6 +1,5 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
-import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 
 function testPlugin() {
@@ -34,4 +33,4 @@ export default defineConfig({
       },
     },
   },
-}) as UserConfig
+})

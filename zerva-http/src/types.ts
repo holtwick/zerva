@@ -33,49 +33,49 @@ export interface zervaHttpInterface {
   http: Server
 
   /** GET */
-  get(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  get: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** POST */
-  post(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  post: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** PUT */
-  put(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  put: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** DELETE */
-  delete(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  delete: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** GET */
-  onGET(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onGET: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** POST */
-  onPOST(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onPOST: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** PUT */
-  onPUT(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onPUT: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** DELETE */
-  onDELETE(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  onDELETE: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** GET */
-  GET(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  GET: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** POST */
-  POST(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  POST: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** PUT */
-  PUT(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  PUT: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** DELETE */
-  DELETE(this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]): void
+  DELETE: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
 
   /** @deprecated use STATIC */
-  addStatic(this: void, path: zervaHttpPaths, fsPath: string): void
+  addStatic: (this: void, path: zervaHttpPaths, fsPath: string) => void
 
   /** @deprecated use STATIC */
-  static(this: void, path: zervaHttpPaths, fsPath: string): void
+  static: (this: void, path: zervaHttpPaths, fsPath: string) => void
 
   /** Serve stativ file or folder  */
-  STATIC(this: void, path: zervaHttpPaths, fsPath: string): void
+  STATIC: (this: void, path: zervaHttpPaths, fsPath: string) => void
 }
 
 declare global {

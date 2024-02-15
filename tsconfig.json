@@ -16,11 +16,7 @@
         "src/*"
       ]
     },
-    "resolveJsonModule": true,
-    "types": [
-      "node",
-      "vitest/globals"
-    ],
+    "resolveJsonModule": true,    
     "allowJs": true,
     "strict": true,
     "strictNullChecks": true,

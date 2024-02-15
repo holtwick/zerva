@@ -17,8 +17,8 @@ const port = 8889
 const url = `ws://localhost:${port}${webSocketPath}`
 
 interface WebsocketActions {
-  echo(value: any): Promise<any>
-  throwsError(): Promise<void>
+  echo: (value: any) => Promise<any>
+  throwsError: () => Promise<void>
 }
 
 describe('module', () => {

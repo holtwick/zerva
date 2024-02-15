@@ -8,10 +8,10 @@ const log = Logger('zerva:serve')
 
 declare global {
   interface ZContextEvents {
-    serveInit(): void
-    serveStart(): void
-    serveStop(): void
-    serveDispose(): void
+    serveInit: () => void
+    serveStart: () => void
+    serveStop: () => void
+    serveDispose: () => void
   }
 }
 
