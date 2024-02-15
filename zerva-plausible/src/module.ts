@@ -2,12 +2,7 @@
 
 import { on, register } from '@zerva/core'
 import { Logger } from 'zeed'
-import {
-  setTrackCollectUrl,
-  setTrackWebsiteId,
-  trackEvent,
-  trackPageView,
-} from './track-plausible'
+import { setTrackCollectUrl, setTrackWebsiteId, trackEvent, trackPageView } from './track-plausible'
 
 const name = 'plausible'
 const log = Logger(`zerva:${name}`)
