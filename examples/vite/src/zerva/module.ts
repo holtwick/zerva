@@ -5,7 +5,7 @@ const log = Logger('counter')
 
 declare global {
   interface ZContextEvents {
-    counterIncrement(counter: number): void
+    counterIncrement: (counter: number) => void
   }
 }
 

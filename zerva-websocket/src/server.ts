@@ -105,6 +105,7 @@ export class WebsocketNodeConnection extends Channel {
       isAlive = true
     })
 
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('message', async (data: ArrayBuffer) => {
       try {
         this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
@@ -124,6 +125,13 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
+    // function asyncVoid(fn: (..._args: any) => Promise<any>) {
+    //   return (...args: any) => {
+    //     void fn(...args)
+    //   }
+    // }
+
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('error', async (error) => {
       this.log.error('onerror', error)
       await this.dispose()
@@ -140,6 +148,7 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('close', async () => {
       this.log('onclose')
       await this.dispose()

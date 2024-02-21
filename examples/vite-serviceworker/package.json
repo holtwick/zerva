@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "vue": "^3.4.19",
-    "zeed": "^0.16.11"
+    "zeed": "^0.17.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

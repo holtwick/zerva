@@ -97,6 +97,7 @@ async function serverCheck() {
   }
 }
 
+// eslint-disable-next-line ts/no-misused-promises
 process.on('beforeExit', serverCheck)
 // process.on('exit', serveStop)
 

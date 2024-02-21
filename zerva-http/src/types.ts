@@ -80,15 +80,15 @@ export interface zervaHttpInterface {
 
 declare global {
   interface ZContextEvents {
-    httpInit(info: zervaHttpInterface): void
-    httpWillStart(info: zervaHttpInterface): void
-    httpRunning(info: {
+    httpInit: (info: zervaHttpInterface) => void
+    httpWillStart: (info: zervaHttpInterface) => void
+    httpRunning: (info: {
       http: Server
       port: number
       family: string
       address: string
-    }): void
-    httpStop(): void
-    httpDidStop(): void
+    }) => void
+    httpStop: () => void
+    httpDidStop: () => void
   }
 }

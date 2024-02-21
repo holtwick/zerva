@@ -195,6 +195,7 @@ export function useHttp(config?: {
       suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
     for (const handler of handlers) {
+      // eslint-disable-next-line ts/no-misused-promises
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
         log(`${mode.toUpperCase()} ${path}`)
         log('headers =', req.headers)
