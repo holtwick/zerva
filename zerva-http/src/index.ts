@@ -197,41 +197,51 @@ export function useHttp(config?: {
     for (const handler of handlers) {
       // eslint-disable-next-line ts/no-misused-promises
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
-        log(`${mode.toUpperCase()} ${path}`)
-        log('headers =', req.headers)
+        try {
+          log(`${mode.toUpperCase()} ${path}`)
+          log('headers =', req.headers)
 
-        // todo maybe later?
-        if (suffix)
-          res.type(suffix ?? 'application/octet-stream')
+          // todo maybe later?
+          if (suffix)
+            res.type(suffix ?? 'application/octet-stream')
 
-        let result: any = handler
-        if (typeof handler === 'function') {
-          const reqX = req as any
-          reqX.req = req
-          result = await promisify(handler(reqX, res, next))
-        }
-
-        if (result != null) {
-          // [500, 'my error message'] or [404, {error: 'not found'}]
-          if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-            res.status(result[0])
-            result = result[1]
+          let result: any = handler
+          if (typeof handler === 'function') {
+            const reqX = req as any
+            reqX.req = req
+            result = await promisify(handler(reqX, res, next))
           }
 
-          if (typeof result === 'number') {
-            res.status(result).send(String(result)) // error code
-            return
-          }
+          if (result != null) {
+            try {
+              // [500, 'my error message'] or [404, {error: 'not found'}]
+              if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
+                res.status(result[0])
+                result = result[1]
+              }
 
-          if (typeof result === 'string') {
-            if (!suffix) {
-              if (result.startsWith('<'))
-                res.set('Content-Type', 'text/html; charset=utf-8')
-              else
-                res.set('Content-Type', 'text/plain; charset=utf-8')
+              if (typeof result === 'number') {
+                res.status(result).send(String(result)) // error code
+                return
+              }
+
+              if (typeof result === 'string') {
+                if (!suffix) {
+                  if (result.startsWith('<'))
+                    res.set('Content-Type', 'text/html; charset=utf-8')
+                  else
+                    res.set('Content-Type', 'text/plain; charset=utf-8')
+                }
+              }
             }
+            catch (err) {
+              log.warn(`Problems setting status or header automatically for ${path}`, err)
+            }
+            res.send(result)
           }
-          res.send(result)
+        }
+        catch (err) {
+          log.warn(`Problems handling reuest for ${path}`, err)
         }
       })
     }
