@@ -371,3 +371,6 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     dispose,
   }
 }
+
+export type UseSqliteTable<T = SqliteTableDefault> = ReturnType<typeof useSqliteTable<T>>
+export type UseSqliteDatabase = ReturnType<typeof useSqliteDatabase>
