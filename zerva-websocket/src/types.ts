@@ -24,18 +24,18 @@ export type WebsocketChannel = Channel & {
 
 declare global {
   interface ZContextEvents {
-    webSocketConnect(info: {
+    webSocketConnect: (info: {
       channel: WebsocketChannel
       name?: string
       path?: string
       dispose: UseDispose
-    }): void
-    webSocketDisconnect(info: {
+    }) => void
+    webSocketDisconnect: (info: {
       channel: WebsocketChannel
       name?: string
       path?: string
       error?: Error
-    }): void
+    }) => void
   }
 }
 

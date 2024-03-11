@@ -34,7 +34,7 @@ export class WebSocketConnection extends Channel {
   private pingTimeout: any
   private log: LoggerInterface
 
-  dispose:any = useDispose()
+  dispose: any = useDispose()
 
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()

@@ -1,6 +1,6 @@
-// @ts-expect-error xxx
+// @ts-ignore custom types
 import BetterSqlite3 from 'better-sqlite3'
-import type { UseDispose } from 'zeed'
+import type { Primitive } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
 
 const log = Logger('sqlite')
@@ -108,7 +108,7 @@ export function useSqliteTable<
     // Update table https://www.sqlite.org/lang_altertable.html
     const missingFields = arrayMinus(Object.keys(creationFields), state.map((col: any) => col.name))
     if (missingFields.length > 0) {
-      const fieldsList = []
+      const fieldsList:string[] = []
       for (const field of missingFields)
         fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((creationFields as any)[field])}`)
       db.exec(fieldsList.join('; '))
@@ -141,13 +141,13 @@ export function useSqliteTable<
     if (value != null) {
       const sql = `SELECT * FROM ${tableName} WHERE ${String(name)}=? LIMIT 1`
       // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
-      return prepare(sql).get(value)
+      return prepare(sql).get(value) as any
     }
   }
 
   function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: OrderByMany<string>) {
-    const fields = []
-    const values = []
+    const fields:string[] = []
+    const values:Primitive[] = []
     if (cols) {
       for (const field of sortedFields) {
         if (field in cols) {
@@ -194,7 +194,7 @@ export function useSqliteTable<
       return _getStatement.get(id)
   }
 
-  function normalizeValue(value: any) {
+  function normalizeValue(value: any): Primitive {
     if (isBoolean(value))
       return value ? 1 : 0
     if (!isPrimitive(value))
@@ -202,7 +202,7 @@ export function useSqliteTable<
     return value
   }
 
-  const getNow = globalThis.TEST ? () => 0 : getTimestamp
+  const getNow = (globalThis as any).TEST ? () => 0 : getTimestamp
 
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (created, updated, ${sortedFields.join(', ')}) VALUES(?, ?, ${sortedFields.map(_ => '?').join(', ')})`)
 
@@ -219,8 +219,8 @@ export function useSqliteTable<
 
   /** Update content `obj` of row with `id`  */
   function update(id: number | string, obj: Partial<ColFullType>): SqliteRunResult {
-    const fields = []
-    const values = []
+    const fields:string[] = []
+    const values:Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)
@@ -242,8 +242,8 @@ export function useSqliteTable<
         throw new Error(`Field ${row} has to be part of object ${obj}`)
     }
 
-    const fields = []
-    const values = []
+    const fields:string[] = []
+    const values:Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(field)
@@ -263,8 +263,8 @@ export function useSqliteTable<
 
   /** Update multiple fields `where` condition */
   function updateWhere(where: string, obj: Partial<ColType>): SqliteRunResult {
-    const fields = []
-    const values = []
+    const fields:string[] = []
+    const values:Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)
@@ -279,12 +279,12 @@ export function useSqliteTable<
 
   /** Delete row with `id` */
   function deleteRow(id: number | string): SqliteRunResult {
-    _deleteStatement.run([id])
+    return _deleteStatement.run([id])
   }
 
   /** Get all rows and `orderBy` */
   function all(orderBy = 'id'): ColFullType[] {
-    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all()
+    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all() as any
   }
 
   /** Get number of rows  */
@@ -372,3 +372,6 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     dispose,
   }
 }
+
+export type UseSqliteTable<T = SqliteTableDefault> = ReturnType<typeof useSqliteTable<T>>
+export type UseSqliteDatabase = ReturnType<typeof useSqliteDatabase>

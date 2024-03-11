@@ -1,17 +1,18 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
+import type { LogConfig } from '@zerva/core'
+import { LoggerFromConfig, on, register } from '@zerva/core'
 import nodemailer from 'nodemailer'
-import { Logger } from 'zeed'
-import { on, register } from '@zerva/core'
+import { LogLevelInfo } from 'zeed'
 import type { ZEmailConfig } from './types'
 
-const name = 'email'
-const log = Logger(`zerva:${name}`)
+const moduleName = 'email'
 
-export function useEmail(config: ZEmailConfig) {
+export function useEmail(config: ZEmailConfig & { log?: LogConfig }) {
+  const log = LoggerFromConfig(config?.log, moduleName, LogLevelInfo)
   const { transport } = config
-  log.info(`use ${name}`)
-  register(name)
+  log.info(`use ${moduleName}`)
+  register(moduleName)
   on('emailSend', async (info) => {
     const {
       to,

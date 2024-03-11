@@ -6,7 +6,7 @@ const log = Logger('sandbox')
 
 declare global {
   interface ZContextEvents {
-    counterInc(up: number): number
+    counterInc: (up: number) => number
   }
 }
 

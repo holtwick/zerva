@@ -12,6 +12,6 @@ export interface ZEmailMessage extends SendMailOptions {
 
 declare global {
   interface ZContextEvents {
-    emailSend(msg: ZEmailMessage): Promise<string>
+    emailSend: (msg: ZEmailMessage) => Promise<string>
   }
 }

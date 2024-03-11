@@ -8,10 +8,10 @@ const log = Logger('zerva:serve')
 
 declare global {
   interface ZContextEvents {
-    serveInit(): void
-    serveStart(): void
-    serveStop(): void
-    serveDispose(): void
+    serveInit: () => void
+    serveStart: () => void
+    serveStop: () => void
+    serveDispose: () => void
   }
 }
 
@@ -97,6 +97,7 @@ async function serverCheck() {
   }
 }
 
+// eslint-disable-next-line ts/no-misused-promises
 process.on('beforeExit', serverCheck)
 // process.on('exit', serveStop)
 

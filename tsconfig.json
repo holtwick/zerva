@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "baseUrl": ".",
-    "declaration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "target": "ESNext",
     "jsx": "preserve",
+    "baseUrl": ".",
     // "lib": [
     //   "ESNext",
     //   "DOM",
@@ -20,30 +16,36 @@
         "src/*"
       ]
     },
-    "preserveSymlinks": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
+    "resolveJsonModule": true,    
+    "allowJs": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2022",
-    "types": [
-      "node",
-      "vitest/globals"
-    ]
+    "declaration": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "preserveSymlinks": true
   },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "vitest-setup.ts",
+    "*.config.ts"
+  ],
   "exclude": [
     "**/node_modules",
-    "**/ssr-vue",
-    "**/dist",
+    "node_modules/**",
+    "**/dist/*",
+    "dist/*",
+    "**/_archive/**",
+    "_archive/**",
     "**/dist_www",
     "**/www",
-    "node_modules/**",
-    "**/_archive/**",
-    "_archive/**"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.vue"
+    "**/ssr-vue",
+    "*.txt"
   ]
 }

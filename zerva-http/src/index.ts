@@ -7,21 +7,23 @@ import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import type { AddressInfo } from 'node:net'
 import process from 'node:process'
-import { emit, on, register } from '@zerva/core'
+import type { LogConfig } from '@zerva/core'
+import { LoggerFromConfig, emit, on, register } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
-import { LogLevelInfo, Logger, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
+import { LogLevelInfo, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
 import { compressionMiddleware } from './compression'
 import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
 export * from './types'
 
-const name = 'http'
-const log = Logger(`zerva:${name}`, LogLevelInfo) // todo let the coder decide
+const moduleName = 'http'
 
 export function useHttp(config?: {
+  log?: LogConfig
+
   host?: string
   port?: number
   sslCrt?: string
@@ -64,7 +66,9 @@ export function useHttp(config?: {
   openBrowser?: boolean
 
 }): zervaHttpInterface {
-  register(name, [])
+  register(moduleName, [])
+
+  const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
 
   const {
     sslKey,
@@ -191,42 +195,53 @@ export function useHttp(config?: {
       suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
     for (const handler of handlers) {
+      // eslint-disable-next-line ts/no-misused-promises
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
-        log(`${mode.toUpperCase()} ${path}`)
-        log('headers =', req.headers)
+        try {
+          log(`${mode.toUpperCase()} ${path}`)
+          log('headers =', req.headers)
 
-        // todo maybe later?
-        if (suffix)
-          res.type(suffix ?? 'application/octet-stream')
+          // todo maybe later?
+          if (suffix)
+            res.type(suffix ?? 'application/octet-stream')
 
-        let result: any = handler
-        if (typeof handler === 'function') {
-          const reqX = req as any
-          reqX.req = req
-          result = await promisify(handler(reqX, res, next))
-        }
-
-        if (result != null) {
-          // [500, 'my error message'] or [404, {error: 'not found'}]
-          if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-            res.status(result[0])
-            result = result[1]
+          let result: any = handler
+          if (typeof handler === 'function') {
+            const reqX = req as any
+            reqX.req = req
+            result = await promisify(handler(reqX, res, next))
           }
 
-          if (typeof result === 'number') {
-            res.status(result).send(String(result)) // error code
-            return
-          }
+          if (result != null) {
+            try {
+              // [500, 'my error message'] or [404, {error: 'not found'}]
+              if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
+                res.status(result[0])
+                result = result[1]
+              }
 
-          if (typeof result === 'string') {
-            if (!suffix) {
-              if (result.startsWith('<'))
-                res.set('Content-Type', 'text/html; charset=utf-8')
-              else
-                res.set('Content-Type', 'text/plain; charset=utf-8')
+              if (typeof result === 'number') {
+                res.status(result).send(String(result)) // error code
+                return
+              }
+
+              if (typeof result === 'string') {
+                if (!suffix) {
+                  if (result.startsWith('<'))
+                    res.set('Content-Type', 'text/html; charset=utf-8')
+                  else
+                    res.set('Content-Type', 'text/plain; charset=utf-8')
+                }
+              }
             }
+            catch (err) {
+              log.warn(`Problems setting status or header automatically for ${path}`, err)
+            }
+            res.send(result)
           }
-          res.send(result)
+        }
+        catch (err) {
+          log.warn(`Problems handling reuest for ${path}`, err)
         }
       })
     }

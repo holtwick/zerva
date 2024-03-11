@@ -12,7 +12,7 @@ import {
 
 declare global {
   interface ZContextEvents {
-    test(x: number): void
+    test: (x: number) => void
   }
 }
 
