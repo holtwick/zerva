@@ -1,6 +1,5 @@
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
-import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 
 function testPlugin() {
@@ -9,6 +8,7 @@ function testPlugin() {
     configureServer(server: any) {
       return () => {
         server.middlewares.use(async (req: any, res: any, next: any) => {
+          // eslint-disable-next-line no-console
           console.log(req.originalUrl)
           next()
         })
@@ -34,4 +34,4 @@ export default defineConfig({
       },
     },
   },
-}) as UserConfig
+})

@@ -165,7 +165,7 @@ export function compressionMiddleware(options: any = {}) {
         : zlib.createDeflate(opts)
 
       // add buffered listeners to stream
-      addListeners(stream, stream.on, listeners)
+      addListeners(stream, stream.on.bind(stream), listeners)
 
       // header fields
       res.setHeader('Content-Encoding', method)

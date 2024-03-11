@@ -3,6 +3,7 @@
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
+import type { MessageDefinitions } from 'zeed'
 import { Logger, createPromise, sleep, useMessageHub, uuid } from 'zeed'
 import { WebSocketConnection } from './connection'
 import { useWebSocket } from './server'
@@ -16,9 +17,9 @@ const log = Logger('test:module')
 const port = 8889
 const url = `ws://localhost:${port}${webSocketPath}`
 
-interface WebsocketActions {
-  echo(value: any): Promise<any>
-  throwsError(): Promise<void>
+interface WebsocketActions extends MessageDefinitions {
+  echo: (value: any) => Promise<any>
+  throwsError: () => Promise<void>
 }
 
 describe('module', () => {
@@ -102,7 +103,6 @@ describe('module', () => {
       await bridge.throwsError()
     }
     catch (err) {
-      // @ts-expect-error xxx
       expect(err.message).toBe('fakeError')
     }
 

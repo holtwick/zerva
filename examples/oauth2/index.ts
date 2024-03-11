@@ -2,7 +2,7 @@
 
 import process from 'node:process'
 import { on, serve } from '@zerva/core'
-import type { NextFunction, Request, Response, zervaHttpInterface } from '@zerva/http'
+import type { NextFunction, Request, Response } from '@zerva/http'
 import { useHttp } from '@zerva/http'
 import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
@@ -64,7 +64,7 @@ log('settings', {
 })
 
 on('httpInit', (info) => {
-  const { app, onGET } = info as zervaHttpInterface
+  const { app, onGET } = info
 
   app.set('trust proxy', 1) // trust first proxy
 

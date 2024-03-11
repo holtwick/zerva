@@ -6,7 +6,7 @@ import { URL } from 'node:url'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, LogLevelInfo, LogLevelWarn, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
+import { Channel, LogLevelInfo, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
 import type { LogConfig } from '@zerva/core'
 import { LoggerFromConfig, assertModules, emit, on, once, register } from '@zerva/core'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
@@ -105,6 +105,7 @@ export class WebsocketNodeConnection extends Channel {
       isAlive = true
     })
 
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('message', async (data: ArrayBuffer) => {
       try {
         this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
@@ -124,6 +125,13 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
+    // function asyncVoid(fn: (..._args: any) => Promise<any>) {
+    //   return (...args: any) => {
+    //     void fn(...args)
+    //   }
+    // }
+
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('error', async (error) => {
       this.log.error('onerror', error)
       await this.dispose()
@@ -140,6 +148,7 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
+    // eslint-disable-next-line ts/no-misused-promises
     ws.on('close', async () => {
       this.log('onclose')
       await this.dispose()
@@ -163,8 +172,8 @@ export class WebsocketNodeConnection extends Channel {
   postMessage(data: any): void {
     if (
       this.ws.readyState != null
-        && this.ws.readyState !== wsReadyStateConnecting
-        && this.ws.readyState !== wsReadyStateOpen
+      && this.ws.readyState !== wsReadyStateConnecting
+      && this.ws.readyState !== wsReadyStateOpen
     )
       this.close()
 

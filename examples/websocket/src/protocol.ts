@@ -1,5 +1,5 @@
 export {}
 
 export interface Messages {
-  viteEcho(data: any): any
+  viteEcho: (data: any) => any
 }

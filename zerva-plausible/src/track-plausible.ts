@@ -25,7 +25,7 @@ interface TrackEvent {
 }
 
 export async function track(opt: TrackEvent) {
-  setTimeout(async () => {
+  setTimeout(() => {
     try {
       let {
         name = 'pageview',
@@ -72,10 +72,14 @@ export async function track(opt: TrackEvent) {
 
       // log.info(`track ${name} to ${plausibleApiEventUrl}:`, options)
 
-      const response = await fetchText(plausibleApiEventUrl, options, fetch)
-
-      if (response !== 'ok')
-        log.info('unexpected plausible feedback:', response)
+      fetchText(plausibleApiEventUrl, options, fetch)
+        .then((response) => {
+          if (response !== 'ok')
+            log.info('unexpected plausible feedback:', response)
+        })
+        .catch((err) => {
+          log.warn('Failed to track async', err)
+        })
     }
     catch (err) {
       log.warn('Failed to track', err)
