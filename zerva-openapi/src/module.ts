@@ -4,9 +4,13 @@ import { on, register } from '@zerva/core'
 import '@zerva/http'
 import { Logger } from 'zeed'
 
+// @ts-ignore 
 import indexCss from './static/index.css.txt'
+// @ts-ignore 
 import swaggerUiBundle from './static/swagger-ui-bundle.js.txt'
+// @ts-ignore 
 import swaggerUiPreset from './static/swagger-ui-standalone-preset.js.txt'
+// @ts-ignore 
 import swaggerUiCss from './static/swagger-ui.css.txt'
 
 const name = 'openapi'

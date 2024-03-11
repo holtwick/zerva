@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "jsx": "preserve",
     "baseUrl": ".",
     // "lib": [
@@ -39,14 +39,13 @@
   "exclude": [
     "**/node_modules",
     "node_modules/**",
-    "**/ssr-vue",
     "**/dist/*",
     "dist/*",
-    "**/dist_www",
-    "**/www",
     "**/_archive/**",
     "_archive/**",
-    "**/*.md/*",
-    "**/*.md"
+    "**/dist_www",
+    "**/www",
+    "**/ssr-vue",
+    "*.txt"
   ]
 }
