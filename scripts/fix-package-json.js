@@ -1,11 +1,11 @@
-const fs = require('node:fs')
-const { resolve } = require('node:path')
-const fg = require('fast-glob')
+import { sync } from 'fast-glob'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 async function main() {
   const { default: sortPackageJson } = await import('sort-package-json')
 
-  for (const name of fg.sync(['!**/node_modules', '*/package.json'])) {
+  for (const name of sync(['!**/node_modules', '*/package.json'])) {
     // Skip by path
     if (name.includes('node_modules/'))
       continue
@@ -13,7 +13,7 @@ async function main() {
     console.log('')
     console.log(name)
 
-    let content = fs.readFileSync(name, 'utf8')
+    let content = readFileSync(name, 'utf8')
     let pkg = JSON.parse(content)
 
     // Skip by name
@@ -44,13 +44,13 @@ async function main() {
       },
     }
 
-    if (fs.existsSync(resolve(name, '..', 'src', 'index.ts'))) {
-      const hasBrowserCode = fs.existsSync(
+    if (existsSync(resolve(name, '..', 'src', 'index.ts'))) {
+      const hasBrowserCode = existsSync(
         resolve(name, '..', 'src', 'index.browser.ts'),
       )
 
       const pattern = resolve(name, '..', '**', '*.spec.*')
-      const tests = fg.sync(['!**/node_modules', pattern])
+      const tests = sync(['!**/node_modules', pattern])
       const hasTests = tests.length > 0
 
       console.log(`  Package ${pkg.name} browser=${hasBrowserCode} tests=${hasTests}`)
@@ -89,7 +89,7 @@ async function main() {
               ? 'ZEED=* vitest --globals --run -r src'
               : 'echo \'NO TESTS AVAILABLE\'',
             'watch': `${tsup} --watch`,
-            'check': 'vue-tsc --noEmit -p ./tsconfig.json',
+            'check': 'vue-tsc --noEmit --skipLibCheck -p ./tsconfig.json',
             'clean': 'rm -rf dist www',
             'reset': 'rm -rf dist www node_modules pnpm-lock.yaml .out*',
             'lint': 'eslint .',
@@ -109,7 +109,7 @@ async function main() {
 
     pkg = sortPackageJson(pkg)
     content = `${JSON.stringify(pkg, null, 2)}\n` // trailing \n also from pnpm etc.
-    fs.writeFileSync(name, content, 'utf8')
+    writeFileSync(name, content, 'utf8')
   }
 }
 

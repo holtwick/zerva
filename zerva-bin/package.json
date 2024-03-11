@@ -50,6 +50,6 @@
     "display-notification": "^3.0.0",
     "esbuild": "^0.20.1",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.17.0"
+    "zeed": "^0.17.1"
   }
 }
