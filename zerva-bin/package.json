@@ -46,7 +46,7 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.25",
     "display-notification": "^3.0.0",
     "esbuild": "^0.20.1",
     "esbuild-plugin-yaml": "^0.0.1",

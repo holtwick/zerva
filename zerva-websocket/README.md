@@ -7,7 +7,7 @@
 ## Get started
 
 ```ts
-import { useWebSocket } from 'zerva-websocket'
+import { useWebSocket } from '@zerva/websocket'
 
 useHttp({ port: 8080 })
 useWebSocket()
