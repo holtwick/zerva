@@ -1,7 +1,7 @@
 {
   "name": "@zerva/core",
   "type": "module",
-  "version": "0.41.1",
+  "version": "0.42.2",
   "description": "🌱 Simple event driven server",
   "author": {
     "name": "Dirk Holtwick",
