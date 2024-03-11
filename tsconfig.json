@@ -28,17 +28,22 @@
     "preserveSymlinks": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.vue"
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "vitest-setup.ts",
+    "*.config.ts"
   ],
   "exclude": [
     "**/node_modules",
+    "node_modules/**",
     "**/ssr-vue",
-    "**/dist",
+    "**/dist/*",
+    "dist/*",
     "**/dist_www",
     "**/www",
-    "node_modules/**",
     "**/_archive/**",
     "_archive/**",
     "**/*.md/*",
