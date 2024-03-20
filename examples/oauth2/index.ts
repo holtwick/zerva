@@ -120,25 +120,20 @@ on('httpInit', (info) => {
   onGET(callbackPath, async ({ req, res }) => {
     log('auth', req.query)
     const { code, state } = req.query
-    if (isString(code)) {
-      const authResponse = await getTokenWithCode(code)
-      log('authInfo', authResponse)
-      if (authResponse) {
-        if (req.session.authInfo?.state === state) {
-          Object.assign(req.session.authInfo!, authResponse)
-          return res.redirect('/')
-        }
-        else {
-          return `different states ${req.session.authInfo?.state} !== ${state}`
-        }
-      }
-      else {
-        return 'no response'
-      }
-    }
-    else {
+
+    if (req.session.authInfo?.state !== state)
+      return `different states ${req.session.authInfo?.state} !== ${state}`
+
+    if (!isString(code))
       return 'no code'
-    }
+
+    const authResponse = await getTokenWithCode(code)
+    log('authInfo', authResponse)
+    if (!authResponse)
+      return 'no response'
+    
+    Object.assign(req.session.authInfo!, authResponse)
+    return res.redirect('/')
   })
 
   onGET('/login', ({ req, res }) => {
