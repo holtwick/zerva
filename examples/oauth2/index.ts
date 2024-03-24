@@ -6,11 +6,11 @@ import type { NextFunction, Request, Response } from '@zerva/http'
 import { useHttp } from '@zerva/http'
 import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
-import { Logger, encodeQuery, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
+import { Logger, encodeQuery, fetchJson, fetchOptionsJson, isObject, isString, setupEnv, uuid } from 'zeed'
 
 interface AuthInfo {
-  uuid?: string
-  state?: string
+  // uuid?: string
+  // state?: string
   timestamp?: number
   access_token?: string
 
@@ -25,7 +25,7 @@ declare module 'express-session' {
     authInfo: AuthInfo
     state: string
     lastUrl: string
-    uuid?: string
+    // uuid?: string
     views?: any
   }
 }
@@ -53,7 +53,7 @@ const {
   OAUTH2_CLIENT_SECRET: clientSecret = '',
   OAUTH2_SCOPE: scope = 'user'
 } = process.env ?? {}
- 
+
 const authorizationUri = `${urlBase}/login/oauth/authorize`
 const accessTokenUri = `${urlBase}/login/oauth/access_token`
 
@@ -81,8 +81,8 @@ on('httpInit', (info) => {
     log('init session', req.session.authInfo)
     // if (!req.session.uuid)
     //   req.session.uuid = uuid()
-    if (!req.session.authInfo)
-      req.session.authInfo = { uuid: uuid() }
+    // if (!req.session.authInfo)
+    //   req.session.authInfo = { uuid: uuid() }
     next()
   })
 
@@ -122,11 +122,16 @@ on('httpInit', (info) => {
   /** Middleware for oauth2 */
   function oauth2(req: Request, res: Response, next: NextFunction) {
     log.info('middleware oauth', req.url)
-    req.session.lastUrl = req.url
-    if (req.session.authInfo?.access_token)
+    if (!req.session.lastUrl) {
+      req.session.lastUrl = req.url
+      log.info('req.session.lastUrl', req.session.lastUrl)
+    }
+    if (req.session.authInfo?.access_token) {
       next()
-    log('requires login')
-    res.redirect(301, '/login')
+    } else {
+      log('requires login')
+      res.redirect(307, '/login')
+    }
   }
 
   //
@@ -146,8 +151,13 @@ on('httpInit', (info) => {
     if (!authResponse)
       return 'no response'
 
-    Object.assign(req.session.authInfo!, authResponse)
-    res.redirect(301, req.session.lastUrl ?? '/')
+    req.session.authInfo = {...authResponse as any}
+    // Object.assign(req.session.authInfo!, authResponse)
+    log.info('redirect', req.url, req.session.lastUrl)
+
+    let url = req.session.lastUrl || '/'
+    req.session.lastUrl = undefined
+    res.redirect(307, url)
   })
 
   /** Authorize */
@@ -156,7 +166,7 @@ on('httpInit', (info) => {
 
     const state = uuid()
     req.session.state = state
-    req.session.authInfo!.state = state
+    // req.session.authInfo!.state = state
 
     let query = encodeQuery({
       client_id: clientId,
@@ -168,13 +178,13 @@ on('httpInit', (info) => {
 
     const uri = `${authorizationUri}?${query}`
     log('redirect uri', uri)
-    res.redirect(301, uri)
+    res.redirect(307, uri)
   })
 
   /** Forget about the authorization */
   onGET('/logout', ({ req, res }) => {
-    //
-    res.redirect(301, '/')
+    req.session.authInfo = undefined
+    res.redirect(307, '/')
   })
 
 
@@ -184,14 +194,17 @@ on('httpInit', (info) => {
       log('/protected')
       let user: any = ''
 
-      // if (req.session.authInfo?.access_token) {
-      //   user = await fetchJson(`${urlBase}/api/v1/user/email?access_token=req.session.authInfo?.access_token`)
-      // }
+      if (req.session.authInfo?.access_token) {
+        user = await fetchJson(`${urlBase}/api/v1/user/email?access_token=${req.session.authInfo?.access_token}`)
+      }
 
       return `<p>
         This should be protected:
       </p>
-        User: ${req.session.authInfo}
+      AuthInfo
+      <pre>${JSON.stringify(req.session.authInfo, null, 2)}</pre>
+        User: 
+        <pre>${JSON.stringify(user, null, 2)}</pre>
       <p>
         <a href="/logout">Logout</a>
       </p>
