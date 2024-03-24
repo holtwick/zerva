@@ -6,7 +6,7 @@ import type { NextFunction, Request, Response } from '@zerva/http'
 import { useHttp } from '@zerva/http'
 import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
-import { Logger, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
+import { Logger, encodeQuery, fetchJson, fetchOptionsJson, isString, setupEnv, uuid } from 'zeed'
 
 interface AuthInfo {
   uuid?: string
@@ -23,6 +23,8 @@ interface AuthInfo {
 declare module 'express-session' {
   interface SessionData {
     authInfo: AuthInfo
+    state: string
+    lastUrl: string
     uuid?: string
     views?: any
   }
@@ -49,9 +51,9 @@ const {
   OAUTH2_CALLBACK_URL: redirectUri = `http://localhost:8080${callbackPath}`,
   OAUTH2_CLIENT_ID: clientId = '',
   OAUTH2_CLIENT_SECRET: clientSecret = '',
+  OAUTH2_SCOPE: scope = 'user'
 } = process.env ?? {}
-
-// const urlRedirect = `${urlBase}/login/oauth/authorize?client_id=${escape(clientId)}&redirect_uri=${escape(urlCallback)}&response_type=code&state=${uuid()}`
+ 
 const authorizationUri = `${urlBase}/login/oauth/authorize`
 const accessTokenUri = `${urlBase}/login/oauth/access_token`
 
@@ -90,7 +92,7 @@ on('httpInit', (info) => {
       Not protected.
     </p>
     <p>
-      <a href="/protected">But this one is with test:test</a>.
+      <a href="/protected">But this one requires authentication.</a>.
       <pre>${JSON.stringify(req.session.authInfo, null, 2)}</pre>
     </p>`,
   )
@@ -117,12 +119,24 @@ on('httpInit', (info) => {
     }))
   }
 
+  /** Middleware for oauth2 */
+  function oauth2(req: Request, res: Response, next: NextFunction) {
+    log.info('middleware oauth', req.url)
+    req.session.lastUrl = req.url
+    if (req.session.authInfo?.access_token)
+      next()
+    log('requires login')
+    res.redirect(301, '/login')
+  }
+
+  //
+
   onGET(callbackPath, async ({ req, res }) => {
     log('auth', req.query)
     const { code, state } = req.query
 
-    if (req.session.authInfo?.state !== state)
-      return `different states ${req.session.authInfo?.state} !== ${state}`
+    if (req.session.state !== state)
+      return `different states ${req.session.state} !== ${state}`
 
     if (!isString(code))
       return 'no code'
@@ -131,45 +145,59 @@ on('httpInit', (info) => {
     log('authInfo', authResponse)
     if (!authResponse)
       return 'no response'
-    
+
     Object.assign(req.session.authInfo!, authResponse)
-    return res.redirect('/')
+    res.redirect(301, req.session.lastUrl ?? '/')
   })
 
+  /** Authorize */
   onGET('/login', ({ req, res }) => {
     // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
 
     const state = uuid()
+    req.session.state = state
     req.session.authInfo!.state = state
-    const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${state}`
+
+    let query = encodeQuery({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      state,
+      scope
+    })
+
+    const uri = `${authorizationUri}?${query}`
     log('redirect uri', uri)
     res.redirect(301, uri)
   })
 
+  /** Forget about the authorization */
   onGET('/logout', ({ req, res }) => {
-    // todo
-    // // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
-    // const uri = `${authorizationUri}?client_id=${escape(clientId)}&redirect_uri=${escape(redirectUri)}&response_type=code&state=${uuid()}`
-    // log('redirect uri', uri)
-    // res.redirect(301, uri)
+    //
+    res.redirect(301, '/')
   })
 
-  function oauth2(req: Request, res: Response, next: NextFunction) {
-    log('middleware oauth')
-    if (req.session.authInfo?.access_token)
-      next()
-    res.redirect('/login')
-  }
 
   onGET('/protected',
     oauth2,
-    ({ req }) => `<p>
+    async ({ req }) => {
+      log('/protected')
+      let user: any = ''
+
+      // if (req.session.authInfo?.access_token) {
+      //   user = await fetchJson(`${urlBase}/api/v1/user/email?access_token=req.session.authInfo?.access_token`)
+      // }
+
+      return `<p>
         This should be protected:
       </p>
         User: ${req.session.authInfo}
       <p>
         <a href="/logout">Logout</a>
-      </p>`,
+      </p>
+      <pre>${user}</pre>
+      `
+    }
   )
 })
 

@@ -382,7 +382,7 @@ describe('database.spec', () => {
         "SELECT * FROM test ORDER BY id",
         "SELECT * FROM test WHERE active=1.0 AND age=20.0 ORDER BY id desc, created",
         "SELECT * FROM test WHERE active=1.0 AND age=50.0 LIMIT 1",
-        "DELETE FROM test WHERE id =1.0 ",
+        "DELETE FROM test WHERE id=1.0",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "PRAGMA table_info(test)",
         "SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
