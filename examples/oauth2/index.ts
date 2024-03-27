@@ -6,17 +6,20 @@ import type { NextFunction, Request, Response } from '@zerva/http'
 import { useHttp } from '@zerva/http'
 import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
-import { Logger, encodeQuery, fetchJson, fetchOptionsJson, isObject, isString, setupEnv, uuid } from 'zeed'
+import { Logger, encodeQuery, fetchJson, fetchOptionsJson, getTimestamp, isObject, isString, setupEnv, uuid } from 'zeed'
 
 interface AuthInfo {
   // uuid?: string
   // state?: string
   timestamp?: number
+  
   access_token?: string
 
-  /** The “expires_in” value is the number of seconds that the access token will be valid. */
   refresh_token?: string
+
+  /** The “expires_in” value is the number of seconds that the access token will be valid. */
   expires_in?: number
+  
   token_type?: string
 }
 
@@ -77,14 +80,14 @@ on('httpInit', (info) => {
     saveUninitialized: true,
   }))
 
-  app.use((req, res, next) => {
-    log('init session', req.session.authInfo)
-    // if (!req.session.uuid)
-    //   req.session.uuid = uuid()
-    // if (!req.session.authInfo)
-    //   req.session.authInfo = { uuid: uuid() }
-    next()
-  })
+  // app.use((req, res, next) => {
+  //   log('init session', req.session.authInfo)
+  //   // if (!req.session.uuid)
+  //   //   req.session.uuid = uuid()
+  //   // if (!req.session.authInfo)
+  //   //   req.session.authInfo = { uuid: uuid() }
+  //   next()
+  // })
 
   onGET(
     '/',
@@ -103,35 +106,31 @@ on('httpInit', (info) => {
       grant_type: 'authorization_code',
       client_id: clientId,
       client_secret: clientSecret,
-      code,
       redirect_uri: redirectUri,
+      code,
     }))
   }
 
-  async function getTokenRefresh(token: string) {
+  async function getTokenRefresh(refresh_token: string) {
     // https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/
     return await fetchJson(accessTokenUri, fetchOptionsJson({
       grant_type: 'refresh_token',
       client_id: clientId,
       client_secret: clientSecret,
       redirect_uri: redirectUri,
-      refresh_token: token,
+      refresh_token,
     }))
   }
 
   /** Middleware for oauth2 */
   function oauth2(req: Request, res: Response, next: NextFunction) {
     log.info('middleware oauth', req.url)
-    if (!req.session.lastUrl) {
-      req.session.lastUrl = req.url
-      log.info('req.session.lastUrl', req.session.lastUrl)
-    }
-    if (req.session.authInfo?.access_token) {
-      next()
-    } else {
+    if (!req.session.authInfo?.access_token) {
       log('requires login')
-      res.redirect(307, '/login')
+      req.session.lastUrl = req.url
+      res.redirect(307, '/login')      
     }
+    next()
   }
 
   //
@@ -151,13 +150,14 @@ on('httpInit', (info) => {
     if (!authResponse)
       return 'no response'
 
-    req.session.authInfo = {...authResponse as any}
-    // Object.assign(req.session.authInfo!, authResponse)
-    log.info('redirect', req.url, req.session.lastUrl)
+    req.session.authInfo = {
+       ...authResponse as any,
+      timestamp: getTimestamp()
+    }
+    
+    // log.info('redirect', req.url, req.session.lastUrl)
 
-    let url = req.session.lastUrl || '/'
-    req.session.lastUrl = undefined
-    res.redirect(307, url)
+    res.redirect(307, req.session.lastUrl || '/')
   })
 
   /** Authorize */
@@ -165,8 +165,7 @@ on('httpInit', (info) => {
     // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
 
     const state = uuid()
-    req.session.state = state
-    // req.session.authInfo!.state = state
+    req.session.state = state 
 
     let query = encodeQuery({
       client_id: clientId,
@@ -195,7 +194,7 @@ on('httpInit', (info) => {
       let user: any = ''
 
       if (req.session.authInfo?.access_token) {
-        user = await fetchJson(`${urlBase}/api/v1/user/email?access_token=${req.session.authInfo?.access_token}`)
+        user = await fetchJson(`${urlBase}/api/v1/user?access_token=${req.session.authInfo?.access_token}`)
       }
 
       return `<p>
@@ -208,7 +207,7 @@ on('httpInit', (info) => {
       <p>
         <a href="/logout">Logout</a>
       </p>
-      <pre>${user}</pre>
+       
       `
     }
   )
