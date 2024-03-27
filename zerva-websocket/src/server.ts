@@ -9,7 +9,7 @@ import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, LogLevelInfo, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
 import type { LogConfig } from '@zerva/core'
 import { LoggerFromConfig, assertModules, emit, on, once, register } from '@zerva/core'
-import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { WebsocketData, pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
 
@@ -30,7 +30,7 @@ interface ZWebSocketConfig {
   logLevel?: LogLevelAliasType
 }
 
-function safeLength(data: any): number {
+function safeLength(data: Web): number {
   try {
     return data?.length ?? data?.byteLength ?? data?.count ?? -1
   }
@@ -169,7 +169,7 @@ export class WebsocketNodeConnection extends Channel {
     })
   }
 
-  postMessage(data: any): void {
+  postMessage(data: WebsocketData): void {
     if (
       this.ws.readyState != null
       && this.ws.readyState !== wsReadyStateConnecting
