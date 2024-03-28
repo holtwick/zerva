@@ -2,7 +2,7 @@
 
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
 import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
-import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { WebsocketData, getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 // See lib0 and y-websocket for initial implementation
 
@@ -34,7 +34,7 @@ export class WebSocketConnection extends Channel {
   private pingTimeout: any
   private log: LoggerInterface
 
-  dispose: any = useDispose()
+  dispose = useDispose()
 
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()
@@ -61,7 +61,7 @@ export class WebSocketConnection extends Channel {
     this._connect()
   }
 
-  postMessage(data: any): void {
+  postMessage(data: WebsocketData): void {
     if (this.ws && (this.ws.readyState != null ? (this.ws.readyState === wsReadyStateConnecting || this.ws.readyState === wsReadyStateOpen) : true)) {
       try {
         this.ws.send(data)

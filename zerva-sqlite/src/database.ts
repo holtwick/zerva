@@ -272,10 +272,10 @@ export function useSqliteTable<
       }
     }
     const now = getNow()
-    return prepare(`UPDATE ${tableName} SET updated=?, ${fields.join(', ')} WHERE ${where} `).run([now, ...values])
+    return prepare(`UPDATE ${tableName} SET updated=?, ${fields.join(', ')} WHERE ${where}`).run([now, ...values])
   }
 
-  const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id =? `)
+  const _deleteStatement = db.prepare(`DELETE FROM ${tableName} WHERE id=?`)
 
   /** Delete row with `id` */
   function deleteRow(id: number | string): SqliteRunResult {
@@ -284,12 +284,12 @@ export function useSqliteTable<
 
   /** Get all rows and `orderBy` */
   function all(orderBy = 'id'): ColFullType[] {
-    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy} `).all() as any
+    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all() as any
   }
 
   /** Get number of rows  */
   function count(): number {
-    return prepare(`SELECT count(id) AS count FROM ${tableName} `).get().count
+    return prepare(`SELECT count(id) AS count FROM ${tableName}`).get().count
   }
 
   /** Create index `idx_table_field` of column `field` if not exists. */
