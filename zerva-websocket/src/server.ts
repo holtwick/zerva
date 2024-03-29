@@ -30,7 +30,7 @@ interface ZWebSocketConfig {
   logLevel?: LogLevelAliasType
 }
 
-function safeLength(data: Web): number {
+function safeLength(data: any): number {
   try {
     return data?.length ?? data?.byteLength ?? data?.count ?? -1
   }
