@@ -2,10 +2,11 @@ import antfu from '@antfu/eslint-config'
 
 export default antfu(
   {
-    typescript: {
-      tsconfigPath: './tsconfig.json',
-      // ignores,
-    },
+    // typescript: {
+    //   tsconfigPath: './tsconfig.json',
+    //   // ignores,
+    // },
+    typescript: true,
     vue: true,
     ignores: [
       '*.md',
