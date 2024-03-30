@@ -182,7 +182,6 @@ export async function runMain(config: ZervaConf) {
           void startNode()
         })
 
-        // eslint-disable-next-line ts/no-misused-promises
         build.onDispose(stopNode)
       },
     } as Plugin)

@@ -1,4 +1,4 @@
-// @ts-ignore custom types
+// @ts-expect-error custom types
 import BetterSqlite3 from 'better-sqlite3'
 import type { Primitive } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, useDispose } from 'zeed'
@@ -108,7 +108,7 @@ export function useSqliteTable<
     // Update table https://www.sqlite.org/lang_altertable.html
     const missingFields = arrayMinus(Object.keys(creationFields), state.map((col: any) => col.name))
     if (missingFields.length > 0) {
-      const fieldsList:string[] = []
+      const fieldsList: string[] = []
       for (const field of missingFields)
         fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((creationFields as any)[field])}`)
       db.exec(fieldsList.join('; '))
@@ -146,8 +146,8 @@ export function useSqliteTable<
   }
 
   function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: OrderByMany<string>) {
-    const fields:string[] = []
-    const values:Primitive[] = []
+    const fields: string[] = []
+    const values: Primitive[] = []
     if (cols) {
       for (const field of sortedFields) {
         if (field in cols) {
@@ -219,8 +219,8 @@ export function useSqliteTable<
 
   /** Update content `obj` of row with `id`  */
   function update(id: number | string, obj: Partial<ColFullType>): SqliteRunResult {
-    const fields:string[] = []
-    const values:Primitive[] = []
+    const fields: string[] = []
+    const values: Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)
@@ -242,8 +242,8 @@ export function useSqliteTable<
         throw new Error(`Field ${row} has to be part of object ${obj}`)
     }
 
-    const fields:string[] = []
-    const values:Primitive[] = []
+    const fields: string[] = []
+    const values: Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(field)
@@ -263,8 +263,8 @@ export function useSqliteTable<
 
   /** Update multiple fields `where` condition */
   function updateWhere(where: string, obj: Partial<ColType>): SqliteRunResult {
-    const fields:string[] = []
-    const values:Primitive[] = []
+    const fields: string[] = []
+    const values: Primitive[] = []
     for (const field of sortedFields) {
       if (field in obj) {
         fields.push(`${field}=?`)

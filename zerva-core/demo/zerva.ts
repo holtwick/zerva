@@ -22,7 +22,6 @@ onStart(() => {
   next()
 })
 
-// eslint-disable-next-line ts/no-misused-promises
 onStop(async () => {
   log('stop')
   await sleep(2000)

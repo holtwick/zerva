@@ -6,20 +6,20 @@ import type { NextFunction, Request, Response } from '@zerva/http'
 import { useHttp } from '@zerva/http'
 import session from 'express-session'
 import type { LoggerInterface } from 'zeed'
-import { Logger, encodeQuery, fetchJson, fetchOptionsJson, getTimestamp, isObject, isString, setupEnv, uuid } from 'zeed'
+import { Logger, encodeQuery, fetchJson, fetchOptionsJson, getTimestamp, isString, setupEnv, uuid } from 'zeed'
 
 interface AuthInfo {
   // uuid?: string
   // state?: string
   timestamp?: number
-  
+
   access_token?: string
 
   refresh_token?: string
 
   /** The “expires_in” value is the number of seconds that the access token will be valid. */
   expires_in?: number
-  
+
   token_type?: string
 }
 
@@ -54,7 +54,7 @@ const {
   OAUTH2_CALLBACK_URL: redirectUri = `http://localhost:8080${callbackPath}`,
   OAUTH2_CLIENT_ID: clientId = '',
   OAUTH2_CLIENT_SECRET: clientSecret = '',
-  OAUTH2_SCOPE: scope = 'user'
+  OAUTH2_SCOPE: scope = 'user',
 } = process.env ?? {}
 
 const authorizationUri = `${urlBase}/login/oauth/authorize`
@@ -128,7 +128,7 @@ on('httpInit', (info) => {
     if (!req.session.authInfo?.access_token) {
       log('requires login')
       req.session.lastUrl = req.url
-      res.redirect(307, '/login')      
+      res.redirect(307, '/login')
     }
     next()
   }
@@ -151,10 +151,10 @@ on('httpInit', (info) => {
       return 'no response'
 
     req.session.authInfo = {
-       ...authResponse as any,
-      timestamp: getTimestamp()
+      ...authResponse as any,
+      timestamp: getTimestamp(),
     }
-    
+
     // log.info('redirect', req.url, req.session.lastUrl)
 
     res.redirect(307, req.session.lastUrl || '/')
@@ -165,14 +165,14 @@ on('httpInit', (info) => {
     // https://www.oauth.com/oauth2-servers/accessing-data/authorization-request/
 
     const state = uuid()
-    req.session.state = state 
+    req.session.state = state
 
-    let query = encodeQuery({
+    const query = encodeQuery({
       client_id: clientId,
       redirect_uri: redirectUri,
       response_type: 'code',
       state,
-      scope
+      scope,
     })
 
     const uri = `${authorizationUri}?${query}`
@@ -186,16 +186,14 @@ on('httpInit', (info) => {
     res.redirect(307, '/')
   })
 
-
   onGET('/protected',
     oauth2,
     async ({ req }) => {
       log('/protected')
       let user: any = ''
 
-      if (req.session.authInfo?.access_token) {
+      if (req.session.authInfo?.access_token)
         user = await fetchJson(`${urlBase}/api/v1/user?access_token=${req.session.authInfo?.access_token}`)
-      }
 
       return `<p>
         This should be protected:
@@ -209,7 +207,7 @@ on('httpInit', (info) => {
       </p>
        
       `
-    }
+    },
   )
 })
 

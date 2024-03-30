@@ -1,7 +1,8 @@
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
+/// <reference types="vite/client" />
 
-  const component: DefineComponent<{}, {}, any>
-  // @ts-expect-error
-  export default component
+declare module '*.vue' {
+  import type { ComponentOptions } from 'vue'
+
+  const Component: ComponentOptions
+  export default Component
 }
