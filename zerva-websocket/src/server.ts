@@ -9,7 +9,8 @@ import type { LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, LogLevelInfo, Logger, equalBinary, uname, useDispose, uuid } from 'zeed'
 import type { LogConfig } from '@zerva/core'
 import { LoggerFromConfig, assertModules, emit, on, once, register } from '@zerva/core'
-import { WebsocketData, pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import type { WebsocketData } from './types'
+import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 const moduleName = 'websocket'
 
@@ -105,7 +106,6 @@ export class WebsocketNodeConnection extends Channel {
       isAlive = true
     })
 
-    // eslint-disable-next-line ts/no-misused-promises
     ws.on('message', async (data: ArrayBuffer) => {
       try {
         this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
@@ -131,7 +131,6 @@ export class WebsocketNodeConnection extends Channel {
     //   }
     // }
 
-    // eslint-disable-next-line ts/no-misused-promises
     ws.on('error', async (error) => {
       this.log.error('onerror', error)
       await this.dispose()
@@ -148,7 +147,6 @@ export class WebsocketNodeConnection extends Channel {
       }
     })
 
-    // eslint-disable-next-line ts/no-misused-promises
     ws.on('close', async () => {
       this.log('onclose')
       await this.dispose()

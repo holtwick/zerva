@@ -2,7 +2,8 @@
 
 import type { LogLevelAliasType, LoggerInterface } from 'zeed'
 import { Channel, Logger, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
-import { WebsocketData, getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import type { WebsocketData } from './types'
+import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 
 // See lib0 and y-websocket for initial implementation
 

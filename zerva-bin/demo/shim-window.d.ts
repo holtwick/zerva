@@ -1,11 +1,5 @@
-export {}
-
 declare global {
-  module globalThis {
-    var TEST: boolean
+  namespace globalThis {
+    let TEST: boolean
   }
-
-  // interface Window {
-  //   TEST: boolean
-  // }
 }

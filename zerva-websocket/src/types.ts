@@ -2,6 +2,8 @@
 
 import type { Channel, UseDispose } from 'zeed'
 
+import 'ws'
+
 export { }
 
 export const websocketName = 'zerva-websocket'
