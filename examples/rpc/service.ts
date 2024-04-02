@@ -9,9 +9,10 @@ const log = Logger('service')
 
 useHttp({ port: 8080 })
 
-useWebsocketRpcHub()
 
 useVite({ root: '.' })
+
+useWebsocketRpcHub()
 
 let clientCounter = 1
 on('rpcConnect', async ({ rpcHub, dispose }) => {

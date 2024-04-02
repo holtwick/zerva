@@ -8,8 +8,6 @@ import process from 'node:process'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
-
-// @ts-expect-error xxx
 import displayNotification from 'display-notification'
 import type { ZervaConf } from './config'
 
@@ -118,7 +116,6 @@ export async function runMain(config: ZervaConf) {
         spawnExec = 'deno'
         spawnArgs = [
           'run',
-          '--unstable',
           '--allow-read',
           '--allow-write=./',
           '--allow-env',

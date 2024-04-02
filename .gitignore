@@ -85,7 +85,7 @@ package-lock.json
 dist_www
 
 *.rest
-zerva-bin/bin.cjs
+# zerva-bin/bin.cjs
 *.node
 
 .npmrc*
