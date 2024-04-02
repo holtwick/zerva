@@ -7,7 +7,7 @@ import { ResillientChannel } from './channel-resilient'
 const log: LoggerInterface = Logger('rpc', false)
 
 /** Our connection to the signaling server */
-export function useWebSocketClientRpcHub(url = getWebsocketUrlFromLocation('rpc')) {
+export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation('rpc')) {
   const rpcChannel = new ResillientChannel()
   const rpcHub = createRPCHub(rpcChannel)
 

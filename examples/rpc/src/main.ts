@@ -1,5 +1,4 @@
 import { Logger } from 'zeed'
-
 import { createApp } from 'vue'
 import App from './App.vue'
 

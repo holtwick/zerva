@@ -1,9 +1,9 @@
-import { emit, on, register } from '@zerva/core'
+import { emit, on } from '@zerva/core'
+import { useWebSocket } from '@zerva/websocket'
 import type { Channel, UseDisposeWithUtils, useRPCHub } from 'zeed'
 import { Logger, useDisposeWithUtils } from 'zeed'
-import { useWebSocket } from '@zerva/websocket'
-import { createRPCHub } from './rpc-hub'
 import { rpcSocketName } from './_types'
+import { createRPCHub } from './rpc-hub'
 
 const moduleName = 'websocket:rpc'
 const log = Logger(moduleName, false)
@@ -22,7 +22,6 @@ declare global {
 
 export function useWebsocketRpcHub(info: { name?: string } = {}) {
   log.info(`use ${moduleName}`)
-  register(moduleName, ['websocket'])
 
   const { name: rpcName = rpcSocketName } = info
 

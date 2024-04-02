@@ -20,7 +20,6 @@
     "start": "ZEED=* LEVEL=a zerva"
   },
   "dependencies": {
-    "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/rpc": "workspace:*",
     "@zerva/vite": "workspace:*",
@@ -31,6 +30,7 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/compiler-sfc": "^3.4.21",
     "@zerva/bin": "workspace:*",
+    "@zerva/core": "workspace:*",
     "vite": "^5.2.7"
   }
 }
