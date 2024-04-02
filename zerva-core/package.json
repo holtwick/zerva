@@ -1,7 +1,7 @@
 {
   "name": "@zerva/core",
   "type": "module",
-  "version": "0.44.0",
+  "version": "0.45.0",
   "description": "🌱 Simple event driven server",
   "author": {
     "name": "Dirk Holtwick",
@@ -52,11 +52,11 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "*"
+    "zeed": "^0.18.6"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.2",
     "@zerva/bin": "workspace:*",
     "tsup": "^8.0.2",
     "typescript": "^5.4.3",

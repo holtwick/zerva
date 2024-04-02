@@ -1,7 +1,7 @@
 {
   "name": "@zerva/openapi",
   "type": "module",
-  "version": "0.44.0",
+  "version": "0.45.0",
   "description": "🌱 Zerva module template",
   "author": {
     "name": "Dirk Holtwick",
@@ -54,7 +54,7 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "*"
+    "zeed": "^0.18.6"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",

@@ -1,7 +1,7 @@
 import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
-import type { SqliteTableDefault } from './database'
-import { useSqliteDatabase } from './database'
+import { useSqliteDatabase } from './index'
+import type { SqliteTableDefault } from './index'
 
 const log = Logger('test')
 
@@ -199,6 +199,14 @@ describe('database.spec', () => {
 
     //
 
+    expect(table.query(`select max(age) as oldest from ${table.name} where id > ?`, 0)).toMatchInlineSnapshot(`
+      [
+        {
+          "oldest": 50,
+        },
+      ]
+    `)
+
     expect(table.all()).toMatchInlineSnapshot(`
       [
         {
@@ -379,6 +387,7 @@ describe('database.spec', () => {
         "UPDATE test SET updated=0.0, amount=1.23, note='it is working!' WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
+        "select max(age) as oldest from test where id > 0.0",
         "SELECT * FROM test ORDER BY id",
         "SELECT * FROM test WHERE active=1.0 AND age=20.0 ORDER BY id desc, created",
         "SELECT * FROM test WHERE active=1.0 AND age=50.0 LIMIT 1",
