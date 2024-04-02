@@ -2,18 +2,22 @@
 
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import type { MessageDefinitions } from 'zeed'
-import { Logger, createPromise, useMessageHub, uuid } from 'zeed'
+import WebSocket from 'ws'
+import { Logger, createPromise, uuid } from 'zeed'
 import { useWebsocketRpcHub } from './server'
+import { useWebsocketRpcHubClient } from './client'
+
+// @ts-expect-error xxx
+globalThis.WebSocket = WebSocket
 
 const log = Logger('test:module')
 
-const port = 8889
-const url = `ws://localhost:${port}${webSocketPath}`
+const port = 8887
+const url = `ws://localhost:${port}/rpc`
 
-interface WebsocketActions extends MessageDefinitions {
-  echo: (value: any) => Promise<any>
-  throwsError: () => Promise<void>
+interface WebsocketActions {
+  echo: (value: any) => any
+  throwsError: () => void
 }
 
 describe('rpc', () => {
@@ -22,6 +26,18 @@ describe('rpc', () => {
 
     useHttp({ port })
     useWebsocketRpcHub()
+
+    on('rpcConnect', async ({ rpcHub, dispose }) => {
+      const rpc = rpcHub<WebsocketActions, WebsocketActions>({
+        echo(value) {
+          log('echo', value)
+          return value
+        },
+        throwsError() {
+          throw new Error('fakeError')
+        },
+      })
+    })
 
     const [promise, resolve] = createPromise()
     on('httpRunning', resolve)
@@ -33,22 +49,26 @@ describe('rpc', () => {
   afterAll(serveStop)
 
   it('should connect and send stuff', async () => {
-    expect.assertions(2)
+    expect.assertions(1)
 
-    // const bridge = useMessageHub({ channel }).send<WebsocketActions>()
+    const { rpcHub, dispose, awaitConnection } = useWebsocketRpcHubClient(url)
 
-    // const id = uuid()
-    // const result = await bridge.echo({ id })
-    // log('result', result)
-    // expect(result).toEqual({ id })
+    const rpc = rpcHub<WebsocketActions>()
+
+    await awaitConnection
+
+    const id = uuid()
+    const result = await rpc.echo({ id })
+    log('result', result)
+    expect(result).toEqual({ id })
 
     // try {
-    //   await bridge.throwsError()
+    //   await rpc.throwsError()
     // }
     // catch (err) {
     //   expect(err.message).toBe('fakeError')
     // }
 
-    // channel.dispose()
+    await dispose()
   })
 })
