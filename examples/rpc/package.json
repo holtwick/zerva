@@ -1,0 +1,36 @@
+{
+  "name": "zerva-example-rpc",
+  "type": "module",
+  "version": "0.2.4",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "scripts": {
+    "build": "zerva build && vite build",
+    "dev": "vite",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "serve": "ZEED=* LEVEL=a node dist/main.cjs",
+    "start": "ZEED=* LEVEL=a zerva"
+  },
+  "dependencies": {
+    "@zerva/core": "workspace:*",
+    "@zerva/http": "workspace:*",
+    "@zerva/rpc": "workspace:*",
+    "@zerva/vite": "workspace:*",
+    "vue": "^3.4.21",
+    "zeed": "^0.18.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/compiler-sfc": "^3.4.21",
+    "@zerva/bin": "workspace:*",
+    "vite": "^5.2.7"
+  }
+}
