@@ -3,11 +3,12 @@ import { Logger, useDispose } from 'zeed'
 import { WebSocketConnection, getWebsocketUrlFromLocation } from '@zerva/websocket'
 import { createRPCHub } from './rpc-hub'
 import { ResillientChannel } from './channel-resilient'
+import { rpcSocketName } from './_types'
 
 const log: LoggerInterface = Logger('rpc', false)
 
 /** Our connection to the signaling server */
-export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation('rpc')) {
+export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSocketName)) {
   const rpcChannel = new ResillientChannel()
   const rpcHub = createRPCHub(rpcChannel)
 
