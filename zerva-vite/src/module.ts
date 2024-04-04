@@ -3,9 +3,9 @@ import '@zerva/http'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { LoggerFromConfig, on, register } from '@zerva/core'
-import type { LogConfig } from '@zerva/core'
-import { LogLevelInfo, toHumanReadableFilePath, toPath } from 'zeed'
+import { on, register } from '@zerva/core'
+import type { LogConfig } from 'zeed'
+import { LogLevelInfo, LoggerFromConfig, toHumanReadableFilePath, toPath } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 // HACK! This will be removed by Zerva later on

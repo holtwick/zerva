@@ -25,7 +25,7 @@ describe('rpc', () => {
     setContext() // Avoid conflict of multiple registration
 
     useHttp({ port })
-    useWebsocketRpcHub()
+    useWebsocketRpcHub({ log: true })
 
     on('rpcConnect', async ({ rpcHub, dispose }) => {
       const rpc = rpcHub<WebsocketActions, WebsocketActions>({
