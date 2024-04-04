@@ -1,9 +1,9 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import type { LogConfig } from '@zerva/core'
-import { LoggerFromConfig, on, register } from '@zerva/core'
+import { on, register } from '@zerva/core'
 import nodemailer from 'nodemailer'
-import { LogLevelInfo } from 'zeed'
+import type { LogConfig } from 'zeed'
+import { LogLevelInfo, LoggerFromConfig } from 'zeed'
 import type { ZEmailConfig } from './types'
 
 const moduleName = 'email'

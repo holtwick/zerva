@@ -1,12 +1,11 @@
 import { emit, on } from '@zerva/core'
 import { useWebSocket } from '@zerva/websocket'
-import type { Channel, UseDisposeWithUtils, useRPCHub } from 'zeed'
-import { Logger, useDisposeWithUtils } from 'zeed'
+import type { Channel, LogConfig, UseDisposeWithUtils, useRPCHub } from 'zeed'
+import { LogLevelInfo, LoggerFromConfig, useDisposeWithUtils } from 'zeed'
 import { rpcSocketName } from './_types'
 import { createRPCHub } from './rpc-hub'
 
 const moduleName = 'websocket:rpc'
-const log = Logger(moduleName, false)
 
 type UseRPCHubType = ReturnType<typeof useRPCHub>
 
@@ -20,21 +19,28 @@ declare global {
   }
 }
 
-export function useWebsocketRpcHub(info: { name?: string } = {}) {
+export function useWebsocketRpcHub(config: {
+  name?: string
+  log?: LogConfig
+} = {}) {
+  const log = LoggerFromConfig(config.log, moduleName, LogLevelInfo)
+
   log.info(`use ${moduleName}`)
 
-  const { name: rpcName = rpcSocketName } = info
+  const { name: rpcName = rpcSocketName } = config
+
+  log(`name=${rpcName}`)
 
   useWebSocket({
     name: rpcName,
-    log: false,
+    log: config.log,
   })
 
   on('webSocketConnect', async ({ channel, name }) => {
     if (rpcName == null || name === rpcName) {
-      log('webSocketConnect')
+      log('webSocketConnect', name)
       const dispose = useDisposeWithUtils(log.label)
-      const rpcHub = createRPCHub(channel)
+      const rpcHub = createRPCHub(channel, config.log)
       await emit('rpcConnect', {
         rpcHub,
         dispose,

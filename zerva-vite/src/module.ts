@@ -3,10 +3,15 @@ import '@zerva/http'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { LoggerFromConfig, on, register } from '@zerva/core'
-import type { LogConfig } from '@zerva/core'
-import { LogLevelInfo, toHumanReadableFilePath, toPath } from 'zeed'
+import { on, register } from '@zerva/core'
+import type { LogConfig } from 'zeed'
+import { LogLevelInfo, LoggerFromConfig, toHumanReadableFilePath, toPath } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
+
+// HACK! This will be removed by Zerva later on
+declare global {
+  const ZERVA_DEVELOPMENT: boolean
+}
 
 const moduleName = 'vite'
 
@@ -20,18 +25,18 @@ export function useVite(config?: {
   log(`use ${moduleName} ${process.env.ZERVA}`)
   register(moduleName, ['http'])
 
-  const isDevMode = process.env.ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
+  // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
 
   const {
     root = process.cwd(),
     www = './dist_www',
-    mode = process.env.MODE || (isDevMode ? 'development' : 'production'),
+    mode = (ZERVA_DEVELOPMENT ? 'development' : 'production'),
   } = config ?? {}
 
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
 
-  if (isDevMode) {
+  if (ZERVA_DEVELOPMENT) {
     if (!existsSync(rootPath))
       log.error(`vite project does not exist at ${rootPath}`)
   }
@@ -41,7 +46,7 @@ export function useVite(config?: {
   }
 
   on('httpWillStart', async ({ STATIC, app }) => {
-    if (isDevMode) {
+    if (ZERVA_DEVELOPMENT) {
       // eslint-disable-next-line no-console
       console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
       // log.info(`serving through vite from ${rootPath}`)
