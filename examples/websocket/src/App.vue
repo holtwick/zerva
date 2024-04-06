@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Logger } from 'zeed'
+import { Logger, Uint8ArrayToJson, jsonToUint8Array } from 'zeed'
 import { WebSocketConnection } from '@zerva/websocket'
 
 const log = Logger('app')
@@ -17,7 +17,7 @@ const channel = new WebSocketConnection(undefined, { log: 0 })
 if (true) {
   channel.on('message', (msg) => {
     pushedFeedback.value = msg.data
-    log('message', JSON.parse(msg.data))
+    log('message', Uint8ArrayToJson(msg.data))
   })
 
   channel.on('disconnect', () => {
@@ -36,7 +36,7 @@ if (true) {
     // return
     counter++
     channel.postMessage(
-      JSON.stringify({
+      jsonToUint8Array({
         from: 'client',
         counter,
       }),

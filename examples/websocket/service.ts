@@ -2,7 +2,7 @@ import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useVite } from '@zerva/vite'
 import { useWebSocket } from '@zerva/websocket'
-import { Logger, useInterval } from 'zeed'
+import { Logger, Uint8ArrayToJson, useInterval } from 'zeed'
 
 const log = Logger('service')
 
@@ -19,7 +19,7 @@ on('webSocketConnect', ({ channel }) => {
 
   if (true) {
     channel.on('message', (msg) => {
-      log.info('message', JSON.parse(msg.data))
+      log.info('message', Uint8ArrayToJson(msg.data))
     })
 
     counter++
