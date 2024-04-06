@@ -6,9 +6,9 @@ import { Logger, useInterval } from 'zeed'
 
 const log = Logger('service')
 
-useHttp({ port: 8080 })
+useHttp({ port: 8080, helmet: false })
 
-useWebSocket()
+useWebSocket({ log: 0 })
 
 useVite({ root: '.' })
 

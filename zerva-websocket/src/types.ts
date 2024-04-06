@@ -24,7 +24,7 @@ export type WebsocketChannel = Channel & {
   path: string
 }
 
-export type WebsocketData = Uint8Array //  string | ArrayBufferLike | Blob | ArrayBufferView
+// export type WebsocketData = Uint8Array //  string | ArrayBufferLike | Blob | ArrayBufferView
 
 declare global {
   interface ZContextEvents {

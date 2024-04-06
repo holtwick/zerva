@@ -12,7 +12,7 @@ const pushedFeedback = ref({})
 
 let counter = 0
 
-const channel = new WebSocketConnection()
+const channel = new WebSocketConnection(undefined, { log: 0 })
 
 if (true) {
   channel.on('message', (msg) => {

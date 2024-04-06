@@ -2,7 +2,7 @@ import { useWebsocketRpcHubClient } from '@zerva/rpc'
 import { ref } from 'vue'
 import type { RpcClientFunctions, RpcServerFunctions } from './_types'
 
-const { rpcHub } = useWebsocketRpcHubClient()
+const { rpcHub } = useWebsocketRpcHubClient(undefined, { log: 0 })
 
 export const counter = ref(-1)
 

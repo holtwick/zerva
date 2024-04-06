@@ -1,4 +1,4 @@
-import type { LoggerInterface } from 'zeed'
+import type { LogConfig, LoggerInterface } from 'zeed'
 import { Logger, ResillientChannel, createPromise, useDispose } from 'zeed'
 import { WebSocketConnection, getWebsocketUrlFromLocation } from '@zerva/websocket'
 import { createRPCHub } from './rpc-hub'
@@ -7,11 +7,13 @@ import { rpcSocketName } from './_types'
 const log: LoggerInterface = Logger('rpc', false)
 
 /** Our connection to the signaling server */
-export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSocketName)) {
+export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSocketName), opt: {
+  log?: LogConfig
+} = {}) {
   const rpcChannel = new ResillientChannel()
   const rpcHub = createRPCHub(rpcChannel, false) // todo log
 
-  const websocketChannel = new WebSocketConnection(url, { logLevel: 'i' })
+  const websocketChannel = new WebSocketConnection(url, { log: opt.log })
 
   const [awaitConnection, resolve] = createPromise()
 
