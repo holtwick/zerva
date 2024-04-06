@@ -31,8 +31,8 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
-    "typescript": "^5.4.3",
+    "typescript": "^5.4.4",
     "vite": "^5.2.8",
-    "zeed": "^0.19.1"
+    "zeed": "^0.19.4"
   }
 }
