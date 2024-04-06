@@ -6,7 +6,7 @@ import { assertModules, emit, on, once, register } from '@zerva/core'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogConfig, LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, LogLevelInfo, Logger, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
+import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
 import '@zerva/http'
 

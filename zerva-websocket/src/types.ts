@@ -19,7 +19,7 @@ export const wsReadyStateClosing = 2
 export const wsReadyStateClosed = 3
 
 /** Tell multiple channels apart  */
-export type WebsocketChannel = Channel & {
+export type WebsocketChannel = Channel<Uint8Array> & {
   name: string
   path: string
 }
