@@ -19,12 +19,12 @@ export const wsReadyStateClosing = 2
 export const wsReadyStateClosed = 3
 
 /** Tell multiple channels apart  */
-export type WebsocketChannel = Channel & {
+export type WebsocketChannel = Channel<Uint8Array> & {
   name: string
   path: string
 }
 
-export type WebsocketData = Uint8Array //  string | ArrayBufferLike | Blob | ArrayBufferView
+// export type WebsocketData = Uint8Array //  string | ArrayBufferLike | Blob | ArrayBufferView
 
 declare global {
   interface ZContextEvents {

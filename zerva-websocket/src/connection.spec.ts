@@ -3,7 +3,7 @@
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
-import { Uint8ArrayToString, createPromise, waitOn } from 'zeed'
+import { Uint8ArrayToString, createPromise, stringToUInt8Array, waitOn } from 'zeed'
 import { WebSocketConnection } from './connection'
 import { useWebSocket } from './server'
 import { webSocketPath } from './types'
@@ -45,7 +45,7 @@ describe('connection', () => {
     })
     await channel.awaitConnect()
 
-    channel.postMessage('Hello World')
+    channel.postMessage(stringToUInt8Array('Hello World'))
 
     const msg = await waitOn(channel, 'message')
     expect(Uint8ArrayToString(msg.data)).toMatchInlineSnapshot('"Hello World"')

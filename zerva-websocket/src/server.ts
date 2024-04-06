@@ -1,15 +1,14 @@
 // (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
 
-import '@zerva/http'
 import type { Buffer } from 'node:buffer'
 import { URL } from 'node:url'
+import { assertModules, emit, on, once, register } from '@zerva/core'
 import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogConfig, LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, LogLevelInfo, Logger, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
-import { assertModules, emit, on, once, register } from '@zerva/core'
-import type { WebsocketData } from './types'
+import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import '@zerva/http'
 
 const moduleName = 'websocket'
 
@@ -30,22 +29,6 @@ interface ZWebSocketConfig {
   logLevel?: LogLevelAliasType
 }
 
-function safeLength(data: any): number {
-  try {
-    return data?.length ?? data?.byteLength ?? data?.count ?? -1
-  }
-  catch (err: any) { }
-  return -1
-}
-
-function safeType(data: any): string {
-  try {
-    return (data)?.constructor?.name ?? typeof data ?? 'unknown'
-  }
-  catch (err: any) { }
-  return 'unknown'
-}
-
 export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
 
@@ -60,7 +43,7 @@ export class WebsocketNodeConnection extends Channel {
 
   private log: LoggerInterface
 
-  constructor(ws: WebSocket, config: ZWebSocketConfig = {}, log?: LoggerInterface) {
+  constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
     super()
 
     this.config = config
@@ -73,7 +56,7 @@ export class WebsocketNodeConnection extends Channel {
     const id = config.debug === true ? uname(moduleName) : uuid()
 
     // this.log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
-    this.log = log ? log.extend(id) : Logger(moduleName, false)
+    this.log = LoggerFromConfig(config.log, moduleName, LogLevelInfo)
 
     this.log('new connection', id)
 
@@ -107,7 +90,7 @@ export class WebsocketNodeConnection extends Channel {
 
     ws.on('message', async (data: ArrayBuffer) => {
       try {
-        this.log(`onmessage length=${safeLength(data)} type=${safeType(data)}`)
+        this.log(`onmessage length=${data.byteLength}`, data)
 
         // Hardcoded message type to allow ping from client side, sends pong
         // This is different to the hearbeat and isAlive from before!
@@ -166,7 +149,7 @@ export class WebsocketNodeConnection extends Channel {
     })
   }
 
-  postMessage(data: WebsocketData): void {
+  postMessage(data: Uint8Array): void {
     if (
       this.ws.readyState != null
       && this.ws.readyState !== wsReadyStateConnecting

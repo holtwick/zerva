@@ -14,15 +14,14 @@
   },
   "scripts": {
     "build": "zerva build && vite build",
-    "dev": "vite",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "serve": "ZEED=* LEVEL=a node dist/main.cjs",
+    "serve": "ZEED=* LEVEL=a node dist/main.mjs",
     "start": "ZEED=* LEVEL=a zerva"
   },
   "dependencies": {
     "@zerva/rpc": "workspace:*",
     "vue": "^3.4.21",
-    "zeed": "^0.19.1"
+    "zeed": "^0.19.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

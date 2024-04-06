@@ -1,7 +1,7 @@
 {
   "name": "@zerva/vite",
   "type": "module",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "description": "🌱 Zerva and Vite",
   "author": {
     "name": "Dirk Holtwick",
@@ -57,12 +57,12 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.19.1"
+    "zeed": "^0.19.5"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.3",
+    "typescript": "^5.4.4",
     "vite": "^5.2.8"
   }
 }

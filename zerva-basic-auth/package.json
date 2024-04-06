@@ -1,7 +1,7 @@
 {
   "name": "@zerva/basic-auth",
   "type": "module",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "description": "🌱 Zerva useBasicAuth",
   "author": {
     "name": "Dirk Holtwick",
@@ -54,10 +54,10 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.19.1"
+    "zeed": "^0.19.5"
   },
   "devDependencies": {
     "tsup": "^8.0.2",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.4"
   }
 }
