@@ -1,13 +1,12 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.51.0",
+  "version": "0.51.1",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "check": "vue-tsc --noEmit --skipLibCheck",
     "clean": "pnpm -r --filter=@zerva/* run clean",
-    "fix": "node scripts/fix-package-json.js",
     "preinstall": "npx only-allow pnpm",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
