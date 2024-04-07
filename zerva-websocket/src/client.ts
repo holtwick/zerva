@@ -1,14 +1,21 @@
 /* eslint-disable node/prefer-global/process */
 
 import type { LogConfig, LoggerInterface } from 'zeed'
-import { Channel, LogLevelInfo, LoggerFromConfig, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
-import { getWebsocketUrlFromLocation, pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { Channel, LogLevelInfo, LoggerFromConfig, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useDisposeWithUtils, useEventListener } from 'zeed'
+import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
 
 // See lib0 and y-websocket for initial implementation
 
 const default_reconnectTimeoutBase = 1200
 const default_maxReconnectTimeout = 2500
 const default_messageReconnectTimeout = 30000
+
+/** Find the correct websocket URL by taking into consideration the `location` e.g. `https` leads to `wss` */
+export function getWebsocketUrlFromLocation(path: string = webSocketPath) {
+  if (!path.startsWith('/'))
+    path = `/${path}`
+  return `ws${location.protocol.substring(4)}//${location.host}${path}`
+}
 
 export interface WebSocketConnectionOptions {
   log?: LogConfig

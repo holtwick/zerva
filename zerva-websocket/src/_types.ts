@@ -1,10 +1,4 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import type { Channel, UseDispose } from 'zeed'
-
-import 'ws'
-
-export { }
 
 export const websocketName = 'zerva-websocket'
 export const webSocketPath = `/${websocketName}`
@@ -24,8 +18,6 @@ export type WebsocketChannel = Channel<Uint8Array> & {
   path: string
 }
 
-// export type WebsocketData = Uint8Array //  string | ArrayBufferLike | Blob | ArrayBufferView
-
 declare global {
   interface ZContextEvents {
     webSocketConnect: (info: {
@@ -40,17 +32,5 @@ declare global {
       path?: string
       error?: Error
     }) => void
-  }
-}
-
-export function getWebsocketUrlFromLocation(path: string = webSocketPath) {
-  if (!path.startsWith('/'))
-    path = `/${path}`
-  return `ws${location.protocol.substring(4)}//${location.host}${path}`
-}
-
-declare module 'ws' {
-  export interface WebSocket {
-    isAlive?: boolean
   }
 }
