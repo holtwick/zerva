@@ -5,9 +5,9 @@ import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
 import type { MessageDefinitions } from 'zeed'
 import { Logger, createPromise, sleep, useMessageHub, uuid } from 'zeed'
-import { WebSocketConnection } from './connection'
+import { webSocketPath } from './_types'
+import { WebSocketConnection } from './client'
 import { useWebSocket } from './server'
-import { webSocketPath } from './types'
 
 // @ts-expect-error xxx
 globalThis.WebSocket = WebSocket

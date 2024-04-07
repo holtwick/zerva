@@ -85,13 +85,8 @@ package-lock.json
 dist_www
 
 *.rest
-# zerva-bin/bin.cjs
 *.node
 
 .npmrc*
-
-.vscode
-
-# _archive
 
 *.sqlite

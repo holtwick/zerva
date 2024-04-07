@@ -7,10 +7,18 @@ import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogConfig, LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
-import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './types'
+import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
 import '@zerva/http'
 
+// import 'ws'
+
 const moduleName = 'websocket'
+
+// declare module 'ws' {
+//   export interface WebSocket {
+//     isAlive?: boolean
+//   }
+// }
 
 declare module 'ws' {
   interface WebSocket {

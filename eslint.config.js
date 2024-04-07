@@ -86,7 +86,6 @@ export default antfu(
       '.out.*',
     ],
   },
-  {},
   {
     rules: {
       'unused-imports/no-unused-vars': 'off',
