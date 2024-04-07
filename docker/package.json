@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "zerva build",
-    "serve": "node dist/main.cjs",
+    "serve": "node dist/main.mjs",
     "start": "LEVEL=a zerva",
     "upload": "npm run build && rsync -rvz --exclude-from=.rsyncignore * my-docker-server:zerva-docker"
   },
