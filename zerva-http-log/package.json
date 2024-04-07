@@ -52,14 +52,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
+    "@types/morgan": "^1.9.9",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
+    "morgan": "^1.10.0",
+    "rotating-file-stream": "^3.2.1",
     "zeed": "^0.20.0"
   },
   "devDependencies": {
-    "@types/morgan": "^1.9.9",
-    "morgan": "^1.10.0",
-    "rotating-file-stream": "^3.2.1",
     "tsup": "^8.0.2",
     "typescript": "^5.4.4",
     "vite": "^5.2.8"
