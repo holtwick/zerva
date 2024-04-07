@@ -1,23 +1,22 @@
 import type { Options } from 'tsup'
 
-import pkg from './package.json'
-
 export const tsup: Options = {
   sourcemap: true,
   clean: true,
   dts: true,
   format: ['esm', 'cjs'],
   minify: false,
-  splitting: true,
+  // splitting: true,
   bundle: true,
   skipNodeModulesBundle: true,
-  entryPoints: ['src/index.all.ts'],
-  noExternal: Object.keys(pkg.devDependencies),
+  noExternal: [/^(?!(zeed|@zerva\/|better-sqlite3|vite)).*$/gim],
   target: 'es2020',
   outDir: 'dist',
-  entry: ['src/**/*.ts'],
   loader: {
     '.css': 'text',
     '.html': 'text',
   },
+  // noExternal: Object.keys(pkg.devDependencies),
+  // external: ['zeed', /^@zerva\//gim],
+  // entry: ['src/index.ts'],
 }

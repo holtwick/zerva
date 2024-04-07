@@ -1,6 +1,6 @@
 import type { LoggerInterface } from 'zeed'
-import { Logger, sleep } from 'zeed'
-import { onStart, onStop, serve } from '@zerva/core'
+import { Logger, sleep, uuid } from 'zeed'
+import { on, onStart, onStop, serve, serveStop } from '@zerva/core'
 import { useHttp } from '../src'
 
 const log: LoggerInterface = Logger('demo')
@@ -9,7 +9,11 @@ log('demo')
 
 let ctr = 0
 
-useHttp()
+useHttp({ helmet: true, cors: true })
+
+on('httpInit', ({ onGET }) => {
+  onGET('/', `Hello world ${uuid()}`)
+})
 
 onStart(() => {
   log('start')
@@ -19,6 +23,8 @@ onStart(() => {
       log('do ...', ++ctr)
       if (ctr < 5)
         next()
+      else
+        serveStop()
     }, 1000)
   }
 
