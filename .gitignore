@@ -90,8 +90,4 @@ dist_www
 
 .npmrc*
 
-.vscode
-
-# _archive
-
 *.sqlite
