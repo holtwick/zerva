@@ -52,9 +52,11 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/request-ip": "^0.0.41",
     "@zerva/core": "workspace:*",
-    "request-ip": "^3.3.0",
-    "zeed": "^0.19.5"
+    "zeed": "^0.20.0"
+  },
+  "devDependencies": {
+    "@types/request-ip": "^0.0.41",
+    "request-ip": "^3.3.0"
   }
 }
