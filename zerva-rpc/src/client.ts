@@ -33,8 +33,13 @@ export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSo
 
   websocketChannel.on('disconnect', () => {
     log('useWebSocket disconnect')
-    rpcChannel.deleteChannel()
+    rpcChannel.setChannel()
   })
 
-  return { rpcHub, dispose, awaitConnection }
+  return {
+    rpcHub,
+    dispose,
+    awaitConnection,
+    channel: websocketChannel,
+  }
 }
