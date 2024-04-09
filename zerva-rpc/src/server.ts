@@ -22,12 +22,16 @@ declare global {
 export function useWebsocketRpcHub(config: {
   name?: string
   log?: LogConfig
+  exceptions?: boolean
 } = {}) {
   const log = LoggerFromConfig(config.log, moduleName, LogLevelInfo)
 
   log.info(`use ${moduleName}`)
 
-  const { name: rpcName = rpcSocketName } = config
+  const {
+    name: rpcName = rpcSocketName,
+    exceptions,
+  } = config
 
   log(`name=${rpcName}`)
 
@@ -40,7 +44,7 @@ export function useWebsocketRpcHub(config: {
     if (rpcName == null || name === rpcName) {
       log('webSocketConnect', name)
       const dispose = useDisposeWithUtils(log.label)
-      const rpcHub = createRPCHub(channel, config.log)
+      const rpcHub = createRPCHub(channel, config.log, exceptions)
       await emit('rpcConnect', {
         rpcHub,
         dispose,
