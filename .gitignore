@@ -90,3 +90,5 @@ dist_www
 .npmrc*
 
 *.sqlite
+
+zerva-bin/bin.?js
