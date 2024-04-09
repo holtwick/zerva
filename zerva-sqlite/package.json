@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite",
   "type": "module",
-  "version": "0.52.0",
+  "version": "0.53.1",
   "private": false,
   "description": "",
   "author": {
@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^9.4.5",
-    "zeed": "^0.20.0"
+    "zeed": "^0.20.2"
   },
   "devDependencies": {
     "tsup": "^8.0.2",

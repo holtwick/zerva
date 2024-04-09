@@ -9,9 +9,10 @@ const log: LoggerInterface = Logger('rpc', false)
 /** Our connection to the signaling server */
 export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSocketName), opt: {
   log?: LogConfig
+  exceptions?: boolean
 } = {}) {
   const rpcChannel = new ResillientChannel()
-  const rpcHub = createRPCHub(rpcChannel, false) // todo log
+  const rpcHub = createRPCHub(rpcChannel, false, opt.exceptions) // todo log
 
   const websocketChannel = new WebSocketConnection(url, { log: opt.log })
 

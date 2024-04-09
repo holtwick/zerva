@@ -2,9 +2,11 @@ import type { Channel, LogConfig } from 'zeed'
 import { LogLevelInfo, LoggerFromConfig, decodeJson, encodeJson, useRPCHub } from 'zeed'
 
 /** Generic RPC through a channel. */
-export function createRPCHub(channel: Channel, logConfig: LogConfig) {
+export function createRPCHub(channel: Channel, logConfig: LogConfig, exceptions = false) {
   const log = LoggerFromConfig(logConfig, 'rpc-hub', LogLevelInfo)
   return useRPCHub({
+    log,
+    exceptions,
     // onlyEvents: true,
     post: (data: any) => {
       try {
