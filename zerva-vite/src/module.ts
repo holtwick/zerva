@@ -12,9 +12,9 @@ import { zervaMultiPageAppIndexRouting } from './multi'
 // HACK!
 // This will be removed by Zerva later on.
 // Otherwise it drags full vite into production build.
-declare global {
-  const ZERVA_DEVELOPMENT: boolean
-}
+// declare global {
+//   const ZERVA_DEVELOPMENT: boolean
+// }
 
 const moduleName = 'vite'
 
