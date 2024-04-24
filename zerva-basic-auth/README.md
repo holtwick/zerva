@@ -5,7 +5,7 @@
 ```js
 useBasicAuth({
   routes: ['/admin'],
-  users: {
+  auth: {
     user: 'password'
   }
 })

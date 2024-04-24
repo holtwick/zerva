@@ -1,8 +1,9 @@
-import type { LogConfig, LoggerInterface } from 'zeed'
-import { Logger, ResillientChannel, createPromise, useDispose } from 'zeed'
 import { WebSocketConnection, getWebsocketUrlFromLocation } from '@zerva/websocket'
-import { createRPCHub } from './rpc-hub'
+import type { LogConfig, LoggerInterface } from 'zeed'
+import { Logger, createPromise, useDispose } from 'zeed'
 import { rpcSocketName } from './_types'
+import { createRPCHub } from './rpc-hub'
+import { ResillientChannel } from './channel-resilient'
 
 const log: LoggerInterface = Logger('rpc', false)
 
@@ -12,7 +13,7 @@ export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSo
   exceptions?: boolean
 } = {}) {
   const rpcChannel = new ResillientChannel()
-  const rpcHub = createRPCHub(rpcChannel, false, opt.exceptions) // todo log
+  const rpcHub = createRPCHub(rpcChannel, opt.log, opt.exceptions)
 
   const websocketChannel = new WebSocketConnection(url, { log: opt.log })
 
@@ -33,8 +34,13 @@ export function useWebsocketRpcHubClient(url = getWebsocketUrlFromLocation(rpcSo
 
   websocketChannel.on('disconnect', () => {
     log('useWebSocket disconnect')
-    rpcChannel.deleteChannel()
+    rpcChannel.setChannel()
   })
 
-  return { rpcHub, dispose, awaitConnection }
+  return {
+    rpcHub,
+    dispose,
+    awaitConnection,
+    channel: rpcChannel,
+  }
 }

@@ -8,6 +8,10 @@ declare global {
   interface ZeedGlobalContext {
     zerva?: ZContext
   }
+
+  const ZERVA_DEVELOPMENT: boolean
+  const ZERVA_PRODUCTION: boolean
+  const ZERVA_VERSION: string
 }
 
 export class ZContext extends Emitter<ZContextEvents> {

@@ -4,14 +4,17 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { on, register } from '@zerva/core'
+import type { InlineConfig } from 'vite'
 import type { LogConfig } from 'zeed'
 import { LogLevelInfo, LoggerFromConfig, toHumanReadableFilePath, toPath } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
-// HACK! This will be removed by Zerva later on
-declare global {
-  const ZERVA_DEVELOPMENT: boolean
-}
+// HACK!
+// This will be removed by Zerva later on.
+// Otherwise it drags full vite into production build.
+// declare global {
+//   const ZERVA_DEVELOPMENT: boolean
+// }
 
 const moduleName = 'vite'
 
@@ -20,6 +23,7 @@ export function useVite(config?: {
   root?: string
   www?: string
   mode?: string
+  // hmr?: boolean
 }) {
   const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
   log(`use ${moduleName} ${process.env.ZERVA}`)
@@ -31,6 +35,7 @@ export function useVite(config?: {
     root = process.cwd(),
     www = './dist_www',
     mode = (ZERVA_DEVELOPMENT ? 'development' : 'production'),
+    // hmr = true,
   } = config ?? {}
 
   const rootPath = toPath(root)
@@ -55,14 +60,19 @@ export function useVite(config?: {
       // in prod mode ;)
       const { createServer } = await import('vite')
 
-      const vite = await createServer({
+      const config: InlineConfig = {
         mode,
         root: rootPath,
         server: {
           middlewareMode: true,
         },
         plugins: [zervaMultiPageAppIndexRouting()],
-      })
+      }
+
+      // if (hmr === false && config.server != null)
+      //   config.server.hmr = false
+
+      const vite = await createServer(config)
 
       app?.use(vite.middlewares)
 
