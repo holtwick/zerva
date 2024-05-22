@@ -1,29 +1,50 @@
+/* eslint-disable ts/no-use-before-define */
+import { createSetupTS, createTypesTS, getFieldName, getInterfaceName, getVariableName } from './drawdb'
+
 describe('drawdb.spec', () => {
-  it('should do something', async () => {
-    const types: string[] = []
-    const code: string[] = []
+  it('should create name', async () => {
+    expect(getInterfaceName('sample_name')).toMatchInlineSnapshot(`"TableSampleName"`)
+    expect(getVariableName('sample_name')).toMatchInlineSnapshot(`"tableSampleName"`)
+    expect(getFieldName('sample_name')).toMatchInlineSnapshot(`"sampleName"`)
+  })
 
-    // eslint-disable-next-line ts/no-use-before-define
-    for (const table of sample.tables) {
-      types.push(`export interface ${table.name} {`)
-      for (const field of table.fields)
-        types.push(`  ${field.name}: ${field.type}`)
-      types.push(`}`)
-      types.push(``)
-    }
+  it('should create types', async () => {
+    expect(createTypesTS(sample)).toMatchInlineSnapshot(`
+      "import type { SqliteTableDefault } from '@zerva/sqlite'
 
-    expect(types.join('\n')).toMatchInlineSnapshot(`
-      "export interface events {
-        id: INT
-        title: TEXT
-        active: BOOLEAN
-        uid: UUID
+      export interface TableEvents extends SqliteTableDefault {
+        id: number
+        title: string
+        active: boolean
+        uid: string
       }
-      export interface service {
-        id: INT
-        title: VARCHAR
-        event: INT
-      }"
+
+      /** Bezeichnung des Services */
+      export interface TableService extends SqliteTableDefault {
+        id: number
+        title: string
+        event: number
+      }
+      "
+    `)
+  })
+
+  it('should create setup code something', async () => {
+    expect(createSetupTS(sample)).toMatchInlineSnapshot(`
+      "export const tableEvents = db.table<TableEvents>('events', {
+        id: 'integer',
+        title: 'text',
+        active: 'integer',
+        uid: 'text',
+      }
+
+      /** Bezeichnung des Services */
+      export const tableService = db.table<TableService>('service', {
+        id: 'integer',
+        title: 'text',
+        event: 'integer',
+      }
+      "
     `)
   })
 })

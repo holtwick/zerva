@@ -4,7 +4,7 @@ import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 const log = Logger('sqlite:table')
 
-// https://www.sqlite.org/datatype3.html
+// https://www.sqlite.org/datatype3.html#affinity_name_examples
 const _affinity = {
   integer: 'integer',
   int: 'integer',
@@ -21,10 +21,12 @@ const _affinity = {
   number: 'real',
 
   numeric: 'numeric',
-  decimal: 'numeric',
-  boolean: 'numeric',
-  date: 'numeric',
-  datetime: 'numeric',
+
+  // previously numeric
+  decimal: 'integer',
+  boolean: 'integer',
+  date: 'integer',
+  datetime: 'integer',
 }
 
 export type SqliteColTypes = keyof typeof _affinity
