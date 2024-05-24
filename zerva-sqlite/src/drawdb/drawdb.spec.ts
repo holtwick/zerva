@@ -1,19 +1,19 @@
 /* eslint-disable ts/no-use-before-define */
-import { createSetupTS, createTypesTS, getFieldName, getInterfaceName, getVariableName } from './drawdb'
+import { getFieldName, getInterfaceName } from './_types'
+import { createSetupTS, createTypesTS } from './drawdb'
 
 describe('drawdb.spec', () => {
   it('should create name', async () => {
     expect(getInterfaceName('sample_name')).toMatchInlineSnapshot(`"TableSampleName"`)
-    expect(getVariableName('sample_name')).toMatchInlineSnapshot(`"tableSampleName"`)
+    // expect(getVariableName('sample_name')).toMatchInlineSnapshot(`"tableSampleName"`)
     expect(getFieldName('sample_name')).toMatchInlineSnapshot(`"sampleName"`)
   })
 
   it('should create types', async () => {
-    expect(createTypesTS(sample)).toMatchInlineSnapshot(`
+    expect(createTypesTS(sample as any)).toMatchInlineSnapshot(`
       "import type { SqliteTableDefault } from '@zerva/sqlite'
 
       export interface TableEvents extends SqliteTableDefault {
-        id: number
         title: string
         active: boolean
         uid: string
@@ -21,7 +21,6 @@ describe('drawdb.spec', () => {
 
       /** Bezeichnung des Services */
       export interface TableService extends SqliteTableDefault {
-        id: number
         title: string
         event: number
       }
@@ -30,19 +29,30 @@ describe('drawdb.spec', () => {
   })
 
   it('should create setup code something', async () => {
-    expect(createSetupTS(sample)).toMatchInlineSnapshot(`
-      "export const tableEvents = db.table<TableEvents>('events', {
-        id: 'integer',
-        title: 'text',
-        active: 'integer',
-        uid: 'text',
-      }
+    expect(createSetupTS(sample as any)).toMatchInlineSnapshot(`
+      "import type { UseSqliteDatabase, UseSqliteTable } from '@zerva/sqlite'
+      import type { TableEvents, TableService } from './types'
+
+      export function createTables(db: UseSqliteDatabase): {
+        events: UseSqliteTable<TableEvents>
+        service: UseSqliteTable<TableService>
+      } {
+        const events = db.table<TableEvents>('events', {
+          title: 'text',
+          active: 'integer',
+          uid: 'text',
+        })
 
       /** Bezeichnung des Services */
-      export const tableService = db.table<TableService>('service', {
-        id: 'integer',
-        title: 'text',
-        event: 'integer',
+        const service = db.table<TableService>('service', {
+          title: 'text',
+          event: 'integer',
+        })
+
+        return {
+          events,
+          service,
+        }
       }
       "
     `)
