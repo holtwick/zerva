@@ -2,7 +2,7 @@ import { toCamelCase } from 'zeed'
 
 export function getInterfaceName(name: string, prefix = 'Table') {
   let s = toCamelCase(name)
-  s = s.charAt(0).toUpperCase() + s.slice(1)
+  s = s.charAt(0).toUpperCase() + s.slice(1)    
   return `${prefix}${s}`
 }
 

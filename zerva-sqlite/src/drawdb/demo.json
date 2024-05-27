@@ -1,11 +1,11 @@
 {
   "author": "Unnamed",
   "title": "Health",
-  "date": "2024-05-24T14:02:19.982Z",
+  "date": "2024-05-27T08:37:44.566Z",
   "tables": [
     {
       "id": 0,
-      "name": "persons",
+      "name": "person",
       "x": 474.69932795491604,
       "y": 162.89509000879264,
       "fields": [
@@ -167,16 +167,16 @@
           "size": ""
         }
       ],
-      "comment": "",
+      "comment": "Person details and sensor provider login",
       "indices": [],
       "color": "#175e7a",
       "key": 1716558894918
     },
     {
       "id": 1,
-      "name": "points",
-      "x": 827.4236249299419,
-      "y": 262.5902221810871,
+      "name": "point",
+      "x": 828.4236249299419,
+      "y": 325.5902221810871,
       "fields": [
         {
           "name": "id",
@@ -241,7 +241,7 @@
           "id": 4
         }
       ],
-      "comment": "",
+      "comment": "The CGM values over time",
       "indices": [
         {
           "id": 0,
@@ -253,12 +253,12 @@
           ]
         }
       ],
-      "color": "#175e7a",
+      "color": "#6360f7",
       "key": 1716559062865
     },
     {
       "id": 2,
-      "name": "events",
+      "name": "event",
       "x": 829.586864526612,
       "y": 42.25199376802874,
       "fields": [
@@ -314,7 +314,7 @@
           "id": 3
         }
       ],
-      "comment": "",
+      "comment": "Events like meals over time",
       "indices": [
         {
           "id": 0,

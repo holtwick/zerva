@@ -1,6 +1,7 @@
 import type { SqliteTableDefault } from '@zerva/sqlite'
 
-export interface TablePersons extends SqliteTableDefault {
+/** Person details and sensor provider login */
+export interface HealthPerson extends SqliteTableDefault {
   title: string
   service: string
   monitor: boolean
@@ -14,14 +15,16 @@ export interface TablePersons extends SqliteTableDefault {
   limitVeryLow: number
 }
 
-export interface TablePoints extends SqliteTableDefault {
+/** The CGM values over time */
+export interface HealthPoint extends SqliteTableDefault {
   ts: number
   value: number
   trend: number
   personId: number
 }
 
-export interface TableEvents extends SqliteTableDefault {
+/** Events like meals over time */
+export interface HealthEvent extends SqliteTableDefault {
   ts: number
   text: string
   personId: number

@@ -1,7 +1,7 @@
 import type { DrawDatabase } from './_types'
 import { getFieldName, getInterfaceName, setupMap, typeMap } from './_types'
 
-export function createTypesTS(info: DrawDatabase) {
+export function createTypesTS(info: DrawDatabase, prefix: string) {
   const lines: string[] = []
 
   lines.push(`import type { SqliteTableDefault } from '@zerva/sqlite'`)
@@ -12,7 +12,7 @@ export function createTypesTS(info: DrawDatabase) {
   for (const table of info.tables) {
     if (table.comment)
       lines.push(`/** ${table.comment} */`)
-    lines.push(`export interface ${getInterfaceName(table.name)} extends SqliteTableDefault {`)
+    lines.push(`export interface ${getInterfaceName(table.name, prefix)} extends SqliteTableDefault {`)
     for (const field of table.fields) {
       if (field.name !== 'id')
         lines.push(`  ${getFieldName(field.name)}: ${typeMap[field.type] ?? field.type}`)
@@ -24,10 +24,10 @@ export function createTypesTS(info: DrawDatabase) {
   return lines.join('\n')
 }
 
-export function createSetupTS(info: DrawDatabase) {
+export function createSetupTS(info: DrawDatabase, prefix: string) {
   const lines: string[] = []
 
-  const interfaces = info.tables.map(table => getInterfaceName(table.name))
+  const interfaces = info.tables.map(table => getInterfaceName(table.name, prefix))
   interfaces.sort()
 
   lines.push(`import type { UseSqliteDatabase, UseSqliteTable } from '@zerva/sqlite'`)
@@ -38,13 +38,13 @@ export function createSetupTS(info: DrawDatabase) {
 
   lines.push(`export function createTables(db: UseSqliteDatabase): {`)
   for (const table of info.tables)
-    lines.push(`  ${getFieldName(table.name)}: UseSqliteTable<${getInterfaceName(table.name)}>`)
+    lines.push(`  ${getFieldName(table.name)}: UseSqliteTable<${getInterfaceName(table.name, prefix)}>`)
   lines.push(`} {`)
 
   for (const table of info.tables) {
     if (table.comment)
-      lines.push(`/** ${table.comment} */`)
-    lines.push(`  const ${getFieldName(table.name)} = db.table<${getInterfaceName(table.name)}>('${table.name}', {`)
+      lines.push(`  /** ${table.comment} */`)
+    lines.push(`  const ${getFieldName(table.name)} = db.table<${getInterfaceName(table.name, prefix)}>('${table.name}', {`)
     for (const field of table.fields) {
       if (field.name !== 'id')
         lines.push(`    ${getFieldName(field.name)}: '${setupMap[field.type] ?? field.type}',`)

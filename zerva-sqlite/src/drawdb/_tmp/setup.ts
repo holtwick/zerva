@@ -1,12 +1,13 @@
 import type { UseSqliteDatabase, UseSqliteTable } from '@zerva/sqlite'
-import type { TableEvents, TablePersons, TablePoints } from './types'
+import type { HealthEvent, HealthPerson, HealthPoint } from './types'
 
 export function createTables(db: UseSqliteDatabase): {
-  persons: UseSqliteTable<TablePersons>
-  points: UseSqliteTable<TablePoints>
-  events: UseSqliteTable<TableEvents>
+  person: UseSqliteTable<HealthPerson>
+  point: UseSqliteTable<HealthPoint>
+  event: UseSqliteTable<HealthEvent>
 } {
-  const persons = db.table<TablePersons>('persons', {
+  /** Person details and sensor provider login */
+  const person = db.table<HealthPerson>('person', {
     title: 'text',
     service: 'text',
     monitor: 'integer',
@@ -20,26 +21,28 @@ export function createTables(db: UseSqliteDatabase): {
     limitVeryLow: 'real',
   })
 
-  const points = db.table<TablePoints>('points', {
+  /** The CGM values over time */
+  const point = db.table<HealthPoint>('point', {
     ts: 'integer',
     value: 'integer',
     trend: 'integer',
     personId: 'integer',
   })
 
-  points.indexUnique(['ts', 'personId'])
+  point.indexUnique(['ts', 'personId'])
 
-  const events = db.table<TableEvents>('events', {
+  /** Events like meals over time */
+  const event = db.table<HealthEvent>('event', {
     ts: 'integer',
     text: 'text',
     personId: 'integer',
   })
 
-  events.indexUnique(['ts', 'personId'])
+  event.indexUnique(['ts', 'personId'])
 
   return {
-    persons,
-    points,
-    events,
+    person,
+    point,
+    event,
   }
 }
