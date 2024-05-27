@@ -1,6 +1,7 @@
 /* eslint-disable ts/no-use-before-define */
 import { getFieldName, getInterfaceName } from './_types'
-import { createSetupTS, createTypesTS } from './drawdb'
+import { createSetupTS } from './create-setup'
+import { createTypesTS } from './create-types'
 
 describe('drawdb.spec', () => {
   it('should create name', async () => {
@@ -43,7 +44,7 @@ describe('drawdb.spec', () => {
           uid: 'text',
         })
 
-      /** Bezeichnung des Services */
+        /** Bezeichnung des Services */
         const service = db.table<TableService>('service', {
           title: 'text',
           event: 'integer',
