@@ -4,27 +4,27 @@ import type { HealthEvent, HealthPerson, HealthPoint } from './types'
 export interface RpcHealthPerson {
   getPerson: (id: number) => HealthPerson | undefined
   getPersonList: () => HealthPerson[]
-  addPerson: (item: Omit<HealthPerson, 'id' | 'created' | 'updated'>) => Promise<void>
-  updatePerson: (item: Partial<HealthPerson> & {id: number}) => Promise<void>
-  removePerson: (id: number) => Promise<undefined>
+  addPerson: (item: Partial<Omit<HealthPerson, 'id' | 'created' | 'updated'>>) => void
+  updatePerson: (item: Partial<HealthPerson> & {id: number}) => void
+  removePerson: (id: number) => void
 }
 
 /** The CGM values over time */
 export interface RpcHealthPoint {
   getPoint: (id: number) => HealthPoint | undefined
   getPointList: () => HealthPoint[]
-  addPoint: (item: Omit<HealthPoint, 'id' | 'created' | 'updated'>) => Promise<void>
-  updatePoint: (item: Partial<HealthPoint> & {id: number}) => Promise<void>
-  removePoint: (id: number) => Promise<undefined>
+  addPoint: (item: Partial<Omit<HealthPoint, 'id' | 'created' | 'updated'>>) => void
+  updatePoint: (item: Partial<HealthPoint> & {id: number}) => void
+  removePoint: (id: number) => void
 }
 
 /** Events like meals over time */
 export interface RpcHealthEvent {
   getEvent: (id: number) => HealthEvent | undefined
   getEventList: () => HealthEvent[]
-  addEvent: (item: Omit<HealthEvent, 'id' | 'created' | 'updated'>) => Promise<void>
-  updateEvent: (item: Partial<HealthEvent> & {id: number}) => Promise<void>
-  removeEvent: (id: number) => Promise<undefined>
+  addEvent: (item: Partial<Omit<HealthEvent, 'id' | 'created' | 'updated'>>) => void
+  updateEvent: (item: Partial<HealthEvent> & {id: number}) => void
+  removeEvent: (id: number) => void
 }
 
 export type RpcHealth = RpcHealthEvent | RpcHealthPerson | RpcHealthPoint

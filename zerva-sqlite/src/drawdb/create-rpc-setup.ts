@@ -29,18 +29,18 @@ export function setupRpc${inter}(table: UseSqliteTable<${inter}>, handleChange?:
     get${name}List() {
       return table.all() 
     },
-    async add${name}(item) {
-      const id = table.insert(item)
+    add${name}(item) {
+      const id = table.insert(item as any)
       if (id && handleChange)
         handleChange(id)
     },
-    async update${name}(item) {
+    update${name}(item) {
       const id = item.id
       table.update(id, item)
       if (handleChange)
         handleChange(id)
     },
-    async remove${name}(id) {
+    remove${name}(id) {
       table.delete(id)
       if (handleChange)
         handleChange(id)

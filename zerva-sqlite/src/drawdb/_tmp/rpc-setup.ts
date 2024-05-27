@@ -11,18 +11,18 @@ export function setupRpcHealthPerson(table: UseSqliteTable<HealthPerson>, handle
     getPersonList() {
       return table.all() 
     },
-    async addPerson(item) {
-      const id = table.insert(item)
+    addPerson(item) {
+      const id = table.insert(item as any)
       if (id && handleChange)
         handleChange(id)
     },
-    async updatePerson(item) {
+    updatePerson(item) {
       const id = item.id
       table.update(id, item)
       if (handleChange)
         handleChange(id)
     },
-    async removePerson(id) {
+    removePerson(id) {
       table.delete(id)
       if (handleChange)
         handleChange(id)
@@ -40,18 +40,18 @@ export function setupRpcHealthPoint(table: UseSqliteTable<HealthPoint>, handleCh
     getPointList() {
       return table.all() 
     },
-    async addPoint(item) {
-      const id = table.insert(item)
+    addPoint(item) {
+      const id = table.insert(item as any)
       if (id && handleChange)
         handleChange(id)
     },
-    async updatePoint(item) {
+    updatePoint(item) {
       const id = item.id
       table.update(id, item)
       if (handleChange)
         handleChange(id)
     },
-    async removePoint(id) {
+    removePoint(id) {
       table.delete(id)
       if (handleChange)
         handleChange(id)
@@ -69,18 +69,18 @@ export function setupRpcHealthEvent(table: UseSqliteTable<HealthEvent>, handleCh
     getEventList() {
       return table.all() 
     },
-    async addEvent(item) {
-      const id = table.insert(item)
+    addEvent(item) {
+      const id = table.insert(item as any)
       if (id && handleChange)
         handleChange(id)
     },
-    async updateEvent(item) {
+    updateEvent(item) {
       const id = item.id
       table.update(id, item)
       if (handleChange)
         handleChange(id)
     },
-    async removeEvent(id) {
+    removeEvent(id) {
       table.delete(id)
       if (handleChange)
         handleChange(id)

@@ -20,9 +20,9 @@ export function createRpcTypesTS(info: DrawDatabase, prefix?: string) {
     lines.push(`export interface Rpc${inter} {`)
     lines.push(`  get${name}: (id: number) => ${inter} | undefined`)
     lines.push(`  get${name}List: () => ${inter}[]`)
-    lines.push(`  add${name}: (item: Omit<${inter}, 'id' | 'created' | 'updated'>) => Promise<void>`)
-    lines.push(`  update${name}: (item: Partial<${inter}> & {id: number}) => Promise<void>`)
-    lines.push(`  remove${name}: (id: number) => Promise<undefined>`)
+    lines.push(`  add${name}: (item: Partial<Omit<${inter}, 'id' | 'created' | 'updated'>>) => void`)
+    lines.push(`  update${name}: (item: Partial<${inter}> & {id: number}) => void`)
+    lines.push(`  remove${name}: (id: number) => void`)
     lines.push(`}`)
     lines.push(``)
   }
