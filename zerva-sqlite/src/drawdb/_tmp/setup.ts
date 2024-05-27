@@ -1,8 +1,6 @@
 import type { UseSqliteDatabase, UseSqliteTable } from '@zerva/sqlite'
 import type { TableEvents, TablePersons, TablePoints } from './types'
 
-// Generated at 2024-05-24T14:44:57.613Z
-
 export function createTables(db: UseSqliteDatabase): {
   persons: UseSqliteTable<TablePersons>
   points: UseSqliteTable<TablePoints>

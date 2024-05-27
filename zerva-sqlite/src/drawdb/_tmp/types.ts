@@ -1,7 +1,5 @@
 import type { SqliteTableDefault } from '@zerva/sqlite'
 
-// Generated at 2024-05-24T14:44:57.615Z
-
 export interface TablePersons extends SqliteTableDefault {
   title: string
   service: string
