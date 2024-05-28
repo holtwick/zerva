@@ -1,4 +1,4 @@
-import type { HealthEvent, HealthPerson, HealthPoint } from './types'
+import type { HealthEvent, HealthPerson, HealthPoint, HealthPointHour } from './types'
 
 /** Person details and sensor provider login */
 export interface RpcHealthPerson {
@@ -27,4 +27,12 @@ export interface RpcHealthEvent {
   removeEvent: (id: number) => void
 }
 
-export type RpcHealth = RpcHealthEvent | RpcHealthPerson | RpcHealthPoint
+export interface RpcHealthPointHour {
+  getPointHour: (id: number) => HealthPointHour | undefined
+  getPointHourList: () => HealthPointHour[]
+  addPointHour: (item: Partial<Omit<HealthPointHour, 'id' | 'created' | 'updated'>>) => void
+  updatePointHour: (item: Partial<HealthPointHour> & {id: number}) => void
+  removePointHour: (id: number) => void
+}
+
+export type RpcHealth = RpcHealthEvent | RpcHealthPerson | RpcHealthPoint | RpcHealthPointHour

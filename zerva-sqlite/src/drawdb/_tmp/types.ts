@@ -29,3 +29,12 @@ export interface HealthEvent extends SqliteTableDefault {
   text: string
   personId: number
 }
+
+export interface HealthPointHour extends SqliteTableDefault {
+  max: number
+  min: number
+  avg: number
+  median: number
+  personId: number
+  ts: number
+}

@@ -4,6 +4,13 @@ import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 const log = Logger('sqlite:table')
 
+/* export interface TableEvents {
+  willChange: (id: number) => any
+  didChange: (id: number) => any
+  willDelete: (id: number) => any
+  didDelete: (id: number) => any
+} */
+
 // https://www.sqlite.org/datatype3.html#affinity_name_examples
 const _affinity = {
   integer: 'integer',
@@ -46,7 +53,7 @@ export function escapeSQLValueSingleQuotes(value: any) {
     return String(value)
   if (!isString(value))
     value = JSON.stringify(value)
-  return `'${String(value).replace(/\'/gim, '\'\'')}'`
+  return `'${String(value).replace(/'/g, '\'\'')}'`
 }
 
 /**
