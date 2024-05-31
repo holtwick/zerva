@@ -53,14 +53,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "better-sqlite3": "^10.0.0",
+    "better-sqlite3": "^11.0.0",
     "zeed": "^0.20.7"
   },
   "devDependencies": {
     "tsup": "^8.0.2",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "vite": "^5.2.12",
     "vitest": "^1.6.0"
   }
 }
