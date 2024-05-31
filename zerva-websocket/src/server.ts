@@ -10,15 +10,7 @@ import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose
 import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
 import '@zerva/http'
 
-// import 'ws'
-
 const moduleName = 'websocket'
-
-// declare module 'ws' {
-//   export interface WebSocket {
-//     isAlive?: boolean
-//   }
-// }
 
 declare module 'ws' {
   interface WebSocket {
@@ -180,6 +172,10 @@ export class WebsocketNodeConnection extends Channel {
   }
 }
 
+/**
+ * - Integrates well in Express and Vite
+ * - Heartbeat ping/pong from both sides
+ */
 export function useWebSocket(config: ZWebSocketConfig = {}) {
   const log = LoggerFromConfig(config?.log ?? true, moduleName, config.logLevel ?? LogLevelInfo)
 
@@ -232,10 +228,10 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
           log('upgrade connection')
           wss.emit('connection', ws, req)
         })
-
-        // } else {
-        //   log("ignore upgrade") // this can be vite HMR e.g.
-        //   // socket.destroy()
+      }
+      else {
+        log('ignore upgrade') // this can be vite HMR e.g.
+        socket.destroy()
       }
     }
 
