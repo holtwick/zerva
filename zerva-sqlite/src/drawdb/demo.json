@@ -1,0 +1,483 @@
+{
+  "author": "Unnamed",
+  "title": "Health",
+  "date": "2024-05-28T13:01:34.141Z",
+  "tables": [
+    {
+      "id": 0,
+      "name": "person",
+      "x": 474.69932795491604,
+      "y": 162.89509000879264,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "title",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": 65535
+        },
+        {
+          "name": "service",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": 65535
+        },
+        {
+          "name": "monitor",
+          "type": "BOOLEAN",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "uid",
+          "type": "UUID",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 4,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "username",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 5,
+          "size": 65535
+        },
+        {
+          "name": "password",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 6,
+          "size": 65535
+        },
+        {
+          "name": "location",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 7,
+          "size": 65535
+        },
+        {
+          "name": "limitVeryHigh",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 8,
+          "size": ""
+        },
+        {
+          "name": "limitHigh",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 9,
+          "size": ""
+        },
+        {
+          "name": "limitLow",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 10,
+          "size": ""
+        },
+        {
+          "name": "limitVeryLow",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 11,
+          "size": ""
+        }
+      ],
+      "comment": "Person details and sensor provider login",
+      "indices": [],
+      "color": "#175e7a",
+      "key": 1716558894918
+    },
+    {
+      "id": 1,
+      "name": "point",
+      "x": 828.4236249299419,
+      "y": 325.5902221810871,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "ts",
+          "type": "TIMESTAMP",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "value",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 2
+        },
+        {
+          "name": "trend",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 3
+        },
+        {
+          "name": "personId",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 4
+        }
+      ],
+      "comment": "The CGM values over time",
+      "indices": [
+        {
+          "id": 0,
+          "name": "ts_personId_index",
+          "unique": true,
+          "fields": [
+            "ts",
+            "personId"
+          ]
+        }
+      ],
+      "color": "#6360f7",
+      "key": 1716559062865
+    },
+    {
+      "id": 2,
+      "name": "event",
+      "x": 829.586864526612,
+      "y": 42.25199376802874,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "ts",
+          "type": "TIMESTAMP",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": "",
+          "values": []
+        },
+        {
+          "name": "text",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": 65535
+        },
+        {
+          "name": "personId",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 3
+        }
+      ],
+      "comment": "Events like meals over time",
+      "indices": [
+        {
+          "id": 0,
+          "name": "ts_personId_index",
+          "unique": true,
+          "fields": [
+            "ts",
+            "personId"
+          ]
+        }
+      ],
+      "color": "#175e7a",
+      "key": 1716559159031
+    },
+    {
+      "id": 3,
+      "name": "point_hour",
+      "x": 828,
+      "y": 573,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "max",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1,
+          "size": ""
+        },
+        {
+          "name": "min",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 2,
+          "size": ""
+        },
+        {
+          "name": "avg",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 3,
+          "size": ""
+        },
+        {
+          "name": "median",
+          "type": "FLOAT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 4,
+          "size": ""
+        },
+        {
+          "name": "personId",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 5
+        },
+        {
+          "name": "ts",
+          "type": "TIMESTAMP",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 6,
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [
+        {
+          "id": 0,
+          "name": "ts_personId_index",
+          "unique": true,
+          "fields": [
+            "ts",
+            "personId"
+          ]
+        }
+      ],
+      "color": "#bc49c4",
+      "key": 1716900983794
+    }
+  ],
+  "relationships": [
+    {
+      "startTableId": 1,
+      "startFieldId": 4,
+      "endTableId": 0,
+      "endFieldId": 0,
+      "cardinality": "Eins zu eins",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "points_personId_fk",
+      "id": 0
+    },
+    {
+      "startTableId": 2,
+      "startFieldId": 3,
+      "endTableId": 0,
+      "endFieldId": 0,
+      "cardinality": "Eins zu eins",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "events_personId_fk",
+      "id": 1
+    },
+    {
+      "startTableId": 3,
+      "startFieldId": 5,
+      "endTableId": 0,
+      "endFieldId": 0,
+      "cardinality": "Eins zu eins",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "point_hour_personId_fk",
+      "id": 2
+    }
+  ],
+  "notes": [],
+  "subjectAreas": [],
+  "types": []
+}

@@ -2,13 +2,9 @@
 
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import WebSocket from 'ws'
 import { Logger, createPromise, uuid } from 'zeed'
 import { useWebsocketRpcHub } from './server'
 import { useWebsocketRpcHubClient } from './client'
-
-// @ts-expect-error xxx
-globalThis.WebSocket = WebSocket
 
 const log = Logger('test:module')
 

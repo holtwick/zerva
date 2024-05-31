@@ -56,6 +56,10 @@ const doe = table.get(1)
 const betterSQLiteDatabase = db.db
 ```
 
+## Visual Database Design
+
+Support for [DrawDB](https://drawdb.vercel.app/editor) planned.
+
 ## Links
 
 Inspirations and alternatives:
