@@ -48,7 +48,7 @@ describe('connection', () => {
     channel.postMessage(stringToUInt8Array('Hello World'))
 
     const msg = await waitOn(channel, 'message')
-    expect(Uint8ArrayToString(msg.data)).toMatchInlineSnapshot('"Hello World"')
+    expect(Uint8ArrayToString(msg.data)).toEqual('Hello World')
 
     channel.dispose()
   }, 5000)

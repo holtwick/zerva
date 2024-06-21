@@ -302,7 +302,7 @@ describe('database.spec', () => {
           "name": "active",
           "notnull": 0,
           "pk": 0,
-          "type": "numeric",
+          "type": "INTEGER",
         },
         {
           "cid": 4,
@@ -342,7 +342,7 @@ describe('database.spec', () => {
     const sqlDump = db.dump()
 
     expect(sqlDump).toMatchInlineSnapshot(`
-      "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, updated integer, created integer, amount real, note text);
+      "CREATE TABLE test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active integer, updated integer, created integer, amount real, note text);
       INSERT INTO test (id, name, age, active, updated, created, amount, note) VALUES(3, 'An''na', 20, 1, 0, 0, NULL, NULL);
       CREATE UNIQUE INDEX idx_test_name ON test (name);
       CREATE UNIQUE INDEX idx_test_name_age ON test (name, age)"
@@ -364,7 +364,7 @@ describe('database.spec', () => {
     expect(sql).toMatchInlineSnapshot(`
       [
         "PRAGMA table_info(test)",
-        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active numeric, updated integer, created integer)",
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, age integer, active integer, updated integer, created integer)",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_test_name ON test (name)",
         "INSERT INTO test (created, updated, active, age, id, name) VALUES(0.0, 0.0, 1.0, 49.0, NULL, 'Dirk')",
         "INSERT INTO test (created, updated, active, age, id, name) VALUES(0.0, 0.0, 0.0, 50.0, NULL, 'Dirk')",

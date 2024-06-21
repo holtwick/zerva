@@ -67,11 +67,9 @@ describe('http', () => {
         `${url}/data`,
         fetchOptionsJson({ hello: 'world' }, 'POST'),
       ),
-    ).toMatchInlineSnapshot(`
-      {
-        "hello": "world",
-      }
-    `)
+    ).toEqual({
+      hello: 'world',
+    })
 
     // Classic form
     expect(
@@ -79,11 +77,9 @@ describe('http', () => {
         `${url}/data`,
         fetchOptionsFormURLEncoded({ hello: 'world' }, 'POST'),
       ),
-    ).toMatchInlineSnapshot(`
-      {
-        "hello": "world",
-      }
-    `)
+    ).toEqual({
+      hello: 'world',
+    })
 
     // Binary
     const bin = new Uint8Array([1, 2, 3])
@@ -97,6 +93,7 @@ describe('http', () => {
 
     const buffer = await result.arrayBuffer()
     const data = new Uint8Array(buffer)
+    expect(data[0]).toBe(1)
     expect(data).toMatchInlineSnapshot(`
       Uint8Array [
         1,

@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
-    "tsup": "^8.0.2",
+    "tsup": "^8.1.0",
     "typescipt": "^1.0.0"
   }
 }
