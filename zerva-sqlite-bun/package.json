@@ -49,14 +49,14 @@
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "ZEED=* vitest --globals --run -r src",
+    "test": "ZEED=* bun test",
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/bun": "^1.1.5",
     "zeed": "^0.20.7"
   },
   "devDependencies": {
+    "@types/bun": "^1.1.5",
     "tsup": "^8.1.0",
     "tsx": "^4.15.7",
     "typescript": "^5.5.2",

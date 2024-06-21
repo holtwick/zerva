@@ -3,7 +3,7 @@ import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNu
 import type { Database as SqliteDatabase, Statement as SqliteStatement } from 'bun:sqlite'
 // import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
-interface SqliteRunResult {
+export interface SqliteRunResult {
   /**
    * The number of rows changed by the last `run` or `exec` call.
    */

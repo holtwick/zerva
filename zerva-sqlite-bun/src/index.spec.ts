@@ -370,5 +370,7 @@ CREATE UNIQUE INDEX idx_test_name_age ON test (name, age)`)
  */
 
     unlinkSync('test.sqlite')
+    unlinkSync('test.sqlite-shm')
+    unlinkSync('test.sqlite-wal')
   })
 })

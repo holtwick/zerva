@@ -90,5 +90,8 @@ dist_www
 .npmrc*
 
 *.sqlite
+*.sqlite-*
 
 zerva-bin/bin.?js
+
+bun.lockb
