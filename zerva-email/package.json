@@ -55,11 +55,11 @@
     "@types/nodemailer": "^6.4.15",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "nodemailer": "^6.9.13",
+    "nodemailer": "^6.9.14",
     "zeed": "^0.20.7"
   },
   "devDependencies": {
-    "@types/node": "^20.12.13",
-    "tsup": "^8.0.2"
+    "@types/node": "^20.14.7",
+    "tsup": "^8.1.0"
   }
 }

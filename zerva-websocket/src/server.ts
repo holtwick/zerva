@@ -43,6 +43,8 @@ export class WebsocketNodeConnection extends Channel {
 
   private log: LoggerInterface
 
+  private buffer: Uint8Array[] = []
+
   constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
     super()
 
@@ -149,18 +151,39 @@ export class WebsocketNodeConnection extends Channel {
     })
   }
 
-  postMessage(data: Uint8Array): void {
-    if (
-      this.ws.readyState != null
-      && this.ws.readyState !== wsReadyStateConnecting
-      && this.ws.readyState !== wsReadyStateOpen
-    )
-      this.close()
-
+  flush(): boolean {
     try {
-      this.ws.send(data)
+      while (this.buffer.length > 0) {
+        if (this.ws.readyState === wsReadyStateOpen)
+          this.ws.send(this.buffer[0])
+        else
+          return false
+        this.buffer.shift()
+      }
+      return true
     }
     catch (e) {
+      this.log.warn('Error for flush occured', e)
+      this.close()
+    }
+    return false
+  }
+
+  postMessage(data: Uint8Array): void {
+    this.flush()
+    try {
+      if (data != null && data.byteLength) {
+        if (this.ws.readyState === wsReadyStateOpen) {
+          this.ws.send(data)
+        }
+        else {
+          this.log('not ready for send', this.ws.readyState)
+          this.buffer.push(data)
+        }
+      }
+    }
+    catch (e) {
+      this.log.warn('Error for send occured', e)
       this.close()
     }
   }
