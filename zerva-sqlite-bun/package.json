@@ -1,0 +1,66 @@
+{
+  "name": "@zerva/sqlite",
+  "type": "module",
+  "version": "0.54.1",
+  "private": false,
+  "description": "",
+  "author": {
+    "name": "Dirk Holtwick",
+    "email": "dirk.holtwick@gmail.com",
+    "url": "https://holtwick.de"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "GitHub Sponsors ❤",
+    "url": "https://github.com/sponsors/holtwick"
+  },
+  "exports": {
+    ".": {
+      "browser": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js",
+      "node": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "bin": {
+    "zsqlite": "bin.cjs"
+  },
+  "files": [
+    "bin.cjs",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "pnpm run clean && pnpm run build:tsup",
+    "build:tsup": "tsup src/index.ts",
+    "check": "vue-tsc --noEmit -p ./tsconfig.json",
+    "clean": "rm -rf dist www",
+    "dbld": "zerva demo/zerva.ts --build && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
+    "drun": "ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "pnpm test && pnpm run build",
+    "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
+    "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
+    "start": "pnpm run watch",
+    "test": "ZEED=* vitest --globals --run -r src",
+    "watch": "tsup src/index.ts --watch"
+  },
+  "dependencies": {
+    "@types/bun": "^1.1.5",
+    "zeed": "^0.20.7"
+  },
+  "devDependencies": {
+    "tsup": "^8.1.0",
+    "tsx": "^4.15.7",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0"
+  }
+}

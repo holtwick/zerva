@@ -7,7 +7,7 @@
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "check": "vue-tsc --noEmit --skipLibCheck",
     "clean": "pnpm -r --filter=@zerva/* run clean",
-    "preinstall": "npx only-allow pnpm",
+    "_preinstall": "npx only-allow pnpm",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prune": "pnpm store prune",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^2.21.1",
     "@antfu/ni": "^0.21.12",
+    "@types/bun": "^1.1.5",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.7",
     "bumpp": "^9.4.1",
