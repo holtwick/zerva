@@ -16,6 +16,7 @@ onMounted(async () => {
 
 <template>
   <div class="AppMessages">
+    <p>We receive a counter that goes up</p>
     <pre>counter = {{ counter }}</pre>
   </div>
 </template>

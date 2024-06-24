@@ -17,6 +17,8 @@ export function getWebsocketUrlFromLocation(path: string = webSocketPath) {
   return `ws${location.protocol.substring(4)}//${location.host}${path}`
 }
 
+let counter = 0
+
 export interface WebSocketConnectionOptions {
   log?: LogConfig
   path?: string
@@ -46,7 +48,7 @@ export class WebSocketConnection extends Channel {
   constructor(url?: string, opt: WebSocketConnectionOptions = {}) {
     super()
 
-    this.log = LoggerFromConfig(opt.log, 'websocket', LogLevelInfo)
+    this.log = LoggerFromConfig(opt.log, `websocket-${++counter}`, LogLevelInfo)
 
     let path = opt.path ?? webSocketPath
     if (!path.startsWith('/'))

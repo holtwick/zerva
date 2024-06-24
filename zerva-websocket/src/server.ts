@@ -29,6 +29,8 @@ interface ZWebSocketConfig {
   logLevel?: LogLevelAliasType
 }
 
+let counter = 0
+
 export class WebsocketNodeConnection extends Channel {
   private ws: WebSocket
 
@@ -58,7 +60,7 @@ export class WebsocketNodeConnection extends Channel {
     const id = config.debug === true ? uname(moduleName) : uuid()
 
     // this.log = Logger(`${id}:zerva-${moduleName}`, config.logLevel ?? false)
-    this.log = LoggerFromConfig(config.log, moduleName, LogLevelInfo)
+    this.log = LoggerFromConfig(config.log, `${moduleName}-${++counter}`, LogLevelInfo)
 
     this.log('new connection', id)
 

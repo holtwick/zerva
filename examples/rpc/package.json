@@ -16,7 +16,8 @@
     "build": "zerva build && vite build",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "serve": "ZEED=* LEVEL=a node dist/main.mjs",
-    "start": "ZEED=* LEVEL=a zerva"
+    "start": "DEBUG=1 ZEED=* LEVEL=a zerva",
+    "bun": "DEBUG=1 ZEED=* LEVEL=a zerva --debug --bun --external bun:sqlite"
   },
   "dependencies": {
     "@zerva/rpc": "workspace:*",
