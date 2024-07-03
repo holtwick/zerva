@@ -3,6 +3,7 @@
 import type { LogConfig, LoggerInterface } from 'zeed'
 import { Channel, LogLevelInfo, LoggerFromConfig, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
 import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
+import { useSingletonFlag } from './singleton'
 
 // See lib0 and y-websocket for initial implementation
 
@@ -31,7 +32,7 @@ const PERFORM_RETRY = true
 
 export class WebSocketConnection extends Channel {
   public ws?: WebSocket
-  public url: string | URL
+  public url: string
   public shouldConnect = true
   public isConnected = false
   public lastMessageReceived = 0
@@ -56,6 +57,8 @@ export class WebSocketConnection extends Channel {
 
     this.opt = opt
     this.url = url ?? getWebsocketUrlFromLocation(path)
+
+    this.dispose.add(useSingletonFlag(`_zerva_websocket_client_${this.url}`, this.log))
 
     if (isBrowser()) {
       this.dispose.add(useEventListener(window, 'beforeunload', () => this.dispose()))
