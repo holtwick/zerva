@@ -2,7 +2,7 @@ import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useWebsocketRpcHub } from '@zerva/rpc'
 import { useVite } from '@zerva/vite'
-import { Logger } from 'zeed'
+import { Logger, sleep } from 'zeed'
 import type { RpcClientFunctions, RpcServerFunctions } from './src/_types'
 
 const log = Logger('service')
@@ -18,6 +18,7 @@ on('rpcConnect', async ({ rpcHub, dispose }) => {
   const rpc = rpcHub<RpcServerFunctions, RpcClientFunctions>({
     helloIAmNew(id) {
       log.info('New client with user agent:', id)
+      // await sleep(10000)
       return clientCounter++
     },
   })
@@ -26,7 +27,7 @@ on('rpcConnect', async ({ rpcHub, dispose }) => {
 
   dispose.interval(() => {
     rpc.updateCounter(counter++)
-  }, 1000)
+  }, 2500)
 })
 
 void serve()

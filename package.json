@@ -1,6 +1,6 @@
 {
   "name": "@zerva/monorepo",
-  "version": "0.55.3",
+  "version": "0.55.4",
   "private": true,
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
@@ -20,21 +20,21 @@
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.21.1",
+    "@antfu/eslint-config": "^2.21.2",
     "@antfu/ni": "^0.21.12",
-    "@types/bun": "^1.1.5",
+    "@types/bun": "^1.1.6",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.7",
+    "@types/node": "^20.14.9",
     "bumpp": "^9.4.1",
     "eslint": "<9",
     "fast-glob": "^3.3.2",
     "only-allow": "^1.2.1",
     "sort-package-json": "^2.10.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.2",
-    "vite": "^5.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3",
     "vitest": "^1.6.0",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.0.24"
   },
   "type": "module",
   "engines": {
