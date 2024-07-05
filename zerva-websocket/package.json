@@ -59,7 +59,7 @@
     "@types/ws": "^8.5.10",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "ws": "^8.17.1",
+    "ws": "^8.18.0",
     "zeed": "^0.21.0"
   },
   "devDependencies": {
@@ -68,6 +68,6 @@
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0",
-    "vue-tsc": "^2.0.24"
+    "vue-tsc": "^2.0.26"
   }
 }
