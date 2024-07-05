@@ -1,7 +1,7 @@
 {
   "name": "@zerva/rpc",
   "type": "module",
-  "version": "0.55.3",
+  "version": "0.56.0",
   "description": "🌱 Zerva websocket rpc module",
   "author": {
     "name": "Dirk Holtwick",
