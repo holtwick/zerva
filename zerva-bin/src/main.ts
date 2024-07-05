@@ -248,7 +248,7 @@ const __dirname = (await import("node:path")).dirname(__filename)`
       'process.env.ZERVA_DEVELOPMENT': String(!config.build),
       'process.env.ZERVA_PRODUCTION': String(config.build),
       'process.env.ZERVA_VERSION': `"${config.version}"`,
-      'DEBUG': valueToBoolean(process.env.DEFINE, false),
+      'DEBUG': String(valueToBoolean(process.env.DEFINE, false)),
       ...config.define,
     } as any,
     minify: config.build,
