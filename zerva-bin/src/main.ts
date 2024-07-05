@@ -9,6 +9,7 @@ import type { BuildOptions, Plugin } from 'esbuild'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
 import displayNotification from 'display-notification'
+import { valueToBoolean } from 'zeed'
 import type { ZervaConf } from './config'
 
 const DEFAULT_EXCLUDE = [
@@ -247,6 +248,7 @@ const __dirname = (await import("node:path")).dirname(__filename)`
       'process.env.ZERVA_DEVELOPMENT': String(!config.build),
       'process.env.ZERVA_PRODUCTION': String(config.build),
       'process.env.ZERVA_VERSION': `"${config.version}"`,
+      'DEBUG': String(valueToBoolean(process.env.DEFINE, false)),
       ...config.define,
     } as any,
     minify: config.build,

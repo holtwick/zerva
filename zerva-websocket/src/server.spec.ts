@@ -1,5 +1,3 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
@@ -106,7 +104,7 @@ describe('module', () => {
       expect(err.message).toBe('fakeError')
     }
 
-    channel.dispose()
+    await channel.dispose()
   })
 
   it('should ping', async () => {
@@ -117,6 +115,6 @@ describe('module', () => {
     await sleep(2000)
     // 2000 / 600 = 3.333...
     expect(channel.pingCount).toBe(3)
-    channel.dispose()
+    await channel.dispose()
   }, 5000)
 })

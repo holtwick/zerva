@@ -1,5 +1,4 @@
-// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
-
+import '@zerva/http'
 import type { Buffer } from 'node:buffer'
 import { URL } from 'node:url'
 import { assertModules, emit, on, once, register } from '@zerva/core'
@@ -7,8 +6,8 @@ import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
 import type { LogConfig, LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
 import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
-import { pingMessage, pongMessage, websocketName, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
-import '@zerva/http'
+import { pingMessage, pongMessage, websocketName, wsReadyStateOpen } from './_types'
+import { useSingletonFlag } from './singleton'
 
 const moduleName = 'websocket'
 
@@ -219,6 +218,9 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
     path = `/${path}`
   config.path = path
 
+  const dispose = useDispose()
+  dispose.add(useSingletonFlag(`_zerva_websocket_server_${config.path}`))
+
   on('httpInit', ({ http }) => {
     log(`init path=${path}`)
 
@@ -274,4 +276,6 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
       log.info('server stop done')
     })
   })
+
+  return dispose
 }
