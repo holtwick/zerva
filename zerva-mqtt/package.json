@@ -1,9 +1,8 @@
 {
-  "name": "@zerva/sqlite-bun",
+  "name": "@zerva/mqtt",
   "type": "module",
   "version": "0.56.0",
-  "private": false,
-  "description": "",
+  "description": "🌱 Zerva MQTT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
@@ -14,6 +13,11 @@
     "type": "GitHub Sponsors ❤",
     "url": "https://github.com/sponsors/holtwick"
   },
+  "keywords": [
+    "server",
+    "typescript",
+    "event"
+  ],
   "exports": {
     ".": {
       "browser": "./dist/index.js",
@@ -24,13 +28,8 @@
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
-  "bin": {
-    "zsqlite": "bin.cjs"
-  },
   "files": [
-    "bin.cjs",
     "dist"
   ],
   "engines": {
@@ -45,22 +44,20 @@
     "drun": "ZEED=* ZEED_COLOR=1 zerva demo/zerva.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepublishOnly": "pnpm test && pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
-    "test": "ZEED=* bun test",
+    "test": "echo 'NO TESTS AVAILABLE'",
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
+    "@zerva/core": "workspace:*",
+    "mqtt": "^5.9.1",
     "zeed": "^0.23.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.6",
-    "tsup": "^8.2.4",
-    "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.0",
-    "vitest": "^2.0.5"
+    "@types/node": "^22.2.0",
+    "tsup": "^8.2.4"
   }
 }
