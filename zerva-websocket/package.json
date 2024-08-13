@@ -1,7 +1,7 @@
 {
   "name": "@zerva/websocket",
   "type": "module",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "description": "🌱 Zerva websocket module",
   "author": {
     "name": "Dirk Holtwick",
@@ -56,18 +56,18 @@
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
-    "@types/ws": "^8.5.10",
+    "@types/ws": "^8.5.12",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.0",
-    "zeed": "^0.21.0"
+    "zeed": "^0.23.1"
   },
   "devDependencies": {
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.2.0",
     "@zerva/bin": "workspace:*",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "vitest": "^1.6.0",
-    "vue-tsc": "^2.0.26"
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "vue-tsc": "^2.0.29"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@zerva/bin",
   "type": "module",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "description": "🌱 Zerva Command Line Tool",
   "author": {
     "email": "dirk.holtwick@gmail.com",
@@ -46,10 +46,10 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.2.0",
     "display-notification": "^3.0.0",
     "esbuild": "^0.23.0",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.21.0"
+    "zeed": "^0.23.1"
   }
 }

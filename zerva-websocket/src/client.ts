@@ -58,7 +58,7 @@ export class WebSocketConnection extends Channel {
     this.opt = opt
     this.url = url ?? getWebsocketUrlFromLocation(path)
 
-    this.dispose.add(useSingletonFlag(`_zerva_websocket_client_${this.url}`, this.log))
+    // this.dispose.add(useSingletonFlag(`_zerva_websocket_client_${this.url}`, this.log))
 
     if (isBrowser()) {
       this.dispose.add(useEventListener(window, 'beforeunload', () => this.dispose()))

@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite-bun",
   "type": "module",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "private": false,
   "description": "",
   "author": {
@@ -53,14 +53,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.21.0"
+    "zeed": "^0.23.1"
   },
   "devDependencies": {
     "@types/bun": "^1.1.6",
-    "tsup": "^8.1.0",
-    "tsx": "^4.16.2",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.3",
-    "vitest": "^1.6.0"
+    "tsup": "^8.2.4",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "vitest": "^2.0.5"
   }
 }

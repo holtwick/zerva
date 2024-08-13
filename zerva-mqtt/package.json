@@ -1,8 +1,8 @@
 {
-  "name": "@zerva/email",
+  "name": "@zerva/mqtt",
   "type": "module",
   "version": "0.57.0",
-  "description": "🌱 Zerva send email service",
+  "description": "🌱 Zerva MQTT",
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
@@ -52,10 +52,8 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/nodemailer": "^6.4.15",
     "@zerva/core": "workspace:*",
-    "@zerva/http": "workspace:*",
-    "nodemailer": "^6.9.14",
+    "mqtt": "^5.9.1",
     "zeed": "^0.23.1"
   },
   "devDependencies": {
