@@ -2,6 +2,7 @@ import type { LoggerInterface } from 'zeed'
 import { Logger } from 'zeed'
 import { emit } from '@zerva/core'
 import type { HassEntity } from './_types_homeassistant'
+import './_types'
 
 const log: LoggerInterface = Logger('hass-mqtt')
 
@@ -47,13 +48,14 @@ export function hassValue(
 
   return {
     info: payload,
-    send(value: any) {
+    publish(value: any) {
       try {
         emit('mqttPublish',
           `${component}/${id}`,
           JSON.stringify(value),
         )
 
+        // From time to time send structural data
         if (ctr++ % 60) {
           emit('mqttPublish',
             `${DISCOVERY_PREFIX}/sensor/${component}/${id}/config`,
@@ -69,6 +71,10 @@ export function hassValue(
   }
 }
 
+/**
+ * Define a Home Assistant component, which can e. g. be a device.
+ * Then use the returned function to publish values to MQTT.
+ */
 export function hassComponent(id: string) {
   return hassValue.bind(null, id)
 }
