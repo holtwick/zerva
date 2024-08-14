@@ -25,7 +25,7 @@
     "@zerva/vite": "workspace:*",
     "@zerva/websocket": "workspace:*",
     "vue": "^3.4.37",
-    "zeed": "^0.23.1"
+    "zeed": "^0.23.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",

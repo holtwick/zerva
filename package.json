@@ -1,7 +1,11 @@
 {
   "name": "@zerva/monorepo",
+  "type": "module",
   "version": "0.57.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "pnpm -r --filter=@zerva/* build",
     "bump": "bumpp package.json zerva-*/package.json --commit",
@@ -21,10 +25,10 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.25.1",
-    "@antfu/ni": "^0.22.1",
+    "@antfu/ni": "^0.22.4",
     "@types/bun": "^1.1.6",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.3.0",
     "bumpp": "^9.5.1",
     "eslint": "^9.9.0",
     "fast-glob": "^3.3.2",
@@ -34,10 +38,7 @@
     "typescript": "^5.5.4",
     "vite": "^5.4.0",
     "vitest": "^2.0.5",
-    "vue-tsc": "^2.0.29"
-  },
-  "type": "module",
-  "engines": {
-    "node": ">=20.0.0"
+    "vue-tsc": "^2.0.29",
+    "zeed": "^0.23.4"
   }
 }

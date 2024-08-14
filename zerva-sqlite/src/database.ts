@@ -47,7 +47,7 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
   }
 
   return {
-    db,
+    db: db as SqliteDatabase,
     table,
     transaction,
     dump,

@@ -60,10 +60,10 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.0",
-    "zeed": "^0.23.1"
+    "zeed": "^0.23.4"
   },
   "devDependencies": {
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.3.0",
     "@zerva/bin": "workspace:*",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",

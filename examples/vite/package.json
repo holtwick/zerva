@@ -33,6 +33,6 @@
     "@zerva/vite": "workspace:*",
     "typescript": "^5.5.4",
     "vite": "^5.4.0",
-    "zeed": "^0.23.1"
+    "zeed": "^0.23.4"
   }
 }
