@@ -141,10 +141,10 @@ export function useHttp(config?: {
             const type = req.headers['content-type']?.toLowerCase()
             return (
               type?.startsWith('application/')
-                && ![
-                  'application/json',
-                  'application/x-www-form-urlencoded',
-                ].includes(type)
+              && ![
+                'application/json',
+                'application/x-www-form-urlencoded',
+              ].includes(type)
             )
           },
         }),

@@ -1,7 +1,10 @@
 import antfu from '@antfu/eslint-config'
 import { eslintDefaults } from 'zeed'
 
-export default antfu(eslintDefaults({
+const config = eslintDefaults({
+  type: 'lib',
+  regexp: false,
+  
   ignores: [
     '*.md',
     '**/*.md/**',
@@ -79,10 +82,15 @@ export default antfu(eslintDefaults({
     '**/.out.*',
     '.out.*',
   ],
-}, {
   rules: {
-    'gexp/confusing-quantifier': 'off',
+    'regexp/*': 'off',
+    'regexp/confusing-quantifier': 'off',
     'antfu/consistent-list-newline': 'off',
     'eslint-disable-unused-imports/no-unused-imports': 'off',
   },
-}))
+})
+
+// eslint-disable-next-line no-console
+console.info('ESLint config =', config)
+
+export default antfu(config)

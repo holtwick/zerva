@@ -3,7 +3,6 @@
 import type { LogConfig, LoggerInterface } from 'zeed'
 import { Channel, LogLevelInfo, LoggerFromConfig, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
 import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
-import { useSingletonFlag } from './singleton'
 
 // See lib0 and y-websocket for initial implementation
 

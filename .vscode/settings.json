@@ -42,7 +42,7 @@
     "gql",
     "graphql"
   ],
-  
+
   "vitest.commandLine": "pnpm exec vitest",
   "vitest.enable": true,
   "vitest.exclude": [
@@ -51,5 +51,5 @@
     "**/dist/**",
     "**/cypress/**",
     "**/.{idea,git,cache,output,temp}/**"
-  ],
+  ]
 }

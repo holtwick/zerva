@@ -1,4 +1,3 @@
-/* eslint-disable ts/no-var-requires */
 /* eslint-disable ts/no-require-imports */
 /* eslint-disable no-console */
 

@@ -2,7 +2,7 @@ import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useWebsocketRpcHub } from '@zerva/rpc'
 import { useVite } from '@zerva/vite'
-import { Logger, sleep } from 'zeed'
+import { Logger } from 'zeed'
 import type { RpcClientFunctions, RpcServerFunctions } from './src/_types'
 
 const log = Logger('service')

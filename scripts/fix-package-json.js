@@ -1,6 +1,6 @@
-import { sync } from 'fast-glob'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { sync } from 'fast-glob'
 
 async function main() {
   const { default: sortPackageJson } = await import('sort-package-json')
