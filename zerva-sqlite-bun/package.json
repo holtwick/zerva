@@ -26,9 +26,6 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
-  "bin": {
-    "zsqlite": "bin.cjs"
-  },
   "files": [
     "bin.cjs",
     "dist"
