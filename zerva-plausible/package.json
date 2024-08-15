@@ -55,7 +55,7 @@
     "@types/request-ip": "^0.0.41",
     "@zerva/core": "workspace:*",
     "request-ip": "^3.3.0",
-    "zeed": "^0.23.4"
+    "zeed": "^0.23.5"
   },
   "devDependencies": {
     "tsup": "^8.2.4",
