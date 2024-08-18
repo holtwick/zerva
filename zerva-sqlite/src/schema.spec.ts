@@ -8,6 +8,12 @@ const log: LoggerInterface = Logger('schema.spec')
 
 globalThis.TEST = true
 
+declare module 'zeed' {
+  interface TypeProps {
+    fieldType: string
+  }
+}
+
 describe('database schema', () => {
   it('use schema', async () => {
     try {
@@ -42,7 +48,7 @@ describe('database schema', () => {
       const info = {}
       log.assert(schema._object, 'object required')
       for (const [key, type] of Object.entries(schema._object)) {
-        info[key] = mapTypeToField[type.type] ?? type.props?.fieldType ?? 'text'
+        info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
       }
       return info as any
     }
