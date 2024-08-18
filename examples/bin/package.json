@@ -23,7 +23,7 @@
     "start": "LEVEL=i ZEED=* zerva"
   },
   "dependencies": {
-    "zeed": "^0.23.5"
+    "zeed": "^0.23.8"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
