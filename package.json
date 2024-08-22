@@ -24,19 +24,19 @@
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.26.0",
+    "@antfu/eslint-config": "^2.27.0",
     "@antfu/ni": "^0.22.4",
     "@types/bun": "^1.1.6",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.4.0",
+    "@types/node": "^22.5.0",
     "bumpp": "^9.5.1",
     "eslint": "^9.9.0",
     "fast-glob": "^3.3.2",
     "only-allow": "^1.2.1",
-    "sort-package-json": "^2.10.0",
+    "sort-package-json": "^2.10.1",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
-    "vite": "^5.4.1",
+    "vite": "^5.4.2",
     "vitest": "^2.0.5",
     "vue-tsc": "^2.0.29",
     "zeed": "^0.23.8"

@@ -31,6 +31,6 @@
     "@vitejs/plugin-vue": "^5.1.2",
     "@vue/compiler-sfc": "^3.4.38",
     "@zerva/bin": "workspace:*",
-    "vite": "^5.4.1"
+    "vite": "^5.4.2"
   }
 }
