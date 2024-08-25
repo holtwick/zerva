@@ -1,11 +1,25 @@
-import type { Infer, ObjectOutput, Type } from 'zeed'
-import { useDispose } from 'zeed'
+import type { Infer, Type } from 'zeed'
+import { TypeProps, useDispose } from 'zeed'
 import type { SqliteDatabase, SqliteOptions } from './sqlite'
 import { BetterSqlite3 } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
 import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
 
-const mapTypeToField = {
+declare module 'zeed' {
+  export interface TypeProps {
+    /** Type to be used as SQLite field. See https://www.sqlite.org/datatype3.html#affinity_name_examples */
+    fieldType: 'integer' | 'real' | 'text' | 'numeric' | 'blob'
+
+    /** Index column */
+    // fieldIndex?: boolean
+
+    fieldTransformSet?: (value: any) => any
+
+    fieldTransformGet?: (value: any) => any
+  }
+}
+
+const mapTypeToField: any = {
   string: 'text',
   boolean: 'boolean',
   number: 'integer',
@@ -41,18 +55,19 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   //   return info as any
   // }
 
-  function tableWithSchema<O extends ObjectOutput, T = Infer<O>>(tableName: string, schema: O) {
+  function tableWithSchema<O extends Type<any>, T = Infer<O>>(tableName: string, schema: O) {
     const obj = schema._object
     if (!obj)
       throw new Error('object schema required')
 
-    const fields = {}
+    const fields: Record<string, any> = {}
     for (const [key, type] of Object.entries(obj)) {
       fields[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
     }
 
     return useSqliteTable<T>(db, tableName, fields as any)
   }
+
   // todo: implement with yield and stream
   /** Similar to `.dump` in SQLite CLI */
   function dump() {

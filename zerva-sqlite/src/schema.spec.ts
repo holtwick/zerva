@@ -1,6 +1,5 @@
 import type { Infer, LoggerInterface, Type } from 'zeed'
 import { Logger, boolean, number, object, string } from 'zeed'
-import type { SqliteTableColsDefinition } from './index'
 import { useSqliteDatabase } from './index'
 
 const log: LoggerInterface = Logger('schema.spec')
@@ -23,6 +22,8 @@ describe('database schema', () => {
       age: number(),
       active: boolean().props({ fieldType: 'integer' }),
     })
+
+    // type x = Infer<typeof schema>
 
     const table = db.tableWithSchema('test', schema)
 
@@ -417,6 +418,28 @@ describe('database schema', () => {
         "SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
         "SELECT * FROM test LIMIT 100",
       ]
+    `)
+  })
+
+  it('table example', async () => {
+    function tableWithSchema<O extends Type<any>, T = Infer<O>>(tableName: string, schema: O) {
+      const obj = schema._object
+      if (!obj)
+        throw new Error('object schema required')
+
+      const fields = {}
+      for (const [key, type] of Object.entries(obj)) {
+        fields[key] = /* mapTypeToField[type.type] ?? */ type._props?.fieldType ?? 'text'
+      }
+
+      return fields
+    }
+
+    const r = tableWithSchema('hello', object({ name: string() }))
+    expect(r).toMatchInlineSnapshot(`
+      {
+        "name": "text",
+      }
     `)
   })
 })
