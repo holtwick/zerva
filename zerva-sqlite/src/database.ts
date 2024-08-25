@@ -1,13 +1,23 @@
+import type { Infer, ObjectOutput, Type } from 'zeed'
 import { useDispose } from 'zeed'
 import type { SqliteDatabase, SqliteOptions } from './sqlite'
 import { BetterSqlite3 } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
 import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
 
-export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
+const mapTypeToField = {
+  string: 'text',
+  boolean: 'boolean',
+  number: 'integer',
+}
+
+export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   const dispose: any = useDispose()
 
-  if (!name.includes('.') && name !== ':memory:')
+  if (name == null)
+    name = ':memory:'
+
+  else if (!name.includes('.') && name !== ':memory:')
     name += '.sqlite'
 
   // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
@@ -22,6 +32,27 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
     return useSqliteTable<T>(db, tableName, fields)
   }
 
+  // function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
+  //   const info = {}
+  //   log.assert(schema._object, 'object required')
+  //   for (const [key, type] of Object.entries(schema._object)) {
+  //     info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+  //   }
+  //   return info as any
+  // }
+
+  function tableWithSchema<O extends ObjectOutput, T = Infer<O>>(tableName: string, schema: O) {
+    const obj = schema._object
+    if (!obj)
+      throw new Error('object schema required')
+
+    const fields = {}
+    for (const [key, type] of Object.entries(obj)) {
+      fields[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+    }
+
+    return useSqliteTable<T>(db, tableName, fields as any)
+  }
   // todo: implement with yield and stream
   /** Similar to `.dump` in SQLite CLI */
   function dump() {
@@ -49,6 +80,7 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
   return {
     db: db as SqliteDatabase,
     table,
+    tableWithSchema,
     transaction,
     dump,
     dispose,

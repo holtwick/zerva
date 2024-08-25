@@ -1,5 +1,4 @@
-import { unlinkSync } from 'node:fs'
-import type { Infer, LoggerInterface, Type, TypeProps } from 'zeed'
+import type { Infer, LoggerInterface, Type } from 'zeed'
 import { Logger, boolean, number, object, string } from 'zeed'
 import type { SqliteTableColsDefinition } from './index'
 import { useSqliteDatabase } from './index'
@@ -10,14 +9,9 @@ globalThis.TEST = true
 
 describe('database schema', () => {
   it('use schema', async () => {
-    try {
-      unlinkSync('test.sqlite')
-    }
-    catch (err) { }
-
     const sql: string[] = []
 
-    const db = useSqliteDatabase('test.sqlite', {
+    const db = useSqliteDatabase(undefined, {
       verbose: (s: any) => {
         log(s)
         sql.push(s)
@@ -30,34 +24,36 @@ describe('database schema', () => {
       active: boolean().props({ fieldType: 'integer' }),
     })
 
-    type MyTable = Infer<typeof schema>
+    const table = db.tableWithSchema('test', schema)
 
-    const mapTypeToField = {
-      string: 'text',
-      boolean: 'boolean',
-      number: 'integer',
-    }
+    // type MyTable = Infer<typeof schema>
 
-    function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
-      const info = {}
-      log.assert(schema._object, 'object required')
-      for (const [key, type] of Object.entries(schema._object)) {
-        info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
-      }
-      return info as any
-    }
+    // const mapTypeToField = {
+    //   string: 'text',
+    //   boolean: 'boolean',
+    //   number: 'integer',
+    // }
 
-    const fields = tableFromSchema(schema)
+    // function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
+    //   const info = {}
+    //   log.assert(schema._object, 'object required')
+    //   for (const [key, type] of Object.entries(schema._object)) {
+    //     info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+    //   }
+    //   return info as any
+    // }
 
-    expect(fields).toMatchInlineSnapshot(`
-      {
-        "active": "boolean",
-        "age": "integer",
-        "name": "text",
-      }
-    `)
+    // const fields = tableFromSchema(schema)
 
-    const table = db.table<MyTable>('test', fields)
+    // expect(fields).toMatchInlineSnapshot(`
+    //   {
+    //     "active": "boolean",
+    //     "age": "integer",
+    //     "name": "text",
+    //   }
+    // `)
+
+    // const table = db.table<MyTable>('test', fields)
 
     table.indexUnique('name')
 
@@ -422,7 +418,5 @@ describe('database schema', () => {
         "SELECT * FROM test LIMIT 100",
       ]
     `)
-
-    unlinkSync('test.sqlite')
   })
 })

@@ -1,4 +1,4 @@
-import type { Primitive } from 'zeed'
+import type { Primitive, Type } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
@@ -79,6 +79,7 @@ export function useSqliteTable<
   db: SqliteDatabase,
   tableName: string,
   fields: SqliteTableColsDefinition<ColType>,
+  // schema?: Type,
 ) {
   const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
@@ -222,6 +223,7 @@ export function useSqliteTable<
 
   /** Update content `obj` of row with `id`  */
   function update(id: number | string, obj: Partial<ColFullType>): SqliteRunResult {
+    // if(schema?.parse(obj))
     const fields: string[] = []
     const values: Primitive[] = []
     for (const field of sortedFields) {
