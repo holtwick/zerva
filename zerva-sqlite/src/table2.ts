@@ -191,6 +191,7 @@ export function useSqliteTable2<
       return _getStatement.get(id)
   }
 
+  // todo respect schema
   function normalizeValue(value: any): Primitive {
     if (isBoolean(value))
       return value ? 1 : 0
