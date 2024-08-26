@@ -1,9 +1,11 @@
 import type { Infer, Type } from 'zeed'
-import { TypeProps, useDispose } from 'zeed'
+import { useDispose } from 'zeed'
 import type { SqliteDatabase, SqliteOptions } from './sqlite'
 import { BetterSqlite3 } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
 import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
+import type { SqliteColType } from './table2'
+import { useSqliteTable2 } from './table2'
 
 declare module 'zeed' {
   export interface TypeProps {
@@ -19,9 +21,9 @@ declare module 'zeed' {
   }
 }
 
-const mapTypeToField: any = {
+const mapTypeToField: Record<string, SqliteColType> = {
   string: 'text',
-  boolean: 'boolean',
+  boolean: 'integer',
   number: 'integer',
 }
 
@@ -65,7 +67,7 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
       fields[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
     }
 
-    return useSqliteTable<T>(db, tableName, fields as any)
+    return useSqliteTable2<T>(db, tableName, fields as any)
   }
 
   // todo: implement with yield and stream

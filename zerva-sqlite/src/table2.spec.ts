@@ -228,7 +228,7 @@ describe('database schema', () => {
       ]
     `)
 
-    expect(table.all()).toMatchInlineSnapshot(`
+    expect(table.findAll()).toMatchInlineSnapshot(`
       [
         {
           "active": 1,
@@ -254,9 +254,12 @@ describe('database schema', () => {
     `)
 
     expect(table.findAll({
-      age: 20,
-      active: true,
-    }, ['id desc', 'created'])).toMatchInlineSnapshot(`
+      conditions: {
+        age: 20,
+        active: true,
+      },
+      orderBy: ['id desc', 'created'],
+    })).toMatchInlineSnapshot(`
       [
         {
           "active": 1,
@@ -409,7 +412,7 @@ describe('database schema', () => {
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "SELECT * FROM test WHERE id=1.0 LIMIT 1",
         "select max(age) as oldest from test where id > 0.0",
-        "SELECT * FROM test ORDER BY id",
+        "SELECT * FROM test",
         "SELECT * FROM test WHERE active=1.0 AND age=20.0 ORDER BY id desc, created",
         "SELECT * FROM test WHERE active=1.0 AND age=50.0 LIMIT 1",
         "DELETE FROM test WHERE id=1.0",
