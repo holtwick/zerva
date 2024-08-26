@@ -1,5 +1,6 @@
-import type { Primitive } from 'zeed'
+import type { Infer, Primitive, Type } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import { mapSchemaTypeToField } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 const log = Logger('sqlite:table')
@@ -44,16 +45,28 @@ export interface SqliteTableDefault {
 
 /** Only use via `useSqliteDatabase`! */
 export function useSqliteTable2<
-  ColType,
+  S extends Type<any>,
+  ColType = Infer<S>,
   ColFullType = ColType & SqliteTableDefault,
   ColTypeInsert = Omit<ColType, 'id' | 'updated' | 'created'> & Partial<SqliteTableDefault>,
   ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
   tableName: string,
-  fields: SqliteTableColsDefinition<ColType>,
-  // schema?: Type,
+  // fields: SqliteTableColsDefinition<ColType>,
+  schema: S,
 ) {
+  const obj = schema._object
+  if (!obj)
+    throw new Error('object schema required')
+
+  const fields: Record<string, any> = {}
+  for (const [key, type] of Object.entries(obj)) {
+    fields[key] = mapSchemaTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+  }
+
+  //
+
   const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
 
@@ -307,5 +320,3 @@ export function useSqliteTable2<
     findAll,
   }
 }
-
-export type UseSqliteTable2<T = SqliteTableDefault> = ReturnType<typeof useSqliteTable2<T>>
