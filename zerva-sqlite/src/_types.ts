@@ -1,5 +1,3 @@
-import type { Infer, Type } from 'zeed'
-import { useDispose } from 'zeed'
 import type { SqliteColType } from './table2'
 
 declare module 'zeed' {
@@ -19,5 +17,6 @@ declare module 'zeed' {
 export const mapSchemaTypeToField: Record<string, SqliteColType> = {
   string: 'text',
   boolean: 'integer',
-  number: 'integer',
+  number: 'real',
+  int: 'integer',
 }

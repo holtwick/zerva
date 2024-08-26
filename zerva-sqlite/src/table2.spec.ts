@@ -1,5 +1,5 @@
 import type { Infer, LoggerInterface, Type } from 'zeed'
-import { Logger, boolean, number, object, string } from 'zeed'
+import { Logger, boolean, float, int, number, object, string } from 'zeed'
 import { useSqliteDatabase } from './index'
 
 const log: LoggerInterface = Logger('schema.spec')
@@ -19,7 +19,7 @@ describe('database schema', () => {
 
     const schema = object({
       name: string(),
-      age: number(),
+      age: int(),
       active: boolean(),
     })
 
@@ -134,15 +134,11 @@ describe('database schema', () => {
 
     //
 
-    const table2 = db.table<{
-      name: string
-      amount: number
-      note: string
-    }>('test', {
-      name: 'text',
-      amount: 'real',
-      note: 'string',
-    })
+    const table2 = db.tableWithSchema('test', object({
+      name: string(),
+      amount: float(),
+      note: string(),
+    }))
 
     expect(table2.get(1)).toMatchInlineSnapshot(`
       {
