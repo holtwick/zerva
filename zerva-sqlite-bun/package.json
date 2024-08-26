@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite-bun",
   "type": "module",
-  "version": "0.57.0",
+  "version": "0.58.2",
   "private": false,
   "description": "",
   "author": {
@@ -18,17 +18,13 @@
     ".": {
       "browser": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.js",
-      "node": "./dist/index.js"
+      "default": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
-  "bin": {
-    "zsqlite": "bin.cjs"
-  },
   "files": [
     "bin.cjs",
     "dist"
@@ -53,14 +49,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "zeed": "^0.23.1"
+    "zeed": "^0.24.6"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.6",
+    "@types/bun": "^1.1.8",
     "tsup": "^8.2.4",
-    "tsx": "^4.17.0",
+    "tsx": "^4.18.0",
     "typescript": "^5.5.4",
-    "vite": "^5.4.0",
+    "vite": "^5.4.2",
     "vitest": "^2.0.5"
   }
 }

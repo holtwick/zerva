@@ -1,5 +1,5 @@
 import type { DrawDatabase } from './_types'
-import { getFieldName, getInterfaceName, setupMap, typeMap } from './_types'
+import { getFieldName, getInterfaceName, setupMap } from './_types'
 
 export function createSetupTS(info: DrawDatabase, prefix?: string) {
   const lines: string[] = []

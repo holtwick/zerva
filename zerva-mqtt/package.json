@@ -1,7 +1,7 @@
 {
   "name": "@zerva/mqtt",
   "type": "module",
-  "version": "0.57.0",
+  "version": "0.58.2",
   "description": "🌱 Zerva MQTT",
   "author": {
     "name": "Dirk Holtwick",
@@ -22,8 +22,7 @@
     ".": {
       "browser": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.js",
-      "node": "./dist/index.js"
+      "default": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
@@ -53,11 +52,11 @@
   },
   "dependencies": {
     "@zerva/core": "workspace:*",
-    "mqtt": "^5.9.1",
-    "zeed": "^0.23.1"
+    "mqtt": "^5.10.0",
+    "zeed": "^0.24.6"
   },
   "devDependencies": {
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.5.0",
     "tsup": "^8.2.4"
   }
 }

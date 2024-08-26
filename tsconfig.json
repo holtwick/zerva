@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "preserve",
-    "baseUrl": ".",
     "lib": [
       "ES2022",
       //   "ESNext",
@@ -10,6 +9,7 @@
       "DOM.Iterable",
       "WebWorker"
     ],
+    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {

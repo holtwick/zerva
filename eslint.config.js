@@ -1,14 +1,15 @@
 import antfu from '@antfu/eslint-config'
+import { eslintIgnoreDefaults, eslintRulesDefaults } from 'zeed'
 
 export default antfu(
   {
-    // typescript: {
-    //   tsconfigPath: './tsconfig.json',
-    //   // ignores,
-    // },
     typescript: true,
     vue: true,
+
+    regexp: false,
+
     ignores: [
+      ...eslintIgnoreDefaults(),
       '*.md',
       '**/*.md/**',
       '**/*.md',
@@ -86,19 +87,14 @@ export default antfu(
       '.out.*',
     ],
   },
+  {},
   {
     rules: {
-      'unused-imports/no-unused-vars': 'off',
+      ...eslintRulesDefaults(),
+      'regexp/*': 'off',
+      'regexp/confusing-quantifier': 'off',
       'antfu/consistent-list-newline': 'off',
       'eslint-disable-unused-imports/no-unused-imports': 'off',
-      'ts/no-unsafe-argument': 'off',
-      'ts/no-unsafe-assignment': 'off',
-      'ts/no-unsafe-call': 'off',
-      'ts/no-unsafe-member-access': 'off',
-      'ts/no-unsafe-return': 'off',
-      'ts/restrict-template-expressions': 'off',
-      // 'ts/require-await': 'off',
-      // 'ts/no-misused-promises': 'off',
     },
   },
 )

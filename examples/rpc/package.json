@@ -21,16 +21,16 @@
   },
   "dependencies": {
     "@zerva/rpc": "workspace:*",
-    "vue": "^3.4.37",
-    "zeed": "^0.23.1"
+    "vue": "^3.4.38",
+    "zeed": "^0.24.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",
-    "@vue/compiler-sfc": "^3.4.37",
+    "@vue/compiler-sfc": "^3.4.38",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
-    "vite": "^5.4.0"
+    "vite": "^5.4.2"
   }
 }

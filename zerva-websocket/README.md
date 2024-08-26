@@ -46,7 +46,7 @@ You can also use the [Zeed Message](https://github.com/holtwick/zeed/tree/master
 
 ```ts
 interface Messages {
-  echo(msg: string): string
+  echo: (msg: string) => string
 }
 ```
 

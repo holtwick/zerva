@@ -32,6 +32,5 @@ Valid defines are:
 For better compatibility the defines can also be accessed as `process.env.ZERVA_DEVELOPMENT` and `process.env.ZERVA_PRODUCTION`.
 
 ```
-npm install -D @zerva/bin @zerva/core @zerva/http 
+npm install -D @zerva/bin @zerva/core @zerva/http
 ```
-

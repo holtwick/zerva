@@ -1,14 +1,4 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
-import {
-  createContext,
-  emit,
-  hasModule,
-  on,
-  register,
-  requireModules,
-  setContext,
-} from './context'
+import { createContext, emit, hasModule, on, register, requireModules, setContext } from './context'
 
 declare global {
   interface ZContextEvents {

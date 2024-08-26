@@ -1,6 +1,6 @@
-import { sync } from 'fast-glob'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { sync } from 'fast-glob'
 
 async function main() {
   const { default: sortPackageJson } = await import('sort-package-json')
@@ -67,9 +67,9 @@ async function main() {
               browser: hasBrowserCode
                 ? './dist/index.browser.js'
                 : './dist/index.js',
-              default: './dist/index.js',
-              node: './dist/index.js',
+              // node: './dist/index.js',
               require: './dist/index.cjs',
+              default: './dist/index.js',
             },
           },
           main: 'dist/index.cjs',

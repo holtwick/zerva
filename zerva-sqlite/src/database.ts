@@ -1,13 +1,18 @@
+import type { Infer, Type } from 'zeed'
 import { useDispose } from 'zeed'
 import type { SqliteDatabase, SqliteOptions } from './sqlite'
 import { BetterSqlite3 } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
 import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
+import { useSqliteTable2 } from './table2'
 
-export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
+export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   const dispose: any = useDispose()
 
-  if (!name.includes('.') && name !== ':memory:')
+  if (name == null)
+    name = ':memory:'
+
+  else if (!name.includes('.') && name !== ':memory:')
     name += '.sqlite'
 
   // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
@@ -20,6 +25,19 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
 
   function table<T>(tableName: string, fields: SqliteTableColsDefinition<T>) {
     return useSqliteTable<T>(db, tableName, fields)
+  }
+
+  // function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
+  //   const info = {}
+  //   log.assert(schema._object, 'object required')
+  //   for (const [key, type] of Object.entries(schema._object)) {
+  //     info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+  //   }
+  //   return info as any
+  // }
+
+  function tableWithSchema<O extends Type<any>, T = Infer<O>>(tableName: string, schema: O) {
+    return useSqliteTable2(db, tableName, schema)
   }
 
   // todo: implement with yield and stream
@@ -47,8 +65,9 @@ export function useSqliteDatabase(name: string, opt: SqliteOptions = {}) {
   }
 
   return {
-    db,
+    db: db as SqliteDatabase,
     table,
+    tableWithSchema,
     transaction,
     dump,
     dispose,

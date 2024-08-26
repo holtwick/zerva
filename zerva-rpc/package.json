@@ -1,7 +1,7 @@
 {
   "name": "@zerva/rpc",
   "type": "module",
-  "version": "0.57.0",
+  "version": "0.58.2",
   "description": "🌱 Zerva websocket rpc module",
   "author": {
     "name": "Dirk Holtwick",
@@ -25,10 +25,9 @@
   ],
   "exports": {
     ".": {
-      "browser": "./dist/index.browser.js",
+      "browser": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.js",
-      "node": "./dist/index.js"
+      "default": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
@@ -58,10 +57,10 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/websocket": "workspace:*",
-    "zeed": "^0.23.1"
+    "zeed": "^0.24.6"
   },
   "devDependencies": {
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.5.0",
     "@zerva/bin": "workspace:*",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",

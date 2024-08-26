@@ -1,5 +1,6 @@
-import type { Primitive, Type } from 'zeed'
+import type { Infer, Primitive, Type } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import { mapSchemaTypeToField } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 const log = Logger('sqlite:table')
@@ -11,38 +12,21 @@ const log = Logger('sqlite:table')
   didDelete: (id: number) => any
 } */
 
-// https://www.sqlite.org/datatype3.html#affinity_name_examples
-const _affinity = {
-  integer: 'integer',
-  int: 'integer',
-
-  text: 'text',
-  varchar: 'text',
-  string: 'text',
-
-  blob: 'blob',
-
-  real: 'real',
-  float: 'real',
-  double: 'real',
-  number: 'real',
-
-  numeric: 'numeric',
-
-  // previously numeric
-  decimal: 'integer',
-  boolean: 'integer',
-  date: 'integer',
-  datetime: 'integer',
-}
-
-export type SqliteColTypes = keyof typeof _affinity
-
-const affinity = _affinity as Record<string, string>
+export type SqliteColType = 'real' | 'blob' | 'integer' | 'text'
 
 /** Redefine accoring to interface to create correct field types */
 export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
-  [key in K]: SqliteColTypes
+  [key in K]: SqliteColType
+}
+
+type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
+type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
+
+export interface SelectDescription<ColFullType> {
+  conditions?: Partial<ColFullType>
+  limit?: number
+  offset?: number
+  orderBy?: OrderByMany<string>
 }
 
 /** Escape for .dump() */
@@ -70,23 +54,30 @@ export interface SqliteTableDefault {
 }
 
 /** Only use via `useSqliteDatabase`! */
-export function useSqliteTable<
-  ColType,
+export function useSqliteTable2<
+  S extends Type<any>,
+  ColType = Infer<S>,
   ColFullType = ColType & SqliteTableDefault,
   ColTypeInsert = Omit<ColType, 'id' | 'updated' | 'created'> & Partial<SqliteTableDefault>,
   ColName = keyof ColFullType,
 >(
   db: SqliteDatabase,
   tableName: string,
-  fields: SqliteTableColsDefinition<ColType>,
-  // schema?: Type,
+  schema: S,
 ) {
+  const obj = schema._object
+  if (!obj)
+    throw new Error('object schema required')
+
+  const fields: Record<string, any> = {}
+  for (const [key, type] of Object.entries(obj)) {
+    fields[key] = mapSchemaTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+  }
+
+  //
+
   const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
-
-  function getAffinity(name: any) {
-    return affinity[String(name)] ?? 'text'
-  }
 
   // Check current state
   const _tableInfoStatement = db.prepare(`PRAGMA table_info(${tableName})`)
@@ -105,7 +96,7 @@ export function useSqliteTable<
       `${primaryKeyName} INTEGER PRIMARY KEY AUTOINCREMENT`,
     ]
     for (const [field, colType] of Object.entries(creationFields))
-      fieldsList.push(`${field} ${getAffinity(colType)}`)
+      fieldsList.push(`${field} ${colType}`)
     db.exec(`CREATE TABLE IF NOT EXISTS ${tableName} (${fieldsList.join(', ')})`)
   }
   else {
@@ -114,7 +105,7 @@ export function useSqliteTable<
     if (missingFields.length > 0) {
       const fieldsList: string[] = []
       for (const field of missingFields)
-        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${getAffinity((creationFields as any)[field])}`)
+        fieldsList.push(`ALTER TABLE ${tableName} ADD COLUMN ${field} ${(creationFields as any)[field]}`)
       db.exec(fieldsList.join('; '))
     }
   }
@@ -149,14 +140,15 @@ export function useSqliteTable<
     }
   }
 
-  function findPrepare(cols?: Partial<ColFullType>, limit?: number, orderBy?: OrderByMany<string>) {
+  function findPrepare(opt?: SelectDescription<ColFullType>) {
+    const { conditions, orderBy, limit, offset } = opt ?? {}
     const fields: string[] = []
     const values: Primitive[] = []
-    if (cols) {
+    if (conditions) {
       for (const field of sortedFields) {
-        if (field in cols) {
+        if (field in conditions) {
           fields.push(`${field}=?`)
-          values.push(normalizeValue((cols as any)[field]))
+          values.push(normalizeValue((conditions as any)[field]))
         }
       }
     }
@@ -170,6 +162,9 @@ export function useSqliteTable<
     }
     if (limit != null)
       sql += ` LIMIT ${limit}`
+    if (offset != null)
+      sql += ` OFFSET ${offset}`
+
     // log(`EXPLAIN QUERY PLAN: "${prepare(`EXPLAIN QUERY PLAN ${sql}`).get(value).detail}"`)
     return {
       statement: prepare(sql),
@@ -177,16 +172,13 @@ export function useSqliteTable<
     }
   }
 
-  function findOne(cols: Partial<ColFullType>): ColFullType | undefined {
-    const { statement, values } = findPrepare(cols, 1)
+  function findOne(conditions: Partial<ColFullType>): ColFullType | undefined {
+    const { statement, values } = findPrepare({ conditions, limit: 1 })
     return statement.get(values)
   }
 
-  type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
-  type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
-
-  function findAll(cols?: Partial<ColFullType>, orderBy?: OrderByMany<string>, limit?: number): ColFullType[] {
-    const { statement, values } = findPrepare(cols, limit, orderBy)
+  function findAll(opt?: SelectDescription<ColFullType>): ColFullType[] {
+    const { statement, values } = findPrepare(opt)
     return statement.all(values) ?? []
   }
 
@@ -198,6 +190,7 @@ export function useSqliteTable<
       return _getStatement.get(id)
   }
 
+  // todo respect schema
   function normalizeValue(value: any): Primitive {
     if (isBoolean(value))
       return value ? 1 : 0
@@ -292,11 +285,6 @@ export function useSqliteTable<
     return prepare(sql).all(args)
   }
 
-  /** Get all rows and `orderBy` */
-  function all(orderBy = 'id'): ColFullType[] {
-    return prepare(`SELECT * FROM ${tableName} ORDER BY ${orderBy}`).all() as any
-  }
-
   /** Get number of rows  */
   function count(): number {
     return prepare(`SELECT count(id) AS count FROM ${tableName}`).get().count
@@ -328,10 +316,7 @@ export function useSqliteTable<
     indexUnique,
     query,
     count,
-    all,
     findOne,
     findAll,
   }
 }
-
-export type UseSqliteTable<T = SqliteTableDefault> = ReturnType<typeof useSqliteTable<T>>
