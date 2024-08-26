@@ -20,41 +20,10 @@ describe('database schema', () => {
     const schema = object({
       name: string(),
       age: number(),
-      active: boolean().props({ fieldType: 'integer' }),
+      active: boolean(),
     })
 
-    // type x = Infer<typeof schema>
-
     const table = db.tableWithSchema('test', schema)
-
-    // type MyTable = Infer<typeof schema>
-
-    // const mapTypeToField = {
-    //   string: 'text',
-    //   boolean: 'boolean',
-    //   number: 'integer',
-    // }
-
-    // function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
-    //   const info = {}
-    //   log.assert(schema._object, 'object required')
-    //   for (const [key, type] of Object.entries(schema._object)) {
-    //     info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
-    //   }
-    //   return info as any
-    // }
-
-    // const fields = tableFromSchema(schema)
-
-    // expect(fields).toMatchInlineSnapshot(`
-    //   {
-    //     "active": "boolean",
-    //     "age": "integer",
-    //     "name": "text",
-    //   }
-    // `)
-
-    // const table = db.table<MyTable>('test', fields)
 
     table.indexUnique('name')
 
