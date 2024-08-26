@@ -1,5 +1,6 @@
 import type { Infer, Primitive, Type } from 'zeed'
 import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import type { OrderByMany, SqliteTableDefault } from './_types'
 import { mapSchemaTypeToField } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
@@ -12,16 +13,6 @@ const log = Logger('sqlite:table')
   didDelete: (id: number) => any
 } */
 
-export type SqliteColType = 'real' | 'blob' | 'integer' | 'text'
-
-/** Redefine accoring to interface to create correct field types */
-export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
-  [key in K]: SqliteColType
-}
-
-type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
-type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
-
 export interface SelectDescription<ColFullType> {
   conditions?: Partial<ColFullType>
   limit?: number
@@ -29,32 +20,8 @@ export interface SelectDescription<ColFullType> {
   orderBy?: OrderByMany<string>
 }
 
-/** Escape for .dump() */
-export function escapeSQLValueSingleQuotes(value: any) {
-  if (value == null)
-    return 'NULL'
-  if (isNumber(value))
-    return String(value)
-  if (!isString(value))
-    value = JSON.stringify(value)
-  return `'${String(value).replace(/'/g, '\'\'')}'`
-}
-
-/**
- * Basic fields of every table with
- *
- * - `id` as incrementing primary key
- * - `created` in miliseconds
- * - `updated` in miliseconds
- */
-export interface SqliteTableDefault {
-  id: number
-  created: number
-  updated: number
-}
-
 /** Only use via `useSqliteDatabase`! */
-export function useSqliteTable2<
+export function useSqliteTableWithSchema<
   S extends Type<any>,
   ColType = Infer<S>,
   ColFullType = ColType & SqliteTableDefault,
@@ -320,3 +287,5 @@ export function useSqliteTable2<
     findAll,
   }
 }
+
+export type UseSqliteTableWithSchema = ReturnType<typeof useSqliteTableWithSchema>
