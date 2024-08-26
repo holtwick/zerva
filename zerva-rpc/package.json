@@ -25,10 +25,9 @@
   ],
   "exports": {
     ".": {
-      "browser": "./dist/index.browser.js",
+      "browser": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.js",
-      "node": "./dist/index.js"
+      "default": "./dist/index.js"
     }
   },
   "main": "dist/index.cjs",
