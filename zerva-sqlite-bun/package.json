@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite-bun",
   "type": "module",
-  "version": "0.58.0",
+  "version": "0.58.1",
   "private": false,
   "description": "",
   "author": {
