@@ -19,6 +19,16 @@ export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'create
   [key in K]: SqliteColType
 }
 
+type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
+type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
+
+export interface SelectDescription<ColFullType> {
+  conditions?: Partial<ColFullType>
+  limit?: number
+  offset?: number
+  orderBy?: OrderByMany<string>
+}
+
 /** Escape for .dump() */
 export function escapeSQLValueSingleQuotes(value: any) {
   if (value == null)
@@ -53,7 +63,6 @@ export function useSqliteTable2<
 >(
   db: SqliteDatabase,
   tableName: string,
-  // fields: SqliteTableColsDefinition<ColType>,
   schema: S,
 ) {
   const obj = schema._object
@@ -131,14 +140,7 @@ export function useSqliteTable2<
     }
   }
 
-  interface SelectDescription {
-    conditions?: Partial<ColFullType>
-    limit?: number
-    offset?: number
-    orderBy?: OrderByMany<string>
-  }
-
-  function findPrepare(opt?: SelectDescription) {
+  function findPrepare(opt?: SelectDescription<ColFullType>) {
     const { conditions, orderBy, limit, offset } = opt ?? {}
     const fields: string[] = []
     const values: Primitive[] = []
@@ -175,10 +177,7 @@ export function useSqliteTable2<
     return statement.get(values)
   }
 
-  type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
-  type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
-
-  function findAll(opt?: SelectDescription): ColFullType[] {
+  function findAll(opt?: SelectDescription<ColFullType>): ColFullType[] {
     const { statement, values } = findPrepare(opt)
     return statement.all(values) ?? []
   }
