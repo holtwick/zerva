@@ -1,5 +1,6 @@
-import type { Primitive, Type } from 'zeed'
-import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import type { Primitive } from 'zeed'
+import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive } from 'zeed'
+import type { OrderByMany, SqliteTableDefault } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 const log = Logger('sqlite:table')
@@ -43,30 +44,6 @@ const affinity = _affinity as Record<string, string>
 /** Redefine accoring to interface to create correct field types */
 export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
   [key in K]: SqliteColTypes
-}
-
-/** Escape for .dump() */
-export function escapeSQLValueSingleQuotes(value: any) {
-  if (value == null)
-    return 'NULL'
-  if (isNumber(value))
-    return String(value)
-  if (!isString(value))
-    value = JSON.stringify(value)
-  return `'${String(value).replace(/'/g, '\'\'')}'`
-}
-
-/**
- * Basic fields of every table with
- *
- * - `id` as incrementing primary key
- * - `created` in miliseconds
- * - `updated` in miliseconds
- */
-export interface SqliteTableDefault {
-  id: number
-  created: number
-  updated: number
 }
 
 /** Only use via `useSqliteDatabase`! */
@@ -181,9 +158,6 @@ export function useSqliteTable<
     const { statement, values } = findPrepare(cols, 1)
     return statement.get(values)
   }
-
-  type OrderBy<T extends string> = T | `${T} asc` | `${T} desc` | `${T} ASC` | `${T} DESC`
-  type OrderByMany<T extends string> = OrderBy<T> | OrderBy<T>[]
 
   function findAll(cols?: Partial<ColFullType>, orderBy?: OrderByMany<string>, limit?: number): ColFullType[] {
     const { statement, values } = findPrepare(cols, limit, orderBy)

@@ -3,8 +3,9 @@ import { useDispose } from 'zeed'
 import type { SqliteDatabase, SqliteOptions } from './sqlite'
 import { BetterSqlite3 } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
-import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
-import { useSqliteTable2 } from './table2'
+import { useSqliteTable } from './table'
+import { useSqliteTableWithSchema } from './table-schema'
+import { escapeSQLValueSingleQuotes } from './_types'
 
 export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   const dispose: any = useDispose()
@@ -37,7 +38,7 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   // }
 
   function tableWithSchema<O extends Type<any>, T = Infer<O>>(tableName: string, schema: O) {
-    return useSqliteTable2(db, tableName, schema)
+    return useSqliteTableWithSchema(db, tableName, schema)
   }
 
   // todo: implement with yield and stream
