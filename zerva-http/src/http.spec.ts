@@ -2,7 +2,7 @@
 
 import { on, serve, serveStop } from '@zerva/core'
 import { Logger, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson } from 'zeed'
-import { useHttp } from '.'
+import { useHttp } from './http'
 
 const log = Logger('test-http')
 
