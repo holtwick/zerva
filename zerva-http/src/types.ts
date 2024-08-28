@@ -1,5 +1,3 @@
-// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import type { Server } from 'node:http'
 import type { Express, NextFunction, Request, RequestHandler, Response } from 'express'
 
