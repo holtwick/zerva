@@ -59,14 +59,14 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.0",
-    "zeed": "^0.24.8"
+    "zeed": "^0.24.13"
   },
   "devDependencies": {
-    "@types/node": "^22.5.0",
+    "@types/node": "^22.5.1",
     "@zerva/bin": "workspace:*",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5",
-    "vue-tsc": "^2.0.29"
+    "vue-tsc": "^2.1.2"
   }
 }
