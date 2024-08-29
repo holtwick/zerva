@@ -51,5 +51,12 @@
     "**/dist/**",
     "**/cypress/**",
     "**/.{idea,git,cache,output,temp}/**"
-  ]
+  ],
+
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  }
 }

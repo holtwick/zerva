@@ -68,6 +68,39 @@ log('settings', {
   redirectUri,
 })
 
+async function getTokenWithCode(code: string) {
+  // https://www.oauth.com/oauth2-servers/accessing-data/obtaining-an-access-token/
+  return await fetchJson(accessTokenUri, fetchOptionsJson({
+    grant_type: 'authorization_code',
+    client_id: clientId,
+    client_secret: clientSecret,
+    redirect_uri: redirectUri,
+    code,
+  }))
+}
+
+async function getTokenRefresh(refresh_token: string) {
+  // https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/
+  return await fetchJson(accessTokenUri, fetchOptionsJson({
+    grant_type: 'refresh_token',
+    client_id: clientId,
+    client_secret: clientSecret,
+    redirect_uri: redirectUri,
+    refresh_token,
+  }))
+}
+
+/** Middleware for oauth2 */
+function oauth2(req: Request, res: Response, next: NextFunction) {
+  log.info('middleware oauth', req.url)
+  if (!req.session.authInfo?.access_token) {
+    log('requires login')
+    req.session.lastUrl = req.url
+    res.redirect(307, '/login')
+  }
+  next()
+}
+
 on('httpInit', (info) => {
   const { app, onGET } = info
 
@@ -99,41 +132,6 @@ on('httpInit', (info) => {
       <pre>${JSON.stringify(req.session.authInfo, null, 2)}</pre>
     </p>`,
   )
-
-  async function getTokenWithCode(code: string) {
-    // https://www.oauth.com/oauth2-servers/accessing-data/obtaining-an-access-token/
-    return await fetchJson(accessTokenUri, fetchOptionsJson({
-      grant_type: 'authorization_code',
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      code,
-    }))
-  }
-
-  async function getTokenRefresh(refresh_token: string) {
-    // https://www.oauth.com/oauth2-servers/making-authenticated-requests/refreshing-an-access-token/
-    return await fetchJson(accessTokenUri, fetchOptionsJson({
-      grant_type: 'refresh_token',
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      refresh_token,
-    }))
-  }
-
-  /** Middleware for oauth2 */
-  function oauth2(req: Request, res: Response, next: NextFunction) {
-    log.info('middleware oauth', req.url)
-    if (!req.session.authInfo?.access_token) {
-      log('requires login')
-      req.session.lastUrl = req.url
-      res.redirect(307, '/login')
-    }
-    next()
-  }
-
-  //
 
   onGET(callbackPath, async ({ req, res }) => {
     log('auth', req.query)
