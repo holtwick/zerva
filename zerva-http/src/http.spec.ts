@@ -9,6 +9,10 @@ const log = Logger('test-http')
 const port = 8888
 const url = `http://localhost:${port}`
 
+function middleware(req: any, res: any, next: any) {
+  res.set('X-Test', '123')
+  next()
+}
 describe('http', () => {
   beforeAll(async () => {
     useHttp({ port })
@@ -18,11 +22,6 @@ describe('http', () => {
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
-
-      function middleware(req: any, res: any, next: any) {
-        res.set('X-Test', '123')
-        next()
-      }
 
       onGET('/hello', middleware, 'Hello World')
       onGET('/json', { itIs: 'json', v: 1 })

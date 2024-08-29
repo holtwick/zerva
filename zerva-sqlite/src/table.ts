@@ -41,6 +41,18 @@ export type SqliteColTypes = keyof typeof _affinity
 
 const affinity = _affinity as Record<string, string>
 
+function getAffinity(name: any) {
+  return affinity[String(name)] ?? 'text'
+}
+
+function normalizeValue(value: any): Primitive {
+  if (isBoolean(value))
+    return value ? 1 : 0
+  if (!isPrimitive(value))
+    return String(value)
+  return value
+}
+
 /** Redefine accoring to interface to create correct field types */
 export type SqliteTableColsDefinition<T, TT = Omit<T, 'id' | 'updated' | 'created'>, K extends keyof TT = keyof TT> = {
   [key in K]: SqliteColTypes
@@ -60,10 +72,6 @@ export function useSqliteTable<
 ) {
   const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement> = {}
-
-  function getAffinity(name: any) {
-    return affinity[String(name)] ?? 'text'
-  }
 
   // Check current state
   const _tableInfoStatement = db.prepare(`PRAGMA table_info(${tableName})`)
@@ -170,14 +178,6 @@ export function useSqliteTable<
   function get(id: number | string): ColFullType | undefined {
     if (id != null)
       return _getStatement.get(id) as any
-  }
-
-  function normalizeValue(value: any): Primitive {
-    if (isBoolean(value))
-      return value ? 1 : 0
-    if (!isPrimitive(value))
-      return String(value)
-    return value
   }
 
   const getNow = (globalThis as any).TEST ? () => 0 : getTimestamp

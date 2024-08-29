@@ -69,6 +69,14 @@ export function escapeSQLValueSingleQuotes(value: any) {
   return `'${String(value).replace(/'/g, '\'\'')}'`
 }
 
+function normalizeValue(value: any): Primitive {
+  if (isBoolean(value))
+    return value ? 1 : 0
+  if (!isPrimitive(value))
+    return String(value)
+  return value
+}
+
 /**
  * Basic fields of every table with
  *
@@ -80,6 +88,10 @@ export interface SqliteTableDefault {
   id: number
   created: number
   updated: number
+}
+
+function getAffinity(name: any) {
+  return affinity[String(name)] ?? 'text'
 }
 
 /** Only use via `useSqliteDatabase`! */
@@ -96,10 +108,6 @@ export function useSqliteTable<
 ) {
   const primaryKeyName = 'id'
   const statementsCache: Record<string, SqliteStatement<any>> = {}
-
-  function getAffinity(name: any) {
-    return affinity[String(name)] ?? 'text'
-  }
 
   // Check current state
   const _tableInfoStatement = db.prepare(`PRAGMA table_info(${tableName})`)
@@ -211,14 +219,6 @@ export function useSqliteTable<
   function get(id: number | string): ColFullType | undefined {
     if (id != null)
       return _getStatement.get(id) ?? undefined
-  }
-
-  function normalizeValue(value: any): Primitive {
-    if (isBoolean(value))
-      return value ? 1 : 0
-    if (!isPrimitive(value))
-      return String(value)
-    return value
   }
 
   const getNow = (globalThis as any).TEST ? () => 0 : getTimestamp

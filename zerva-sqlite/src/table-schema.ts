@@ -13,6 +13,19 @@ const log = Logger('sqlite:table')
   didDelete: (id: number) => any
 } */
 
+// todo respect schema
+function normalizeValue(value: any): Primitive {
+  if (isBoolean(value))
+    return value ? 1 : 0
+  if (!isPrimitive(value))
+    return String(value)
+  return value
+}
+
+function getNow(): number {
+  return (globalThis as any).TEST ? 0 : getTimestamp()
+}
+
 export interface SelectDescription<ColFullType> {
   conditions?: Partial<ColFullType>
   limit?: number
@@ -156,17 +169,6 @@ export function useSqliteTableWithSchema<
     if (id != null)
       return _getStatement.get(id) as any
   }
-
-  // todo respect schema
-  function normalizeValue(value: any): Primitive {
-    if (isBoolean(value))
-      return value ? 1 : 0
-    if (!isPrimitive(value))
-      return String(value)
-    return value
-  }
-
-  const getNow = (globalThis as any).TEST ? () => 0 : getTimestamp
 
   const _insertStatement = db.prepare(`INSERT INTO ${tableName} (created, updated, ${sortedFields.join(', ')}) VALUES(?, ?, ${sortedFields.map(_ => '?').join(', ')})`)
 
