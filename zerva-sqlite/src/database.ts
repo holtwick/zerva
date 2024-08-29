@@ -8,7 +8,7 @@ import { useSqliteTableWithSchema } from './table-schema'
 import { escapeSQLValueSingleQuotes } from './_types'
 
 export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
-  const dispose: any = useDispose()
+  const dispose = useDispose()
 
   if (name == null)
     name = ':memory:'
@@ -21,21 +21,12 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   dispose.add(() => db.close())
 
   function transaction(fn: (...args: any[]) => any) {
-    return db.transaction(fn) as any
+    return db.transaction(fn)
   }
 
   function table<T>(tableName: string, fields: SqliteTableColsDefinition<T>) {
     return useSqliteTable<T>(db, tableName, fields)
   }
-
-  // function tableFromSchema<T>(schema: Type<T>): SqliteTableColsDefinition<T> {
-  //   const info = {}
-  //   log.assert(schema._object, 'object required')
-  //   for (const [key, type] of Object.entries(schema._object)) {
-  //     info[key] = mapTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
-  //   }
-  //   return info as any
-  // }
 
   function tableWithSchema<O extends Type<any>, T = Infer<O>>(tableName: string, schema: O) {
     return useSqliteTableWithSchema(db, tableName, schema)
@@ -50,14 +41,20 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
       statements.push(String(statement))
     }
 
-    const tables = db.prepare('SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE \'sqlite_%\'').all() as any
+    interface SqliteMasterRow {
+      name: string
+      type: 'table' | 'index' | 'view' | 'trigger'
+      sql: string
+    }
+
+    const tables = db.prepare('SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE \'sqlite_%\'').all() as SqliteMasterRow[]
     for (const tableDefinition of tables) {
       add(tableDefinition.sql)
 
       if (tableDefinition.type === 'table') {
-        const values = db.prepare(`SELECT * FROM ${tableDefinition.name} LIMIT 100`).all()
+        const values = db.prepare(`SELECT * FROM ${tableDefinition.name} LIMIT 100`).all() as any[]
         const sortedFields = Object.keys(values[0] ?? {})
-        for (const row of values as any[])
+        for (const row of values)
           add(`INSERT INTO ${tableDefinition.name} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(name => escapeSQLValueSingleQuotes(row[name])).join(', ')})`)
       }
     }
@@ -66,7 +63,7 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   }
 
   return {
-    db: db as SqliteDatabase,
+    db,
     table,
     tableWithSchema,
     transaction,
