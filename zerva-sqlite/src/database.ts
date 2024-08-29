@@ -50,14 +50,14 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
       statements.push(String(statement))
     }
 
-    const tables = db.prepare('SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE \'sqlite_%\'').all()
+    const tables = db.prepare('SELECT name, type, sql FROM sqlite_master WHERE name NOT LIKE \'sqlite_%\'').all() as any
     for (const tableDefinition of tables) {
       add(tableDefinition.sql)
 
       if (tableDefinition.type === 'table') {
         const values = db.prepare(`SELECT * FROM ${tableDefinition.name} LIMIT 100`).all()
         const sortedFields = Object.keys(values[0] ?? {})
-        for (const row of values)
+        for (const row of values as any[])
           add(`INSERT INTO ${tableDefinition.name} (${sortedFields.join(', ')}) VALUES(${sortedFields.map(name => escapeSQLValueSingleQuotes(row[name])).join(', ')})`)
       }
     }

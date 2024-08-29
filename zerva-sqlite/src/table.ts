@@ -156,12 +156,12 @@ export function useSqliteTable<
 
   function findOne(cols: Partial<ColFullType>): ColFullType | undefined {
     const { statement, values } = findPrepare(cols, 1)
-    return statement.get(values)
+    return statement.get(values) as any
   }
 
   function findAll(cols?: Partial<ColFullType>, orderBy?: OrderByMany<string>, limit?: number): ColFullType[] {
     const { statement, values } = findPrepare(cols, limit, orderBy)
-    return statement.all(values) ?? []
+    return statement.all(values) as any
   }
 
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
@@ -169,7 +169,7 @@ export function useSqliteTable<
   /** Query row with `id`  */
   function get(id: number | string): ColFullType | undefined {
     if (id != null)
-      return _getStatement.get(id)
+      return _getStatement.get(id) as any
   }
 
   function normalizeValue(value: any): Primitive {
@@ -188,7 +188,7 @@ export function useSqliteTable<
   function insert(obj: ColTypeInsert): number | undefined {
     try {
       const now = getNow()
-      return _insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid
+      return Number(_insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid)
     }
     catch (err) {
       log('insert err', err)
@@ -263,7 +263,7 @@ export function useSqliteTable<
 
   /** Your SELECT query, your args, all optimized and cached */
   function query(sql: string, ...args: any): ColFullType[] {
-    return prepare(sql).all(args)
+    return prepare(sql).all(args) as any
   }
 
   /** Get all rows and `orderBy` */
@@ -273,7 +273,8 @@ export function useSqliteTable<
 
   /** Get number of rows  */
   function count(): number {
-    return prepare(`SELECT count(id) AS count FROM ${tableName}`).get().count
+    const result = prepare(`SELECT count(id) AS count FROM ${tableName}`).get() as any
+    return result?.count ?? 0
   }
 
   /** Create index `idx_table_field` of column `field` if not exists. */

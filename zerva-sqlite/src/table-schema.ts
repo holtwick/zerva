@@ -37,7 +37,7 @@ export function useSqliteTableWithSchema<
     throw new Error('object schema required')
 
   const fields: Record<string, any> = {}
-  for (const [key, type] of Object.entries(obj)) {
+  for (const [key, type] of Object.entries(obj) as [string, Type<any>][]) {
     fields[key] = mapSchemaTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
   }
 
@@ -141,12 +141,12 @@ export function useSqliteTableWithSchema<
 
   function findOne(conditions: Partial<ColFullType>): ColFullType | undefined {
     const { statement, values } = findPrepare({ conditions, limit: 1 })
-    return statement.get(values)
+    return statement.get(values) as any
   }
 
   function findAll(opt?: SelectDescription<ColFullType>): ColFullType[] {
     const { statement, values } = findPrepare(opt)
-    return statement.all(values) ?? []
+    return statement.all(values) as any
   }
 
   const _getStatement = db.prepare(`SELECT * FROM ${tableName} WHERE ${primaryKeyName}=? LIMIT 1`)
@@ -154,7 +154,7 @@ export function useSqliteTableWithSchema<
   /** Query row with `id`  */
   function get(id: number | string): ColFullType | undefined {
     if (id != null)
-      return _getStatement.get(id)
+      return _getStatement.get(id) as any
   }
 
   // todo respect schema
@@ -174,7 +174,7 @@ export function useSqliteTableWithSchema<
   function insert(obj: ColTypeInsert): number | undefined {
     try {
       const now = getNow()
-      return _insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid
+      return Number(_insertStatement.run([now, now, ...sortedFields.map(field => normalizeValue((obj as any)[field]))]).lastInsertRowid)
     }
     catch (err) {
       log('insert err', err)
@@ -249,12 +249,13 @@ export function useSqliteTableWithSchema<
 
   /** Your SELECT query, your args, all optimized and cached */
   function query(sql: string, ...args: any): ColFullType[] {
-    return prepare(sql).all(args)
+    return prepare(sql).all(args) as any
   }
 
   /** Get number of rows  */
   function count(): number {
-    return prepare(`SELECT count(id) AS count FROM ${tableName}`).get().count
+    const result = prepare(`SELECT count(id) AS count FROM ${tableName}`).get() as any
+    return result?.count ?? 0
   }
 
   /** Create index `idx_table_field` of column `field` if not exists. */
