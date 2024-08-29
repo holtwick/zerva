@@ -1,5 +1,5 @@
 import type { Infer, Primitive, Type } from 'zeed'
-import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive } from 'zeed'
 import type { OrderByMany, SqliteTableDefault } from './_types'
 import { mapSchemaTypeToField } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
