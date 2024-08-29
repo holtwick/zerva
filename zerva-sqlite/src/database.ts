@@ -1,11 +1,11 @@
+import BetterSqlite3 from 'better-sqlite3'
 import type { Infer, Type } from 'zeed'
 import { useDispose } from 'zeed'
-import type { SqliteDatabase, SqliteOptions } from './sqlite'
-import { BetterSqlite3 } from './sqlite'
+import { escapeSQLValueSingleQuotes } from './_types'
+import type { SqliteDatabase, SqliteOptions, SqliteTransaction } from './sqlite'
 import type { SqliteTableColsDefinition } from './table'
 import { useSqliteTable } from './table'
 import { useSqliteTableWithSchema } from './table-schema'
-import { escapeSQLValueSingleQuotes } from './_types'
 
 export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   const dispose = useDispose()
@@ -17,10 +17,10 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
     name += '.sqlite'
 
   // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
-  const db: SqliteDatabase = new BetterSqlite3(name, opt)
+  const db = new BetterSqlite3(name, opt)
   dispose.add(() => db.close())
 
-  function transaction(fn: (...args: any[]) => any) {
+  function transaction(fn: (...args: any[]) => any): SqliteTransaction {
     return db.transaction(fn)
   }
 
@@ -63,7 +63,7 @@ export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   }
 
   return {
-    db,
+    db: db as SqliteDatabase,
     table,
     tableWithSchema,
     transaction,
