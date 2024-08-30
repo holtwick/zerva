@@ -1,5 +1,3 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { Logger, createPromise, uuid } from 'zeed'

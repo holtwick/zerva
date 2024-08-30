@@ -1,5 +1,3 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import process from 'node:process'
 import { Logger } from 'zeed'
 import { emit, getContext, on } from './context'
