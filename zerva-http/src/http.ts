@@ -1,5 +1,3 @@
-// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
-
 /* eslint-disable no-console */
 
 import fs from 'node:fs'

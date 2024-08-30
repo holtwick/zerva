@@ -1,5 +1,3 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import { on, serve, serveStop } from '@zerva/core'
 import { Logger, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson } from 'zeed'
 import { useHttp } from './http'
@@ -13,6 +11,7 @@ function middleware(req: any, res: any, next: any) {
   res.set('X-Test', '123')
   next()
 }
+
 describe('http', () => {
   beforeAll(async () => {
     useHttp({ port })
@@ -56,9 +55,9 @@ describe('http', () => {
 
     expect(
       (await (await fetch(`${url}/index.ts`)).text()).split('\n')[0],
-    ).toEqual(
-      '// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.',
-    )
+    ).toMatchInlineSnapshot(
+
+    `"export * from './types'"`)
 
     // Json
     expect(

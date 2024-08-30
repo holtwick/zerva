@@ -1,5 +1,3 @@
-// (C)opyright 2021-07-15 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import type { DisposerFunction } from 'zeed'
 import { Logger, arrayFlatten, getGlobalContext, useDispose } from 'zeed'
 import { ZContext } from './types'

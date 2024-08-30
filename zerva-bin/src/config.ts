@@ -1,8 +1,6 @@
 /* eslint-disable ts/no-require-imports */
 /* eslint-disable no-console */
 
-// (C)opyright 2021 Dirk Holtwick, holtwick.de. All rights reserved.
-
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
