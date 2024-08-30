@@ -1,5 +1,3 @@
-// (C)opyright 2021 Dirk Holtwick, holtwick.it. All rights reserved.
-
 import { on, register } from '@zerva/core'
 import '@zerva/http'
 import { Logger } from 'zeed'
