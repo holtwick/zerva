@@ -1,11 +1,13 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { sync } from 'fast-glob'
+import { files } from 'zeed'
 
 async function main() {
   const { default: sortPackageJson } = await import('sort-package-json')
 
-  for (const name of sync(['!**/node_modules', '*/package.json'])) {
+  const fileNames = files({ pattern: 'zerva-*/package.json' })
+
+  for (const name of fileNames) { // sync(['!**/node_modules', '*/package.json'])) {
     // Skip by path
     if (name.includes('node_modules/'))
       continue
@@ -109,7 +111,7 @@ async function main() {
 
     pkg = sortPackageJson(pkg)
     content = `${JSON.stringify(pkg, null, 2)}\n` // trailing \n also from pnpm etc.
-    writeFileSync(name, content, 'utf8')
+    // writeFileSync(name, content, 'utf8')
   }
 }
 
