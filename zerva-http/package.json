@@ -1,7 +1,7 @@
 {
   "name": "@zerva/http",
   "type": "module",
-  "version": "0.59.1",
+  "version": "0.60.0",
   "description": "🌱 Zerva Express HTTP",
   "author": {
     "name": "Dirk Holtwick",
@@ -20,7 +20,6 @@
   ],
   "exports": {
     ".": {
-      "browser": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     }

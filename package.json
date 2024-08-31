@@ -1,7 +1,7 @@
 {
   "name": "@zerva/monorepo",
   "type": "module",
-  "version": "0.59.2",
+  "version": "0.60.0",
   "private": true,
   "engines": {
     "node": ">=20.0.0"
@@ -31,7 +31,6 @@
     "@types/node": "^22.5.1",
     "bumpp": "^9.5.2",
     "eslint": "^9.9.1",
-    "fast-glob": "^3.3.2",
     "only-allow": "^1.2.1",
     "sort-package-json": "^2.10.1",
     "tsup": "^8.2.4",

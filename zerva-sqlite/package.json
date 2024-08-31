@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite",
   "type": "module",
-  "version": "0.59.1",
+  "version": "0.60.0",
   "private": false,
   "description": "",
   "author": {
@@ -15,8 +15,7 @@
     "url": "https://github.com/sponsors/holtwick"
   },
   "exports": {
-    ".": {
-      "browser": "./dist/index.js",
+    ".": {      
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     }
