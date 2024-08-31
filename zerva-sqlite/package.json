@@ -15,8 +15,7 @@
     "url": "https://github.com/sponsors/holtwick"
   },
   "exports": {
-    ".": {
-      "browser": "./dist/index.js",
+    ".": {      
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     }
