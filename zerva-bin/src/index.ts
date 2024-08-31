@@ -31,6 +31,7 @@ is restarted on every update.
 --define=key:value  Text replacement before compiling (see esbuild)
 --esbuild=key:value Additional esbuild configs
 --node=arg          Command line argument to be added to node execution
+--mode=mode         Is passed to process.env.ZERVA_MODE and is used in @zerva/vite
 --bun               Execute with bun.sh
 --deno              Execute with deno.com
 `,

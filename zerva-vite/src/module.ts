@@ -29,7 +29,7 @@ export function useVite(config?: {
   log(`use ${moduleName} ${process.env.ZERVA}`)
   register(moduleName, ['http'])
 
-  // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development' || process.env.ZERVA_MODE === 'development'
+  // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
   const {
     root = process.cwd(),
@@ -61,7 +61,7 @@ export function useVite(config?: {
       const { createServer } = await import('vite')
 
       const config: InlineConfig = {
-        mode,
+        mode: process.env.ZERVA_MODE ?? mode,
         root: rootPath,
         server: {
           middlewareMode: true,

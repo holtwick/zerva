@@ -245,6 +245,7 @@ const __dirname = (await import("node:path")).dirname(__filename)`
       'ZERVA_DEVELOPMENT': String(!config.build),
       'ZERVA_PRODUCTION': String(config.build),
       'ZERVA_VERSION': `"${config.version}"`,
+      'ZERVA_MODE': String(config.mode),
       'process.env.ZERVA_DEVELOPMENT': String(!config.build),
       'process.env.ZERVA_PRODUCTION': String(config.build),
       'process.env.ZERVA_VERSION': `"${config.version}"`,

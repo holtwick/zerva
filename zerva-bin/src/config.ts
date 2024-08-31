@@ -8,46 +8,48 @@ import { arrayRemoveElement, parseArgs } from 'zeed'
 import { entryCandidates } from './static'
 
 export interface ZervaConf {
-  version: string
+  args: any
   build: boolean
   bun: boolean
-  deno: boolean
-  outfile: string
-  metafile: boolean
-  help: boolean
-  esm: boolean
   cjs: boolean
-  sourcemap: boolean
-  entry: string
   debug: boolean
-  open: boolean
-  external: string[]
-  node: []
   define: Record<string, string>
-  loader: Record<string, string>
+  deno: boolean
+  entry: string
   esbuild: Record<string, string>
-  args: any
+  esm: boolean
+  external: string[]
+  help: boolean
+  loader: Record<string, string>
+  metafile: boolean
+  mode: string
+  node: []
+  open: boolean
+  outfile: string
+  sourcemap: boolean
+  version: string
 }
 
 export function getConfig(): ZervaConf {
   const config: Partial<ZervaConf> = {
+    args: {},
     build: false,
     bun: false,
-    deno: false,
-    help: false,
-    esm: true,
     cjs: false,
-    version: '',
-    metafile: true,
-    sourcemap: true,
     debug: false,
-    open: false,
-    external: [],
     define: {},
-    loader: {},
+    deno: false,
     esbuild: {},
+    esm: true,
+    external: [],
+    help: false,
+    loader: {},
+    metafile: true,
+    mode: 'development',
     node: [],
-    args: {},
+    open: false,
+    sourcemap: true,
+    version: '',
   }
 
   try {
@@ -83,6 +85,7 @@ export function getConfig(): ZervaConf {
   config.external = args.external ?? []
   config.node = args.node ?? []
   config.build = args.build ?? args._.includes('build')
+  config.mode = args.mode ?? (config.build ? 'production' : 'development')
   config.esm = args.cjs !== true // default
   config.bun = args.bun
   config.deno = args.deno
@@ -104,7 +107,6 @@ export function getConfig(): ZervaConf {
 
   if (config.build) {
     config.outfile = args.outfile ?? resolve(`dist/main.${suffix}`)
-    config.build = true
   }
   else {
     config.outfile = args.outfile ?? resolve(`.out.${suffix}`)
