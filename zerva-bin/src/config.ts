@@ -4,7 +4,7 @@
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { arrayRemoveElement, parseArgs } from 'zeed'
+import { arrayRemoveElement, parseArgs, setupEnv } from 'zeed'
 import { entryCandidates } from './static'
 
 export interface ZervaConf {
@@ -127,5 +127,12 @@ export function getConfig(): ZervaConf {
 
   if (config.debug)
     console.log('config =', config)
+
+  // .env. and .env.local
+  // .env.MODE and .env.MODE.local
+  setupEnv({ mode: config.mode })
+  if (config.debug)
+    console.log('env =', process.env)
+
   return config as ZervaConf
 }
