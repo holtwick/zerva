@@ -197,7 +197,7 @@ export function useHttp(config?: {
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
         try {
           log(`${mode.toUpperCase()} ${path}`)
-          log('headers =', req.headers)
+          // log('headers =', req.headers)
 
           // todo maybe later?
           if (suffix)
