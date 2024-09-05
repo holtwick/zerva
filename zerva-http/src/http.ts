@@ -196,7 +196,7 @@ export function useHttp(config?: {
     for (const handler of handlers) {
       app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
         try {
-          log(`${mode.toUpperCase()} ${path}`)
+          log(`${mode.toUpperCase()} ${path} ${path !== req.url ? `-> ${req.url}` : ''}`)
           // log('headers =', req.headers)
 
           // todo maybe later?
