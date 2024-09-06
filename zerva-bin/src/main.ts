@@ -26,6 +26,8 @@ export async function runMain(config: ZervaConf) {
     yamlPlugin({}),
   ]
 
+  let openBrowser = config.open
+
   if (!config.build) {
     //
     // Forced exit like CTRL-c
@@ -139,9 +141,13 @@ export async function runMain(config: ZervaConf) {
             ...process.env,
             ZERVA_MODE: 'development',
             ZERVA_VERSION: config.version,
+            ZERVA_HTTP_OPEN: String(openBrowser),
           },
         },
       )
+
+      // Only once
+      openBrowser = false
 
       console.info('\nZerva: Starting app')
       zervaNodeProcess.on('error', (err) => {
