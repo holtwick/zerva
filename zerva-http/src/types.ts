@@ -23,12 +23,21 @@ export type zervaHttpGetHandler =
     req: Request
   }), res: Response, next: NextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
 
+export interface ZervaHttpRouteDescription {
+  path: string
+  method: string
+  description: string
+}
+
 export interface zervaHttpInterface {
   /** Express app */
   app: Express
 
   /** Node http */
   http: Server
+
+  /** Reflects the registeres routes */
+  routes: ZervaHttpRouteDescription[]
 
   /** GET */
   get: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => void
