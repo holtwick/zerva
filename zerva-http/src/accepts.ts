@@ -6,8 +6,8 @@
  * MIT Licensed
  */
 
-import Negotiator from 'negotiator'
 import mime from 'mime'
+import Negotiator from 'negotiator'
 
 function Accepts(this: any, req: any) {
   if (!(this instanceof Accepts)) {

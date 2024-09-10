@@ -1,5 +1,5 @@
-import type { Server } from 'node:http'
 import type { Express, NextFunction, Request, RequestHandler, Response } from 'express'
+import type { Server } from 'node:http'
 
 export type { Server }
 export type { Express, NextFunction, Request, RequestHandler, Response }

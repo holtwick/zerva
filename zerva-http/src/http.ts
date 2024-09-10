@@ -3,20 +3,20 @@
 import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
-import type { AddressInfo } from 'node:net'
 import process from 'node:process'
 import { emit, on, register } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
-import type { HelmetOptions } from 'helmet'
 import helmetDefault from 'helmet'
+import { isLocalHost, isString, LoggerFromConfig, LogLevelInfo, promisify, valueToBoolean } from 'zeed'
+import type { HelmetOptions } from 'helmet'
+import type { AddressInfo } from 'node:net'
 import type { LogConfig } from 'zeed'
-import { LogLevelInfo, LoggerFromConfig, isLocalHost, isString, promisify, valueToBoolean } from 'zeed'
 import { compressionMiddleware } from './compression'
 import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
 
-export * from './types'
 export * from './status'
+export * from './types'
 
 const moduleName = 'http'
 
@@ -179,13 +179,24 @@ export function useHttp(config?: {
     log.error('client request error', err)
   })
 
+  interface ZervaHttpRouteDescription {
+    path: string
+    method: string
+    description: string
+  }
+
+  const routes: ZervaHttpRouteDescription[] = []
+
   function smartRequestHandler(
     mode: zervaHttpHandlerModes,
     path: zervaHttpPaths,
     handlers: zervaHttpGetHandler[],
-  ): void {
+  ) {
     if (isString(path) && !path.startsWith('/'))
       path = `/${path}`
+
+    const route: ZervaHttpRouteDescription = { path: String(path), method: mode, description: '' }
+    routes.push(route)
 
     log(`register ${mode.toUpperCase()} ${path}`)
 
@@ -243,6 +254,12 @@ export function useHttp(config?: {
         }
       })
     }
+
+    return {
+      description(description: string) {
+        route.description = description
+      },
+    }
   }
 
   function addStatic(path: zervaHttpPaths, fsPath: string): void {
@@ -286,6 +303,7 @@ export function useHttp(config?: {
       addStatic,
       static: addStatic,
       STATIC: addStatic,
+      routes,
     } as any)
   })
 
@@ -315,6 +333,7 @@ export function useHttp(config?: {
       addStatic,
       static: addStatic,
       STATIC: addStatic,
+      routes,
     } as any)
     server.listen({ host, port }, () => {
       const { port, family, address } = server.address() as AddressInfo
