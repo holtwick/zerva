@@ -1,5 +1,5 @@
+import { boolean, float, int, Logger, object, string } from 'zeed'
 import type { LoggerInterface } from 'zeed'
-import { Logger, boolean, float, int, object, string } from 'zeed'
 import { useSqliteDatabase } from './index'
 
 const log: LoggerInterface = Logger('schema.spec')
