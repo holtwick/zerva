@@ -1,7 +1,7 @@
 {
   "name": "@zerva/email",
   "type": "module",
-  "version": "0.60.0",
+  "version": "0.61.0",
   "description": "🌱 Zerva send email service",
   "author": {
     "name": "Dirk Holtwick",
@@ -53,11 +53,11 @@
     "@types/nodemailer": "^6.4.15",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "nodemailer": "^6.9.14",
-    "zeed": "^0.24.13"
+    "nodemailer": "^6.9.15",
+    "zeed": "^0.24.17"
   },
   "devDependencies": {
-    "@types/node": "^22.5.1",
+    "@types/node": "^22.5.4",
     "tsup": "^8.2.4"
   }
 }

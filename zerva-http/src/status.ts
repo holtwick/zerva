@@ -1,5 +1,5 @@
-import type { LoggerInterface } from 'zeed'
 import { Logger } from 'zeed'
+import type { LoggerInterface } from 'zeed'
 
 const log: LoggerInterface = Logger('status')
 
