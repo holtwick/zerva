@@ -1,5 +1,5 @@
 import { on, serve, serveStop } from '@zerva/core'
-import { Logger, fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson } from 'zeed'
+import { fetchJson, fetchOptionsFormURLEncoded, fetchOptionsJson, Logger } from 'zeed'
 import { useHttp } from './http'
 
 const log = Logger('test-http')
@@ -57,7 +57,7 @@ describe('http', () => {
       (await (await fetch(`${url}/index.ts`)).text()).split('\n')[0],
     ).toMatchInlineSnapshot(
 
-    `"export * from './types'"`)
+      `"export * from './http'"`)
 
     // Json
     expect(

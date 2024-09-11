@@ -13,7 +13,7 @@ import type { HelmetOptions } from 'helmet'
 import type { AddressInfo } from 'node:net'
 import type { LogConfig } from 'zeed'
 import { compressionMiddleware } from './compression'
-import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths } from './types'
+import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
 
 export * from './status'
 export * from './types'
@@ -178,12 +178,6 @@ export function useHttp(config?: {
   server.on('clientError', (err: Error) => {
     log.error('client request error', err)
   })
-
-  interface ZervaHttpRouteDescription {
-    path: string
-    method: string
-    description: string
-  }
 
   const routes: ZervaHttpRouteDescription[] = []
 
@@ -365,6 +359,7 @@ export function useHttp(config?: {
   return {
     app,
     http: server,
+    routes,
     get: GET,
     post: POST,
     put: PUT,
