@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-import type { ChildProcess } from 'node:child_process'
 import { spawn } from 'node:child_process'
+import { chmodSync } from 'node:fs'
 import { chmod } from 'node:fs/promises'
 import { normalize } from 'node:path'
-import { chmodSync } from 'node:fs'
 import process from 'node:process'
-import type { BuildOptions, Plugin } from 'esbuild'
+import displayNotification from 'display-notification'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
-import displayNotification from 'display-notification'
 import { valueToBoolean } from 'zeed'
+import type { BuildOptions, Plugin } from 'esbuild'
+import type { ChildProcess } from 'node:child_process'
 import type { ZervaConf } from './config'
 
 const DEFAULT_EXCLUDE = [

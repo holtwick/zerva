@@ -1,7 +1,7 @@
 import { emit, on } from '@zerva/core'
 import { useWebSocket } from '@zerva/websocket'
+import { LoggerFromConfig, LogLevelInfo, useDisposeWithUtils } from 'zeed'
 import type { Channel, LogConfig, UseDisposeWithUtils, useRPCHub } from 'zeed'
-import { LogLevelInfo, LoggerFromConfig, useDisposeWithUtils } from 'zeed'
 import { rpcSocketName } from './_types'
 import { createRPCHub } from './rpc-hub'
 

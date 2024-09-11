@@ -1,5 +1,5 @@
 import { getClientIp } from 'request-ip'
-import { Logger, fetchOptionsJson, fetchText } from 'zeed'
+import { fetchOptionsJson, fetchText, Logger } from 'zeed'
 
 const log = Logger('track')
 

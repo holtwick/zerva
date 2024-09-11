@@ -1,8 +1,8 @@
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import { Logger, createPromise, uuid } from 'zeed'
-import { useWebsocketRpcHub } from './server'
+import { createPromise, Logger, uuid } from 'zeed'
 import { useWebsocketRpcHubClient } from './client'
+import { useWebsocketRpcHub } from './server'
 
 const log = Logger('test:module')
 

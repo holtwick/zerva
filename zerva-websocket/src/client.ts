@@ -1,7 +1,7 @@
 /* eslint-disable node/prefer-global/process */
 
+import { Channel, createPromise, equalBinary, getTimestamp, isBrowser, LoggerFromConfig, LogLevelInfo, useDispose, useEventListener } from 'zeed'
 import type { LogConfig, LoggerInterface } from 'zeed'
-import { Channel, LogLevelInfo, LoggerFromConfig, createPromise, equalBinary, getTimestamp, isBrowser, useDispose, useEventListener } from 'zeed'
 import { pingMessage, pongMessage, webSocketPath, wsReadyStateConnecting, wsReadyStateOpen } from './_types'
 
 // See lib0 and y-websocket for initial implementation

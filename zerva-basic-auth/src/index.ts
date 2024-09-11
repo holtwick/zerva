@@ -1,5 +1,5 @@
 import { on, register } from '@zerva/core'
-import { Logger, isRecord, size } from 'zeed'
+import { isRecord, Logger, size } from 'zeed'
 import { getCredentials } from './auth'
 import '@zerva/http'
 

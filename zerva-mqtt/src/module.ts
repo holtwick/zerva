@@ -1,7 +1,7 @@
 import { on, register } from '@zerva/core'
-import type { LogConfig } from 'zeed'
-import { LogLevelInfo, LoggerFromConfig } from 'zeed'
 import { connect } from 'mqtt'
+import { LoggerFromConfig, LogLevelInfo } from 'zeed'
+import type { LogConfig } from 'zeed'
 import type { ZMqttConfig } from './_types'
 
 const moduleName = 'mqtt'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Logger, Uint8ArrayToJson, jsonToUint8Array } from 'zeed'
 import { WebSocketConnection } from '@zerva/websocket'
+import { ref } from 'vue'
+import { jsonToUint8Array, Logger, Uint8ArrayToJson } from 'zeed'
 
 const log = Logger('app')
 log('app')

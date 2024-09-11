@@ -1,6 +1,6 @@
-import type { LoggerInterface } from 'zeed'
-import { Logger, sleep, uuid } from 'zeed'
 import { on, onStart, onStop, serve, serveStop } from '@zerva/core'
+import { Logger, sleep, uuid } from 'zeed'
+import type { LoggerInterface } from 'zeed'
 import { useHttp } from '../src'
 
 const log: LoggerInterface = Logger('demo')

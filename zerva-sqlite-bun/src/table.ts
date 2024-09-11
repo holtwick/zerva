@@ -1,6 +1,6 @@
-import type { Primitive } from 'zeed'
-import { Logger, arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString } from 'zeed'
+import { arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isNumber, isPrimitive, isString, Logger } from 'zeed'
 import type { Database as SqliteDatabase, Statement as SqliteStatement } from 'bun:sqlite'
+import type { Primitive } from 'zeed'
 // import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
 
 export interface SqliteRunResult {
