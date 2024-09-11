@@ -17,5 +17,6 @@ declare global {
 export class ZContext extends Emitter<ZContextEvents> {
   name: string = uname('context')
   modules: string[] = []
+  eventNamesEmitted: Record<string, boolean> = {}
   // config: any
 }

@@ -1,5 +1,5 @@
+import { arrayFlatten, getGlobalContext, Logger, useDispose } from 'zeed'
 import type { DisposerFunction } from 'zeed'
-import { Logger, arrayFlatten, getGlobalContext, useDispose } from 'zeed'
 import { ZContext } from './types'
 
 const log = Logger('zerva:context')
@@ -45,7 +45,9 @@ export async function emit<U extends keyof ZContextEvents>(
   ...args: Parameters<ZContextEvents[U]>
 ): Promise<boolean> {
   log('emit', event, JSON.stringify(args.map(o => typeof o)))
-  return await getContext().emit(event, ...args)
+  const ctx = getContext()
+  ctx.eventNamesEmitted[event] = true
+  return await ctx.emit(event, ...args)
 }
 
 /** Listener that binds to the current global context */
@@ -62,12 +64,21 @@ export function on<U extends keyof ZContextEvents>(
   first: Partial<ZContextEvents> | U,
   listener?: ZContextEvents[U],
 ): DisposerFunction {
-  if (typeof first === 'string' && listener != null)
-    return getContext().on(first, listener)
+  const ctx = getContext()
 
+  // Single
+  if (typeof first === 'string' && listener != null) {
+    if (ctx.eventNamesEmitted[first])
+      log.warn(`Event '${first}' has already been emitted before listener was added`)
+    return ctx.on(first, listener)
+  }
+
+  // Multiple
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
-    dispose.add(getContext().on(k as any, v))
+    if (ctx.eventNamesEmitted[k])
+      log.warn(`Event '${first}' has already been emitted before listener was added`)
+    dispose.add(ctx.on(k as any, v))
   })
   return dispose
 }
@@ -81,12 +92,21 @@ export function once<U extends keyof ZContextEvents>(
   first: Partial<ZContextEvents> | U,
   listener?: ZContextEvents[U],
 ): DisposerFunction {
-  if (typeof first === 'string' && listener != null)
-    return getContext().once(first, listener)
+  const ctx = getContext()
 
+  // Single
+  if (typeof first === 'string' && listener != null) {
+    if (ctx.eventNamesEmitted[first])
+      log.warn(`Event '${first}' has already been emitted before listener was added`)
+    return ctx.once(first, listener)
+  }
+
+  // Multiple
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
-    dispose.add(getContext().once(k as any, v))
+    if (ctx.eventNamesEmitted[k])
+      log.warn(`Event '${first}' has already been emitted before listener was added`)
+    dispose.add(ctx.once(k as any, v))
   })
   return dispose
 }
