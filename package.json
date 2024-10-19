@@ -1,7 +1,7 @@
 {
   "name": "@zerva/monorepo",
   "type": "module",
-  "version": "0.62.0",
+  "version": "0.63.0",
   "private": true,
   "engines": {
     "node": ">=20.0.0"
