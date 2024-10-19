@@ -1,9 +1,9 @@
-import { WebSocketConnection, getWebsocketUrlFromLocation } from '@zerva/websocket'
+import { getWebsocketUrlFromLocation, WebSocketConnection } from '@zerva/websocket'
+import { createPromise, Logger, useDispose } from 'zeed'
 import type { LogConfig, LoggerInterface } from 'zeed'
-import { Logger, createPromise, useDispose } from 'zeed'
 import { rpcSocketName } from './_types'
-import { createRPCHub } from './rpc-hub'
 import { ResillientChannel } from './channel-resilient'
+import { createRPCHub } from './rpc-hub'
 
 const log: LoggerInterface = Logger('rpc', false)
 

@@ -1,6 +1,6 @@
-import type { LoggerInterface } from 'zeed'
-import { Logger } from 'zeed'
 import { emit } from '@zerva/core'
+import { Logger } from 'zeed'
+import type { LoggerInterface } from 'zeed'
 import type { HassEntity } from './_types_homeassistant'
 import './_types'
 

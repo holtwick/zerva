@@ -1,8 +1,8 @@
 // Simple demo for node and CommonJS loading
 
+import { on } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useOpenApi } from '@zerva/openapi'
-import { on } from '@zerva/core'
 import data from './openapi.yaml'
 
 useHttp()

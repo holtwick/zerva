@@ -1,7 +1,7 @@
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
-import { Uint8ArrayToString, createPromise, stringToUInt8Array, useDispose, waitOn } from 'zeed'
+import { createPromise, stringToUInt8Array, Uint8ArrayToString, useDispose, waitOn } from 'zeed'
 import { WebSocketConnection } from './client'
 import { useWebSocket } from './server'
 

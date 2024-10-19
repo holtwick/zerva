@@ -1,13 +1,13 @@
-import '@zerva/http'
-import type { Buffer } from 'node:buffer'
 import { URL } from 'node:url'
 import { assertModules, emit, on, once, register } from '@zerva/core'
-import type WebSocket from 'ws'
 import { WebSocketServer } from 'ws'
-import type { LogConfig, LogLevelAliasType, LoggerInterface, UseDispose } from 'zeed'
-import { Channel, LogLevelInfo, LoggerFromConfig, equalBinary, uname, useDispose, uuid } from 'zeed'
+import { Channel, equalBinary, LoggerFromConfig, LogLevelInfo, uname, useDispose, uuid } from 'zeed'
+import type { Buffer } from 'node:buffer'
+import type WebSocket from 'ws'
+import type { LogConfig, LoggerInterface, LogLevelAliasType, UseDispose } from 'zeed'
 import { pingMessage, pongMessage, websocketName, wsReadyStateOpen } from './_types'
 import { useSingletonFlag } from './singleton'
+import '@zerva/http'
 
 const moduleName = 'websocket'
 

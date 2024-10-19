@@ -3,8 +3,8 @@
 
 import { existsSync } from 'node:fs'
 import process from 'node:process'
-import { runMain } from './main'
 import { getConfig } from './config'
+import { runMain } from './main'
 
 async function main() {
   const config = getConfig()

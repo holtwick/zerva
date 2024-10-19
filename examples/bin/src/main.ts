@@ -1,9 +1,9 @@
 // Simple demo for node and CommonJS loading
 
 import process from 'node:process'
-import { Logger, valueToInteger } from 'zeed'
 import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
+import { Logger, valueToInteger } from 'zeed'
 import { useCounter } from './module'
 
 const log = Logger('app')
