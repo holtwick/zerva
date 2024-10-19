@@ -50,14 +50,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/nodemailer": "^6.4.15",
+    "@types/nodemailer": "^6.4.16",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "nodemailer": "^6.9.15",
-    "zeed": "^0.24.17"
+    "zeed": "^0.25.3"
   },
   "devDependencies": {
-    "@types/node": "^22.5.4",
-    "tsup": "^8.2.4"
+    "@types/node": "^22.7.7",
+    "tsup": "^8.3.0"
   }
 }

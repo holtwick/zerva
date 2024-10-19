@@ -46,10 +46,10 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^22.5.4",
+    "@types/node": "^22.7.7",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.23.1",
+    "esbuild": "^0.24.0",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^0.24.17"
+    "zeed": "^0.25.3"
   }
 }
