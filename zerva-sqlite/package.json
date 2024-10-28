@@ -24,9 +24,6 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
-  "bin": {
-    "zsqlite": "bin.cjs"
-  },
   "files": [
     "bin.cjs",
     "dist"
@@ -51,15 +48,15 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "better-sqlite3": "^11.4.0",
-    "zeed": "^0.25.3"
+    "better-sqlite3": "^11.5.0",
+    "zeed": "^0.25.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",
-    "tsup": "^8.3.0",
-    "tsx": "^4.19.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
-    "vite": "^5.4.9",
-    "vitest": "^2.1.3"
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
   }
 }
