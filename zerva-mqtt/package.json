@@ -1,7 +1,7 @@
 {
   "name": "@zerva/mqtt",
   "type": "module",
-  "version": "0.63.0",
+  "version": "0.64.0",
   "description": "🌱 Zerva MQTT",
   "author": {
     "name": "Dirk Holtwick",
@@ -52,10 +52,10 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "mqtt": "^5.10.1",
-    "zeed": "^0.25.3"
+    "zeed": "^0.25.4"
   },
   "devDependencies": {
-    "@types/node": "^22.7.7",
-    "tsup": "^8.3.0"
+    "@types/node": "^22.8.1",
+    "tsup": "^8.3.5"
   }
 }
