@@ -1,13 +1,8 @@
 import { on, register } from '@zerva/core'
 import { Logger } from 'zeed'
-// @ts-expect-error we just need them raw
 import indexCss from './static/index.css.txt'
-
-// @ts-expect-error we just need them raw
 import swaggerUiCss from './static/swagger-ui.css.txt'
-// @ts-expect-error we just need them raw
 import swaggerUiBundle from './static/swagger-ui-bundle.js.txt'
-// @ts-expect-error we just need them raw
 import swaggerUiPreset from './static/swagger-ui-standalone-preset.js.txt'
 import '@zerva/http'
 
