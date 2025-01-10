@@ -1,11 +1,10 @@
+import type { InlineConfig } from 'vite'
+import type { LogConfig } from 'zeed'
 import { existsSync } from 'node:fs'
-
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { on, register } from '@zerva/core'
 import { LoggerFromConfig, LogLevelInfo, toHumanReadableFilePath, toPath } from 'zeed'
-import type { InlineConfig } from 'vite'
-import type { LogConfig } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 import '@zerva/http'
 
@@ -94,6 +93,12 @@ export function useVite(config?: {
       STATIC('', wwwPath)
 
       const multiInputCache: Record<string, string> = {}
+
+      // Cache static assets
+      app.get(/[^\/]assets\//, (req: any, res: any) => {
+        res.setHeader('Cache-Control', 'max-age=31536000, immutable')
+        // Cache-Control: max-age=31536000, immutable
+      })
 
       // Map dynamic routes to index.html
       app?.get(/.*/, (req: any, res: any) => {

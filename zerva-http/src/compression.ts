@@ -7,14 +7,14 @@
  * MIT Licensed
  */
 
+import type { IncomingMessage } from 'node:http'
+import type { Readable } from 'node:stream'
 import { Buffer } from 'node:buffer'
 import zlib from 'node:zlib'
 import bytes from 'bytes'
 import compressible from 'compressible'
 import onHeaders from 'on-headers'
 import vary from 'vary'
-import type { IncomingMessage } from 'node:http'
-import type { Readable } from 'node:stream'
 import accepts from './accepts'
 
 const cacheControlNoTransformRegExp = /(?:^|,)\s*?no-transform\s*?(?:,|$)/
