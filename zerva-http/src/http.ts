@@ -244,7 +244,7 @@ export function useHttp(config?: {
           }
         }
         catch (err) {
-          log.warn(`Problems handling reuest for ${path}`, err)
+          log.warn(`Problems handling request for ${path}`, err)
         }
       })
     }
