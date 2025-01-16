@@ -48,7 +48,7 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "better-sqlite3": "^11.7.2",
+    "better-sqlite3": "<11.8.0",
     "zeed": "^0.27.1"
   },
   "devDependencies": {
