@@ -1,7 +1,7 @@
-import { arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive, Logger } from 'zeed'
 import type { Primitive } from 'zeed'
 import type { OrderByMany, SqliteTableDefault } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
+import { arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive, Logger } from 'zeed'
 
 const log = Logger('sqlite:table')
 

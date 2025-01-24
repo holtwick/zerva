@@ -23,6 +23,7 @@ export function useVite(config?: {
   www?: string
   mode?: string
   // hmr?: boolean
+  cacheAssets?: boolean
 }) {
   const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
   log(`use ${moduleName} ${process.env.ZERVA}`)
@@ -35,6 +36,7 @@ export function useVite(config?: {
     www = './dist_www',
     mode = (ZERVA_DEVELOPMENT ? 'development' : 'production'),
     // hmr = true,
+    cacheAssets = true,
   } = config ?? {}
 
   const rootPath = toPath(root)
@@ -95,10 +97,15 @@ export function useVite(config?: {
       const multiInputCache: Record<string, string> = {}
 
       // Cache static assets
-      app.get(/[^\/]assets\//, (req: any, res: any) => {
-        res.setHeader('Cache-Control', 'max-age=31536000, immutable')
-        // Cache-Control: max-age=31536000, immutable
-      })
+      if (cacheAssets) {
+        app.use((req, res, next) => {
+          const path = req.path
+          if (path.includes('/assets/') || /.*\.(?:png|ico|svg|jpg|pdf|jpeg|mp4|mp3|woff2|ttf|tflite)$/.test(req.path)) {
+            res.setHeader('Cache-Control', 'max-age=31536000, immutable')
+          }
+          next()
+        })
+      }
 
       // Map dynamic routes to index.html
       app?.get(/.*/, (req: any, res: any) => {

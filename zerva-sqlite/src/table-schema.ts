@@ -1,8 +1,8 @@
-import { arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive, Logger } from 'zeed'
 import type { Infer, Primitive, Type } from 'zeed'
-import { mapSchemaTypeToField } from './_types'
 import type { OrderByMany, SqliteTableDefault } from './_types'
 import type { SqliteDatabase, SqliteRunResult, SqliteStatement } from './sqlite'
+import { arrayMinus, arraySorted, getTimestamp, isArray, isBoolean, isPrimitive, Logger } from 'zeed'
+import { mapSchemaTypeToField } from './_types'
 
 const log = Logger('sqlite:table')
 
