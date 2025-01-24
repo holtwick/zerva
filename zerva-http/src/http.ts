@@ -118,7 +118,11 @@ export function useHttp(config?: {
 
     if (postJson) {
       log(`Post JSON, limit=${postLimit}`)
-      app.use(express.json({ limit: postLimit }))
+      app.use(express.json({ limit: postLimit,
+        verify: (req, res, buf) => {
+          if (req)
+            (req as any).rawBody = buf
+        } }))
     }
 
     if (postText) {
