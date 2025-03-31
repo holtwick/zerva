@@ -57,7 +57,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/websocket": "workspace:*",
-    "zeed": "^0.27.1"
+    "zeed": "^0.28.1"
   },
   "devDependencies": {
     "@types/node": "^22.13.14",
