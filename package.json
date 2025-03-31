@@ -1,7 +1,7 @@
 {
   "name": "@zerva/monorepo",
   "type": "module",
-  "version": "0.65.2",
+  "version": "0.66.0",
   "private": true,
   "packageManager": "pnpm@10.7.0",
   "engines": {
@@ -45,7 +45,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "better-sqlite3",
-      "esbuild" 
+      "esbuild"
     ]
   }
 }
