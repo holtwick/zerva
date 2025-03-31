@@ -1,5 +1,5 @@
-import { getInterfaceName } from './_types'
 import type { DrawDatabase } from './_types'
+import { getInterfaceName } from './_types'
 
 export function createRpcTypesTS(info: DrawDatabase, prefix?: string) {
   const lines: string[] = []

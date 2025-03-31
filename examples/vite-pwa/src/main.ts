@@ -1,6 +1,6 @@
+import type { LoggerInterface } from 'zeed'
 import { createApp } from 'vue'
 import { Logger } from 'zeed'
-import type { LoggerInterface } from 'zeed'
 import App from './App.vue'
 import { setupPWA } from './pwa'
 

@@ -8,7 +8,6 @@ function testPlugin() {
     configureServer(server: any) {
       return () => {
         server.middlewares.use(async (req: any, res: any, next: any) => {
-          // eslint-disable-next-line no-console
           console.log(req.originalUrl)
           next()
         })

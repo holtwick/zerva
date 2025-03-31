@@ -1,7 +1,7 @@
+import type { SqliteTableColsDefinition } from './table'
 import { Database as SqliteDatabase } from 'bun:sqlite'
 import { useDispose } from 'zeed'
 import { escapeSQLValueSingleQuotes, useSqliteTable } from './table'
-import type { SqliteTableColsDefinition } from './table'
 
 interface SqliteOptions {
   /**

@@ -66,3 +66,4 @@ Inspirations and alternatives:
 
 - https://mongoosejs.com/docs/typescript.html
 - https://sequelize.org/
+- https://github.com/enimatek-nl/small-orm-sqlite

@@ -237,7 +237,6 @@ export function useWebSocket(config: ZWebSocketConfig = {}) {
     wss.on('connection', (ws: WebSocket) => {
       log.info('onconnection')
 
-      // @ts-expect-error Strange... see types.ts
       ws.isAlive = true
 
       const conn = new WebsocketNodeConnection(ws, config)

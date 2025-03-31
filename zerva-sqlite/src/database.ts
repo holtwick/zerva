@@ -1,11 +1,11 @@
+import type { Infer, Type } from 'zeed'
+import type { SqliteDatabase, SqliteOptions, SqliteTransaction } from './sqlite'
+import type { SqliteTableColsDefinition } from './table'
 import BetterSqlite3 from 'better-sqlite3'
 import { useDispose } from 'zeed'
-import type { Infer, Type } from 'zeed'
 import { escapeSQLValueSingleQuotes } from './_types'
 import { useSqliteTable } from './table'
 import { useSqliteTableWithSchema } from './table-schema'
-import type { SqliteDatabase, SqliteOptions, SqliteTransaction } from './sqlite'
-import type { SqliteTableColsDefinition } from './table'
 
 export function useSqliteDatabase(name?: string, opt: SqliteOptions = {}) {
   const dispose = useDispose()

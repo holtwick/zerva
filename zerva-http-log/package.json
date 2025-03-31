@@ -54,12 +54,12 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.0",
-    "rotating-file-stream": "^3.2.5",
+    "rotating-file-stream": "^3.2.6",
     "zeed": "^0.27.1"
   },
   "devDependencies": {
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.3",
-    "vite": "^6.0.7"
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.4"
   }
 }

@@ -1,5 +1,5 @@
-import { Logger, sleep } from 'zeed'
 import type { LoggerInterface } from 'zeed'
+import { Logger, sleep } from 'zeed'
 import { onStart, onStop, serve } from '../src'
 
 const log: LoggerInterface = Logger('demo')

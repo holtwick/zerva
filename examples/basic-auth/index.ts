@@ -1,11 +1,11 @@
 // Simple demo for node and CommonJS loading
 
+import type { LoggerInterface } from 'zeed'
 import { readFileSync } from 'node:fs'
 import { useBasicAuth, useHtpasswd } from '@zerva/basic-auth'
 import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { Logger } from 'zeed'
-import type { LoggerInterface } from 'zeed'
 
 const log: LoggerInterface = Logger('basic-auth')
 

@@ -1,6 +1,6 @@
+import type { RpcClientFunctions, RpcServerFunctions } from './_types'
 import { useWebsocketRpcHubClient } from '@zerva/rpc'
 import { ref } from 'vue'
-import type { RpcClientFunctions, RpcServerFunctions } from './_types'
 
 export function useAppRpc() {
   const { rpcHub } = useWebsocketRpcHubClient(undefined, { log: 0 })

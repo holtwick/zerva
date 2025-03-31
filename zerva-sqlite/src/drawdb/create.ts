@@ -1,10 +1,10 @@
+import type { DrawDatabase } from './_types'
 import { resolve } from 'node:path'
 import { ensureFolder, toCapitalize, writeText } from 'zeed'
 import { createRpcSetupTS } from './create-rpc-setup'
 import { createRpcTypesTS } from './create-rpc-types'
 import { createSetupTS } from './create-setup'
 import { createTypesTS } from './create-types'
-import type { DrawDatabase } from './_types'
 
 export async function createFilesFromDrawDb(info: DrawDatabase, prefix = 'Table') {
   const base = resolve(__dirname, '_tmp')

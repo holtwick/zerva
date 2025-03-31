@@ -1,8 +1,8 @@
+import type { LogConfig } from 'zeed'
+import type { ZEmailConfig } from './types'
 import { on, register } from '@zerva/core'
 import nodemailer from 'nodemailer'
 import { LoggerFromConfig, LogLevelInfo } from 'zeed'
-import type { LogConfig } from 'zeed'
-import type { ZEmailConfig } from './types'
 
 const moduleName = 'email'
 
