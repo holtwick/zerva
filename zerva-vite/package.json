@@ -1,7 +1,7 @@
 {
   "name": "@zerva/vite",
   "type": "module",
-  "version": "0.65.2",
+  "version": "0.68.0",
   "description": "🌱 Zerva and Vite",
   "author": {
     "name": "Dirk Holtwick",
