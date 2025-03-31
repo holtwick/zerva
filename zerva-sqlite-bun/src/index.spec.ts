@@ -1,7 +1,7 @@
+import type { SqliteTableDefault } from './index'
 import { unlinkSync } from 'node:fs'
 import { Logger } from 'zeed'
 import { useSqliteDatabase } from './index'
-import type { SqliteTableDefault } from './index'
 
 const log = Logger('test')
 

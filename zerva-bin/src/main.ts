@@ -1,4 +1,7 @@
 /* eslint-disable no-console */
+import type { BuildOptions, Plugin } from 'esbuild'
+import type { ChildProcess } from 'node:child_process'
+import type { ZervaConf } from './config'
 import { spawn } from 'node:child_process'
 import { chmodSync } from 'node:fs'
 import { chmod } from 'node:fs/promises'
@@ -8,9 +11,6 @@ import displayNotification from 'display-notification'
 import { context } from 'esbuild'
 import { yamlPlugin } from 'esbuild-plugin-yaml'
 import { valueToBoolean } from 'zeed'
-import type { BuildOptions, Plugin } from 'esbuild'
-import type { ChildProcess } from 'node:child_process'
-import type { ZervaConf } from './config'
 
 const DEFAULT_EXCLUDE = [
   'fs', // todo required?

@@ -1,5 +1,5 @@
-import { arrayFlatten, getGlobalContext, Logger, useDispose } from 'zeed'
 import type { DisposerFunction } from 'zeed'
+import { arrayFlatten, getGlobalContext, Logger, useDispose } from 'zeed'
 import { ZContext } from './types'
 
 const log = Logger('zerva:context')

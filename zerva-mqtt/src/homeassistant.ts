@@ -1,7 +1,7 @@
-import { emit } from '@zerva/core'
-import { Logger } from 'zeed'
 import type { LoggerInterface } from 'zeed'
 import type { HassEntity } from './_types_homeassistant'
+import { emit } from '@zerva/core'
+import { Logger } from 'zeed'
 import './_types'
 
 const log: LoggerInterface = Logger('hass-mqtt')
