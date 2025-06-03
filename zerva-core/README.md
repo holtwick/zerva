@@ -64,6 +64,18 @@ Modules themselves may follow a similar pattern to allow their sub-modules to st
 
 By convenstion module initializers start by `use` like `useHttp` or `useWebsocket`.
 
+## Dependencies
+
+Some modules depend on others. To make sure nothing is missing, you should **register** modules like:
+
+```ts
+module('websocket', {
+  requires: ['http']
+}
+```
+
+## Config
+
 ## Contexts
 
 TBD

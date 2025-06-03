@@ -1,4 +1,7 @@
-import { createContext, emit, hasModule, on, register, requireModules, setContext } from './context'
+import { register } from 'node:module'
+import { z } from 'zeed'
+import { createContext, emit, on, setContext } from './context'
+import { hasModule, registerModule, requireModules } from './register'
 
 declare global {
   interface ZContextEvents {
@@ -22,6 +25,23 @@ describe('context', () => {
     setContext()
     register('a')
     register('b', 'a')
+    expect(hasModule('c')).toBe(false)
+    expect(hasModule('a')).toBe(true)
+    requireModules('a')
+    // requireModules(["x"])
+  })
+
+  it('should register - modern', () => {
+    const schema = z.object({
+      host: z.string().default('localhost'),
+      port: z.number().default(3000),
+    })
+
+    setContext()
+    const { config: configA } = registerModule('a')
+    expect(configA).toBeUndefined()
+    const { config } = registerModule('b', { requires: 'a', configSchema: schema })
+    expect(config.host).toBe('localhost')
     expect(hasModule('c')).toBe(false)
     expect(hasModule('a')).toBe(true)
     requireModules('a')
