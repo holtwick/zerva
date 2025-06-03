@@ -75,6 +75,7 @@ export function registerModule<T extends Type<unknown>>(name: string, options?: 
   if (configSchema != null) {
     config = getConfig(configSchema, {
       prefix: `${name.toUpperCase()}_`,
+      module: name,
       ...configOptions,
     })
   }

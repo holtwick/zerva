@@ -1,7 +1,7 @@
-import { register } from 'node:module'
 import { z } from 'zeed'
+import { dumpConfig } from './config'
 import { createContext, emit, on, setContext } from './context'
-import { hasModule, registerModule, requireModules } from './register'
+import { hasModule, register, registerModule, requireModules } from './register'
 
 declare global {
   interface ZContextEvents {
@@ -46,6 +46,17 @@ describe('context', () => {
     expect(hasModule('a')).toBe(true)
     requireModules('a')
     // requireModules(["x"])
+
+    expect(dumpConfig()).toMatchInlineSnapshot(`
+      "#
+      # Module: b
+      #
+
+      B_HOST=localhost
+
+      B_PORT=3000
+      "
+    `)
   })
 
   it('should allow sub-context', async () => {
