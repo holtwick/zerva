@@ -2,7 +2,6 @@ import type { Infer, SchemaEnvOptions, Type } from 'zeed'
 import { assert, isSchemaObjectFlat, parseSchemaEnv, stringFromSchemaEnv } from 'zeed'
 
 export interface ZervaConfigOptions extends SchemaEnvOptions {
-  env?: Record<string, any>
 }
 
 const schemaList: {

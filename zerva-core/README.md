@@ -4,37 +4,79 @@
 
 ## Get started
 
-Set up your first project using this [template](https://github.com/holtwick/zerva-project-template/generate).
-
-## How it works
-
 It all starts with the `context` which is the common ground for any **module** we use or create. It serves as a hub/bus for emitting and listening on **events**.
 
-Usually you would start to build a server like this:
+Usually you would start to build a HTTP server like this:
 
 ```ts
+// main.ts
+
 import { useHttp } from '@zerva/http'
 
 useHttp({
   port: 8080
 })
+
+serve()
 ```
 
-`serve` itself is a **module** that i.e. it is a function working on **context**. It takes a function to call other modules and provides a common lifecycle by emitting `serveInit` and `serveStart`. These are the entry points for other services.
+With a `package.json` like the following you get started with `npm start`:
 
-`useHttp` for example will set up an [express]() server and start it on `serveStart`. It will emit `httpInit` before it starts and `httpRunning` when it is ready.
+```json
+{
+  "name": "zerva-example",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "LEVEL=i ZEED=* zerva",
+    "build": "zerva build"
+  },
+  "devDependencies": {
+    "@zerva/bin": "*",
+    "@zerva/core": "*",
+    "@zerva/http": "*"
+  }
+}
+```
 
-> By convention, we add `use` to module initializer to be able to identify them at first glance.
+## Lifecycle of a module
 
-You can write your own module which can use `httpInit` to add some listeners:
+`serve` itself is a **module** as well. That means it does **emit** and **listen** to **events**. 
+
+`serve` provides the basic life-cycle, which emits the following events in this order:
+
+- `serveInit` to do some preliminary setup
+- `serveStart` to actually start a module
+- `serveStop` to stop the module or its service
+- `serveDispose` to free and dispose objects
+
+Listening to these events works like this:
+
+```ts
+import { on } from '@zerva/core'
+
+on('serveStart', async () => {
+  console.log('Did start')
+})
+```
+
+Modules themselves may follow a similar pattern to allow their sub-modules to start in the right moment as well. For example `@zerva/http` module emits `httpInit` which is the used to set up the routes or a Websocket connection for `@zerva/websocket`. You don't have to care a lot about the complexity, since one builds on the other.
+
+By convenstion module initializers start by `use` like `useHttp` or `useWebsocket`.
+
+## Contexts
+
+TBD
+
+## useHttp example
 
 ```ts
 import { zerva } from '@zerva/core'
 
 function useCounter() {
   let counter = 0
-  zerva.on('httpInit', ({ get }) => {
-    get('/counter', () => `Counter ${counter++}`)
+  zerva.on('httpInit', ({ onGET }) => {
+    onGET('/counter', () => `Counter ${counter++}`)
   })
 }
 ```
@@ -87,40 +129,16 @@ In your `package.json` you might want to add these lines:
 
 Zerva integrates perfectly with Docker. Learn more at [demos/docker](https://github.com/holtwick/zerva/demos/docker).
 
-## GitHub Templates
+## Available Modules
 
-To get started, you can use these GitHub Templates:
+- [@zerva/http](zerva-http/README.md)
+- [@zerva/http-log](zerva-http-log/README.md)
+- [@zerva/mqtt](zerva-mqtt/README.md)
+- [@zerva/sqlite](zerva-sqlite/README.md)
+- [@zerva/vite](zerva-vite/README.md)
+- [@zerva/websocket](zerva-websocket/README.md)
 
-- [Create your own Zerva module](https://github.com/holtwick/zerva-module-template/generate)
-- [Create your own Zerva project](https://github.com/holtwick/zerva-project-template/generate)
-
-## External Modules
-
-- [zerva-websocket](https://github.com/holtwick/zerva-websocket)
-- [zerva-vite](https://github.com/holtwick/zerva-vite)
-- [zerva-email](https://github.com/holtwick/zerva-email)
-- [zerva-umami](https://github.com/holtwick/zerva-umami)
-- [zerva-socketio](https://github.com/holtwick/zerva-socketio)
-
-## Internal Modules
-
-### useHttp
-
-Sets up an Express web server.
-
-Emits `httpInit` before the server starts. Use this to set up custom routes. The custom helpers `get`, `post` and `addStatic` help to make this a concise operation. You also have access to `http` and `app` to get the full power of Express and attach e.g. WebSocket servers. See [zerva-websocket](https://github.com/holtwick/zerva-websocket) for demos.
-
-`httpRunning` is emitted after the web server is listening.
-
-On `httpStop` you can do some optional cleanup for your web server.
-
-### useExit
-
-Catch various exit scenarios and try to emit `serverStop` if possible, for example catch `CTRL-C`.
-
-## Advanced Topics
-
-### Conditional building
+## Conditional building
 
 Zerva uses [esbuild](https://esbuild.github.io) to create both the development server code and the production code. You can take advantage of conditional building using [defines](https://esbuild.github.io/api/#define). This can be used to have code that avoids certain imports or otherwise unneed stuff in production mode. I.e. in your code you can do stuff like this:
 
@@ -136,13 +154,6 @@ Valid defines are:
 - `ZERVA_PRODUCTION` is `true` when started as `zerva build`
 
 For better compatibility the defines can also be accessed as `process.env.ZERVA_DEVELOPMENT` and `process.env.ZERVA_PRODUCTION`.
-
-## Minimal Requirements
-
-- Node: 16
-- JS target: es2022
-
-See [tsconfig/bases](https://github.com/tsconfig/bases) to learn details about the configuration considerations.
 
 ## Related Projects
 
