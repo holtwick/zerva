@@ -53,11 +53,11 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "zeed": "^0.28.4"
+    "zeed": "^0.28.13"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
-    "tsup": "^8.4.0",
+    "tsup": "^8.5.0",
     "typescipt": "^1.0.0"
   }
 }
