@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
-    "zeed": "^0.28.13"
+    "zeed": "^0.28.15"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
@@ -58,6 +58,6 @@
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.1"
   }
 }

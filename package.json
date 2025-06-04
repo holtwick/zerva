@@ -22,10 +22,10 @@
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
     "test": "pnpm -r --filter=@zerva/* test",
-    "update": "pnpm -r update -i --latest" 
+    "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.13.2",
+    "@antfu/eslint-config": "^4.13.3",
     "@antfu/ni": "^25.0.0",
     "@types/bun": "^1.2.15",
     "@types/jest": "^29.5.14",
@@ -38,9 +38,9 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitest": "^3.2.0",
+    "vitest": "^3.2.1",
     "vue-tsc": "^2.2.10",
-    "zeed": "^0.28.13"
+    "zeed": "^0.28.15"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
