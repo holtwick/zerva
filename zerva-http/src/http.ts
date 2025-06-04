@@ -42,7 +42,7 @@ const configSchema = z.object({
 
 type Config = Infer<typeof configSchema>
 
-export function useHttp(options?: Config): zervaHttpInterface {
+export function useHttp(options?: Partial<Config>): zervaHttpInterface {
   const { config, log } = registerModule(moduleName, {
     options,
     configSchema,

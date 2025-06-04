@@ -28,7 +28,7 @@ const configSchema = z.object({
 
 type Config = Infer<typeof configSchema>
 
-export function useVite(options?: Config) {
+export function useVite(options?: Partial<Config>) {
   const { config, log } = registerModule(moduleName, {
     requires: ['http'],
     options,

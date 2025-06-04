@@ -98,11 +98,16 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   // Config and options
   const config: any = { ...options?.options }
   if (configSchema != null) {
-    Object.assign(config, getConfig(configSchema, {
+    const configFromSchema = getConfig(configSchema, {
       prefix: `${moduleName.toUpperCase()}_`,
       module: moduleName,
       ...configOptions,
-    }))
+    })
+    Object.entries(configFromSchema as any).forEach(([key, value]) => {
+      if (value !== undefined) {
+        config[key] = value
+      }
+    })
   }
 
   // Logging

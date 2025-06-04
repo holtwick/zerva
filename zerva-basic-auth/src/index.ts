@@ -1,12 +1,11 @@
-import { on, register } from '@zerva/core'
-import { isRecord, Logger, size } from 'zeed'
-import { getCredentials } from './auth'
+import { on, registerModule } from '@zerva/core'
 import '@zerva/http'
+import { Infer, isRecord, size, z } from 'zeed'
+import { getCredentials } from './auth'
 
 export * from './htpasswd-md5'
 
 const name = 'basic-auth'
-const log = Logger(`zerva:${name}`)
 
 // declare global {
 //   interface ZContextEvents {
@@ -14,17 +13,33 @@ const log = Logger(`zerva:${name}`)
 //   }
 // }
 
-interface ZervaBasicAuthConfig {
-  routes?: any[]
-  auth?: Record<string, string> | ((user: string, password: string) => boolean)
-  logout?: string
-  realm?: string
-  waitSecondsBetweenAuthorization?: number
-}
+const configSchema = z.object({
+  routes: z.array(z.string()).default(['/']).props({ envSkip: true }),
+  auth: z.union([
+    z.record(z.string()),
+    z.func([z.string(), z.string()], z.boolean()),
+  ]).optional().props({ envSkip: true }),
+  logout: z.string().optional(),
+  realm: z.string().default('default'),
+  waitSecondsBetweenAuthorization: z.number().default(1),
+})
 
-export function useBasicAuth(config?: ZervaBasicAuthConfig) {
-  log.info(`use ${name}`)
-  register(name, ['http'])
+// interface ZervaBasicAuthConfig {
+//   routes?: any[]
+//   auth?: Record<string, string> | ((user: string, password: string) => boolean)
+//   logout?: string
+//   realm?: string
+//   waitSecondsBetweenAuthorization?: number
+// }
+
+type Config = Infer<typeof configSchema>
+
+export function useBasicAuth(options?: Partial<Config>) {
+  const { config, log } = registerModule(name, {
+    requires: ['http'],
+    options,
+    configSchema
+  })
 
   const {
     routes = ['/'],
