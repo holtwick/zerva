@@ -1,6 +1,6 @@
-import type { Infer, LoggerInterface, Type } from 'zeed'
+import type { Infer, LoggerInterface, LogLevel, Type } from 'zeed'
 import type { ZervaConfigOptions } from './config'
-import { arrayFlatten, Logger, z } from 'zeed'
+import { arrayFlatten, Logger, LoggerFromConfig, LogLevelInfo, z } from 'zeed'
 import { getConfig } from './config'
 import { getContext } from './context'
 
@@ -66,18 +66,63 @@ export interface ZervaModuleOptions<T> {
   requires?: string[] | string
   configSchema?: T
   configOptions?: ZervaConfigOptions
+  options?: Partial<Infer<T>>
+  logLevel?: LogLevel
 }
 
-export function registerModule<T extends Type<unknown>>(name: string, options?: ZervaModuleOptions<T>): { name: string, config: Infer<T> } {
+/**
+ * Register a module with its configuration and dependencies.
+ *
+ * This function registers a module by its name, checks for required modules,
+ * and retrieves its configuration based on the provided schema.
+ *
+ * It also initializes a logger for the module, where log details can be customized.
+ * If `configSchema.log` is of type `LogConfig` the logger will be created from it.
+ *
+ * `options` can be used to override the default configuration values i.e. first
+ * apply `options` and then the `configSchema` values.
+ *
+ * @param name Name of the module to register
+ * @param options Additional options for the module
+ * @returns { name: string, config: Infer<T>, log: LoggerInterface }
+ */
+export function registerModule<T extends Type<unknown> = Type<any>>(name: string, options?: ZervaModuleOptions<T>): {
+  name: string
+  config: Infer<T>
+  log: LoggerInterface
+} {
   const { requires = [], configOptions, configSchema } = options || {}
-  register(name, requires)
-  let config: any
+
+  // Module name
+  const moduleName = name.toLowerCase()
+
+  // Config and options
+  const config: any = { ...options }
   if (configSchema != null) {
-    config = getConfig(configSchema, {
-      prefix: `${name.toUpperCase()}_`,
-      module: name,
+    Object.assign(config, getConfig(configSchema, {
+      prefix: `${moduleName.toUpperCase()}_`,
+      module: moduleName,
       ...configOptions,
-    })
+    }))
   }
-  return { name, config }
+
+  // Logging
+  const log = LoggerFromConfig(config?.log ?? true, name, options?.logLevel ?? LogLevelInfo)
+  log(`use ${moduleName} with config:`, config)
+
+  // Register module in context
+  if (hasModule(moduleName))
+    log.warn(`The module '${moduleName} has been registered multiple times`)
+  getContext().modules.push(moduleName)
+
+  // Check required modules
+  const modules = arrayFlatten(requires)
+  const missing = modules.filter(module => !hasModule(module))
+  if (missing.length > 0) {
+    const message = `Zerva module '${moduleName}' requires modules: ${missing}`
+    log.error(message)
+    throw new Error(message)
+  }
+
+  return { name: moduleName, log, config }
 }

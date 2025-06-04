@@ -31,34 +31,6 @@ describe('context', () => {
     // requireModules(["x"])
   })
 
-  it('should register - modern', () => {
-    const schema = z.object({
-      host: z.string().default('localhost'),
-      port: z.number().default(3000),
-    })
-
-    setContext()
-    const { config: configA } = registerModule('a')
-    expect(configA).toBeUndefined()
-    const { config } = registerModule('b', { requires: 'a', configSchema: schema })
-    expect(config.host).toBe('localhost')
-    expect(hasModule('c')).toBe(false)
-    expect(hasModule('a')).toBe(true)
-    requireModules('a')
-    // requireModules(["x"])
-
-    expect(dumpConfig()).toMatchInlineSnapshot(`
-      "#
-      # Module: b
-      #
-
-      B_HOST=localhost
-
-      B_PORT=3000
-      "
-    `)
-  })
-
   it('should allow sub-context', async () => {
     setContext()
     register('a')

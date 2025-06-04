@@ -1,10 +1,10 @@
 import type { InlineConfig } from 'vite'
-import type { LogConfig } from 'zeed'
+import type { Infer, LogConfig } from 'zeed'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { on, register } from '@zerva/core'
-import { LoggerFromConfig, LogLevelInfo, toHumanReadableFilePath, toPath } from 'zeed'
+import { on, registerModule } from '@zerva/core'
+import { toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 import '@zerva/http'
 
@@ -17,27 +17,27 @@ import '@zerva/http'
 
 const moduleName = 'vite'
 
-export function useVite(config?: {
-  log?: LogConfig
-  root?: string
-  www?: string
-  mode?: string
-  // hmr?: boolean
-  cacheAssets?: boolean
-}) {
-  const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
-  log(`use ${moduleName} ${process.env.ZERVA}`)
-  register(moduleName, ['http'])
+const configSchema = z.object({
+  log: z.any<LogConfig>().optional(),
+  root: z.string().default(process.cwd()),
+  www: z.string().default('./dist_www'),
+  mode: z.string().default((process.env.ZERVA_DEVELOPMENT ? 'development' : 'production')),
+  // hmr: z.boolean().default(true),
+  cacheAssets: z.boolean().default(true),
+})
+
+type Config = Infer<typeof configSchema>
+
+export function useVite(options?: Config) {
+  const { config, log } = registerModule(moduleName, {
+    requires: ['http'],
+    options,
+    configSchema,
+  })
 
   // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
-  const {
-    root = process.cwd(),
-    www = './dist_www',
-    mode = (ZERVA_DEVELOPMENT ? 'development' : 'production'),
-    // hmr = true,
-    cacheAssets = true,
-  } = config ?? {}
+  const { root, www, mode, cacheAssets } = config
 
   const rootPath = toPath(root)
   const wwwPath = toPath(www)
