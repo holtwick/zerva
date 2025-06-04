@@ -2,17 +2,17 @@
 
 import type { HelmetOptions } from 'helmet'
 import type { AddressInfo } from 'node:net'
-import type { LogConfig } from 'zeed'
+import type { Infer, LogConfig } from 'zeed'
 import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
 import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import process from 'node:process'
-import { emit, on, register } from '@zerva/core'
+import { emit, on, register, registerModule } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import helmetDefault from 'helmet'
-import { isLocalHost, isString, LoggerFromConfig, LogLevelInfo, promisify, valueToBoolean } from 'zeed'
+import { isLocalHost, isString, LoggerFromConfig, LogLevelInfo, promisify, valueToBoolean, z } from 'zeed'
 import { compressionMiddleware } from './compression'
 
 export * from './status'
@@ -20,75 +20,52 @@ export * from './types'
 
 const moduleName = 'http'
 
-export function useHttp(config?: {
-  log?: LogConfig
+const configSchema = z.object({
+  log: z.any<LogConfig>().optional(),
+  host: z.string().optional().props({ desc: 'Host to bind the server to' }),
+  port: z.number().default(8080).props({ desc: 'Port to listen on' }),
+  sslCrt: z.string().optional().props({ desc: 'Path to SSL certificate' }),
+  sslKey: z.string().optional().props({ desc: 'Path to SSL key' }),
+  showServerInfo: z.boolean().default(true).props({ desc: 'Print server details to console' }),
+  noExtras: z.boolean().default(false).props({ desc: 'None of the following middlewares is installed, just plain express. Add your own at httpInit' }),
+  cors: z.boolean().default(true).props({ desc: 'Enable CORS middleware https://github.com/expressjs/cors' }),
+  helmet: z.union([z.boolean(), z.any<HelmetOptions>()]).default(true).props({ desc: 'Security setting https://helmetjs.github.io/' }),
+  compression: z.boolean().default(true).props({ desc: 'Compress content' }),
+  trustProxy: z.boolean().default(true).props({ desc: 'Trust proxy setting https://stackoverflow.com/a/46475726/140927' }),
+  postLimit: z.string().default('1gb').props({ desc: 'Express post body size limit https://expressjs.com/en/api.html#express' }),
+  postJson: z.boolean().default(true).props({ desc: 'application/json -> object' }),
+  postText: z.boolean().default(true).props({ desc: 'text/plain -> string' }),
+  postBinary: z.boolean().default(true).props({ desc: 'application/octet-stream -> Buffer and application/* except json and urlencoded' }),
+  postUrlEncoded: z.boolean().default(true).props({ desc: 'application/x-www-form-urlencoded' }),
+  openBrowser: z.boolean().default(false).props({ desc: 'Open a browser' }),
+})
 
-  host?: string
-  port?: number
-  sslCrt?: string
-  sslKey?: string
+type Config = Infer<typeof configSchema>
 
-  /** Print server details to console */
-  showServerInfo?: boolean
-
-  /** None of the following middlewares is installed, just plain express. Add your own at httpInit  */
-  noExtras?: boolean
-
-  /** https://github.com/expressjs/cors */
-  cors?: boolean
-
-  /** Security setting https://helmetjs.github.io/ */
-  helmet?: boolean | HelmetOptions
-
-  /** Compress content */
-  compression?: boolean
-
-  /** https://stackoverflow.com/a/46475726/140927 */
-  trustProxy?: boolean
-
-  /** https://expressjs.com/en/api.html#express */
-  postLimit?: string
-
-  /** application/json -> object */
-  postJson?: boolean
-
-  /** text/plain -> string  */
-  postText?: boolean
-
-  /** application/octet-stream -> Buffer and application/* except json and urlencoded */
-  postBinary?: boolean
-
-  /** application/x-www-form-urlencoded */
-  postUrlEncoded?: boolean
-
-  /** Open a browser */
-  openBrowser?: boolean
-
-}): zervaHttpInterface {
-  register(moduleName, [])
-
-  const log = LoggerFromConfig(config?.log ?? true, moduleName, LogLevelInfo)
+export function useHttp(options?: Config): zervaHttpInterface {
+  const { config, log } = registerModule(moduleName, {
+    options,
+    configSchema,
+  })
 
   const {
     sslKey,
     sslCrt,
-    port = 8080,
-    host, // = process.env.NODE_MODE === "development" ? undefined : "0.0.0.0",
-    showServerInfo = true,
-    noExtras = false,
-    cors = true,
-    helmet = true,
-    compression = true,
-    trustProxy = true,
-    postLimit = '1gb',
-    postJson = true,
-    postText = true,
-    postBinary = true,
-    postUrlEncoded = true,
-    openBrowser = false,
-  } = config ?? {}
-
-  log('config =', config)
+    port,
+    host,
+    showServerInfo,
+    noExtras,
+    cors,
+    helmet,
+    compression,
+    trustProxy,
+    postLimit,
+    postJson,
+    postText,
+    postBinary,
+    postUrlEncoded,
+    openBrowser,
+  } = config
 
   // The actual web server
   const app: Express = express()

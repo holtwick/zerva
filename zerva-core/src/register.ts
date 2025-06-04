@@ -1,6 +1,6 @@
 import type { Infer, LoggerInterface, LogLevel, Type } from 'zeed'
 import type { ZervaConfigOptions } from './config'
-import { arrayFlatten, Logger, LoggerFromConfig, LogLevelInfo, z } from 'zeed'
+import { arrayFlatten, Logger, LoggerFromConfig, LogLevelAll, LogLevelInfo, z } from 'zeed'
 import { getConfig } from './config'
 import { getContext } from './context'
 
@@ -15,10 +15,9 @@ const log: LoggerInterface = Logger('zerva:register')
  */
 export function hasModule(module: string, strict = false): boolean {
   const has = getContext().modules.includes(module.toLowerCase())
-  log(`hasModule ${module} => ${has} (strict=${strict})`)
+  // log(`hasModule ${module} => ${has} (strict=${strict})`)
   if (strict && !has)
     log.error(`module '${module}' is missing`)
-
   return has
 }
 
@@ -97,7 +96,7 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   const moduleName = name.toLowerCase()
 
   // Config and options
-  const config: any = { ...options }
+  const config: any = { ...options?.options }
   if (configSchema != null) {
     Object.assign(config, getConfig(configSchema, {
       prefix: `${moduleName.toUpperCase()}_`,
@@ -107,7 +106,7 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   }
 
   // Logging
-  const log = LoggerFromConfig(config?.log ?? true, name, options?.logLevel ?? LogLevelInfo)
+  const log = LoggerFromConfig(config?.log ?? true, moduleName, options?.logLevel ?? LogLevelAll)
   log(`use ${moduleName} with config:`, config)
 
   // Register module in context
