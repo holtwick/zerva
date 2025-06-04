@@ -22,6 +22,7 @@
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
     "test": "pnpm -r --filter=@zerva/* test",
+    "test:release": "pnpm -r --filter=@zerva/* test",
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
