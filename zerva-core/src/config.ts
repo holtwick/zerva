@@ -2,7 +2,7 @@ import type { Infer, SchemaEnvOptions, Type } from 'zeed'
 import { assert, isSchemaObjectFlat, parseSchemaEnv, stringFromSchemaEnv } from 'zeed'
 import { getContext } from './context'
 
-export interface ZervaConfigOptions extends SchemaEnvOptions {
+export interface ZervaConfigOptions<T> extends SchemaEnvOptions<T> {
   moduleName?: string
 }
 
@@ -13,11 +13,10 @@ export interface ZervaConfigOptions extends SchemaEnvOptions {
  * @param options ZervaConfigOptions
  * @returns The configuration object inferred from the schema and the environment variables.
  */
-export function getConfig<T extends Type<any>>(schema: T, options?: ZervaConfigOptions): Infer<T> {
+export function getConfig<T extends Type<any>>(schema: T, options?: ZervaConfigOptions<T>): Infer<T> {
   assert(isSchemaObjectFlat(schema), 'getConfig schema must be a flat object schema')
-  // eslint-disable-next-line node/prefer-global/process
-  const { env = process.env, moduleName } = options || {}
-  const config = parseSchemaEnv(schema, { env })
+  // const { env = process.env, existing, moduleName } = options || {}
+  const config = parseSchemaEnv(schema, options)
   // schemaList.push({ module: moduleName, schema, options })
   return config
 }

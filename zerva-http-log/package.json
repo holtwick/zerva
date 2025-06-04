@@ -55,7 +55,7 @@
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.2.6",
-    "zeed": "^0.28.16"
+    "zeed": "^0.28.17"
   },
   "devDependencies": {
     "tsup": "^8.5.0",

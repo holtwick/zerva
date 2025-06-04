@@ -18,9 +18,14 @@ describe('register', () => {
     const { config } = registerModule('b', {
       requires: 'a',
       configSchema: schema,
+      configOptions: {
+        env: {
+          B_PORT: 3000,
+        },
+      },
       options: { host: 'holtwick.de', port: 8080 },
     })
-    expect(config.host).toBe('localhost')
+    expect(config.host).toBe('holtwick.de')
     expect(config.port).toBe(3000)
     expect(hasModule('c')).toBe(false)
     expect(hasModule('a')).toBe(true)
@@ -51,27 +56,31 @@ describe('register', () => {
       name: 'a',
       setup: () => {
         return {}
-      }
+      },
     })
 
     const useB = use({
       name: 'b',
       requires: 'a',
       configSchema: schema,
+      configOptions: {
+        env: {
+          B_PORT: 3000,
+        },
+      },
       setup: async ({ config }) => {
         return { config }
-      }
+      },
     })
-
 
     useA()
 
     const { config } = await useB({
       host: 'holtwick.de',
-      port: 8080
+      port: 8080,
     })
 
-    expect(config.host).toBe('localhost')
+    expect(config.host).toBe('holtwick.de')
     expect(config.port).toBe(3000)
     expect(hasModule('c')).toBe(false)
     expect(hasModule('a')).toBe(true)

@@ -5,7 +5,8 @@ import { readFileSync } from 'node:fs'
 import { useBasicAuth, useHtpasswd } from '@zerva/basic-auth'
 import { on, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import { Logger } from 'zeed'
+import { Logger, writeText } from 'zeed'
+import { dumpConfig } from '../../zerva-core/src/config'
 
 const log: LoggerInterface = Logger('basic-auth')
 
@@ -45,3 +46,5 @@ on('httpInit', ({ get }) => {
 })
 
 void serve()
+
+writeText('.env.sample', dumpConfig())

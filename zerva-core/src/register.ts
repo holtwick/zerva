@@ -80,7 +80,7 @@ export interface ZervaModuleOptions<T> {
   requires?: string[] | string
 
   configSchema?: T
-  configOptions?: ZervaConfigOptions
+  configOptions?: ZervaConfigOptions<T>
   options?: Partial<Infer<T>>
 
   log?: LogConfig
@@ -114,24 +114,26 @@ export interface ZervaModuleContext<T> {
  * @returns { name: string, config: Infer<T>, log: LoggerInterface }
  */
 export function registerModule<T extends Type<unknown> = Type<any>>(name: string, moduleOptions?: ZervaModuleOptions<T>): ZervaModuleContext<T> {
-  const { requires = [], configOptions, configSchema } = moduleOptions || {}
+  const { requires = [], configOptions, configSchema, options } = moduleOptions || {}
 
   // Module name
   const moduleName = name.toLowerCase()
 
   // Config and options
-  const config: any = { ...moduleOptions?.options }
+  const config: any = { ...options }
   if (configSchema != null) {
     const configFromSchema = getConfig(configSchema, {
+      existing: options as any,
       prefix: `${moduleName.toUpperCase()}_`,
       moduleName,
       ...configOptions,
     })
-    Object.entries(configFromSchema as any).forEach(([key, value]) => {
-      if (value !== undefined) {
-        config[key] = value
-      }
-    })
+    Object.assign(config, configFromSchema)
+    // Object.entries(configFromSchema as any).forEach(([key, value]) => {
+    //   if (value !== undefined) {
+    //     config[key] = value
+    //   }
+    // })
   }
 
   // Logging
