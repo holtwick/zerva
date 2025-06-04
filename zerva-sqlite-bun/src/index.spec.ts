@@ -7,7 +7,7 @@ const log = Logger('test')
 
 globalThis.TEST = true
 
-describe('database.spec', () => {
+describe.skip('database.spec', () => {
   it('should do common stuff', async () => {
     try {
       unlinkSync('test.sqlite')

@@ -1,17 +1,10 @@
 import type { Infer, SchemaEnvOptions, Type } from 'zeed'
 import { assert, isSchemaObjectFlat, parseSchemaEnv, stringFromSchemaEnv } from 'zeed'
+import { getContext } from './context'
 
 export interface ZervaConfigOptions extends SchemaEnvOptions {
-  module?: string
+  moduleName?: string
 }
-
-const schemaList: {
-  module?: string
-  schema: Type<any>
-  options?: ZervaConfigOptions
-  config?: any
-  dump?: string
-}[] = []
 
 /**
  * Get the configuration object based on the provided schema and environment variables.
@@ -23,9 +16,9 @@ const schemaList: {
 export function getConfig<T extends Type<any>>(schema: T, options?: ZervaConfigOptions): Infer<T> {
   assert(isSchemaObjectFlat(schema), 'getConfig schema must be a flat object schema')
   // eslint-disable-next-line node/prefer-global/process
-  const { env = process.env, module } = options || {}
+  const { env = process.env, moduleName } = options || {}
   const config = parseSchemaEnv(schema, { env })
-  schemaList.push({ module, schema, options })
+  // schemaList.push({ module: moduleName, schema, options })
   return config
 }
 
@@ -35,12 +28,16 @@ export function getConfig<T extends Type<any>>(schema: T, options?: ZervaConfigO
  */
 export function dumpConfig(): string {
   const dump: string[] = []
-  for (const info of schemaList) {
-    const name = info.module
+  for (const info of Object.values(getContext().uses)) {
+    const name = info.name
     if (name) {
       dump.push(`#\n# Module: ${name}\n#\n`)
     }
-    dump.push(stringFromSchemaEnv(info.schema, info.options?.prefix))
+    const schema = info.moduleOptions?.configSchema
+    if (schema) {
+      const prefix = info.moduleOptions?.configOptions?.prefix ?? `${name.toUpperCase()}_`
+      dump.push(stringFromSchemaEnv(schema, prefix))
+    }
   }
   return dump.join('\n')
 }

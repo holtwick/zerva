@@ -1,23 +1,34 @@
-import type { Infer, LoggerInterface, LogLevel, Type } from 'zeed'
+import type { Infer, LogConfig, LoggerInterface, LogLevel, Type } from 'zeed'
 import type { ZervaConfigOptions } from './config'
-import { arrayFlatten, Logger, LoggerFromConfig, LogLevelAll, LogLevelInfo, z } from 'zeed'
+import { arrayFlatten, Logger, LoggerFromConfig, LogLevelAll } from 'zeed'
 import { getConfig } from './config'
-import { getContext } from './context'
+import { emit, getContext, on, once } from './context'
 
 const log: LoggerInterface = Logger('zerva:register')
+
+export function getModuleContext<T extends Type<unknown> = Type<any>>(name: string): ZervaModuleContext<T> | undefined {
+  const moduleName = name.toLowerCase()
+  const context = getContext()
+  if (context.uses[moduleName] != null) {
+    return context.uses[moduleName] as ZervaModuleContext<T>
+  }
+  log.warn(`Module '${moduleName}' not found in context uses`)
+  return undefined
+}
 
 /**
  * Check existance of registered module.
  *
- * @param module Name of module
+ * @param name Name of module
  * @param strict Log error if check fails
  * @returns `true` if `module` has been registered before
  */
-export function hasModule(module: string, strict = false): boolean {
-  const has = getContext().modules.includes(module.toLowerCase())
+export function hasModule(name: string, strict = false): boolean {
+  const moduleName = name.toLowerCase()
+  const has = getContext().modules.includes(moduleName) || getContext().uses[moduleName] != null
   // log(`hasModule ${module} => ${has} (strict=${strict})`)
   if (strict && !has)
-    log.error(`module '${module}' is missing`)
+    log.error(`module '${name}' is missing`)
   return has
 }
 
@@ -62,11 +73,28 @@ export function register(
 }
 
 export interface ZervaModuleOptions<T> {
+  name?: string
+  description?: string
+  url?: string
+
   requires?: string[] | string
+
   configSchema?: T
   configOptions?: ZervaConfigOptions
   options?: Partial<Infer<T>>
+
+  log?: LogConfig
   logLevel?: LogLevel
+}
+
+export interface ZervaModuleContext<T> {
+  name: string
+  config: Infer<T>
+  moduleOptions?: ZervaModuleOptions<T>
+  log: LoggerInterface
+  on: typeof on
+  once: typeof once
+  emit: typeof emit
 }
 
 /**
@@ -82,25 +110,21 @@ export interface ZervaModuleOptions<T> {
  * apply `options` and then the `configSchema` values.
  *
  * @param name Name of the module to register
- * @param options Additional options for the module
+ * @param moduleOptions Additional options for the module
  * @returns { name: string, config: Infer<T>, log: LoggerInterface }
  */
-export function registerModule<T extends Type<unknown> = Type<any>>(name: string, options?: ZervaModuleOptions<T>): {
-  name: string
-  config: Infer<T>
-  log: LoggerInterface
-} {
-  const { requires = [], configOptions, configSchema } = options || {}
+export function registerModule<T extends Type<unknown> = Type<any>>(name: string, moduleOptions?: ZervaModuleOptions<T>): ZervaModuleContext<T> {
+  const { requires = [], configOptions, configSchema } = moduleOptions || {}
 
   // Module name
   const moduleName = name.toLowerCase()
 
   // Config and options
-  const config: any = { ...options?.options }
+  const config: any = { ...moduleOptions?.options }
   if (configSchema != null) {
     const configFromSchema = getConfig(configSchema, {
       prefix: `${moduleName.toUpperCase()}_`,
-      module: moduleName,
+      moduleName,
       ...configOptions,
     })
     Object.entries(configFromSchema as any).forEach(([key, value]) => {
@@ -111,13 +135,12 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   }
 
   // Logging
-  const log = LoggerFromConfig(config?.log ?? true, moduleName, options?.logLevel ?? LogLevelAll)
-  log(`use ${moduleName} with config:`, config)
+  const log = LoggerFromConfig(config?.log ?? moduleOptions?.log ?? true, moduleName, moduleOptions?.logLevel ?? LogLevelAll)
+  log.info(`use ${moduleName} with config:`, config)
 
   // Register module in context
   if (hasModule(moduleName))
     log.warn(`The module '${moduleName} has been registered multiple times`)
-  getContext().modules.push(moduleName)
 
   // Check required modules
   const modules = arrayFlatten(requires)
@@ -128,5 +151,22 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
     throw new Error(message)
   }
 
-  return { name: moduleName, log, config }
+  const context: ZervaModuleContext<T> = { name: moduleName, log, config, on, once, emit, moduleOptions }
+  getContext().uses[moduleName] = context
+  return context
+}
+
+export function use<T extends Type<unknown> = Type<any>, R = any>(
+  moduleOptions: ZervaModuleOptions<T> & {
+    name: string
+    setup: (context: ZervaModuleContext<T>) => R
+  },
+): (options?: Partial<Infer<T>>) => R {
+  return (options) => {
+    return moduleOptions.setup(
+      registerModule(moduleOptions.name, {
+        options,
+        ...moduleOptions,
+      }))
+  }
 }
