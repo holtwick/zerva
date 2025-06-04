@@ -1,4 +1,7 @@
-import { createContext, emit, hasModule, on, register, requireModules, setContext } from './context'
+import { z } from 'zeed'
+import { dumpConfig } from './config'
+import { createContext, emit, on, setContext } from './context'
+import { hasModule, register, registerModule, requireModules } from './register'
 
 declare global {
   interface ZContextEvents {

@@ -1,3 +1,4 @@
+import type { ZervaModuleContext } from './register'
 import { Emitter, uname } from 'zeed'
 
 declare global {
@@ -18,5 +19,6 @@ export class ZContext extends Emitter<ZContextEvents> {
   name: string = uname('context')
   modules: string[] = []
   eventNamesEmitted: Record<string, boolean> = {}
+  uses: Record<string, ZervaModuleContext<any>> = {}
   // config: any
 }

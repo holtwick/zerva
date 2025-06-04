@@ -1,7 +1,6 @@
-import { emit, on, register } from '@zerva/core'
-import { cloneObject, Logger } from 'zeed'
-
-const log = Logger('counter')
+import { emit, on } from '@zerva/core'
+import { cloneObject } from 'zeed'
+import { registerModule } from '../../../../zerva-core/src/register'
 
 declare global {
   interface ZContextEvents {
@@ -10,9 +9,14 @@ declare global {
 }
 
 export function useCounter() {
-  log.info('use counter')
-  register('counter', ['http'])
+  const { log } = registerModule('counter', {
+    requires: ['http'],
+  })
+
+  log('Counter module initialized')
+
   let counter = 0
+
   on('httpInit', ({ get }) => {
     get('/counter', async () => {
       await emit('counterIncrement', ++counter)

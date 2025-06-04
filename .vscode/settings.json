@@ -58,5 +58,6 @@
     "plaintext": false,
     "markdown": false,
     "scminput": false
-  }
+  },
+  "vitest.disableWorkspaceWarning": true
 }

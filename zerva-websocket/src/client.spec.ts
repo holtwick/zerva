@@ -3,7 +3,7 @@ import { useHttp } from '@zerva/http'
 import WebSocket from 'ws'
 import { createPromise, stringToUInt8Array, Uint8ArrayToString, useDispose, waitOn } from 'zeed'
 import { WebSocketConnection } from './client'
-import { useWebSocket } from './server'
+import { useWebSocket } from './use'
 
 // @ts-expect-error xxx
 globalThis.WebSocket = WebSocket

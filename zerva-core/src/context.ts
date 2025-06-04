@@ -1,5 +1,5 @@
 import type { DisposerFunction } from 'zeed'
-import { arrayFlatten, getGlobalContext, Logger, useDispose } from 'zeed'
+import { getGlobalContext, Logger, useDispose } from 'zeed'
 import { ZContext } from './types'
 
 const log = Logger('zerva:context')
@@ -109,71 +109,6 @@ export function once<U extends keyof ZContextEvents>(
     dispose.add(ctx.once(k as any, v))
   })
   return dispose
-}
-
-/**
- * Check existance of registered module.
- *
- * @param module Name of module
- * @param strict Log error if check fails
- * @returns `true` if `module` has been registered before
- */
-export function hasModule(module: string, strict = false): boolean {
-  const has = getContext().modules.includes(module.toLowerCase())
-  log(`hasModule ${module} => ${has} (strict=${strict})`)
-  if (strict && !has)
-    log.error(`module '${module}' is missing`)
-
-  return has
-}
-
-/**
- * Check existance of registered modules, log error if missing.
- */
-export function requireModules(
-  ...requiredModules: (string | string[])[]
-): boolean {
-  const modules = arrayFlatten(requiredModules)
-  return !modules.map(module => hasModule(module, true)).some(ok => !ok)
-}
-
-export function assertModules(...requiredModules: (string | string[])[]): void {
-  const modules = arrayFlatten(requiredModules)
-  const missing = modules.filter(module => !hasModule(module))
-  if (missing.length > 0) {
-    log.error(`Zerva modules required: ${missing}`)
-    throw new Error(`Zerva modules required: ${missing}`)
-  }
-}
-
-/**
- * Register module by name and check for modules it depends on
- *
- * @param moduleName Module name to register
- * @param dependencies List of modules names that have to be registered before in this context
- */
-export function register(
-  moduleName: string,
-  ...dependencies: (string | string[])[]
-): boolean {
-  moduleName = moduleName.toLowerCase()
-
-  const modules = arrayFlatten(dependencies)
-
-  log(
-    `register ${moduleName} ${modules.length ? `with dependencies=${modules}` : ''
-    }`,
-  )
-
-  if (hasModule(moduleName))
-    log.warn(`The module '${moduleName} has been registered multiple times`)
-
-  getContext().modules.push(moduleName)
-
-  assertModules(modules)
-
-  // return requireModules(modules)
-  return true
 }
 
 /**

@@ -121,7 +121,7 @@ Object.keys(signals).forEach((signal) => {
         // log('Process EXIT')
         process.exit(0)
       }).catch((err) => {
-        log.error(`Error on srveStop: ${err}`)
+        log.error(`Error on serveStop: ${err}`)
       })
     }
     else {
