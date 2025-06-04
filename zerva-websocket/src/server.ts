@@ -1,32 +1,11 @@
-import type { Buffer } from 'node:buffer'
 import type WebSocket from 'ws'
-import type { LogConfig, LoggerInterface, LogLevelAliasType, UseDispose } from 'zeed'
-import { URL } from 'node:url'
-import { assertModules, emit, on, once, register } from '@zerva/core'
-import { WebSocketServer } from 'ws'
+import type { LoggerInterface, UseDispose } from 'zeed'
+import type { ZWebSocketConfig } from './_server'
+import { emit } from '@zerva/core'
 import { Channel, equalBinary, LoggerFromConfig, LogLevelInfo, uname, useDispose, uuid } from 'zeed'
-import { pingMessage, pongMessage, websocketName, wsReadyStateOpen } from './_types'
-import { useSingletonFlag } from './singleton'
+import { moduleName } from './_server'
+import { pingMessage, pongMessage, wsReadyStateOpen } from './_types'
 import '@zerva/http'
-
-const moduleName = 'websocket'
-
-declare module 'ws' {
-  interface WebSocket {
-    isAlive?: boolean
-  }
-}
-
-interface ZWebSocketConfig {
-  log?: LogConfig
-  debug?: boolean
-  name?: string
-  path?: string
-  pingInterval?: number
-
-  /** @deprecated use log */
-  logLevel?: LogLevelAliasType
-}
 
 let counter = 0
 
@@ -46,7 +25,7 @@ export class WebsocketNodeConnection extends Channel {
 
   private buffer: Uint8Array[] = []
 
-  constructor(ws: WebSocket, config: ZWebSocketConfig = {}) {
+  constructor(ws: WebSocket, config: ZWebSocketConfig) {
     super()
 
     this.config = config
@@ -63,7 +42,7 @@ export class WebsocketNodeConnection extends Channel {
 
     this.log('new connection', id)
 
-    const { pingInterval = 30000 } = config
+    const { pingInterval } = config
 
     // Heartbeat state
     let isAlive = true
@@ -194,87 +173,4 @@ export class WebsocketNodeConnection extends Channel {
     this.dispose.sync()
     this.ws.close()
   }
-}
-
-/**
- * - Integrates well in Express and Vite
- * - Heartbeat ping/pong from both sides
- */
-export function useWebSocket(config: ZWebSocketConfig = {}) {
-  const log = LoggerFromConfig(config?.log ?? true, moduleName, config.logLevel ?? LogLevelInfo)
-
-  log('setup')
-
-  register(moduleName)
-
-  on('serveInit', () => {
-    assertModules('http')
-  })
-
-  config.name ??= websocketName
-
-  let path = config.path ?? config.name
-  if (!path.startsWith('/'))
-    path = `/${path}`
-  config.path = path
-
-  const dispose = useDispose()
-  dispose.add(useSingletonFlag(`_zerva_websocket_server_${config.path}`))
-
-  on('httpInit', ({ http }) => {
-    log(`init path=${path}`)
-
-    // https://github.com/websockets/ws
-    // https://cheatcode.co/tutorials/how-to-set-up-a-websocket-server-with-node-js-and-express
-
-    const wss = new WebSocketServer({
-      noServer: true,
-      path,
-    })
-
-    const pool = new Map<string, WebsocketNodeConnection>()
-
-    wss.on('connection', (ws: WebSocket) => {
-      log.info('onconnection')
-
-      ws.isAlive = true
-
-      const conn = new WebsocketNodeConnection(ws, config)
-      const id = conn.id
-      log.info('onconnection -> pool', id)
-      conn.dispose.add(() => pool.delete(id))
-      pool.set(id, conn)
-    })
-
-    function handleUpgrade(req: any, socket: any, head: Buffer) {
-      const { pathname } = new URL(req.url, 'https://example.com')
-      log('onupgrade', pathname, path)
-      if (pathname === path) {
-        wss.handleUpgrade(req, socket, head, (ws: any) => {
-          log('upgrade connection')
-          wss.emit('connection', ws, req)
-        })
-      }
-      else {
-        log('ignore upgrade') // this can be vite HMR e.g.
-        socket.destroy()
-      }
-    }
-
-    http.on('upgrade', handleUpgrade)
-
-    once('serveStop', async () => {
-      log.info('server stop forced', pool)
-      http.off('upgrade', handleUpgrade)
-
-      for (const conn of pool.values())
-        conn.close()
-      pool.clear()
-
-      await new Promise(resolve => wss.close(resolve))
-      log.info('server stop done')
-    })
-  })
-
-  return dispose
 }

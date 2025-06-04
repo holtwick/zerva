@@ -5,7 +5,7 @@ import WebSocket from 'ws'
 import { createPromise, Logger, sleep, useMessageHub, uuid } from 'zeed'
 import { webSocketPath } from './_types'
 import { WebSocketConnection } from './client'
-import { useWebSocket } from './server'
+import { useWebSocket } from './use'
 
 // @ts-expect-error xxx
 globalThis.WebSocket = WebSocket
