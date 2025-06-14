@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite",
   "type": "module",
-  "version": "0.70.1",
+  "version": "0.71.0",
   "private": false,
   "packageManager": "pnpm@10.7.0",
   "description": "",
@@ -50,14 +50,14 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
-    "zeed": "^0.28.17"
+    "zeed": "^0.30.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "tsup": "^8.5.0",
-    "tsx": "^4.19.4",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitest": "^3.2.1"
+    "vitest": "^3.2.3"
   }
 }

@@ -20,11 +20,11 @@
     "start": "ZEED=* LEVEL=a zerva index.ts"
   },
   "dependencies": {
-    "@types/express-session": "^1.18.1",
+    "@types/express-session": "^1.18.2",
     "@zerva/bin": "workspace:*",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "express-session": "^1.18.1",
-    "zeed": "^0.28.17"
+    "zeed": "^0.30.1"
   }
 }

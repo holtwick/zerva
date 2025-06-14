@@ -11,10 +11,10 @@ declare global {
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
-  url: z.string().props({ desc: 'MQTT broker URL, e.g. "mqtt://localhost"' }),
-  port: z.number().optional().props({ desc: 'MQTT broker port (optional)' }),
-  username: z.string().optional().props({ desc: 'Username for MQTT authentication (optional)' }),
-  password: z.string().optional().props({ desc: 'Password for MQTT authentication (optional)' }),
+  url: z.string().meta({ desc: 'MQTT broker URL, e.g. "mqtt://localhost"' }),
+  port: z.number().optional().meta({ desc: 'MQTT broker port (optional)' }),
+  username: z.string().optional().meta({ desc: 'Username for MQTT authentication (optional)' }),
+  password: z.string().optional().meta({ desc: 'Password for MQTT authentication (optional)' }),
 })
 
 export const useVite = use({
