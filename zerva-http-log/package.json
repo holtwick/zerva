@@ -50,12 +50,12 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/morgan": "^1.9.9",
+    "@types/morgan": "^1.9.10",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.2.6",
-    "zeed": "^0.28.17"
+    "zeed": "^0.30.0"
   },
   "devDependencies": {
     "tsup": "^8.5.0",
