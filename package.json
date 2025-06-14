@@ -41,7 +41,7 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.3",
     "vue-tsc": "^2.2.10",
-    "zeed": "^0.30.0"
+    "zeed": "^0.30.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

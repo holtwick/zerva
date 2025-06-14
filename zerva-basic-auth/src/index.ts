@@ -14,11 +14,11 @@ const name = 'basic-auth'
 // }
 
 const configSchema = z.object({
-  routes: z.array(z.string()).default(['/']).props({ envSkip: true }),
+  routes: z.array(z.string()).default(['/']).meta({ envSkip: true }),
   auth: z.union([
     z.record(z.string()),
     z.func([z.string(), z.string()], z.boolean()),
-  ]).optional().props({ envSkip: true }),
+  ]).optional().meta({ envSkip: true }),
   logout: z.string().optional(),
   realm: z.string().default('default'),
   waitSecondsBetweenAuthorization: z.number().default(1),

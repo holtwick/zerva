@@ -18,9 +18,9 @@ declare global {
 }
 
 export const configSchema = z.object({
-  log: z.any<LogConfig>().optional().props({ desc: 'Logging configuration' }),
-  name: z.string().default(rpcSocketName).props({ desc: 'Name of the RPC hub instance.' }),
-  exceptions: z.boolean().default(true).props({ desc: 'Enable exception handling in the RPC hub.' }),
+  log: z.any<LogConfig>().optional().meta({ desc: 'Logging configuration' }),
+  name: z.string().default(rpcSocketName).meta({ desc: 'Name of the RPC hub instance.' }),
+  exceptions: z.boolean().default(true).meta({ desc: 'Enable exception handling in the RPC hub.' }),
 })
 
 export const useWebsocketRpcHub = use({
