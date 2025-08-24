@@ -74,8 +74,23 @@ export const useHttp = use({
         app.use(helmetDefault(options))
       }
 
-      if (compression)
-        app.use(compressionMiddleware())
+      // Use compression unless request appears to be coming via a reverse proxy/CDN (X-Forwarded-*/Via)
+      if (compression) {
+        const staticCompressionMiddleware = compressionMiddleware()
+        app.use((req, res, next) => {
+          const h = req.headers
+          const forwarded
+            = h['x-forwarded-for']
+            || h['x-forwarded-proto']
+            || h['x-forwarded-host']
+            || h['x-forwarded-port']
+            || h['via']
+            || h['cf-connecting-ip']
+            || h['cf-ray']
+          if (forwarded) return next()
+          return staticCompressionMiddleware(req as any, res as any, next as any)
+        })
+      }
 
       if (cors) {
         log('CORS')
