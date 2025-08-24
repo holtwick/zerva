@@ -199,7 +199,7 @@ export async function runMain(config: ZervaConf) {
           subtitle: 'Zerva Build Error',
           text: error?.text ?? 'Error',
           sound: 'Bottle',
-        })
+        } as any)
       }
     }
     catch (err) { }
