@@ -22,8 +22,8 @@ const DEFAULT_EXCLUDE = [
 ]
 
 export async function runMain(config: ZervaConf) {
-  const plugins = [
-    yamlPlugin({}),
+  const plugins: Plugin[] = [
+    yamlPlugin({}) as any,
   ]
 
   let openBrowser = config.open
@@ -188,7 +188,7 @@ export async function runMain(config: ZervaConf) {
 
         build.onDispose(stopNode)
       },
-    } as Plugin)
+    })
   }
 
   async function notifyError(error: any) {
@@ -199,7 +199,7 @@ export async function runMain(config: ZervaConf) {
           subtitle: 'Zerva Build Error',
           text: error?.text ?? 'Error',
           sound: 'Bottle',
-        })
+        } as any)
       }
     }
     catch (err) { }

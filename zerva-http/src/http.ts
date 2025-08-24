@@ -11,9 +11,11 @@ import process from 'node:process'
 import { use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
-import helmetDefault from 'helmet'
+import rateLimit from 'express-rate-limit'
 import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
 import { compressionMiddleware } from './compression'
+import { setupSecurity } from './security'
+import { isRequestProxied } from './utils'
 
 export * from './status'
 export * from './types'
@@ -28,6 +30,23 @@ const configSchema = z.object({
   noExtras: z.boolean().default(false).meta({ desc: 'None of the following middlewares is installed, just plain express. Add your own at httpInit' }),
   cors: z.boolean().default(true).meta({ desc: 'Enable CORS middleware https://github.com/expressjs/cors' }),
   helmet: z.union([z.boolean(), z.any<HelmetOptions>()]).default(true).meta({ desc: 'Security setting https://helmetjs.github.io/' }),
+  csp: z.union([
+    z.boolean(),
+    z.enum(['strict', 'moderate', 'permissive', 'disabled']),
+    z.string(),
+    z.record(z.union([z.string(), z.array(z.string()), z.boolean()])),
+  ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
+  securityHeaders: z.boolean().default(true).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
+  rateLimit: z.union([
+    z.boolean(),
+    z.object({
+      windowMs: z.number().optional(),
+      max: z.number().optional(),
+      skipSuccessfulRequests: z.boolean().optional(),
+      skipFailedRequests: z.boolean().optional(),
+      // skip: z.func().optional(),
+    }),
+  ]).default(false).meta({ desc: 'Rate limiting: boolean or configuration object with windowMs, max, etc.' }),
   compression: z.boolean().default(true).meta({ desc: 'Compress content' }),
   trustProxy: z.boolean().default(true).meta({ desc: 'Trust proxy setting https://stackoverflow.com/a/46475726/140927' }),
   postLimit: z.string().default('1gb').meta({ desc: 'Express post body size limit https://expressjs.com/en/api.html#express' }),
@@ -51,6 +70,9 @@ export const useHttp = use({
       noExtras,
       cors,
       helmet,
+      csp,
+      securityHeaders,
+      rateLimit: rateLimitConfig,
       compression,
       trustProxy,
       postLimit,
@@ -64,18 +86,44 @@ export const useHttp = use({
     // The actual web server
     const app: Express = express()
 
+    // Check if SSL is configured (needed for security setup)
+    const isSSL = !!(sslKey && sslCrt)
+
     if (noExtras === true) {
       log('noExtra')
     }
     else {
-      if (helmet) {
-        const options = helmet === true ? { contentSecurityPolicy: false } : helmet
-        log('Helmet', options)
-        app.use(helmetDefault(options))
+      // Setup security headers (Helmet, CSP, enhanced security headers)
+      setupSecurity(app, { helmet, csp, securityHeaders, isSSL }, log)
+
+      // Rate limiting middleware
+      if (rateLimitConfig) {
+        const rateLimitOptions = rateLimitConfig === true
+          ? {
+              windowMs: 15 * 60 * 1000, // 15 minutes
+              max: 100, // Limit each IP to 100 requests per windowMs
+              message: { error: 'Too many requests, please try again later.' },
+              standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+              legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+            }
+          : rateLimitConfig
+
+        log('Rate limiting enabled', rateLimitOptions)
+        app.use(rateLimit(rateLimitOptions))
       }
 
-      if (compression)
-        app.use(compressionMiddleware())
+      // Use compression unless request appears to be coming via a reverse proxy/CDN (X-Forwarded-*/Via)
+      if (compression) {
+        const staticCompressionMiddleware = compressionMiddleware()
+
+        log('Compression enabled (auto-skip behind proxy)')
+        app.use((req, res, next) => {
+          if (isRequestProxied(req))
+            return next()
+          res.vary('Accept-Encoding') // Important for caching
+          return staticCompressionMiddleware(req as any, res as any, next as any)
+        })
+      }
 
       if (cors) {
         log('CORS')
@@ -128,7 +176,6 @@ export const useHttp = use({
       }
     }
 
-    const isSSL = sslKey && sslCrt
     let server: Server
 
     if (isSSL) {
@@ -254,28 +301,31 @@ export const useHttp = use({
       return smartRequestHandler('delete', path, handlers)
     }
 
+    // Consolidate HTTP API object to avoid repetition
+    const httpApi = {
+      app,
+      http: server,
+      routes,
+      get: GET,
+      post: POST,
+      put: PUT,
+      delete: DELETE,
+      GET,
+      POST,
+      PUT,
+      DELETE,
+      onGET: GET,
+      onPOST: POST,
+      onPUT: PUT,
+      onDELETE: DELETE,
+      addStatic,
+      static: addStatic,
+      STATIC: addStatic,
+    }
+
     on('serveInit', async () => {
       log('serveInit')
-      await emit('httpInit', {
-        app,
-        http: server,
-        get: GET,
-        post: POST,
-        put: PUT,
-        delete: DELETE,
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        onGET: GET,
-        onPOST: POST,
-        onPUT: PUT,
-        onDELETE: DELETE,
-        addStatic,
-        static: addStatic,
-        STATIC: addStatic,
-        routes,
-      } as any)
+      await emit('httpInit', httpApi as any)
     })
 
     on('serveStop', async () => {
@@ -286,26 +336,7 @@ export const useHttp = use({
 
     on('serveStart', async () => {
       log('serveStart')
-      await emit('httpWillStart', {
-        app,
-        http: server,
-        get: GET,
-        post: POST,
-        put: PUT,
-        delete: DELETE,
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        onGET: GET,
-        onPOST: POST,
-        onPUT: PUT,
-        onDELETE: DELETE,
-        addStatic,
-        static: addStatic,
-        STATIC: addStatic,
-        routes,
-      } as any)
+      await emit('httpWillStart', httpApi as any)
       server.listen({ host, port }, () => {
         const { port, family, address } = server.address() as AddressInfo
         const host = isLocalHost(address) ? 'localhost' : address
@@ -333,25 +364,6 @@ export const useHttp = use({
       })
     })
 
-    return {
-      app,
-      http: server,
-      routes,
-      get: GET,
-      post: POST,
-      put: PUT,
-      delete: DELETE,
-      GET,
-      POST,
-      PUT,
-      DELETE,
-      onGET: GET,
-      onPOST: POST,
-      onPUT: PUT,
-      onDELETE: DELETE,
-      addStatic,
-      static: addStatic,
-      STATIC: addStatic,
-    }
+    return httpApi
   },
 })

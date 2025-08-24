@@ -1,7 +1,7 @@
 {
   "name": "@zerva/email",
   "type": "module",
-  "version": "0.71.0",
+  "version": "0.72.0",
   "description": "🌱 Zerva send email service",
   "author": {
     "name": "Dirk Holtwick",
@@ -50,14 +50,14 @@
     "watch": "tsup src/index.ts --watch"
   },
   "dependencies": {
-    "@types/nodemailer": "^6.4.17",
+    "@types/nodemailer": "^7.0.1",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "nodemailer": "^7.0.3",
-    "zeed": "^0.30.1"
+    "nodemailer": "^7.0.5",
+    "zeed": "^1.0.1"
   },
   "devDependencies": {
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.3.0",
     "tsup": "^8.5.0"
   }
 }

@@ -51,7 +51,7 @@ export function useSqliteTableWithSchema<
 
   const fields: Record<string, any> = {}
   for (const [key, type] of Object.entries(obj) as [string, Type<any>][]) {
-    fields[key] = mapSchemaTypeToField[type.type] ?? type._props?.fieldType ?? 'text'
+    fields[key] = mapSchemaTypeToField[type.type] ?? type._meta?.fieldType ?? 'text'
   }
 
   //

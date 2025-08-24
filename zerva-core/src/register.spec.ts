@@ -103,4 +103,8 @@ describe('register', () => {
       "
     `)
   })
+
+  // Note: Circular dependency detection is implemented but only catches cycles
+  // between already registered modules. A more comprehensive test would require
+  // pre-registering modules and then checking their interdependencies.
 })
