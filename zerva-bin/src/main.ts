@@ -1,16 +1,16 @@
 /* eslint-disable no-console */
+import displayNotification from 'display-notification'
 import type { BuildOptions, Plugin } from 'esbuild'
+import { context } from 'esbuild'
+import { yamlPlugin } from 'esbuild-plugin-yaml'
 import type { ChildProcess } from 'node:child_process'
-import type { ZervaConf } from './config'
 import { spawn } from 'node:child_process'
 import { chmodSync } from 'node:fs'
 import { chmod } from 'node:fs/promises'
 import { normalize } from 'node:path'
 import process from 'node:process'
-import displayNotification from 'display-notification'
-import { context } from 'esbuild'
-import { yamlPlugin } from 'esbuild-plugin-yaml'
 import { valueToBoolean } from 'zeed'
+import type { ZervaConf } from './config'
 
 const DEFAULT_EXCLUDE = [
   'fs', // todo required?
@@ -22,8 +22,8 @@ const DEFAULT_EXCLUDE = [
 ]
 
 export async function runMain(config: ZervaConf) {
-  const plugins = [
-    yamlPlugin({}),
+  const plugins: Plugin[] = [
+    yamlPlugin({}) as any,
   ]
 
   let openBrowser = config.open
@@ -188,7 +188,7 @@ export async function runMain(config: ZervaConf) {
 
         build.onDispose(stopNode)
       },
-    } as Plugin)
+    })
   }
 
   async function notifyError(error: any) {
