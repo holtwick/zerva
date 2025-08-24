@@ -15,47 +15,47 @@ function buildCSP(cspConfig: any) {
   // Preset configurations
   const presets = {
     strict: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline needed for many CSS frameworks
-      imgSrc: ["'self'", "data:", "https:"],
-      fontSrc: ["'self'", "https:", "data:"],
-      connectSrc: ["'self'"],
-      mediaSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      childSrc: ["'self'"],
-      workerSrc: ["'self'"],
-      frameSrc: ["'none'"],
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''], // unsafe-inline needed for many CSS frameworks
+      imgSrc: ['\'self\'', 'data:', 'https:'],
+      fontSrc: ['\'self\'', 'https:', 'data:'],
+      connectSrc: ['\'self\''],
+      mediaSrc: ['\'self\''],
+      objectSrc: ['\'none\''],
+      childSrc: ['\'self\''],
+      workerSrc: ['\'self\''],
+      frameSrc: ['\'none\''],
       upgradeInsecureRequests: [], // Helmet expects empty array for this directive
     },
     moderate: {
-      defaultSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // eval needed for many frameworks
-      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-      imgSrc: ["'self'", "data:", "https:", "http:"],
-      fontSrc: ["'self'", "https:", "data:"],
-      connectSrc: ["'self'", "https:", "wss:", "ws:"], // websockets support
-      mediaSrc: ["'self'", "https:", "data:"],
-      objectSrc: ["'self'"],
-      childSrc: ["'self'", "https:"],
-      workerSrc: ["'self'", "blob:"],
-      frameSrc: ["'self'", "https:"],
+      defaultSrc: ['\'self\'', '\'unsafe-inline\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\''], // eval needed for many frameworks
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https:'],
+      imgSrc: ['\'self\'', 'data:', 'https:', 'http:'],
+      fontSrc: ['\'self\'', 'https:', 'data:'],
+      connectSrc: ['\'self\'', 'https:', 'wss:', 'ws:'], // websockets support
+      mediaSrc: ['\'self\'', 'https:', 'data:'],
+      objectSrc: ['\'self\''],
+      childSrc: ['\'self\'', 'https:'],
+      workerSrc: ['\'self\'', 'blob:'],
+      frameSrc: ['\'self\'', 'https:'],
       // upgradeInsecureRequests omitted (disabled) for moderate preset
     },
     permissive: {
-      defaultSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "data:", "https:", "http:"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https:", "http:"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https:", "http:"],
-      imgSrc: "*",
-      fontSrc: "*",
-      connectSrc: "*",
-      mediaSrc: "*",
-      objectSrc: "*",
-      childSrc: "*",
-      workerSrc: "*",
-      frameSrc: "*",
+      defaultSrc: ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'data:', 'https:', 'http:'],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https:', 'http:'],
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https:', 'http:'],
+      imgSrc: '*',
+      fontSrc: '*',
+      connectSrc: '*',
+      mediaSrc: '*',
+      objectSrc: '*',
+      childSrc: '*',
+      workerSrc: '*',
+      frameSrc: '*',
       // upgradeInsecureRequests omitted (disabled) for permissive preset
-    }
+    },
   }
 
   if (typeof cspConfig === 'string') {
@@ -85,14 +85,15 @@ function normalizeCSPDirectives(cspConfig: any) {
   }
 
   const normalized = { ...cspConfig }
-  
+
   // Handle upgradeInsecureRequests: true -> [], false/undefined -> omit
   if (normalized.upgradeInsecureRequests === true) {
     normalized.upgradeInsecureRequests = []
-  } else if (normalized.upgradeInsecureRequests === false || normalized.upgradeInsecureRequests === undefined) {
+  }
+  else if (normalized.upgradeInsecureRequests === false || normalized.upgradeInsecureRequests === undefined) {
     delete normalized.upgradeInsecureRequests
   }
-  
+
   return normalized
 }
 
@@ -116,13 +117,13 @@ export function setupSecurity(app: Express, config: SecurityConfig, log: any) {
 
     const cspDirectives = buildCSP(effectiveCSP)
     const options = {
-      contentSecurityPolicy: cspDirectives !== false ? { directives: cspDirectives } : false
+      contentSecurityPolicy: cspDirectives !== false ? { directives: cspDirectives } : false,
     }
 
     log('Helmet with CSP', {
       helmet: options,
       csp: cspDirectives !== false ? (effectiveCSP || 'moderate') : 'disabled',
-      autoEnabled: securityHeaders && csp === false ? 'via securityHeaders' : false
+      autoEnabled: securityHeaders && csp === false ? 'via securityHeaders' : false,
     })
 
     app.use(helmetDefault(options))

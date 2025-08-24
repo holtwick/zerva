@@ -25,7 +25,7 @@ describe('http', () => {
       onGET('/hello', middleware, 'Hello World')
       onGET('/json', { itIs: 'json', v: 1 })
       onGET('/test2', ({ req }) => {
-        //req.protocol = 'xxx'
+        // req.protocol = 'xxx'
       })
 
       onPOST('/data', ({ req }) => {

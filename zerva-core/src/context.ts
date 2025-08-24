@@ -77,7 +77,7 @@ export function on<U extends keyof ZContextEvents>(
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
     if (ctx.eventNamesEmitted[k])
-      log.warn(`Event '${first}' has already been emitted before listener was added`)
+      log.warn(`Event '${k}' has already been emitted before listener was added`)
     dispose.add(ctx.on(k as any, v))
   })
   return dispose
@@ -105,7 +105,7 @@ export function once<U extends keyof ZContextEvents>(
   const dispose = useDispose()
   Object.entries(first).forEach(([k, v]) => {
     if (ctx.eventNamesEmitted[k])
-      log.warn(`Event '${first}' has already been emitted before listener was added`)
+      log.warn(`Event '${k}' has already been emitted before listener was added`)
     dispose.add(ctx.once(k as any, v))
   })
   return dispose

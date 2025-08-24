@@ -13,10 +13,28 @@ declare global {
   }
 }
 
+enum ServerState {
+  IDLE = 'idle',
+  STARTED = 'started',
+  RUNNING = 'running',
+  STOPPING = 'stopping',
+  DISPOSED = 'disposed',
+}
+
+export { ServerState }
+
 // todo context sensitive?
-let serverStarted = false
-let serverRunning = false
-let serverStoping = false
+let serverState = ServerState.IDLE
+
+/** Get the current server state (mainly for testing) */
+export function getServerState(): ServerState {
+  return serverState
+}
+
+/** Reset the server state to IDLE (mainly for testing) */
+export function resetServerState(): void {
+  serverState = ServerState.IDLE
+}
 
 // Shortcuts
 
@@ -37,27 +55,22 @@ export function onStop(handler: () => void) {
 
 export async function serveStop() {
   // log('serveStop called')
-  if (serverStoping) {
+  if (serverState === ServerState.STOPPING) {
     await new Promise(resolve => getContext().once('serveDispose', () => resolve(true)))
   }
-  else if (serverRunning) {
-    serverRunning = false
-    serverStoping = true
+  else if (serverState === ServerState.RUNNING) {
+    serverState = ServerState.STOPPING
     await emit('serveStop')
-    serverStoping = false
+    serverState = ServerState.DISPOSED
     await emit('serveDispose')
   }
   // log('serveStop done')
 }
 
-on('serveStart', () => {
-  serverRunning = true
-})
-
 on('serveStop', () => {
-  if (serverStoping !== true) {
+  if (serverState !== ServerState.STOPPING) {
     // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
-    log.warn('You should call `serveStop` instead of emitting `serveStop`!')
+    log.warn('You should call `serveStop()` function instead of directly emitting `serveStop` event!')
 
     // eslint-disable-next-line no-console
     console.trace()
@@ -65,13 +78,20 @@ on('serveStop', () => {
 })
 
 /**
- * A simple context to serve modules. Most modules listen to the evnts emitted by it.
+ * A simple context to serve modules. Most modules listen to the events emitted by it.
  *
  * @param fn Call your modules in here to add them to the context
  */
 export async function serve(fn?: () => void) {
   log('serve')
-  serverStarted = true
+
+  // Only start if we're in IDLE state
+  if (serverState !== ServerState.IDLE) {
+    log.warn(`Server is already in state: ${serverState}, ignoring serve() call`)
+    return
+  }
+
+  serverState = ServerState.STARTED
 
   if (fn) {
     log('launch')
@@ -81,15 +101,17 @@ export async function serve(fn?: () => void) {
   await emit('serveInit')
   log('start')
   await emit('serveStart')
+  // Set state to RUNNING after serveStart event is emitted
+  serverState = ServerState.RUNNING
   log('serve')
 }
 
 async function serverCheck() {
-  if (serverStarted !== true) {
+  if (serverState === ServerState.IDLE) {
     log.info('Zerva has not been started manually, will start now!')
     void serve()
   }
-  else if (serverRunning === true) {
+  else if (serverState === ServerState.RUNNING) {
     log('Reached the end, will finish gracefully.')
     await serveStop()
   }

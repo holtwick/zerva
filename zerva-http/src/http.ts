@@ -14,8 +14,8 @@ import express from 'express'
 import rateLimit from 'express-rate-limit'
 import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
 import { compressionMiddleware } from './compression'
-import { isRequestProxied } from './utils'
 import { setupSecurity } from './security'
+import { isRequestProxied } from './utils'
 
 export * from './status'
 export * from './types'
@@ -34,7 +34,7 @@ const configSchema = z.object({
     z.boolean(),
     z.enum(['strict', 'moderate', 'permissive', 'disabled']),
     z.string(),
-    z.record(z.union([z.string(), z.array(z.string()), z.boolean()]))
+    z.record(z.union([z.string(), z.array(z.string()), z.boolean()])),
   ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
   securityHeaders: z.boolean().default(true).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
   rateLimit: z.union([
@@ -45,7 +45,7 @@ const configSchema = z.object({
       skipSuccessfulRequests: z.boolean().optional(),
       skipFailedRequests: z.boolean().optional(),
       // skip: z.func().optional(),
-    })
+    }),
   ]).default(false).meta({ desc: 'Rate limiting: boolean or configuration object with windowMs, max, etc.' }),
   compression: z.boolean().default(true).meta({ desc: 'Compress content' }),
   trustProxy: z.boolean().default(true).meta({ desc: 'Trust proxy setting https://stackoverflow.com/a/46475726/140927' }),
@@ -98,7 +98,7 @@ export const useHttp = use({
 
       // Rate limiting middleware
       if (rateLimitConfig) {
-        const rateLimitOptions = rateLimitConfig === true 
+        const rateLimitOptions = rateLimitConfig === true
           ? {
               windowMs: 15 * 60 * 1000, // 15 minutes
               max: 100, // Limit each IP to 100 requests per windowMs

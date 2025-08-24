@@ -52,6 +52,45 @@ export function assertModules(...requiredModules: (string | string[])[]): void {
 }
 
 /**
+ * Check for circular dependencies in module requirements.
+ * This is a simple detection that prevents direct cycles.
+ *
+ * @param moduleName The module being registered
+ * @param dependencies Its direct dependencies
+ * @param visited Set of modules in the current dependency chain (for recursion)
+ * @returns Array of circular dependency chains found, empty if none
+ */
+function detectCircularDependencies(
+  moduleName: string,
+  dependencies: string[],
+  visited = new Set<string>(),
+): string[][] {
+  const cycles: string[][] = []
+  const context = getContext()
+
+  if (visited.has(moduleName)) {
+    // Found a cycle - return the chain
+    const visitedArray = Array.from(visited)
+    const cycleStart = visitedArray.indexOf(moduleName)
+    return [visitedArray.slice(cycleStart).concat(moduleName)]
+  }
+
+  visited.add(moduleName)
+
+  for (const dep of dependencies) {
+    const depModule = context.uses[dep.toLowerCase()]
+    if (depModule?.moduleOptions?.requires) {
+      const depRequires = arrayFlatten(depModule.moduleOptions.requires)
+      const depCycles = detectCircularDependencies(dep, depRequires, new Set(visited))
+      cycles.push(...depCycles)
+    }
+  }
+
+  visited.delete(moduleName)
+  return cycles
+}
+
+/**
  * Register module by name and check for modules it depends on
  *
  * @param moduleName Module name to register
@@ -149,11 +188,46 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
     throw new Error(message)
   }
 
+  // Check for circular dependencies
+  const cycles = detectCircularDependencies(moduleName, modules)
+  if (cycles.length > 0) {
+    const cycleDescriptions = cycles.map(cycle => cycle.join(' -> '))
+    const message = `Circular dependency detected for module '${moduleName}': ${cycleDescriptions.join(', ')}`
+    log.error(message)
+    throw new Error(message)
+  }
+
   const context: ZervaModuleContext<T> = { name: moduleName, log, config, on, once, emit, moduleOptions }
   getContext().uses[moduleName] = context
   return context
 }
 
+/**
+ * Factory function for creating reusable module functions.
+ *
+ * This pattern allows you to define a module once with its setup logic and configuration schema,
+ * then create multiple instances of it with different configurations.
+ *
+ * @example
+ * ```typescript
+ * // Define a reusable module
+ * const useMyModule = use({
+ *   name: 'myModule',
+ *   configSchema: z.object({ port: z.number().default(3000) }),
+ *   setup({ config, log }) {
+ *     log.info(`Starting module on port ${config.port}`)
+ *     return { port: config.port }
+ *   }
+ * })
+ *
+ * // Use it with custom config
+ * const module1 = useMyModule({ port: 4000 })
+ * const module2 = useMyModule() // uses default port 3000
+ * ```
+ *
+ * @param moduleOptions Configuration and setup function for the module
+ * @returns A function that can be called with partial config to instantiate the module
+ */
 export function use<T extends Type<unknown> = Type<any>, R = any>(
   moduleOptions: ZervaModuleOptions<T> & {
     name: string
