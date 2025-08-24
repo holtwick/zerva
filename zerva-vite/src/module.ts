@@ -126,5 +126,15 @@ export const useVite = use({
         })
       }
     })
+
+    // Return configuration info for testing and introspection
+    return {
+      name: 'vite',
+      config,
+      paths: {
+        root: rootPath,
+        www: wwwPath,
+      },
+    }
   },
 })
