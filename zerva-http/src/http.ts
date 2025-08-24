@@ -11,6 +11,7 @@ import process from 'node:process'
 import { use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
+import rateLimit from 'express-rate-limit'
 import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
 import { compressionMiddleware } from './compression'
 import { isRequestProxied } from './utils'
@@ -36,6 +37,16 @@ const configSchema = z.object({
     z.record(z.union([z.string(), z.array(z.string()), z.boolean()]))
   ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
   securityHeaders: z.boolean().default(true).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
+  rateLimit: z.union([
+    z.boolean(),
+    z.object({
+      windowMs: z.number().optional(),
+      max: z.number().optional(),
+      skipSuccessfulRequests: z.boolean().optional(),
+      skipFailedRequests: z.boolean().optional(),
+      // skip: z.func().optional(),
+    })
+  ]).default(false).meta({ desc: 'Rate limiting: boolean or configuration object with windowMs, max, etc.' }),
   compression: z.boolean().default(true).meta({ desc: 'Compress content' }),
   trustProxy: z.boolean().default(true).meta({ desc: 'Trust proxy setting https://stackoverflow.com/a/46475726/140927' }),
   postLimit: z.string().default('1gb').meta({ desc: 'Express post body size limit https://expressjs.com/en/api.html#express' }),
@@ -61,6 +72,7 @@ export const useHttp = use({
       helmet,
       csp,
       securityHeaders,
+      rateLimit: rateLimitConfig,
       compression,
       trustProxy,
       postLimit,
@@ -83,6 +95,22 @@ export const useHttp = use({
     else {
       // Setup security headers (Helmet, CSP, enhanced security headers)
       setupSecurity(app, { helmet, csp, securityHeaders, isSSL }, log)
+
+      // Rate limiting middleware
+      if (rateLimitConfig) {
+        const rateLimitOptions = rateLimitConfig === true 
+          ? {
+              windowMs: 15 * 60 * 1000, // 15 minutes
+              max: 100, // Limit each IP to 100 requests per windowMs
+              message: { error: 'Too many requests, please try again later.' },
+              standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+              legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+            }
+          : rateLimitConfig
+
+        log('Rate limiting enabled', rateLimitOptions)
+        app.use(rateLimit(rateLimitOptions))
+      }
 
       // Use compression unless request appears to be coming via a reverse proxy/CDN (X-Forwarded-*/Via)
       if (compression) {
