@@ -19,6 +19,82 @@ import { isRequestProxied } from './utils'
 export * from './status'
 export * from './types'
 
+// CSP Presets and helper
+function buildCSP(cspConfig: any) {
+  if (cspConfig === false || cspConfig === 'disabled') {
+    return false
+  }
+
+  if (cspConfig === true) {
+    cspConfig = 'moderate'
+  }
+
+  // Preset configurations
+  const presets = {
+    strict: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline needed for many CSS frameworks
+      imgSrc: ["'self'", "data:", "https:"],
+      fontSrc: ["'self'", "https:", "data:"],
+      connectSrc: ["'self'"],
+      mediaSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      childSrc: ["'self'"],
+      workerSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      upgradeInsecureRequests: true,
+    },
+    moderate: {
+      defaultSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // eval needed for many frameworks
+      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+      imgSrc: ["'self'", "data:", "https:", "http:"],
+      fontSrc: ["'self'", "https:", "data:"],
+      connectSrc: ["'self'", "https:", "wss:", "ws:"], // websockets support
+      mediaSrc: ["'self'", "https:", "data:"],
+      objectSrc: ["'self'"],
+      childSrc: ["'self'", "https:"],
+      workerSrc: ["'self'", "blob:"],
+      frameSrc: ["'self'", "https:"],
+      upgradeInsecureRequests: false,
+    },
+    permissive: {
+      defaultSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "data:", "https:", "http:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https:", "http:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https:", "http:"],
+      imgSrc: "*",
+      fontSrc: "*",
+      connectSrc: "*",
+      mediaSrc: "*",
+      objectSrc: "*",
+      childSrc: "*",
+      workerSrc: "*",
+      frameSrc: "*",
+      upgradeInsecureRequests: false,
+    }
+  }
+
+  if (typeof cspConfig === 'string') {
+    if (cspConfig in presets) {
+      return presets[cspConfig as keyof typeof presets]
+    }
+    // Custom CSP string - return as directives object
+    const directives: any = {}
+    cspConfig.split(';').forEach((directive: string) => {
+      const [key, ...values] = directive.trim().split(/\s+/)
+      if (key) {
+        const camelKey = key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+        directives[camelKey] = values
+      }
+    })
+    return directives
+  }
+
+  // Return object as-is (custom CSP object)
+  return cspConfig
+}
+
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
   host: z.string().optional().meta({ desc: 'Host to bind the server to' }),
@@ -29,6 +105,13 @@ const configSchema = z.object({
   noExtras: z.boolean().default(false).meta({ desc: 'None of the following middlewares is installed, just plain express. Add your own at httpInit' }),
   cors: z.boolean().default(true).meta({ desc: 'Enable CORS middleware https://github.com/expressjs/cors' }),
   helmet: z.union([z.boolean(), z.any<HelmetOptions>()]).default(true).meta({ desc: 'Security setting https://helmetjs.github.io/' }),
+  csp: z.union([
+    z.boolean(),
+    z.enum(['strict', 'moderate', 'permissive', 'disabled']),
+    z.string(),
+    z.record(z.union([z.string(), z.array(z.string()), z.boolean()]))
+  ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
+  securityHeaders: z.boolean().default(true).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
   compression: z.boolean().default(true).meta({ desc: 'Compress content' }),
   trustProxy: z.boolean().default(true).meta({ desc: 'Trust proxy setting https://stackoverflow.com/a/46475726/140927' }),
   postLimit: z.string().default('1gb').meta({ desc: 'Express post body size limit https://expressjs.com/en/api.html#express' }),
@@ -52,6 +135,8 @@ export const useHttp = use({
       noExtras,
       cors,
       helmet,
+      csp,
+      securityHeaders,
       compression,
       trustProxy,
       postLimit,
@@ -69,10 +154,54 @@ export const useHttp = use({
       log('noExtra')
     }
     else {
-      if (helmet) {
-        const options = helmet === true ? { contentSecurityPolicy: false } : helmet
-        log('Helmet', options)
+
+      // Helmet security headers with optional CSP
+      if (helmet || csp !== false || securityHeaders) {
+        // Auto-enable moderate CSP when securityHeaders is true and CSP is not explicitly set
+        let effectiveCSP = csp
+        if (securityHeaders && (csp === false || csp === true)) {
+          effectiveCSP = csp === false ? 'moderate' : csp
+        }
+
+        const cspDirectives = buildCSP(effectiveCSP)
+        const options = {
+          contentSecurityPolicy: cspDirectives !== false ? { directives: cspDirectives } : false
+        }
+
+        log('Helmet with CSP', {
+          helmet: options,
+          csp: cspDirectives !== false ? (effectiveCSP || 'moderate') : 'disabled',
+          autoEnabled: securityHeaders && csp === false ? 'via securityHeaders' : false
+        })
+        
         app.use(helmetDefault(options))
+      }
+
+      // Enhanced security headers beyond helmet
+      if (securityHeaders) {
+        log('Enhanced security headers enabled')
+        app.use((req, res, next) => {
+          // Strict-Transport-Security (HSTS) - force HTTPS for 1 year
+          if (isSSL) {
+            res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+          }
+
+          // Additional security headers
+          res.setHeader('X-Content-Type-Options', 'nosniff')
+          res.setHeader('X-Frame-Options', 'DENY')
+          res.setHeader('X-XSS-Protection', '1; mode=block')
+          res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+          res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=()')
+          res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+          res.setHeader('Cross-Origin-Resource-Policy', 'same-origin')
+
+          // Remove server identification
+          res.removeHeader('X-Powered-By')
+          res.removeHeader('Server')
+
+          next()
+        })
       }
 
       // Use compression unless request appears to be coming via a reverse proxy/CDN (X-Forwarded-*/Via)
