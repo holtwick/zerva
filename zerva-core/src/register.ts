@@ -108,10 +108,6 @@ export interface ZervaModuleContext<T> {
  *
  * `options` can be used to override the default configuration values i.e. first
  * apply `options` and then the `configSchema` values.
- *
- * @param name Name of the module to register
- * @param moduleOptions Additional options for the module
- * @returns { name: string, config: Infer<T>, log: LoggerInterface }
  */
 export function registerModule<T extends Type<unknown> = Type<any>>(name: string, moduleOptions?: ZervaModuleOptions<T>): ZervaModuleContext<T> {
   const { requires = [], configOptions, configSchema, options } = moduleOptions || {}

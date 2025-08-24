@@ -8,20 +8,20 @@ export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
 
 export type zervaHttpPaths = (string | RegExp)[] | (string | RegExp)
 
-export type zervaHttpResultPrimaryTypes =
-  | string
-  | number
-  | undefined
-  | null
-  | object
-  | void
+export type zervaHttpResultPrimaryTypes
+  = | string
+    | number
+    | undefined
+    | null
+    | object
+    | void
 
-export type zervaHttpGetHandler =
-  | zervaHttpResultPrimaryTypes
-  | ((info: (Request & {
-    res: Response
-    req: Request
-  }), res: Response, next: NextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
+export type zervaHttpGetHandler
+  = | zervaHttpResultPrimaryTypes
+    | ((info: (Request & {
+      res: Response
+      req: Request
+    }), res: Response, next: NextFunction) => Promise<zervaHttpResultPrimaryTypes> | zervaHttpResultPrimaryTypes)
 
 export interface ZervaHttpRouteDescription {
   path: string

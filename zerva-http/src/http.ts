@@ -19,7 +19,6 @@ import { isRequestProxied } from './utils'
 export * from './status'
 export * from './types'
 
-
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
   host: z.string().optional().meta({ desc: 'Host to bind the server to' }),
@@ -80,10 +79,10 @@ export const useHttp = use({
       if (compression) {
         const staticCompressionMiddleware = compressionMiddleware()
 
-
         log('Compression enabled (auto-skip behind proxy)')
         app.use((req, res, next) => {
-          if (isRequestProxied(req)) return next()
+          if (isRequestProxied(req))
+            return next()
           res.vary('Accept-Encoding') // Important for caching
           return staticCompressionMiddleware(req as any, res as any, next as any)
         })
