@@ -43,7 +43,7 @@ function buildCSP(cspConfig: any) {
       childSrc: ["'self'"],
       workerSrc: ["'self'"],
       frameSrc: ["'none'"],
-      upgradeInsecureRequests: true,
+      upgradeInsecureRequests: [], // Helmet expects empty array for this directive
     },
     moderate: {
       defaultSrc: ["'self'", "'unsafe-inline'"],
@@ -57,7 +57,7 @@ function buildCSP(cspConfig: any) {
       childSrc: ["'self'", "https:"],
       workerSrc: ["'self'", "blob:"],
       frameSrc: ["'self'", "https:"],
-      upgradeInsecureRequests: false,
+      // upgradeInsecureRequests omitted (disabled) for moderate preset
     },
     permissive: {
       defaultSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "data:", "https:", "http:"],
@@ -71,13 +71,13 @@ function buildCSP(cspConfig: any) {
       childSrc: "*",
       workerSrc: "*",
       frameSrc: "*",
-      upgradeInsecureRequests: false,
+      // upgradeInsecureRequests omitted (disabled) for permissive preset
     }
   }
 
   if (typeof cspConfig === 'string') {
     if (cspConfig in presets) {
-      return presets[cspConfig as keyof typeof presets]
+      return normalizeCSPDirectives(presets[cspConfig as keyof typeof presets])
     }
     // Custom CSP string - return as directives object
     const directives: any = {}
@@ -88,11 +88,29 @@ function buildCSP(cspConfig: any) {
         directives[camelKey] = values
       }
     })
-    return directives
+    return normalizeCSPDirectives(directives)
   }
 
-  // Return object as-is (custom CSP object)
-  return cspConfig
+  // Return object with proper normalization
+  return normalizeCSPDirectives(cspConfig)
+}
+
+// Normalize CSP directives for helmet compatibility
+function normalizeCSPDirectives(cspConfig: any) {
+  if (!cspConfig || typeof cspConfig !== 'object') {
+    return cspConfig
+  }
+
+  const normalized = { ...cspConfig }
+  
+  // Handle upgradeInsecureRequests: true -> [], false/undefined -> omit
+  if (normalized.upgradeInsecureRequests === true) {
+    normalized.upgradeInsecureRequests = []
+  } else if (normalized.upgradeInsecureRequests === false || normalized.upgradeInsecureRequests === undefined) {
+    delete normalized.upgradeInsecureRequests
+  }
+  
+  return normalized
 }
 
 const configSchema = z.object({
@@ -173,7 +191,7 @@ export const useHttp = use({
           csp: cspDirectives !== false ? (effectiveCSP || 'moderate') : 'disabled',
           autoEnabled: securityHeaders && csp === false ? 'via securityHeaders' : false
         })
-        
+
         app.use(helmetDefault(options))
       }
 
