@@ -6,14 +6,11 @@ import process from 'node:process'
 import { use } from '@zerva/core'
 import { toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
+
 import '@zerva/http'
 
-// HACK!
-// This will be removed by Zerva later on.
-// Otherwise it drags full vite into production build.
-// declare global {
-//   const ZERVA_DEVELOPMENT: boolean
-// }
+// Constants for better maintainability
+const CACHEABLE_EXTENSIONS = /.*\.(?:png|ico|svg|jpg|pdf|jpeg|mp4|mp3|woff2|ttf|tflite)$/
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
@@ -24,12 +21,18 @@ const configSchema = z.object({
   cacheAssets: z.boolean().default(true),
 })
 
+/**
+ * Integrates Vite development server with Zerva
+ *
+ * In development mode, serves files through Vite dev server with HMR support.
+ * In production mode, serves pre-built static files with proper caching headers.
+ */
 export const useVite = use({
   name: 'vite',
   requires: ['http'],
   configSchema,
   setup({ log, config, on }) {
-  // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
+    // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
     const { root, www, mode, cacheAssets } = config
 
@@ -47,7 +50,7 @@ export const useVite = use({
 
     on('httpWillStart', async ({ STATIC, app }) => {
       if (ZERVA_DEVELOPMENT) {
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
         // log.info(`serving through vite from ${rootPath}`)
 
@@ -78,12 +81,12 @@ export const useVite = use({
             await vite.ws?.close()
           }
           catch (err) {
-
+            log.warn('Error closing Vite server:', err)
           }
         })
       }
       else {
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
         console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
         // log.info(`serving static files at ${wwwPath}}`)
         STATIC('', wwwPath)
@@ -94,7 +97,7 @@ export const useVite = use({
         if (cacheAssets) {
           app.use((req, res, next) => {
             const path = req.path
-            if (path.includes('/assets/') || /.*\.(?:png|ico|svg|jpg|pdf|jpeg|mp4|mp3|woff2|ttf|tflite)$/.test(req.path)) {
+            if (path.includes('/assets/') || CACHEABLE_EXTENSIONS.test(req.path)) {
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
             next()

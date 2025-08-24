@@ -1,5 +1,12 @@
+/* eslint-disable vars-on-top */
 import type { ZervaModuleContext } from './register'
 import { Emitter, uname } from 'zeed'
+
+declare global {
+  var ZERVA_DEVELOPMENT: boolean
+  var ZERVA_PRODUCTION: boolean
+  var ZERVA_VERSION: string
+}
 
 declare global {
   interface ZContextEvents {
@@ -9,10 +16,6 @@ declare global {
   interface ZeedGlobalContext {
     zerva?: ZContext
   }
-
-  var ZERVA_DEVELOPMENT: boolean
-  var ZERVA_PRODUCTION: boolean
-  var ZERVA_VERSION: string
 }
 
 export class ZContext extends Emitter<ZContextEvents> {
