@@ -14,9 +14,11 @@ import express from 'express'
 import helmetDefault from 'helmet'
 import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
 import { compressionMiddleware } from './compression'
+import { isRequestProxied } from './utils'
 
 export * from './status'
 export * from './types'
+
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
@@ -77,17 +79,12 @@ export const useHttp = use({
       // Use compression unless request appears to be coming via a reverse proxy/CDN (X-Forwarded-*/Via)
       if (compression) {
         const staticCompressionMiddleware = compressionMiddleware()
+
+
+        log('Compression enabled (auto-skip behind proxy)')
         app.use((req, res, next) => {
-          const h = req.headers
-          const forwarded
-            = h['x-forwarded-for']
-            || h['x-forwarded-proto']
-            || h['x-forwarded-host']
-            || h['x-forwarded-port']
-            || h['via']
-            || h['cf-connecting-ip']
-            || h['cf-ray']
-          if (forwarded) return next()
+          if (isRequestProxied(req)) return next()
+          res.vary('Accept-Encoding') // Important for caching
           return staticCompressionMiddleware(req as any, res as any, next as any)
         })
       }
@@ -269,28 +266,31 @@ export const useHttp = use({
       return smartRequestHandler('delete', path, handlers)
     }
 
+    // Consolidate HTTP API object to avoid repetition
+    const httpApi = {
+      app,
+      http: server,
+      routes,
+      get: GET,
+      post: POST,
+      put: PUT,
+      delete: DELETE,
+      GET,
+      POST,
+      PUT,
+      DELETE,
+      onGET: GET,
+      onPOST: POST,
+      onPUT: PUT,
+      onDELETE: DELETE,
+      addStatic,
+      static: addStatic,
+      STATIC: addStatic,
+    }
+
     on('serveInit', async () => {
       log('serveInit')
-      await emit('httpInit', {
-        app,
-        http: server,
-        get: GET,
-        post: POST,
-        put: PUT,
-        delete: DELETE,
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        onGET: GET,
-        onPOST: POST,
-        onPUT: PUT,
-        onDELETE: DELETE,
-        addStatic,
-        static: addStatic,
-        STATIC: addStatic,
-        routes,
-      } as any)
+      await emit('httpInit', httpApi as any)
     })
 
     on('serveStop', async () => {
@@ -301,26 +301,7 @@ export const useHttp = use({
 
     on('serveStart', async () => {
       log('serveStart')
-      await emit('httpWillStart', {
-        app,
-        http: server,
-        get: GET,
-        post: POST,
-        put: PUT,
-        delete: DELETE,
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        onGET: GET,
-        onPOST: POST,
-        onPUT: PUT,
-        onDELETE: DELETE,
-        addStatic,
-        static: addStatic,
-        STATIC: addStatic,
-        routes,
-      } as any)
+      await emit('httpWillStart', httpApi as any)
       server.listen({ host, port }, () => {
         const { port, family, address } = server.address() as AddressInfo
         const host = isLocalHost(address) ? 'localhost' : address
@@ -348,25 +329,6 @@ export const useHttp = use({
       })
     })
 
-    return {
-      app,
-      http: server,
-      routes,
-      get: GET,
-      post: POST,
-      put: PUT,
-      delete: DELETE,
-      GET,
-      POST,
-      PUT,
-      DELETE,
-      onGET: GET,
-      onPOST: POST,
-      onPUT: PUT,
-      onDELETE: DELETE,
-      addStatic,
-      static: addStatic,
-      STATIC: addStatic,
-    }
+    return httpApi
   },
 })

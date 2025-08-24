@@ -53,13 +53,13 @@
     "@types/morgan": "^1.9.10",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "morgan": "^1.10.0",
+    "morgan": "^1.10.1",
     "rotating-file-stream": "^3.2.6",
-    "zeed": "^0.30.2"
+    "zeed": "^1.0.1"
   },
   "devDependencies": {
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
   }
 }
