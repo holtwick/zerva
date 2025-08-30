@@ -36,7 +36,7 @@ const configSchema = z.object({
     z.string(),
     z.record(z.union([z.string(), z.array(z.string()), z.boolean()])),
   ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
-  securityHeaders: z.boolean().default(true).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
+  securityHeaders: z.boolean().default(false).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
   rateLimit: z.union([
     z.boolean(),
     z.object({
