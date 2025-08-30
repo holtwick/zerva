@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-// Test server for E2E tests
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { useWebSocket } from '../dist/index.js'
@@ -33,32 +32,20 @@ async function startServer() {
   })
 
   // Serve static test pages
-  on('httpInit', ({ get }) => {
+  on('httpInit', ({ onGET }) => {
     // Serve the main test page
-    get('/', () => {
-      const html = readFileSync(join(__dirname, 'test-page.html'), 'utf8')
-      return {
-        body: html,
-        headers: { 'Content-Type': 'text/html' },
-      }
+    onGET('/', () => {
+      return readFileSync(join(__dirname, 'test-page.html'), 'utf8')
     })
 
     // Serve reliability test page
-    get('/reliability', () => {
-      const html = readFileSync(join(__dirname, 'reliability-test.html'), 'utf8')
-      return {
-        body: html,
-        headers: { 'Content-Type': 'text/html' },
-      }
+    onGET('/reliability', () => {
+      return readFileSync(join(__dirname, 'reliability-test.html'), 'utf8')
     })
 
     // Serve reconnection test page
-    get('/reconnection', () => {
-      const html = readFileSync(join(__dirname, 'reconnection-test.html'), 'utf8')
-      return {
-        body: html,
-        headers: { 'Content-Type': 'text/html' },
-      }
+    onGET('/reconnection', () => {
+      return readFileSync(join(__dirname, 'reconnection-test.html'), 'utf8')
     })
   })
 
@@ -130,25 +117,6 @@ async function startServer() {
 
   on('webSocketDisconnect', ({ channel, error }) => {
     console.log('WebSocket connection closed', error ? `with error: ${error.message}` : '')
-  })
-
-  // Serve static test pages
-  on('httpInit', ({ http }) => {
-    // Serve test pages
-    http.get('/', (req, res) => {
-      res.writeHead(200, { 'Content-Type': 'text/html' })
-      res.end(readFileSync(join(__dirname, 'test-page.html')))
-    })
-
-    http.get('/reliability', (req, res) => {
-      res.writeHead(200, { 'Content-Type': 'text/html' })
-      res.end(readFileSync(join(__dirname, 'reliability-test.html')))
-    })
-
-    http.get('/reconnection', (req, res) => {
-      res.writeHead(200, { 'Content-Type': 'text/html' })
-      res.end(readFileSync(join(__dirname, 'reconnection-test.html')))
-    })
   })
 
   await serve()
