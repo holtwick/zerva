@@ -24,6 +24,8 @@ export class WebsocketNodeConnection extends Channel {
   private log: LoggerInterface
 
   private buffer: Uint8Array[] = []
+  private maxBufferSize = 100 // Limit buffer to prevent memory issues
+  private heartbeatInterval?: NodeJS.Timeout
 
   constructor(ws: WebSocket, config: ZWebSocketConfig) {
     super()
@@ -51,18 +53,27 @@ export class WebsocketNodeConnection extends Channel {
     if (pingInterval > 0) {
       this.log('Heartbeat interval', pingInterval)
 
-      const heartbeatInterval = setInterval(() => {
+      this.heartbeatInterval = setInterval(() => {
         if (isAlive === false) {
           this.log('heartbeat failed, now close', ws)
           this.close()
+          return
         }
         isAlive = false
-        ws.ping()
+        try {
+          ws.ping()
+        }
+        catch (error) {
+          this.log.warn('ping failed', error)
+          this.close()
+        }
       }, pingInterval)
 
       this.dispose.add(() => {
-        heartbeatInterval.unref()
-        clearInterval(heartbeatInterval)
+        if (this.heartbeatInterval) {
+          this.heartbeatInterval.unref()
+          clearInterval(this.heartbeatInterval)
+        }
       })
     }
 
@@ -97,15 +108,20 @@ export class WebsocketNodeConnection extends Channel {
 
     ws.on('error', async (error) => {
       this.log.error('onerror', error)
-      await this.dispose()
-      ws.close()
       if (this.isConnected) {
         this.isConnected = false
+        await this.dispose()
+        try {
+          ws.close()
+        }
+        catch (closeError) {
+          this.log.warn('error closing websocket', closeError)
+        }
         await this.emit('close')
         await emit('webSocketDisconnect', {
           channel: this as any,
-          name: config.name,
-          path: config.path,
+          name: this.config.name,
+          path: this.config.path,
           error,
         })
       }
@@ -113,12 +129,14 @@ export class WebsocketNodeConnection extends Channel {
 
     ws.on('close', async () => {
       this.log('onclose')
-      await this.dispose()
       if (this.isConnected) {
         this.isConnected = false
+        await this.dispose()
         await this.emit('close')
         await emit('webSocketDisconnect', {
           channel: this as any,
+          name: this.config.name,
+          path: this.config.path,
         })
       }
     })
@@ -132,24 +150,34 @@ export class WebsocketNodeConnection extends Channel {
   }
 
   flush(): boolean {
+    if (!this.isConnected)
+      return false
+
     try {
       while (this.buffer.length > 0) {
-        if (this.ws.readyState === wsReadyStateOpen)
+        if (this.ws.readyState === wsReadyStateOpen) {
           this.ws.send(this.buffer[0])
-        else
+          this.buffer.shift()
+        }
+        else {
           return false
-        this.buffer.shift()
+        }
       }
       return true
     }
     catch (e) {
-      this.log.warn('Error for flush occured', e)
+      this.log.warn('Error during flush', e)
       this.close()
     }
     return false
   }
 
   postMessage(data: Uint8Array): void {
+    if (!this.isConnected) {
+      this.log.warn('attempted to send message on closed connection')
+      return
+    }
+
     this.flush()
     try {
       if (data != null && data.byteLength) {
@@ -158,19 +186,32 @@ export class WebsocketNodeConnection extends Channel {
         }
         else {
           this.log('not ready for send', this.ws.readyState)
-          this.buffer.push(data)
+          if (this.buffer.length < this.maxBufferSize) {
+            this.buffer.push(data)
+          }
+          else {
+            this.log.warn('buffer full, dropping message')
+          }
         }
       }
     }
     catch (e) {
-      this.log.warn('Error for send occured', e)
+      this.log.warn('Error for send occurred', e)
       this.close()
     }
   }
 
   close() {
     this.log('trigger close')
-    this.dispose.sync()
-    this.ws.close()
+    if (this.isConnected) {
+      this.isConnected = false
+      this.dispose.sync()
+      try {
+        this.ws.close()
+      }
+      catch (error) {
+        this.log.warn('error during close', error)
+      }
+    }
   }
 }
