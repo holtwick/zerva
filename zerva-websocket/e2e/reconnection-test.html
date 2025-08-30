@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Reconnection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.disconnected { background: #f8d7da; color: #721c24; }
+        .status.reconnecting { background: #fff3cd; color: #856404; }
+        #log {
+            height: 400px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Reconnection Test</h1>
+    
+    <div id="status" class="status disconnected">Disconnected</div>
+    
+    <div class="controls">
+        <button id="forceDisconnect">Force Disconnect</button>
+        <button id="simulateNetworkFailure">Simulate Network Failure</button>
+        <button id="reconnectTest">Run Reconnection Test</button>
+        <button id="clearLog">Clear Log</button>
+    </div>
+    
+    <div>
+        <p><strong>Reconnection attempts:</strong> <span id="reconnectCount">0</span></p>
+        <p><strong>Successful reconnections:</strong> <span id="successCount">0</span></p>
+        <p><strong>Failed attempts:</strong> <span id="failCount">0</span></p>
+    </div>
+    
+    <div>
+        <h3>Activity Log</h3>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let ws = null
+        let reconnectAttempts = 0
+        let successfulReconnects = 0
+        let failedAttempts = 0
+        let isReconnecting = false
+        let reconnectTimer = null
+        
+        const statusEl = document.getElementById('status')
+        const logEl = document.getElementById('log')
+        const reconnectCountEl = document.getElementById('reconnectCount')
+        const successCountEl = document.getElementById('successCount')
+        const failCountEl = document.getElementById('failCount')
+        
+        function updateStatus(status, text) {
+            statusEl.className = `status ${status}`
+            statusEl.textContent = text
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString()
+            const msg = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`
+            logEl.textContent += msg
+            logEl.scrollTop = logEl.scrollHeight
+            console.log(message)
+        }
+        
+        function updateCounters() {
+            reconnectCountEl.textContent = reconnectAttempts
+            successCountEl.textContent = successfulReconnects
+            failCountEl.textContent = failedAttempts
+        }
+        
+        function connect(isReconnectAttempt = false) {
+            if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) {
+                log('Already connected or connecting', 'warn')
+                return
+            }
+            
+            if (isReconnectAttempt) {
+                reconnectAttempts++
+                updateCounters()
+                isReconnecting = true
+                updateStatus('reconnecting', `Reconnecting... (attempt ${reconnectAttempts})`)
+                log(`Reconnection attempt ${reconnectAttempts}`)
+            } else {
+                updateStatus('reconnecting', 'Connecting...')
+                log('Initial connection attempt')
+            }
+            
+            const wsUrl = `ws://${location.host}/ws`
+            ws = new WebSocket(wsUrl)
+            
+            const connectionTimeout = setTimeout(() => {
+                if (ws.readyState === WebSocket.CONNECTING) {
+                    log('Connection attempt timed out', 'error')
+                    ws.close()
+                    handleConnectionFailure()
+                }
+            }, 5000)
+            
+            ws.onopen = () => {
+                clearTimeout(connectionTimeout)
+                
+                if (isReconnectAttempt) {
+                    successfulReconnects++
+                    updateCounters()
+                    log('Reconnection successful!', 'success')
+                } else {
+                    log('Initial connection successful!', 'success')
+                }
+                
+                isReconnecting = false
+                updateStatus('connected', 'Connected')
+                
+                // Send a test message to verify connection
+                ws.send(JSON.stringify({
+                    type: 'ping',
+                    timestamp: Date.now()
+                }))
+            }
+            
+            ws.onclose = (event) => {
+                clearTimeout(connectionTimeout)
+                
+                if (isReconnecting) {
+                    log(`Connection closed during reconnect: ${event.code} ${event.reason}`, 'warn')
+                    handleConnectionFailure()
+                } else {
+                    log(`Connection closed: ${event.code} ${event.reason}`, 'warn')
+                    updateStatus('disconnected', 'Disconnected')
+                    
+                    // Auto-reconnect unless it was a manual disconnect
+                    if (event.code !== 1000) { // 1000 = normal closure
+                        scheduleReconnect()
+                    }
+                }
+            }
+            
+            ws.onerror = (error) => {
+                clearTimeout(connectionTimeout)
+                log(`Connection error: ${error}`, 'error')
+                
+                if (isReconnectAttempt) {
+                    handleConnectionFailure()
+                } else {
+                    scheduleReconnect()
+                }
+            }
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data)
+                    if (data.type === 'pong') {
+                        log('Received pong - connection is healthy', 'success')
+                    }
+                } catch (e) {
+                    log(`Received: ${event.data}`, 'info')
+                }
+            }
+        }
+        
+        function handleConnectionFailure() {
+            failedAttempts++
+            updateCounters()
+            updateStatus('disconnected', `Connection failed (${failedAttempts} failures)`)
+            log(`Connection attempt failed (total failures: ${failedAttempts})`, 'error')
+            
+            // Schedule next reconnect with exponential backoff
+            scheduleReconnect()
+        }
+        
+        function scheduleReconnect() {
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer)
+            }
+            
+            // Exponential backoff: 1s, 2s, 4s, 8s, max 30s
+            const delay = Math.min(1000 * Math.pow(2, failedAttempts), 30000)
+            log(`Scheduling reconnect in ${delay}ms`, 'info')
+            
+            reconnectTimer = setTimeout(() => {
+                connect(true)
+            }, delay)
+        }
+        
+        function forceDisconnect() {
+            log('Forcing disconnect...', 'warn')
+            if (ws) {
+                ws.close(1000, 'Manual disconnect')
+                ws = null
+            }
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer)
+                reconnectTimer = null
+            }
+            isReconnecting = false
+            updateStatus('disconnected', 'Manually disconnected')
+        }
+        
+        function simulateNetworkFailure() {
+            log('Simulating network failure...', 'warn')
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                // Simulate network failure by closing without proper handshake
+                ws.close(1006, 'Simulated network failure')
+            }
+        }
+        
+        async function runReconnectionTest() {
+            log('Starting automated reconnection test...', 'info')
+            
+            const testIterations = 5
+            for (let i = 0; i < testIterations; i++) {
+                log(`Test iteration ${i + 1}/${testIterations}`, 'info')
+                
+                // Force disconnect
+                forceDisconnect()
+                await new Promise(resolve => setTimeout(resolve, 500))
+                
+                // Reconnect
+                connect(true)
+                
+                // Wait for connection to establish
+                await new Promise((resolve) => {
+                    const checkConnection = () => {
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            resolve()
+                        } else {
+                            setTimeout(checkConnection, 100)
+                        }
+                    }
+                    
+                    setTimeout(() => {
+                        log('Test iteration timeout', 'error')
+                        resolve()
+                    }, 5000)
+                    
+                    checkConnection()
+                })
+                
+                await new Promise(resolve => setTimeout(resolve, 1000))
+            }
+            
+            log('Automated reconnection test completed', 'success')
+        }
+        
+        // Event listeners
+        document.getElementById('forceDisconnect').onclick = forceDisconnect
+        document.getElementById('simulateNetworkFailure').onclick = simulateNetworkFailure
+        document.getElementById('reconnectTest').onclick = runReconnectionTest
+        document.getElementById('clearLog').onclick = () => {
+            logEl.textContent = ''
+            reconnectAttempts = 0
+            successfulReconnects = 0
+            failedAttempts = 0
+            updateCounters()
+        }
+        
+        // Auto-connect on page load
+        connect()
+        
+        // Make functions available globally for Playwright
+        window.reconnectionTester = {
+            connect,
+            forceDisconnect,
+            simulateNetworkFailure,
+            runReconnectionTest,
+            getStats: () => ({
+                reconnectAttempts,
+                successfulReconnects,
+                failedAttempts,
+                isConnected: ws && ws.readyState === WebSocket.OPEN,
+                isReconnecting
+            })
+        }
+    </script>
+</body>
+</html>

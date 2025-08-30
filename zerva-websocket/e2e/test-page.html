@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket E2E Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .panel {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        input {
+            width: 200px;
+            padding: 5px;
+            margin: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.connecting {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket E2E Test Page</h1>
+    
+    <div id="status" class="status disconnected">Disconnected</div>
+    
+    <div class="container">
+        <div class="panel">
+            <h3>Connection Controls</h3>
+            <button id="connect">Connect</button>
+            <button id="disconnect">Disconnect</button>
+            <button id="reconnect">Reconnect</button>
+            
+            <h3>Message Testing</h3>
+            <input type="text" id="messageInput" placeholder="Enter message" value="Hello World">
+            <button id="sendEcho">Send Echo</button>
+            <button id="sendBroadcast">Send Broadcast</button>
+            <button id="sendPing">Send Ping</button>
+            <button id="sendError">Trigger Error</button>
+            
+            <h3>Stress Testing</h3>
+            <button id="stressTest">Start Stress Test</button>
+            <button id="stopStressTest">Stop Stress Test</button>
+            <div>Messages sent: <span id="messageCount">0</span></div>
+            <div>Messages received: <span id="receivedCount">0</span></div>
+        </div>
+        
+        <div class="panel">
+            <h3>Messages</h3>
+            <button id="clearMessages">Clear</button>
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null
+        let messageCount = 0
+        let receivedCount = 0
+        let stressTestInterval = null
+        
+        const statusEl = document.getElementById('status')
+        const messagesEl = document.getElementById('messages')
+        const messageInput = document.getElementById('messageInput')
+        const messageCountEl = document.getElementById('messageCount')
+        const receivedCountEl = document.getElementById('receivedCount')
+        
+        function updateStatus(status, text) {
+            statusEl.className = `status ${status}`
+            statusEl.textContent = text
+        }
+        
+        function addMessage(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString()
+            const msg = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`
+            messagesEl.textContent += msg
+            messagesEl.scrollTop = messagesEl.scrollHeight
+        }
+        
+        function connect() {
+            if (ws && ws.readyState !== WebSocket.CLOSED) {
+                addMessage('Already connected or connecting', 'warn')
+                return
+            }
+            
+            updateStatus('connecting', 'Connecting...')
+            addMessage('Connecting to WebSocket...')
+            
+            const wsUrl = `ws://${location.host}/ws`
+            ws = new WebSocket(wsUrl)
+            
+            ws.onopen = () => {
+                updateStatus('connected', 'Connected')
+                addMessage('Connected successfully', 'success')
+            }
+            
+            ws.onclose = (event) => {
+                updateStatus('disconnected', 'Disconnected')
+                addMessage(`Connection closed: ${event.code} ${event.reason}`, 'warn')
+            }
+            
+            ws.onerror = (error) => {
+                updateStatus('disconnected', 'Error')
+                addMessage(`Connection error: ${error}`, 'error')
+            }
+            
+            ws.onmessage = (event) => {
+                receivedCount++
+                receivedCountEl.textContent = receivedCount
+                
+                try {
+                    const data = JSON.parse(event.data)
+                    addMessage(`Received: ${JSON.stringify(data, null, 2)}`, 'receive')
+                } catch (e) {
+                    addMessage(`Received (raw): ${event.data}`, 'receive')
+                }
+            }
+        }
+        
+        function disconnect() {
+            if (ws) {
+                ws.close()
+                ws = null
+            }
+        }
+        
+        function reconnect() {
+            disconnect()
+            setTimeout(connect, 100)
+        }
+        
+        function sendMessage(type, payload = null) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addMessage('Not connected', 'error')
+                return false
+            }
+            
+            const message = {
+                type,
+                payload: payload || messageInput.value,
+                timestamp: Date.now()
+            }
+            
+            try {
+                ws.send(JSON.stringify(message))
+                messageCount++
+                messageCountEl.textContent = messageCount
+                addMessage(`Sent: ${JSON.stringify(message)}`, 'send')
+                return true
+            } catch (error) {
+                addMessage(`Send error: ${error.message}`, 'error')
+                return false
+            }
+        }
+        
+        function startStressTest() {
+            if (stressTestInterval) {
+                addMessage('Stress test already running', 'warn')
+                return
+            }
+            
+            addMessage('Starting stress test...', 'info')
+            stressTestInterval = setInterval(() => {
+                sendMessage('echo', `Stress test message ${messageCount}`)
+            }, 10) // Send message every 10ms
+        }
+        
+        function stopStressTest() {
+            if (stressTestInterval) {
+                clearInterval(stressTestInterval)
+                stressTestInterval = null
+                addMessage('Stress test stopped', 'info')
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('connect').onclick = connect
+        document.getElementById('disconnect').onclick = disconnect
+        document.getElementById('reconnect').onclick = reconnect
+        document.getElementById('sendEcho').onclick = () => sendMessage('echo')
+        document.getElementById('sendBroadcast').onclick = () => sendMessage('broadcast')
+        document.getElementById('sendPing').onclick = () => sendMessage('ping')
+        document.getElementById('sendError').onclick = () => sendMessage('error')
+        document.getElementById('stressTest').onclick = startStressTest
+        document.getElementById('stopStressTest').onclick = stopStressTest
+        document.getElementById('clearMessages').onclick = () => {
+            messagesEl.textContent = ''
+            messageCount = 0
+            receivedCount = 0
+            messageCountEl.textContent = '0'
+            receivedCountEl.textContent = '0'
+        }
+        
+        // Auto-connect on page load
+        connect()
+        
+        // Make functions available globally for Playwright
+        window.testUtils = {
+            connect,
+            disconnect,
+            reconnect,
+            sendMessage,
+            startStressTest,
+            stopStressTest,
+            getMessageCount: () => messageCount,
+            getReceivedCount: () => receivedCount,
+            getConnectionState: () => ws?.readyState,
+            addMessage
+        }
+    </script>
+</body>
+</html>

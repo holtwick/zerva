@@ -97,3 +97,9 @@ zerva-bin/bin.?js
 bun.lockb
 
 _archive
+
+test-results
+playwright-report
+
+zerva-websocket/test-results/*
+zerva-websocket/playwright-report/*

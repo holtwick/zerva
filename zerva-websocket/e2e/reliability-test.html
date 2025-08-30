@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Reliability Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-results {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .test-results.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-results.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-results.running {
+            background: #fff3cd;
+            color: #856404;
+        }
+        #log {
+            height: 400px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Reliability Test</h1>
+    
+    <div id="testResults" class="test-results running">
+        Running reliability tests...
+    </div>
+    
+    <div>
+        <h3>Test Log</h3>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const logEl = document.getElementById('log')
+        const resultsEl = document.getElementById('testResults')
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString()
+            logEl.textContent += `[${timestamp}] ${message}\n`
+            logEl.scrollTop = logEl.scrollHeight
+            console.log(message)
+        }
+        
+        function updateResults(status, message) {
+            resultsEl.className = `test-results ${status}`
+            resultsEl.textContent = message
+        }
+        
+        class ReliabilityTester {
+            constructor() {
+                this.ws = null
+                this.testsPassed = 0
+                this.testsFailed = 0
+                this.isRunning = false
+            }
+            
+            async runAllTests() {
+                if (this.isRunning) {
+                    log('Tests already running')
+                    return
+                }
+                
+                this.isRunning = true
+                this.testsPassed = 0
+                this.testsFailed = 0
+                
+                log('Starting reliability tests...')
+                
+                try {
+                    await this.testBasicConnection()
+                    await this.testReconnection()
+                    await this.testMessageReliability()
+                    await this.testConnectionTimeout()
+                    await this.testMultipleReconnects()
+                    
+                    if (this.testsFailed === 0) {
+                        updateResults('pass', `All ${this.testsPassed} tests passed!`)
+                        log(`✅ All ${this.testsPassed} tests passed!`)
+                    } else {
+                        updateResults('fail', `${this.testsFailed} tests failed, ${this.testsPassed} tests passed`)
+                        log(`❌ ${this.testsFailed} tests failed, ${this.testsPassed} tests passed`)
+                    }
+                    
+                } catch (error) {
+                    this.testsFailed++
+                    updateResults('fail', `Test suite failed: ${error.message}`)
+                    log(`❌ Test suite failed: ${error.message}`)
+                } finally {
+                    this.isRunning = false
+                    if (this.ws) {
+                        this.ws.close()
+                    }
+                }
+            }
+            
+            async testBasicConnection() {
+                log('🧪 Testing basic connection...')
+                
+                return new Promise((resolve, reject) => {
+                    const wsUrl = `ws://${location.host}/ws`
+                    this.ws = new WebSocket(wsUrl)
+                    
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Connection timeout'))
+                    }, 5000)
+                    
+                    this.ws.onopen = () => {
+                        clearTimeout(timeout)
+                        log('✅ Basic connection test passed')
+                        this.testsPassed++
+                        resolve()
+                    }
+                    
+                    this.ws.onerror = (error) => {
+                        clearTimeout(timeout)
+                        this.testsFailed++
+                        reject(new Error('Connection failed'))
+                    }
+                })
+            }
+            
+            async testReconnection() {
+                log('🧪 Testing reconnection...')
+                
+                return new Promise((resolve, reject) => {
+                    let reconnected = false
+                    
+                    const timeout = setTimeout(() => {
+                        if (!reconnected) {
+                            this.testsFailed++
+                            reject(new Error('Reconnection timeout'))
+                        }
+                    }, 10000)
+                    
+                    // Force close and reconnect
+                    this.ws.close()
+                    
+                    setTimeout(() => {
+                        const wsUrl = `ws://${location.host}/ws`
+                        this.ws = new WebSocket(wsUrl)
+                        
+                        this.ws.onopen = () => {
+                            clearTimeout(timeout)
+                            reconnected = true
+                            log('✅ Reconnection test passed')
+                            this.testsPassed++
+                            resolve()
+                        }
+                        
+                        this.ws.onerror = () => {
+                            clearTimeout(timeout)
+                            this.testsFailed++
+                            reject(new Error('Reconnection failed'))
+                        }
+                    }, 100)
+                })
+            }
+            
+            async testMessageReliability() {
+                log('🧪 Testing message reliability...')
+                
+                return new Promise((resolve, reject) => {
+                    let messagesReceived = 0
+                    const messagesToSend = 10
+                    
+                    const timeout = setTimeout(() => {
+                        if (messagesReceived < messagesToSend) {
+                            this.testsFailed++
+                            reject(new Error(`Only received ${messagesReceived}/${messagesToSend} messages`))
+                        }
+                    }, 5000)
+                    
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data)
+                            if (data.type === 'echo' && data.payload.startsWith('reliability-test-')) {
+                                messagesReceived++
+                                log(`📨 Received message ${messagesReceived}/${messagesToSend}`)
+                                
+                                if (messagesReceived === messagesToSend) {
+                                    clearTimeout(timeout)
+                                    log('✅ Message reliability test passed')
+                                    this.testsPassed++
+                                    resolve()
+                                }
+                            }
+                        } catch (e) {
+                            // Ignore non-JSON messages
+                        }
+                    }
+                    
+                    // Send test messages
+                    for (let i = 0; i < messagesToSend; i++) {
+                        setTimeout(() => {
+                            this.ws.send(JSON.stringify({
+                                type: 'echo',
+                                payload: `reliability-test-${i}`,
+                                timestamp: Date.now()
+                            }))
+                        }, i * 50)
+                    }
+                })
+            }
+            
+            async testConnectionTimeout() {
+                log('🧪 Testing connection timeout...')
+                
+                return new Promise((resolve, reject) => {
+                    // Try to connect to non-existent endpoint
+                    const badWs = new WebSocket('ws://localhost:9999/nonexistent')
+                    
+                    const timeout = setTimeout(() => {
+                        badWs.close()
+                        log('✅ Connection timeout test passed (connection properly timed out)')
+                        this.testsPassed++
+                        resolve()
+                    }, 3000)
+                    
+                    badWs.onopen = () => {
+                        clearTimeout(timeout)
+                        badWs.close()
+                        this.testsFailed++
+                        reject(new Error('Connection should have timed out'))
+                    }
+                    
+                    badWs.onerror = () => {
+                        // This is expected for timeout test
+                    }
+                })
+            }
+            
+            async testMultipleReconnects() {
+                log('🧪 Testing multiple reconnections...')
+                
+                return new Promise(async (resolve, reject) => {
+                    const reconnectionCount = 5
+                    let successfulReconnects = 0
+                    
+                    try {
+                        for (let i = 0; i < reconnectionCount; i++) {
+                            log(`🔄 Reconnection attempt ${i + 1}/${reconnectionCount}`)
+                            
+                            // Close existing connection
+                            if (this.ws) {
+                                this.ws.close()
+                            }
+                            
+                            // Wait a bit
+                            await new Promise(resolve => setTimeout(resolve, 200))
+                            
+                            // Create new connection
+                            await new Promise((resolveConnection, rejectConnection) => {
+                                const wsUrl = `ws://${location.host}/ws`
+                                this.ws = new WebSocket(wsUrl)
+                                
+                                const timeout = setTimeout(() => {
+                                    rejectConnection(new Error('Connection timeout'))
+                                }, 3000)
+                                
+                                this.ws.onopen = () => {
+                                    clearTimeout(timeout)
+                                    successfulReconnects++
+                                    resolveConnection()
+                                }
+                                
+                                this.ws.onerror = () => {
+                                    clearTimeout(timeout)
+                                    rejectConnection(new Error('Connection failed'))
+                                }
+                            })
+                        }
+                        
+                        if (successfulReconnects === reconnectionCount) {
+                            log('✅ Multiple reconnections test passed')
+                            this.testsPassed++
+                            resolve()
+                        } else {
+                            this.testsFailed++
+                            reject(new Error(`Only ${successfulReconnects}/${reconnectionCount} reconnections succeeded`))
+                        }
+                        
+                    } catch (error) {
+                        this.testsFailed++
+                        reject(error)
+                    }
+                })
+            }
+        }
+        
+        // Create tester instance and make it globally available
+        const tester = new ReliabilityTester()
+        window.reliabilityTester = tester
+        
+        // Auto-start tests
+        tester.runAllTests()
+    </script>
+</body>
+</html>
