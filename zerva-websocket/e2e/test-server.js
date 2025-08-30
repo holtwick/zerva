@@ -6,7 +6,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import { useWebSocket } from '../src/index'
+import { useWebSocket } from '../src/index.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -33,7 +33,7 @@ async function startServer() {
   })
 
   // Serve static test pages
-  on('httpInit', ({ onGET }) => {
+  on('httpInit', ({ onGET, STATIC }) => {
     // Serve the main test page
     onGET('/', () => {
       return readFileSync(join(__dirname, 'test-page.html'), 'utf8')
@@ -47,6 +47,13 @@ async function startServer() {
     // Serve reconnection test page
     onGET('/reconnection', () => {
       return readFileSync(join(__dirname, 'reconnection-test.html'), 'utf8')
+    })
+
+    // Serve WebSocket browser bundle with proper MIME type
+    onGET('/websocket-client.js', ({ $response }) => {
+      $response.setHeader('Content-Type', 'application/javascript; charset=utf-8')
+      $response.setHeader('Access-Control-Allow-Origin', '*')
+      return readFileSync(join(__dirname, '../dist/index.browser.js'), 'utf8')
     })
   })
 

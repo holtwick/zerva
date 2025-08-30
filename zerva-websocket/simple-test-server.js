@@ -23,6 +23,14 @@ const server = createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(html)
   }
+  else if (req.url === '/websocket-client.js') {
+    const bundle = readFileSync(join(__dirname, 'dist', 'index.browser.js'), 'utf8')
+    res.writeHead(200, {
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    })
+    res.end(bundle)
+  }
   else {
     res.writeHead(404)
     res.end('Not Found')
