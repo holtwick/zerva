@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/buffer */
 /* eslint-disable no-console */
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -5,7 +6,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { on, serve, serveStop, setContext } from '@zerva/core'
 import { useHttp } from '@zerva/http'
-import { useWebSocket } from '../dist/index.js'
+import { useWebSocket } from '../src/index'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

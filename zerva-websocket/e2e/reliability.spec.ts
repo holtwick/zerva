@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { expect, test } from '@playwright/test'
 
 test.describe('WebSocket Reliability Tests', () => {
