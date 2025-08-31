@@ -154,30 +154,14 @@ export async function runMain(config: ZervaConf) {
         console.error('❌ Zerva: Node process error:', err)
       })
       zervaNodeProcess.on('close', (code) => {
-        // if (config.debug)
-        console.info('💀 Zerva: Node process exits with code:', code)
         console.info('')
-
-        // Always make it clear what's happening - dev server continues watching
-        if (code !== 0) {
-          console.info('⚠️  Zerva: App exited with error. Development server is still watching for changes...')
-          console.info('🔧 Zerva: Fix the error and save a file to restart, or press Ctrl+C to stop the development server.')
-        }
-        else {
-          console.info('👀 Zerva: App stopped. Development server is still watching for changes...')
-          console.info('📝 Zerva: Save a file to restart the app, or press Ctrl+C to stop the development server.')
-        }
+        console.info(`💀 Zerva: App ${code !== 0 ? 'crashed' : 'stopped'} (code: ${code})`)
+        console.info(`👀 Zerva: Development server watching for changes (Ctrl+C to exit)`)
 
         if (zervaNodeProcessDidEndResolve)
           zervaNodeProcessDidEndResolve(code ?? 0)
         zervaNodeProcess = undefined
       })
-      // zervaNodeProcess.on('exit', () => {
-      //   console.info('Zerva: Node process exit.')
-      // })
-      // zervaNodeProcess.on('disconnect', () => {
-      //   console.info('Zerva: Node process disconnect.')
-      // })
     }
 
     plugins.push({
