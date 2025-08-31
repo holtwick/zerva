@@ -26,7 +26,7 @@ const configSchema = z.object({
   port: z.number().default(8080).meta({ desc: 'Port to listen on' }),
   sslCrt: z.string().optional().meta({ desc: 'Path to SSL certificate' }),
   sslKey: z.string().optional().meta({ desc: 'Path to SSL key' }),
-  showServerInfo: z.boolean().default(true).meta({ desc: 'Print server details to console' }),
+  showServerInfo: z.union([z.boolean(), z.enum(['minimal', 'full'])]).default(true).meta({ desc: 'Print server details to console: true/false or "minimal"/"full"' }),
   noExtras: z.boolean().default(false).meta({ desc: 'None of the following middlewares is installed, just plain express. Add your own at httpInit' }),
   cors: z.boolean().default(true).meta({ desc: 'Enable CORS middleware https://github.com/expressjs/cors' }),
   helmet: z.union([z.boolean(), z.any<HelmetOptions>()]).default(true).meta({ desc: 'Security setting https://helmetjs.github.io/' }),
@@ -342,9 +342,76 @@ export const useHttp = use({
         const host = isLocalHost(address) ? 'localhost' : address
         const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
         if (showServerInfo) {
-          console.info('\nZerva: *********************************************************')
-          console.info(`Zerva: Open page at ${url}`)
-          console.info('Zerva: *********************************************************\n')
+          const isDev = process.env.NODE_ENV !== 'production'
+          const mode = isDev ? '🚧 DEVELOPMENT' : '🚀 PRODUCTION'
+          const protocol = isSSL ? '🔒 HTTPS' : '🔓 HTTP'
+          const localUrl = `${isSSL ? 'https' : 'http'}://localhost:${port}`
+          const showFull = showServerInfo === true || showServerInfo === 'full'
+          const showMinimal = showServerInfo === 'minimal'
+
+          if (showMinimal) {
+            // Minimal output - just the essentials
+            console.info(`🌐 Zerva: ${localUrl} (${mode})`)
+          }
+          else {
+            // Full output - detailed information
+            // Build configuration overview
+            const configItems: string[] = []
+            if (noExtras) {
+              configItems.push('🔧 Plain Express (no middlewares)')
+            }
+            else {
+              if (cors)
+                configItems.push('🌍 CORS')
+              if (helmet)
+                configItems.push('🛡️  Helmet')
+              if (csp && csp !== false)
+                configItems.push('📋 CSP')
+              if (securityHeaders)
+                configItems.push('🔐 Security Headers')
+              if (rateLimitConfig)
+                configItems.push('⏱️  Rate Limiting')
+              if (compression)
+                configItems.push('🗜️  Compression')
+              if (trustProxy)
+                configItems.push('🔄 Trust Proxy')
+
+              // Body parsers
+              const bodyParsers: string[] = []
+              if (postJson)
+                bodyParsers.push('JSON')
+              if (postText)
+                bodyParsers.push('Text')
+              if (postUrlEncoded)
+                bodyParsers.push('URL-encoded')
+              if (postBinary)
+                bodyParsers.push('Binary')
+              if (bodyParsers.length > 0) {
+                configItems.push(`📦 Body: ${bodyParsers.join(', ')} (${postLimit})`)
+              }
+            }
+
+            console.info(`\n${'═'.repeat(80)}`)
+            console.info('🌐 ZERVA SERVER RUNNING')
+            console.info('═'.repeat(80))
+            console.info(`📍 Local:    ${localUrl}`)
+            if (!isLocalHost(address)) {
+              console.info(`🌍 Network:  ${url}`)
+            }
+            console.info(`⚙️  Mode:     ${mode}`)
+            console.info(`🔐 Protocol: ${protocol}`)
+            console.info(`🏠 Host:     ${address} (${family})`)
+            console.info(`🚪 Port:     ${port}`)
+            if (routes.length > 0) {
+              console.info(`📋 Routes:   ${routes.length} endpoint${routes.length !== 1 ? 's' : ''} registered`)
+            }
+            if (configItems.length > 0) {
+              console.info('─'.repeat(80))
+              console.info('⚙️  Configuration:')
+              configItems.forEach(item => console.info(`   ${item}`))
+            }
+            console.info(`${'═'.repeat(80)}\n`)
+          }
         }
 
         void emit('httpRunning', { port, family, address, http: server })
