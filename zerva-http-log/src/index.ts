@@ -1,4 +1,4 @@
-import type { Options } from 'rotating-file-stream'
+import type { Compressor, FileSize, Interval, Options } from 'rotating-file-stream'
 
 import { createWriteStream } from 'node:fs'
 import { resolve } from 'node:path'
@@ -15,9 +15,9 @@ export function useHttpLog(opt?: {
   path?: string
   format?: string
   rotate?: Options | boolean
-  size?: string
-  interval?: string
-  compress?: string
+  size?: FileSize
+  interval?: Interval
+  compress?: boolean | 'gzip' | Compressor
 }) {
   on('httpInit', async ({ app }) => {
     const filename = opt?.filename ?? 'access.log'
