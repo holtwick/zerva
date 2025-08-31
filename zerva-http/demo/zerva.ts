@@ -23,8 +23,8 @@ onStart(() => {
       log('do ...', ++ctr)
       if (ctr < 5)
         next()
-      else
-        serveStop()
+      // else
+      //   serveStop()
     }, 1000)
   }
 

@@ -8,7 +8,7 @@ import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import process from 'node:process'
-import { use } from '@zerva/core'
+import { serveStop, use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
@@ -195,8 +195,32 @@ export const useHttp = use({
       server = httpModule.createServer(app)
     }
 
-    server.on('error', (err: Error) => {
-      log.error('starting web server failed:', err.message)
+    server.on('error', async (err: Error & { code?: string, port?: number }) => {
+      if (err.code === 'EADDRINUSE') {
+        log.error(`Port ${port} is already in use. Please check if another application is running on this port or choose a different port.`)
+        log.error(`Try: lsof -ti:${port} | xargs kill -9  # to kill process using the port`)
+        log.error(`Or set a different port in your configuration: { port: ${port + 1} }`)
+      }
+      else if (err.code === 'EACCES') {
+        log.error(`Permission denied to bind to port ${port}. ${port < 1024 ? 'Ports below 1024 require root/admin privileges.' : ''}`)
+      }
+      else if (err.code === 'EADDRNOTAVAIL') {
+        log.error(`Cannot bind to address ${host}:${port}. Address not available.`)
+      }
+      else {
+        log.error('starting web server failed:', err.message)
+      }
+
+      // Use Zerva's graceful shutdown with exit code 1 for errors
+      log.info('Initiating graceful shutdown due to server error...')
+      try {
+        await serveStop(1)
+      }
+      catch (stopError: any) {
+        log.error('Error during graceful shutdown:', stopError)
+        // If serveStop throws (which it now does), exit with the error code
+        process.exit(stopError.exitCode || 1)
+      }
     })
 
     server.on('clientError', (err: Error) => {
@@ -329,8 +353,19 @@ export const useHttp = use({
     })
 
     on('serveStop', async () => {
+      log('Stopping HTTP server...')
       await emit('httpStop')
-      await new Promise(resolve => server.close(resolve as any))
+      await new Promise((resolve) => {
+        server.close((err) => {
+          if (err) {
+            log.error('Error closing HTTP server:', err)
+          }
+          else {
+            log('HTTP server closed successfully')
+          }
+          resolve(true)
+        })
+      })
       await emit('httpDidStop')
     })
 
