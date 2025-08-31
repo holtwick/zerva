@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Debug Test</title>
+</head>
+<body>
+    <div id="status">Disconnected</div>
+    <button id="connect">Connect</button>
+    <div id="messages"></div>
+    
+    <script>
+        const statusEl = document.getElementById('status')
+        const messagesEl = document.getElementById('messages')
+        let ws = null
+        
+        function addMessage(msg) {
+            messagesEl.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${msg}</div>`
+        }
+        
+        function connect() {
+            addMessage('Attempting to connect...')
+            const wsUrl = `ws://${location.host}/ws`
+            addMessage(`WebSocket URL: ${wsUrl}`)
+            
+            ws = new WebSocket(wsUrl)
+            
+            ws.onopen = () => {
+                statusEl.textContent = 'Connected'
+                statusEl.className = 'connected'
+                addMessage('Connected successfully!')
+            }
+            
+            ws.onclose = (event) => {
+                statusEl.textContent = 'Disconnected'
+                statusEl.className = 'disconnected'
+                addMessage(`Disconnected: ${event.code} ${event.reason}`)
+            }
+            
+            ws.onerror = (error) => {
+                statusEl.textContent = 'Error'
+                statusEl.className = 'error'
+                addMessage(`Error: ${error}`)
+            }
+        }
+        
+        document.getElementById('connect').onclick = connect
+        
+        // Auto-connect
+        addMessage('Page loaded, auto-connecting...')
+        connect()
+    </script>
+</body>
+</html>

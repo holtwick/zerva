@@ -1,7 +1,7 @@
 {
   "name": "@zerva/websocket",
   "type": "module",
-  "version": "0.72.0",
+  "version": "0.73.0",
   "description": "🌱 Zerva websocket module",
   "author": {
     "name": "Dirk Holtwick",
@@ -52,6 +52,8 @@
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
     "start": "pnpm run watch",
     "test": "ZEED=* vitest --globals --run -r src",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "watch": "tsup src/index.ts src/index.browser.ts  --watch"
   },
   "dependencies": {
@@ -62,8 +64,10 @@
     "zeed": "^1.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.47.2",
     "@types/node": "^24.3.0",
     "@zerva/bin": "workspace:*",
+    "playwright": "^1.47.2",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",

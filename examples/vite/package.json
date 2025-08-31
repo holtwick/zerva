@@ -23,7 +23,7 @@
     "vite_serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.19"
+    "vue": "^3.5.20"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",

@@ -25,6 +25,7 @@ export interface WebSocketConnectionOptions {
   reconnectTimeoutBase?: number
   maxReconnectTimeout?: number
   messageReconnectTimeout?: number
+  connectionTimeout?: number
 }
 
 const PERFORM_RETRY = true
@@ -101,16 +102,43 @@ export class WebSocketConnection extends Channel {
     clearTimeout(this.pingTimeout)
     clearTimeout(this.reconnectTimout)
     this.shouldConnect = false
+    this.isConnected = false
     if (this.ws != null) {
-      this.ws?.close()
+      try {
+        this.ws.close()
+      }
+      catch (error) {
+        this.log.warn('error closing websocket', error)
+      }
       this.ws = undefined
       void this.emit('disconnect') // todo see also onclose ???
     }
   }
 
   _reconnect() {
-    this.ws?.close()
-    this._connect()
+    // Clear existing timers to prevent orphaned timers
+    clearTimeout(this.pingTimeout)
+    clearTimeout(this.reconnectTimout)
+
+    // Close existing connection if any
+    if (this.ws) {
+      try {
+        // Only close if the websocket is in a closeable state
+        if (this.ws.readyState === wsReadyStateOpen || this.ws.readyState === wsReadyStateConnecting) {
+          this.ws.close()
+        }
+      }
+      catch (error) {
+        this.log.warn('error closing websocket during reconnect', error)
+      }
+      this.ws = undefined
+    }
+
+    // Reset connection state
+    this.isConnected = false
+
+    // Connect after a short delay to avoid race conditions
+    setTimeout(() => this._connect(), 10)
   }
 
   _connect() {
@@ -129,6 +157,14 @@ export class WebSocketConnection extends Channel {
         this.ws = ws
 
         this.isConnected = false
+
+        // Add connection timeout to prevent hanging
+        const connectionTimeout = setTimeout(() => {
+          if (!this.isConnected && this.ws === ws) {
+            this.log.warn('connection timeout')
+            ws.close()
+          }
+        }, this.opt.connectionTimeout ?? 10000) // Use configured timeout or default to 10 seconds
 
         ws.addEventListener('message', (event: any) => {
           try {
@@ -160,8 +196,9 @@ export class WebSocketConnection extends Channel {
         const onclose = (error?: any) => {
           this.log('onclose', error, this.ws)
           clearTimeout(this.pingTimeout)
+          clearTimeout(connectionTimeout)
 
-          if (this.ws != null) {
+          if (this.ws === ws) {
             this.ws = undefined
 
             if (error)
@@ -177,7 +214,7 @@ export class WebSocketConnection extends Channel {
               this.unsuccessfulReconnects++
             }
 
-            if (PERFORM_RETRY) {
+            if (PERFORM_RETRY && this.shouldConnect) {
             // Start with no reconnect timeout and increase timeout by
             // log10(wsUnsuccessfulReconnects).
             // The idea is to increase reconnect timeout slowly and have no reconnect
@@ -199,7 +236,8 @@ export class WebSocketConnection extends Channel {
         ws.addEventListener('error', (error: any) => onclose(error))
         ws.addEventListener('open', () => {
           this.log('onopen') // , this.ws, ws)
-          if (this.ws?.url === ws.url) {
+          clearTimeout(connectionTimeout)
+          if (this.ws === ws && ws.url === this.url) {
             this.lastMessageReceived = getTimestamp()
             this.isConnected = true
             this.unsuccessfulReconnects = 0
@@ -214,12 +252,17 @@ export class WebSocketConnection extends Channel {
           }
           else {
             this.log.warn('onopen connections do not match', this.ws, ws)
+            ws.close()
           }
         })
       }
     }
     catch (err) {
       this.log.warn('_connect error', err)
+      if (this.shouldConnect) {
+        // Retry after a short delay on connection errors
+        this.reconnectTimout = setTimeout(() => this._connect(), 1000)
+      }
     }
   }
 
@@ -230,14 +273,34 @@ export class WebSocketConnection extends Channel {
       this._connect()
   }
 
-  async awaitConnect(): Promise<boolean> {
+  async awaitConnect(timeout = 30000): Promise<boolean> {
     if (this.isConnected)
       return true
+
     const [promise, resolve] = createPromise<boolean>()
+
+    const timeoutId = setTimeout(() => {
+      this.log.warn('awaitConnect timeout')
+      resolve(false)
+    }, timeout)
+
+    const cleanup = () => {
+      clearTimeout(timeoutId)
+    }
+
     this.once('connect', () => {
+      cleanup()
       this.log('awaited connect')
       resolve(true)
     })
+
+    // Also handle disconnect/error cases
+    this.once('disconnect', () => {
+      cleanup()
+      this.log.warn('awaited connect failed - disconnected')
+      resolve(false)
+    })
+
     return promise
   }
 }
