@@ -1,7 +1,7 @@
 {
   "name": "@zerva/rpc",
   "type": "module",
-  "version": "0.73.0",
+  "version": "0.73.1",
   "description": "🌱 Zerva websocket rpc module",
   "author": {
     "name": "Dirk Holtwick",
@@ -57,7 +57,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "@zerva/websocket": "workspace:*",
-    "zeed": "^1.0.1"
+    "zeed": "^1.0.3"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

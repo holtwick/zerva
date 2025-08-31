@@ -8,7 +8,7 @@ import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
 import process from 'node:process'
-import { use } from '@zerva/core'
+import { serveStop, use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
@@ -26,7 +26,7 @@ const configSchema = z.object({
   port: z.number().default(8080).meta({ desc: 'Port to listen on' }),
   sslCrt: z.string().optional().meta({ desc: 'Path to SSL certificate' }),
   sslKey: z.string().optional().meta({ desc: 'Path to SSL key' }),
-  showServerInfo: z.boolean().default(true).meta({ desc: 'Print server details to console' }),
+  showServerInfo: z.union([z.boolean(), z.enum(['minimal', 'full'])]).default(true).meta({ desc: 'Print server details to console: true/false or "minimal"/"full"' }),
   noExtras: z.boolean().default(false).meta({ desc: 'None of the following middlewares is installed, just plain express. Add your own at httpInit' }),
   cors: z.boolean().default(true).meta({ desc: 'Enable CORS middleware https://github.com/expressjs/cors' }),
   helmet: z.union([z.boolean(), z.any<HelmetOptions>()]).default(true).meta({ desc: 'Security setting https://helmetjs.github.io/' }),
@@ -195,8 +195,32 @@ export const useHttp = use({
       server = httpModule.createServer(app)
     }
 
-    server.on('error', (err: Error) => {
-      log.error('starting web server failed:', err.message)
+    server.on('error', async (err: Error & { code?: string, port?: number }) => {
+      if (err.code === 'EADDRINUSE') {
+        log.error(`Port ${port} is already in use. Please check if another application is running on this port or choose a different port.`)
+        log.error(`Try: lsof -ti:${port} | xargs kill -9  # to kill process using the port`)
+        log.error(`Or set a different port in your configuration: { port: ${port + 1} }`)
+      }
+      else if (err.code === 'EACCES') {
+        log.error(`Permission denied to bind to port ${port}. ${port < 1024 ? 'Ports below 1024 require root/admin privileges.' : ''}`)
+      }
+      else if (err.code === 'EADDRNOTAVAIL') {
+        log.error(`Cannot bind to address ${host}:${port}. Address not available.`)
+      }
+      else {
+        log.error('starting web server failed:', err.message)
+      }
+
+      // Use Zerva's graceful shutdown with exit code 1 for errors
+      log.info('Initiating graceful shutdown due to server error...')
+      try {
+        await serveStop(1)
+      }
+      catch (stopError: any) {
+        log.error('Error during graceful shutdown:', stopError)
+        // If serveStop throws (which it now does), exit with the error code
+        process.exit(stopError.exitCode || 1)
+      }
     })
 
     server.on('clientError', (err: Error) => {
@@ -329,8 +353,19 @@ export const useHttp = use({
     })
 
     on('serveStop', async () => {
+      log('Stopping HTTP server...')
       await emit('httpStop')
-      await new Promise(resolve => server.close(resolve as any))
+      await new Promise((resolve) => {
+        server.close((err) => {
+          if (err) {
+            log.error('Error closing HTTP server:', err)
+          }
+          else {
+            log('HTTP server closed successfully')
+          }
+          resolve(true)
+        })
+      })
       await emit('httpDidStop')
     })
 
@@ -342,9 +377,76 @@ export const useHttp = use({
         const host = isLocalHost(address) ? 'localhost' : address
         const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
         if (showServerInfo) {
-          console.info('\nZerva: *********************************************************')
-          console.info(`Zerva: Open page at ${url}`)
-          console.info('Zerva: *********************************************************\n')
+          const isDev = process.env.NODE_ENV !== 'production'
+          const mode = isDev ? '🚧 DEVELOPMENT' : '🚀 PRODUCTION'
+          const protocol = isSSL ? '🔒 HTTPS' : '🔓 HTTP'
+          const localUrl = `${isSSL ? 'https' : 'http'}://localhost:${port}`
+          const showFull = showServerInfo === true || showServerInfo === 'full'
+          const showMinimal = showServerInfo === 'minimal'
+
+          if (showMinimal) {
+            // Minimal output - just the essentials
+            console.info(`🌐 Zerva: ${localUrl} (${mode})`)
+          }
+          else {
+            // Full output - detailed information
+            // Build configuration overview
+            const configItems: string[] = []
+            if (noExtras) {
+              configItems.push('🔧 Plain Express (no middlewares)')
+            }
+            else {
+              if (cors)
+                configItems.push('🌍 CORS')
+              if (helmet)
+                configItems.push('🛡️  Helmet')
+              if (csp && (csp as any) !== false)
+                configItems.push('📋 CSP')
+              if (securityHeaders)
+                configItems.push('🔐 Security Headers')
+              if (rateLimitConfig)
+                configItems.push('⏱️  Rate Limiting')
+              if (compression)
+                configItems.push('🗜️  Compression')
+              if (trustProxy)
+                configItems.push('🔄 Trust Proxy')
+
+              // Body parsers
+              const bodyParsers: string[] = []
+              if (postJson)
+                bodyParsers.push('JSON')
+              if (postText)
+                bodyParsers.push('Text')
+              if (postUrlEncoded)
+                bodyParsers.push('URL-encoded')
+              if (postBinary)
+                bodyParsers.push('Binary')
+              if (bodyParsers.length > 0) {
+                configItems.push(`📦 Body: ${bodyParsers.join(', ')} (${postLimit})`)
+              }
+            }
+
+            console.info(`\n${'═'.repeat(80)}`)
+            console.info('🌐 ZERVA SERVER RUNNING')
+            console.info('═'.repeat(80))
+            console.info(`📍 Local:    ${localUrl}`)
+            if (!isLocalHost(address)) {
+              console.info(`🌍 Network:  ${url}`)
+            }
+            console.info(`⚙️  Mode:     ${mode}`)
+            console.info(`🔐 Protocol: ${protocol}`)
+            console.info(`🏠 Host:     ${address} (${family})`)
+            console.info(`🚪 Port:     ${port}`)
+            if (routes.length > 0) {
+              console.info(`📋 Routes:   ${routes.length} endpoint${routes.length !== 1 ? 's' : ''} registered`)
+            }
+            if (configItems.length > 0) {
+              console.info('─'.repeat(80))
+              console.info('⚙️  Configuration:')
+              configItems.forEach(item => console.info(`   ${item}`))
+            }
+            console.info(`${'═'.repeat(80)}\n`)
+          }
         }
 
         void emit('httpRunning', { port, family, address, http: server })

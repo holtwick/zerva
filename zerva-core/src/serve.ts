@@ -53,7 +53,7 @@ export function onStop(handler: () => void) {
   on('serveStop', handler)
 }
 
-export async function serveStop() {
+export async function serveStop(exitCode?: number) {
   // log('serveStop called')
   if (serverState === ServerState.STOPPING) {
     await new Promise(resolve => getContext().once('serveDispose', () => resolve(true)))
@@ -64,7 +64,16 @@ export async function serveStop() {
     serverState = ServerState.DISPOSED
     await emit('serveDispose')
   }
-  // log('serveStop done')
+
+  // Only exit if an exit code is explicitly provided
+  if (exitCode !== undefined) {
+    log(`Process will exit with code: ${exitCode}`)
+
+    // Throw an error with the exit code to propagate up and exit naturally
+    const error = new Error(`Process termination requested with exit code ${exitCode}`)
+    ;(error as any).exitCode = exitCode
+    throw error
+  }
 }
 
 on('serveStop', () => {
@@ -118,7 +127,6 @@ async function serverCheck() {
 }
 
 process.on('beforeExit', serverCheck)
-// process.on('exit', serveStop)
 
 // Graceful exit
 
@@ -131,23 +139,30 @@ const signals: any = {
 
 let isPerformingExit = false
 
-// on('serveDispose', () => process.exit(0))
-
 Object.keys(signals).forEach((signal) => {
   process.on(signal, () => {
     if (!isPerformingExit) {
       isPerformingExit = true
       log(`Process received a ${signal} signal`)
-      serveStop().then(() => {
-        // process.exit(128 + (+signals[signal] ?? 0))
-        // log('Process EXIT')
+
+      if (serverState === ServerState.RUNNING || serverState === ServerState.STARTED) {
+        serverState = ServerState.STOPPING
+        emit('serveStop').then(() => {
+          serverState = ServerState.DISPOSED
+          return emit('serveDispose')
+        }).then(() => {
+          process.exit(0)
+        }).catch(() => {
+          process.exit(1)
+        })
+      }
+      else {
         process.exit(0)
-      }).catch((err) => {
-        log.error(`Error on serveStop: ${err}`)
-      })
+      }
     }
     else {
-      log(`Ignoring: Process received a ${signal} signal`)
+      // Multiple signals - force exit
+      process.exit(0)
     }
   })
 })

@@ -1,6 +1,6 @@
 import type { LoggerInterface } from 'zeed'
 import { Logger, sleep } from 'zeed'
-import { onStart, onStop, serve } from '../src'
+import { on, serve } from '../src'
 
 const log: LoggerInterface = Logger('demo')
 
@@ -8,21 +8,23 @@ log('demo')
 
 let ctr = 0
 
-onStart(() => {
+on('serveStart', async () => {
   log('start')
 
   function next() {
     setTimeout(() => {
       log('do ...', ++ctr)
-      if (ctr < 5)
+      if (ctr < 3)
         next()
+      // else
+      //   serveStop(1)
     }, 1000)
   }
 
   next()
 })
 
-onStop(async () => {
+on('serveStop', async () => {
   log('stop')
   await sleep(2000)
   log('stop done')
