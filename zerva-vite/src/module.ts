@@ -4,13 +4,10 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
-import { toHumanReadableFilePath, toPath, z } from 'zeed'
+import { escapeRegExp, toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 import '@zerva/http'
-
-// Constants for better maintainability
-const CACHEABLE_EXTENSIONS = /.*\.(?:png|ico|svg|jpg|pdf|jpeg|mp4|mp3|woff2|ttf|tflite)$/
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
@@ -19,6 +16,7 @@ const configSchema = z.object({
   mode: z.string().default((process.env.ZERVA_DEVELOPMENT ? 'development' : 'production')),
   // hmr: z.boolean().default(true),
   cacheAssets: z.boolean().default(true),
+  cacheExtensions: z.string().default('png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite'),
 })
 
 /**
@@ -34,7 +32,10 @@ export const useVite = use({
   setup({ log, config, on }) {
     // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
-    const { root, www, mode, cacheAssets } = config
+    const { root, www, mode, cacheAssets, cacheExtensions } = config
+
+    // Create regex pattern from cacheExtensions config
+    const cacheableExtensionsRegex = new RegExp(`.*\\.(?:${cacheExtensions.split(',').map(escapeRegExp).join('|')})$`)
 
     const rootPath = toPath(root)
     const wwwPath = toPath(www)
@@ -97,7 +98,7 @@ export const useVite = use({
         if (cacheAssets) {
           app.use((req, res, next) => {
             const path = req.path
-            if (path.includes('/assets/') || CACHEABLE_EXTENSIONS.test(req.path)) {
+            if (path.includes('/assets/') || cacheableExtensionsRegex.test(req.path)) {
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
             next()
