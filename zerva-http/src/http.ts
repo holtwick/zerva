@@ -35,7 +35,7 @@ const configSchema = z.object({
     z.enum(['strict', 'moderate', 'permissive', 'disabled']),
     z.string(),
     z.record(z.union([z.string(), z.array(z.string()), z.boolean()])),
-  ]).default(false as any).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
+  ]).default(false).meta({ desc: 'Content Security Policy: boolean, preset (strict/moderate/permissive/disabled), string directive, or object' }),
   securityHeaders: z.boolean().default(false).meta({ desc: 'Enhanced security headers (HSTS, COEP, COOP, etc.)' }),
   rateLimit: z.union([
     z.boolean(),
@@ -400,7 +400,7 @@ export const useHttp = use({
                 configItems.push('🌍 CORS')
               if (helmet)
                 configItems.push('🛡️  Helmet')
-              if (csp && csp !== false)
+              if (csp && (csp as any) !== false)
                 configItems.push('📋 CSP')
               if (securityHeaders)
                 configItems.push('🔐 Security Headers')

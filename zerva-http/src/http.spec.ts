@@ -40,7 +40,7 @@ describe('http', () => {
     await serve()
   })
 
-  afterAll(serveStop)
+  afterAll(() => serveStop())
 
   it('should connect typed', async () => {
     const res = await fetch(`${url}/hello`)
