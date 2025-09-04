@@ -51,5 +51,8 @@
     "esbuild": "^0.25.9",
     "esbuild-plugin-yaml": "^0.0.1",
     "zeed": "^1.0.3"
+  },
+  "devDependencies": {
+    "@zerva/core": "workspace:*"
   }
 }

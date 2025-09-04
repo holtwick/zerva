@@ -13,6 +13,7 @@ import corsDefault from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
 import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
+import { getZervaBuildInfo } from '../../zerva-core/src'
 import { compressionMiddleware } from './compression'
 import { setupSecurity } from './security'
 import { isRequestProxied } from './utils'
@@ -377,8 +378,10 @@ export const useHttp = use({
         const host = isLocalHost(address) ? 'localhost' : address
         const url = `${isSSL ? 'https' : 'http'}://${host}:${port}`
         if (showServerInfo) {
-          const isDev = !process.env.ZERVA_PRODUCTION
-          const mode = isDev ? '🚧 DEVELOPMENT' : '🚀 PRODUCTION'
+          const zervaInfo = getZervaBuildInfo()
+          const isNotBuilt = zervaInfo?.build === false
+          const buildDetails = `@zerva/bin ${zervaInfo?.buildZervaVersion ?? ''} built at ${zervaInfo?.date ?? ''}`
+          const mode = isNotBuilt ? '🚧 DEVELOPMENT' : `🚀 PRODUCTION ${buildDetails}`
           const protocol = isSSL ? '🔒 HTTPS' : '🔓 HTTP'
           const localUrl = `${isSSL ? 'https' : 'http'}://localhost:${port}`
           const showMinimal = showServerInfo === 'minimal'
