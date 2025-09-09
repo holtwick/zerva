@@ -50,7 +50,7 @@
     "display-notification": "^3.0.0",
     "esbuild": "^0.25.9",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^1.0.4"
+    "zeed": "^1.0.8"
   },
   "devDependencies": {
     "@zerva/core": "workspace:*"

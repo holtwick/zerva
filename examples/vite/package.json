@@ -32,7 +32,7 @@
     "@zerva/http": "workspace:*",
     "@zerva/vite": "workspace:*",
     "typescript": "^5.9.2",
-    "vite": "^7.1.4",
-    "zeed": "^1.0.4"
+    "vite": "^7.1.5",
+    "zeed": "^1.0.8"
   }
 }
