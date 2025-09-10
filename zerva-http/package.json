@@ -69,7 +69,7 @@
     "negotiator": "^1.0.0",
     "on-headers": "^1.1.0",
     "vary": "^1.1.2",
-    "zeed": "^1.0.8"
+    "zeed": "^1.0.9"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",

@@ -61,7 +61,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.3",
-    "zeed": "^1.0.8"
+    "zeed": "^1.0.9"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.2",
