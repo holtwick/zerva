@@ -1,7 +1,7 @@
 {
   "name": "@zerva/websocket",
   "type": "module",
-  "version": "0.74.1",
+  "version": "0.74.2",
   "description": "🌱 Zerva websocket module",
   "author": {
     "name": "Dirk Holtwick",
@@ -61,7 +61,7 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.3",
-    "zeed": "^1.0.4"
+    "zeed": "^1.0.9"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.2",

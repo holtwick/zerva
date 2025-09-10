@@ -147,10 +147,7 @@ Object.keys(signals).forEach((signal) => {
 
       if (serverState === ServerState.RUNNING || serverState === ServerState.STARTED) {
         serverState = ServerState.STOPPING
-        emit('serveStop').then(() => {
-          serverState = ServerState.DISPOSED
-          return emit('serveDispose')
-        }).then(() => {
+        serveStop().then(() => {
           process.exit(0)
         }).catch(() => {
           process.exit(1)
