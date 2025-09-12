@@ -40,8 +40,8 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.5",
     "vitest": "^3.2.4",
-    "vue-tsc": "^3.0.6",
-    "zeed": "^1.0.9"
+    "vue-tsc": "^3.0.7",
+    "zeed": "^1.0.13"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

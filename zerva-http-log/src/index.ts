@@ -1,39 +1,38 @@
-import type { Compressor, FileSize, Interval, Options } from 'rotating-file-stream'
-
 import { createWriteStream } from 'node:fs'
-import { resolve } from 'node:path'
+import { basename, dirname, resolve } from 'node:path'
 import process from 'node:process'
-import { on } from '@zerva/core'
+import { use } from '@zerva/core'
 import morgan from 'morgan'
-import { createStream as createStreamRotate } from 'rotating-file-stream'
-import { ensureFolder } from 'zeed'
+import { createRotationStream, ensureFolder, getLogFileRotationConfigSchemaOptions, getLogRotationConfig, z } from 'zeed'
 import '@zerva/http'
 
-/** Log http requests in Apache style */
-export function useHttpLog(opt?: {
-  filename?: string
-  path?: string
-  format?: string
-  rotate?: Options | boolean
-  size?: FileSize
-  interval?: Interval
-  compress?: boolean | 'gzip' | Compressor
-}) {
-  on('httpInit', async ({ app }) => {
-    const filename = opt?.filename ?? 'access.log'
-    const path = resolve(process.cwd(), opt?.path ?? 'logs')
-    await ensureFolder(path)
-    const stream = opt?.rotate
-      ? createStreamRotate(filename, {
-          path,
-          size: opt?.size ?? '10M', // rotate every 10 MegaBytes written
-          interval: opt?.interval ?? '1d', // rotate daily
-          compress: opt?.compress ?? 'gzip', // compress rotated files
-          ...(opt.rotate === true ? {} : opt.rotate),
-        })
-      : createWriteStream(resolve(path, filename), {
-          flags: 'a',
-        })
-    app.use(morgan(opt?.format ?? 'combined', { stream }))
-  })
-}
+export const moduleName = 'http-log'
+
+export const configSchema = z.object({
+  path: z.string().default('access.log').meta({ desc: 'Path to log file. Intermediate folders will be created.' }),
+  format: z.string().default('combined').meta({ desc: 'Log format, see morgan formats.' }),
+  rotate: z.union(getLogFileRotationConfigSchemaOptions(true)).default(false).meta({ desc: 'Enable log rotation with given options or true for defaults.' }),
+})
+
+export const useHttpLog = use({
+  name: moduleName,
+  requires: ['http'],
+  configSchema,
+  setup({ config, log, on, once }) {
+    log('setup', config)
+    on('httpInit', async ({ app }) => {
+      const path = resolve(process.cwd(), config.path)
+      log('logging to', path)
+      await ensureFolder(dirname(path))
+      const rotate = getLogRotationConfig(config.rotate)
+      log('log rotation', rotate)
+      const stream = rotate
+        ? createRotationStream(basename(path), {
+            path: dirname(path),
+            ...rotate,
+          })
+        : createWriteStream(path, { flags: 'a' })
+      app.use(morgan(config.format ?? 'combined', { stream }))
+    })
+  },
+})
