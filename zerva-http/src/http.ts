@@ -226,6 +226,7 @@ export const useHttp = use({
 
     server.on('clientError', (err: Error) => {
       log.error('client request error', err)
+      console.trace('clientError')
     })
 
     const routes: ZervaHttpRouteDescription[] = []
