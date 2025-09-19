@@ -1,6 +1,6 @@
 import type { Infer, LogConfig, LoggerInterface, LogLevel, Type } from 'zeed'
 import type { ZervaConfigOptions } from './config'
-import { arrayFlatten, Logger, LoggerFromConfig, LogLevelAll } from 'zeed'
+import { arrayFlatten, isString, Logger, LoggerFromConfig, LogLevelAll, parseLogLevel } from 'zeed'
 import { getConfig } from './config'
 import { emit, getContext, on, once } from './context'
 
@@ -137,72 +137,6 @@ export interface ZervaModuleContext<T> {
 }
 
 /**
- * Register a module with its configuration and dependencies.
- *
- * This function registers a module by its name, checks for required modules,
- * and retrieves its configuration based on the provided schema.
- *
- * It also initializes a logger for the module, where log details can be customized.
- * If `configSchema.log` is of type `LogConfig` the logger will be created from it.
- *
- * `options` can be used to override the default configuration values i.e. first
- * apply `options` and then the `configSchema` values.
- */
-export function registerModule<T extends Type<unknown> = Type<any>>(name: string, moduleOptions?: ZervaModuleOptions<T>): ZervaModuleContext<T> {
-  const { requires = [], configOptions, configSchema, options } = moduleOptions || {}
-
-  // Module name
-  const moduleName = name.toLowerCase()
-
-  // Config and options
-  const config: any = { ...options }
-  if (configSchema != null) {
-    const configFromSchema = getConfig(configSchema, {
-      existing: options as any,
-      prefix: `${moduleName.toUpperCase()}_`,
-      moduleName,
-      ...configOptions,
-    })
-    Object.assign(config, configFromSchema)
-    // Object.entries(configFromSchema as any).forEach(([key, value]) => {
-    //   if (value !== undefined) {
-    //     config[key] = value
-    //   }
-    // })
-  }
-
-  // Logging
-  const log = LoggerFromConfig(config?.log ?? moduleOptions?.log ?? true, moduleName, moduleOptions?.logLevel ?? LogLevelAll)
-  log.info(`use ${moduleName} with config:`, config)
-
-  // Register module in context
-  if (hasModule(moduleName))
-    log.warn(`The module '${moduleName} has been registered multiple times`)
-
-  // Check required modules
-  const modules = arrayFlatten(requires)
-  const missing = modules.filter(module => !hasModule(module))
-  if (missing.length > 0) {
-    const message = `Zerva module '${moduleName}' requires modules: ${missing}`
-    log.error(message)
-    throw new Error(message)
-  }
-
-  // Check for circular dependencies
-  const cycles = detectCircularDependencies(moduleName, modules)
-  if (cycles.length > 0) {
-    const cycleDescriptions = cycles.map(cycle => cycle.join(' -> '))
-    const message = `Circular dependency detected for module '${moduleName}': ${cycleDescriptions.join(', ')}`
-    log.error(message)
-    throw new Error(message)
-  }
-
-  const context: ZervaModuleContext<T> = { name: moduleName, log, config, on, once, emit, moduleOptions }
-  getContext().uses[moduleName] = context
-  return context
-}
-
-/**
  * Factory function for creating reusable module functions.
  *
  * This pattern allows you to define a module once with its setup logic and configuration schema,
@@ -241,4 +175,79 @@ export function use<T extends Type<unknown> = Type<any>, R = any>(
         ...moduleOptions,
       }))
   }
+}
+
+/**
+ * Register a module with its configuration and dependencies.
+ *
+ * This function registers a module by its name, checks for required modules,
+ * and retrieves its configuration based on the provided schema.
+ *
+ * It also initializes a logger for the module, where log details can be customized.
+ * If `configSchema.log` is of type `LogConfig` the logger will be created from it.
+ *
+ * `options` can be used to override the default configuration values i.e. first
+ * apply `options` and then the `configSchema` values.
+ */
+export function registerModule<T extends Type<unknown> = Type<any>>(name: string, moduleOptions?: ZervaModuleOptions<T>): ZervaModuleContext<T> {
+  const { requires = [], configOptions, configSchema, options } = moduleOptions || {}
+
+  // Module name
+  const moduleName = name.toLowerCase()
+
+  // Config and options
+  const config: any = { ...options }
+  if (configSchema != null) {
+    const configFromSchema = getConfig(configSchema, {
+      existing: options as any,
+      prefix: `${moduleName.toUpperCase().replace(/\W+/gim, '_')}_`,
+      moduleName,
+      ...configOptions,
+    })
+    Object.assign(config, configFromSchema)
+    // Object.entries(configFromSchema as any).forEach(([key, value]) => {
+    //   if (value !== undefined) {
+    //     config[key] = value
+    //   }
+    // })
+  }
+
+  // Logging
+
+  let logLevel = moduleOptions?.logLevel
+  let logConfig = config?.log ?? moduleOptions?.log ?? true
+  if (isString(logConfig)) {
+    if (logLevel == null)
+      logLevel = parseLogLevel(logConfig)
+    logConfig = true
+  }
+
+  const log = LoggerFromConfig(logConfig, moduleName, logLevel ?? LogLevelAll)
+  log.info(`use ${moduleName} with config:`, config)
+
+  // Register module in context
+  if (hasModule(moduleName))
+    log.warn(`The module '${moduleName} has been registered multiple times`)
+
+  // Check required modules
+  const modules = arrayFlatten(requires)
+  const missing = modules.filter(module => !hasModule(module))
+  if (missing.length > 0) {
+    const message = `Zerva module '${moduleName}' requires modules: ${missing}`
+    log.error(message)
+    throw new Error(message)
+  }
+
+  // Check for circular dependencies
+  const cycles = detectCircularDependencies(moduleName, modules)
+  if (cycles.length > 0) {
+    const cycleDescriptions = cycles.map(cycle => cycle.join(' -> '))
+    const message = `Circular dependency detected for module '${moduleName}': ${cycleDescriptions.join(', ')}`
+    log.error(message)
+    throw new Error(message)
+  }
+
+  const context: ZervaModuleContext<T> = { name: moduleName, log, config, on, once, emit, moduleOptions }
+  getContext().uses[moduleName] = context
+  return context
 }

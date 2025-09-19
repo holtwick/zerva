@@ -1,7 +1,7 @@
 {
   "name": "@zerva/http",
   "type": "module",
-  "version": "0.74.2",
+  "version": "0.74.4",
   "description": "🌱 Zerva Express HTTP",
   "author": {
     "name": "Dirk Holtwick",
@@ -69,7 +69,7 @@
     "negotiator": "^1.0.0",
     "on-headers": "^1.1.0",
     "vary": "^1.1.2",
-    "zeed": "^1.0.9"
+    "zeed": "^1.0.13"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",

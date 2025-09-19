@@ -1,7 +1,7 @@
 {
   "name": "@zerva/http-log",
   "type": "module",
-  "version": "0.74.2",
+  "version": "0.74.4",
   "description": "🌱 Zerva module template",
   "author": {
     "name": "Dirk Holtwick",
@@ -54,10 +54,10 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.1",
-    "rotating-file-stream": "^3.2.7",
-    "zeed": "^1.0.9"
+    "zeed": "^1.0.13"
   },
   "devDependencies": {
+    "@zerva/bin": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.5"
