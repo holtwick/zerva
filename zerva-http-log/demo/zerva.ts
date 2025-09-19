@@ -8,6 +8,9 @@ const log: LoggerInterface = Logger('demo')
 
 log('demo')
 
+// eslint-disable-next-line node/prefer-global/process
+process.env.HTTP_LOG_PATH = 'demo.log'
+
 useHttp()
 useHttpLog({
   rotate: 'daily',

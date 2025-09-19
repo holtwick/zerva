@@ -137,6 +137,47 @@ export interface ZervaModuleContext<T> {
 }
 
 /**
+ * Factory function for creating reusable module functions.
+ *
+ * This pattern allows you to define a module once with its setup logic and configuration schema,
+ * then create multiple instances of it with different configurations.
+ *
+ * @example
+ * ```typescript
+ * // Define a reusable module
+ * const useMyModule = use({
+ *   name: 'myModule',
+ *   configSchema: z.object({ port: z.number().default(3000) }),
+ *   setup({ config, log }) {
+ *     log.info(`Starting module on port ${config.port}`)
+ *     return { port: config.port }
+ *   }
+ * })
+ *
+ * // Use it with custom config
+ * const module1 = useMyModule({ port: 4000 })
+ * const module2 = useMyModule() // uses default port 3000
+ * ```
+ *
+ * @param moduleOptions Configuration and setup function for the module
+ * @returns A function that can be called with partial config to instantiate the module
+ */
+export function use<T extends Type<unknown> = Type<any>, R = any>(
+  moduleOptions: ZervaModuleOptions<T> & {
+    name: string
+    setup: (context: ZervaModuleContext<T>) => R
+  },
+): (options?: Partial<Infer<T>>) => R {
+  return (options) => {
+    return moduleOptions.setup(
+      registerModule(moduleOptions.name, {
+        options,
+        ...moduleOptions,
+      }))
+  }
+}
+
+/**
  * Register a module with its configuration and dependencies.
  *
  * This function registers a module by its name, checks for required modules,
@@ -159,7 +200,7 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   if (configSchema != null) {
     const configFromSchema = getConfig(configSchema, {
       existing: options as any,
-      prefix: `${moduleName.toUpperCase()}_`,
+      prefix: `${moduleName.toUpperCase().replace(/\W+/gim, '_')}_`,
       moduleName,
       ...configOptions,
     })
@@ -202,43 +243,3 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   return context
 }
 
-/**
- * Factory function for creating reusable module functions.
- *
- * This pattern allows you to define a module once with its setup logic and configuration schema,
- * then create multiple instances of it with different configurations.
- *
- * @example
- * ```typescript
- * // Define a reusable module
- * const useMyModule = use({
- *   name: 'myModule',
- *   configSchema: z.object({ port: z.number().default(3000) }),
- *   setup({ config, log }) {
- *     log.info(`Starting module on port ${config.port}`)
- *     return { port: config.port }
- *   }
- * })
- *
- * // Use it with custom config
- * const module1 = useMyModule({ port: 4000 })
- * const module2 = useMyModule() // uses default port 3000
- * ```
- *
- * @param moduleOptions Configuration and setup function for the module
- * @returns A function that can be called with partial config to instantiate the module
- */
-export function use<T extends Type<unknown> = Type<any>, R = any>(
-  moduleOptions: ZervaModuleOptions<T> & {
-    name: string
-    setup: (context: ZervaModuleContext<T>) => R
-  },
-): (options?: Partial<Infer<T>>) => R {
-  return (options) => {
-    return moduleOptions.setup(
-      registerModule(moduleOptions.name, {
-        options,
-        ...moduleOptions,
-      }))
-  }
-}
