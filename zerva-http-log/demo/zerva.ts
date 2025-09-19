@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/process */
 import type { LoggerInterface } from 'zeed'
 import { serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
@@ -8,7 +9,7 @@ const log: LoggerInterface = Logger('demo')
 
 log('demo')
 
-// eslint-disable-next-line node/prefer-global/process
+process.env.HTTP_LOG = 'demo.log' // fail
 process.env.HTTP_LOG_PATH = 'demo.log'
 
 useHttp()

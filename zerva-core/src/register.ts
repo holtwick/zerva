@@ -1,6 +1,6 @@
 import type { Infer, LogConfig, LoggerInterface, LogLevel, Type } from 'zeed'
 import type { ZervaConfigOptions } from './config'
-import { arrayFlatten, Logger, LoggerFromConfig, LogLevelAll } from 'zeed'
+import { arrayFlatten, isString, Logger, LoggerFromConfig, LogLevelAll, parseLogLevel } from 'zeed'
 import { getConfig } from './config'
 import { emit, getContext, on, once } from './context'
 
@@ -213,7 +213,16 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   }
 
   // Logging
-  const log = LoggerFromConfig(config?.log ?? moduleOptions?.log ?? true, moduleName, moduleOptions?.logLevel ?? LogLevelAll)
+
+  let logLevel = moduleOptions?.logLevel
+  let logConfig = config?.log ?? moduleOptions?.log ?? true
+  if (isString(logConfig)) {
+    if (logLevel == null)
+      logLevel = parseLogLevel(logConfig)
+    logConfig = true
+  }
+
+  const log = LoggerFromConfig(logConfig, moduleName, logLevel ?? LogLevelAll)
   log.info(`use ${moduleName} with config:`, config)
 
   // Register module in context
@@ -242,4 +251,3 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   getContext().uses[moduleName] = context
   return context
 }
-

@@ -1,7 +1,10 @@
+/* eslint-disable node/prefer-global/process */
 import type { LoggerInterface } from 'zeed'
 import { on, onStart, onStop, serve, serveStop } from '@zerva/core'
 import { Logger, sleep, uuid } from 'zeed'
 import { useHttp } from '../src'
+
+process.env.HTTP_LOG = 'demo.log' // fail
 
 const log: LoggerInterface = Logger('demo')
 
