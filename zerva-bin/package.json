@@ -46,11 +46,11 @@
     "test": "echo todo"
   },
   "dependencies": {
-    "@types/node": "^24.3.1",
+    "@types/node": "^24.5.2",
     "display-notification": "^3.0.0",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.25.10",
     "esbuild-plugin-yaml": "^0.0.1",
-    "zeed": "^1.0.13"
+    "zeed": "^1.0.14"
   },
   "devDependencies": {
     "@zerva/core": "workspace:*"

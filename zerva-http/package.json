@@ -65,11 +65,11 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
-    "mime": "^4.0.7",
+    "mime": "^4.1.0",
     "negotiator": "^1.0.0",
     "on-headers": "^1.1.0",
     "vary": "^1.1.2",
-    "zeed": "^1.0.13"
+    "zeed": "^1.0.14"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
