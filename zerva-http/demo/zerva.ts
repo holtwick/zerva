@@ -1,6 +1,6 @@
 /* eslint-disable node/prefer-global/process */
 import type { LoggerInterface } from 'zeed'
-import { on, onStart, onStop, serve, serveStop } from '@zerva/core'
+import { on, onStart, onStop, serve } from '@zerva/core'
 import { Logger, sleep, uuid } from 'zeed'
 import { useHttp } from '../src'
 

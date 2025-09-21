@@ -26,31 +26,21 @@
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.3.0",
+    "@antfu/eslint-config": "^5.4.1",
     "@antfu/ni": "^25.0.0",
-    "@types/bun": "^1.2.21",
+    "@types/bun": "^1.2.22",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.3.1",
+    "@types/node": "^24.5.2",
     "better-sqlite3": "^12.2.0",
     "bumpp": "^10.2.3",
-    "eslint": "^9.35.0",
+    "eslint": "^9.36.0",
     "only-allow": "^1.2.1",
     "sort-package-json": "^3.4.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5",
+    "vite": "^7.1.6",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.7",
-    "zeed": "^1.0.13"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "esbuild"
-    ],
-    "overrides": {
-      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
-      "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2"
-    }
+    "zeed": "^1.0.14"
   }
 }

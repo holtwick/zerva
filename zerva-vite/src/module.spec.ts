@@ -82,13 +82,13 @@ describe('useVite', () => {
           www: wwwDir,
           mode: 'development',
           cacheAssets: false,
-          cacheExtensions: "png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite",
+          cacheExtensions: 'png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite',
           log: undefined,
         },
         paths: expect.objectContaining({
           root: expect.any(String),
           www: expect.any(String),
-        }), 
+        }),
       })
     })
 

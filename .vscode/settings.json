@@ -38,9 +38,7 @@
     "json",
     "jsonc",
     "yaml",
-    "toml",
-    "gql",
-    "graphql"
+    "toml"
   ],
 
   "vitest.commandLine": "pnpm exec vitest",
@@ -52,12 +50,13 @@
     "**/cypress/**",
     "**/.{idea,git,cache,output,temp}/**"
   ],
-
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  
   "github.copilot.enable": {
     "*": true,
     "plaintext": false,
-    "markdown": true,
+    "markdown": false,
     "scminput": false
-  },
-  "vitest.disableWorkspaceWarning": true
+  }
 }
