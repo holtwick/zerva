@@ -69,12 +69,12 @@
     "negotiator": "^1.0.0",
     "on-headers": "^1.1.0",
     "vary": "^1.1.2",
-    "zeed": "^1.0.14"
+    "zeed": "^1.0.18"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
 }
