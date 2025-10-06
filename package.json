@@ -1,7 +1,7 @@
 {
   "name": "@zerva/monorepo",
   "type": "module",
-  "version": "0.74.4",
+  "version": "0.75.0",
   "private": true,
   "packageManager": "pnpm@10.17.0",
   "engines": {
