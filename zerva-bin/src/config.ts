@@ -12,6 +12,7 @@ export interface ZervaConf {
   build: boolean
   bun: boolean
   cjs: boolean
+  clear: boolean
   debug: boolean
   define: Record<string, string>
   deno: boolean
@@ -36,6 +37,7 @@ export function getConfig(): ZervaConf {
     build: false,
     bun: false,
     cjs: false,
+    clear: false,
     debug: false,
     define: {},
     deno: false,
@@ -72,8 +74,9 @@ export function getConfig(): ZervaConf {
       debug: ['d'],
       esm: ['e'],
       help: ['h', '?'],
+      clear: ['c'],
     },
-    booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm', 'cjs', 'bun', 'deno'],
+    booleanArgs: ['build', 'noSourcemap', 'debug', 'help', 'esm', 'cjs', 'bun', 'deno', 'clear'],
     listArgs: ['external', 'loader', 'define', 'esbuild', 'node', 'lightningcss'],
   })
 
@@ -87,6 +90,7 @@ export function getConfig(): ZervaConf {
   config.build = args.build ?? args._.includes('build')
   config.mode = args.mode ?? (config.build ? 'production' : 'development')
   config.esm = args.cjs !== true // default
+  config.clear = args.clear
   config.bun = args.bun
   config.deno = args.deno
   config.loader = Object.fromEntries(

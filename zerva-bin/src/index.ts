@@ -25,6 +25,7 @@ is restarted on every update.
 --outfile, -o       Target file
 --cjs               Build CJS, default is ESM
 --open, -s          Open browser
+--clear, -c         Clear console on (re)start
 --no-sourcemap      Do not emit source maps
 --external=name     Exclude package from bundle (see esbuild)      
 --loader=.suf:type  Loaders for file types (see esbuild)     

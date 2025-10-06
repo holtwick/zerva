@@ -54,9 +54,8 @@
   "javascript.preferences.importModuleSpecifier": "relative",
   
   "github.copilot.enable": {
-    "*": true,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false
-  }
+    "*": true  
+  },
+  "vitest.maximumConfigs": 25,
+  "git.optimisticUpdate": false
 }

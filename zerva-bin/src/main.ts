@@ -101,6 +101,10 @@ export async function runMain(config: ZervaConf) {
     async function startNode() {
       await stopNode()
 
+      // Clear console
+      if (config.clear)
+        process.stdout.write('\x1Bc')
+
       const cwd = process.cwd()
 
       let spawnExec = process.execPath
