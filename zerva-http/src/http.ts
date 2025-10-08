@@ -265,6 +265,8 @@ export const useHttp = use({
               result = await promisify(handler(reqX, res, next))
             }
 
+            next()
+
             if (result != null) {
               try {
                 // [500, 'my error message'] or [404, {error: 'not found'}]

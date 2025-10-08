@@ -14,8 +14,12 @@ let ctr = 0
 
 useHttp({ helmet: true, cors: true })
 
-on('httpInit', ({ onGET }) => {
+on('httpInit', ({ onGET, app }) => {
   onGET('/', `Hello world ${uuid()}`)
+  app.use((req, res, next) => {
+    res.setHeader('X-Custom', 'foobar')
+    next()
+  })
 })
 
 onStart(() => {
