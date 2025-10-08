@@ -121,7 +121,7 @@ export const useHttp = use({
         app.use((req, res, next) => {
           if (isRequestProxied(req))
             return next()
-          res.vary('Accept-Encoding') // Important for caching
+          res.vary('Accept-Encoding')
           return staticCompressionMiddleware(req as any, res as any, next as any)
         })
       }
@@ -159,18 +159,17 @@ export const useHttp = use({
 
       if (postBinary) {
         log(`Post Uint8Binary, limit=${postLimit}`)
+        const binaryTypes = new Set([
+          'application/json',
+          'application/x-www-form-urlencoded',
+        ])
+
         app.use(
           express.raw({
             limit: postLimit,
             type: (req: any) => {
               const type = req.headers['content-type']?.toLowerCase()
-              return (
-                type?.startsWith('application/')
-                && ![
-                  'application/json',
-                  'application/x-www-form-urlencoded',
-                ].includes(type)
-              )
+              return type?.startsWith('application/') && !binaryTypes.has(type)
             },
           }),
         )
@@ -242,7 +241,8 @@ export const useHttp = use({
       const route: ZervaHttpRouteDescription = { path: String(path), method: mode, description: '' }
       routes.push(route)
 
-      log(`register ${mode.toUpperCase()} ${path}`)
+      const modeUpper = mode.toUpperCase()
+      log(`register ${modeUpper} ${path}`)
 
       let suffix: string | undefined
       if (isString(path))
@@ -251,12 +251,11 @@ export const useHttp = use({
       for (const handler of handlers) {
         app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
           try {
-            log(`${mode.toUpperCase()} ${path} ${path !== req.url ? `-> ${req.url}` : ''}`)
-            // log('headers =', req.headers)
+            log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
 
-            // todo maybe later?
+            // Set content type based on suffix
             if (suffix)
-              res.type(suffix ?? 'application/octet-stream')
+              res.type(suffix)
 
             let result: any = handler
             if (typeof handler === 'function') {
@@ -269,24 +268,22 @@ export const useHttp = use({
 
             if (result != null) {
               try {
-                // [500, 'my error message'] or [404, {error: 'not found'}]
+                // Handle [status, body] tuple format
                 if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
                   res.status(result[0])
                   result = result[1]
                 }
 
                 if (typeof result === 'number') {
-                  res.status(result).send(String(result)) // error code
+                  res.status(result).send(String(result))
                   return
                 }
 
-                if (typeof result === 'string') {
-                  if (!suffix) {
-                    if (result.startsWith('<'))
-                      res.set('Content-Type', 'text/html; charset=utf-8')
-                    else
-                      res.set('Content-Type', 'text/plain; charset=utf-8')
-                  }
+                // Auto-detect content type for string results
+                if (typeof result === 'string' && !suffix) {
+                  res.set('Content-Type', result.startsWith('<')
+                    ? 'text/html; charset=utf-8'
+                    : 'text/plain; charset=utf-8')
                 }
               }
               catch (err) {
@@ -329,7 +326,7 @@ export const useHttp = use({
       return smartRequestHandler('delete', path, handlers)
     }
 
-    // Consolidate HTTP API object to avoid repetition
+    // Consolidate HTTP API object
     const httpApi = {
       app,
       http: server,
@@ -359,15 +356,13 @@ export const useHttp = use({
     on('serveStop', async () => {
       log('Stopping HTTP server...')
       await emit('httpStop')
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         server.close((err) => {
-          if (err) {
+          if (err)
             log.error('Error closing HTTP server:', err)
-          }
-          else {
+          else
             log('HTTP server closed successfully')
-          }
-          resolve(true)
+          resolve()
         })
       })
       await emit('httpDidStop')
@@ -395,7 +390,6 @@ export const useHttp = use({
           }
           else {
             // Full output - detailed information
-            // Build configuration overview
             const configItems: string[] = []
             if (noExtras) {
               configItems.push('🔧 Plain Express (no middlewares)')
@@ -405,7 +399,7 @@ export const useHttp = use({
                 configItems.push('🌍 CORS')
               if (helmet)
                 configItems.push('🛡️  Helmet')
-              if (csp && (csp as any) !== false)
+              if (csp)
                 configItems.push('📋 CSP')
               if (securityHeaders)
                 configItems.push('🔐 Security Headers')
@@ -426,9 +420,8 @@ export const useHttp = use({
                 bodyParsers.push('URL-encoded')
               if (postBinary)
                 bodyParsers.push('Binary')
-              if (bodyParsers.length > 0) {
+              if (bodyParsers.length > 0)
                 configItems.push(`📦 Body: ${bodyParsers.join(', ')} (${postLimit})`)
-              }
             }
 
             console.info(`\n${'═'.repeat(80)}`)
@@ -444,6 +437,16 @@ export const useHttp = use({
             console.info(`🚪 Port:     ${port}`)
             if (routes.length > 0) {
               console.info(`📋 Routes:   ${routes.length} endpoint${routes.length !== 1 ? 's' : ''} registered`)
+              console.info('─'.repeat(80))
+              const sortedRoutes = [...routes].sort((a, b) => {
+                const pathCompare = String(a.path).localeCompare(String(b.path))
+                return pathCompare !== 0 ? pathCompare : a.method.localeCompare(b.method)
+              })
+              sortedRoutes.forEach((route) => {
+                const method = route.method.toUpperCase().padEnd(6)
+                const desc = route.description ? ` - ${route.description}` : ''
+                console.info(`   ${method} ${route.path}${desc}`)
+              })
             }
             if (configItems.length > 0) {
               console.info('─'.repeat(80))
@@ -457,16 +460,17 @@ export const useHttp = use({
         void emit('httpRunning', { port, family, address, http: server })
 
         if (openBrowser || valueToBoolean(process.env.ZERVA_HTTP_OPEN, false)) {
-          const start
-            = process.platform === 'darwin'
-              ? 'open -u'
-              : process.platform === 'win32'
-                ? 'start'
-                : 'xdg-open'
+          const start = process.platform === 'darwin'
+            ? 'open -u'
+            : process.platform === 'win32'
+              ? 'start'
+              : 'xdg-open'
           const cmd = `${start} ${url}`
 
           console.info(`Zerva: Open browser with: ${cmd}`)
-          import('node:child_process').then(m => m.exec(cmd)).catch(err => log.error('Cannot start child process', err))
+          import('node:child_process')
+            .then(m => m.exec(cmd))
+            .catch(err => log.error('Cannot start child process', err))
         }
       })
     })
