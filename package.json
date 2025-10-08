@@ -19,7 +19,7 @@
     "prepublish": "npx only-allow pnpm",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
     "rebuild": "pnpm -r rebuild",
-    "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
+    "release": "pnpm run bump && pnpm run build && pnpm login --scope @zerva && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
     "test": "pnpm -r --filter=@zerva/* test",
     "test:release": "pnpm -r --filter=@zerva/* test",
