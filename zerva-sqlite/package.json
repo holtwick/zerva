@@ -1,9 +1,9 @@
 {
   "name": "@zerva/sqlite",
   "type": "module",
-  "version": "0.74.4",
+  "version": "0.77.1",
   "private": false,
-  "packageManager": "pnpm@10.7.0",
+  "packageManager": "pnpm@10.17.0",
   "description": "",
   "author": {
     "name": "Dirk Holtwick",
@@ -50,14 +50,14 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
-    "zeed": "^1.0.13"
+    "zeed": "^1.0.18"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "tsup": "^8.5.0",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.5",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9",
     "vitest": "^3.2.4"
   }
 }

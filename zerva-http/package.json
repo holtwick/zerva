@@ -1,7 +1,7 @@
 {
   "name": "@zerva/http",
   "type": "module",
-  "version": "0.74.4",
+  "version": "0.77.1",
   "description": "🌱 Zerva Express HTTP",
   "author": {
     "name": "Dirk Holtwick",
@@ -54,7 +54,7 @@
     "@types/compressible": "^2.0.3",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/express-serve-static-core": "^5.0.7",
+    "@types/express-serve-static-core": "^5.1.0",
     "@types/negotiator": "^0.6.4",
     "@types/on-headers": "^1.0.4",
     "@types/vary": "^1.1.3",
@@ -65,16 +65,16 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
-    "mime": "^4.0.7",
+    "mime": "^4.1.0",
     "negotiator": "^1.0.0",
     "on-headers": "^1.1.0",
     "vary": "^1.1.2",
-    "zeed": "^1.0.13"
+    "zeed": "^1.0.18"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
 }

@@ -1,9 +1,9 @@
 {
   "name": "@zerva/monorepo",
   "type": "module",
-  "version": "0.74.4",
+  "version": "0.77.1",
   "private": true,
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@10.17.0",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -19,38 +19,28 @@
     "prepublish": "npx only-allow pnpm",
     "publish": "pnpm -r --filter=@zerva/* publish --access public",
     "rebuild": "pnpm -r rebuild",
-    "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
+    "release": "pnpm run bump && pnpm run build && pnpm login --scope @zerva && pnpm run publish && ./scripts/release.sh",
     "reset": "pnpm -r --filter=@zerva/* run reset",
     "test": "pnpm -r --filter=@zerva/* test",
     "test:release": "pnpm -r --filter=@zerva/* test",
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.3.0",
-    "@antfu/ni": "^25.0.0",
-    "@types/bun": "^1.2.21",
+    "@antfu/eslint-config": "^5.4.1",
+    "@antfu/ni": "^26.1.0",
+    "@types/bun": "^1.2.23",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.3.1",
+    "@types/node": "^24.7.0",
     "better-sqlite3": "^12.2.0",
-    "bumpp": "^10.2.3",
-    "eslint": "^9.35.0",
+    "bumpp": "^10.3.1",
+    "eslint": "^9.37.0",
     "only-allow": "^1.2.1",
     "sort-package-json": "^3.4.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9",
     "vitest": "^3.2.4",
-    "vue-tsc": "^3.0.7",
-    "zeed": "^1.0.13"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "esbuild"
-    ],
-    "overrides": {
-      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
-      "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2"
-    }
+    "vue-tsc": "^3.1.1",
+    "zeed": "^1.0.18"
   }
 }

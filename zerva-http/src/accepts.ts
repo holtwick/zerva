@@ -167,8 +167,8 @@ Accepts.prototype.charset
 
 Accepts.prototype.lang
   = Accepts.prototype.langs
-  = Accepts.prototype.language
-  = Accepts.prototype.languages = function (languages_: any) {
+    = Accepts.prototype.language
+      = Accepts.prototype.languages = function (languages_: any) {
         let languages = languages_
 
         // support flattened arguments
