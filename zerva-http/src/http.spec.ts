@@ -8,7 +8,7 @@ const port = 8888
 const url = `http://localhost:${port}`
 
 function middleware(req: any, res: any, next: any) {
-  res.set('X-Test', '123')
+  res.setHeader('X-Test', '123')
   next()
 }
 

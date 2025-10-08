@@ -40,7 +40,7 @@ describe('rpc', () => {
     await promise
   })
 
-  afterAll(serveStop)
+  afterAll(() => serveStop())
 
   it('should connect and send stuff', async () => {
     expect.assertions(1)

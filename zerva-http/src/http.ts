@@ -248,55 +248,56 @@ export const useHttp = use({
       if (isString(path))
         suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
-      for (const handler of handlers) {
-        app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
-          next()
+      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
+        next()
 
-          try {
+        try {
+          let result: any
+
+          for (const handler of handlers) {
             log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
 
             // Set content type based on suffix
             if (suffix)
               res.type(suffix)
 
-            let result: any = handler
+            result = handler
             if (typeof handler === 'function') {
               const reqX = req as any
               reqX.req = req
               result = await promisify(handler(reqX, res, next))
             }
+          }
 
-            if (result != null) {
-              try {
-                // Handle [status, body] tuple format
-                if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-                  res.status(result[0])
-                  result = result[1]
-                }
-
-                if (typeof result === 'number') {
-                  res.status(result).send(String(result))
-                  return
-                }
-
-                // Auto-detect content type for string results
-                if (typeof result === 'string' && !suffix) {
-                  res.set('Content-Type', result.startsWith('<')
-                    ? 'text/html; charset=utf-8'
-                    : 'text/plain; charset=utf-8')
-                }
-              }
-              catch (err) {
-                log.warn(`Problems setting status or header automatically for ${path}`, err)
-              }
-              res.send(result)
+          if (result != null) {
+            // Handle [status, body] tuple format
+            if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
+              res.status(result[0])
+              result = result[1]
             }
+
+            if (typeof result === 'number') {
+              res.status(result).send(String(result))
+              return
+            }
+
+            // Auto-detect content type for string results
+            if (typeof result === 'string' && !suffix) {
+              res.set('Content-Type', result.startsWith('<')
+                ? 'text/html; charset=utf-8'
+                : 'text/plain; charset=utf-8')
+            }
+
+            res.send(result)
+            return
           }
-          catch (err) {
-            log.warn(`Problems handling request for ${path}`, err)
-          }
-        })
-      }
+        }
+        catch (err) {
+          log.warn(`Problems setting status or header automatically for ${path}`, err)
+        }
+
+        res.status(500).send('No response')
+      })
 
       return {
         description(description: string) {
