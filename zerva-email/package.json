@@ -53,7 +53,7 @@
     "@types/nodemailer": "^7.0.2",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "nodemailer": "^7.0.7",
+    "nodemailer": "^7.0.9",
     "zeed": "^1.0.18"
   },
   "devDependencies": {

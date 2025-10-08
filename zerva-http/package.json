@@ -54,7 +54,7 @@
     "@types/compressible": "^2.0.3",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/express-serve-static-core": "^5.0.7",
+    "@types/express-serve-static-core": "^5.1.0",
     "@types/negotiator": "^0.6.4",
     "@types/on-headers": "^1.0.4",
     "@types/vary": "^1.1.3",
