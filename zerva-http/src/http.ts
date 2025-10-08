@@ -250,6 +250,8 @@ export const useHttp = use({
 
       for (const handler of handlers) {
         app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
+          next()
+
           try {
             log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
 
@@ -263,8 +265,6 @@ export const useHttp = use({
               reqX.req = req
               result = await promisify(handler(reqX, res, next))
             }
-
-            next()
 
             if (result != null) {
               try {

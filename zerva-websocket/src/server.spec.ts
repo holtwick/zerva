@@ -47,7 +47,9 @@ describe('module', () => {
     await promise
   })
 
-  afterAll(serveStop)
+  afterAll(async () => {
+    await serveStop()
+  })
 
   // it("should connect", () =>
   //   new Promise((done) => {
@@ -101,7 +103,7 @@ describe('module', () => {
       await bridge.throwsError()
     }
     catch (err) {
-      expect(err.message).toBe('fakeError')
+      expect((err as any).message).toBe('fakeError')
     }
 
     await channel.dispose()
