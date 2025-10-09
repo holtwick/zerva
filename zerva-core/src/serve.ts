@@ -13,27 +13,14 @@ declare global {
   }
 }
 
-enum ServerState {
-  IDLE = 'idle',
-  STARTED = 'started',
-  RUNNING = 'running',
-  STOPPING = 'stopping',
-  DISPOSED = 'disposed',
-}
-
-export { ServerState }
+export type ServerState = 'starting' | 'started' | 'stopping' | 'stopped'
 
 // todo context sensitive?
-let serverState = ServerState.IDLE
+let serverState: ServerState = 'stopped'
 
 /** Get the current server state (mainly for testing) */
 export function getServerState(): ServerState {
   return serverState
-}
-
-/** Reset the server state to IDLE (mainly for testing) */
-export function resetServerState(): void {
-  serverState = ServerState.IDLE
 }
 
 // Shortcuts
@@ -55,13 +42,13 @@ export function onStop(handler: () => void) {
 
 export async function serveStop(exitCode?: number) {
   // log('serveStop called')
-  if (serverState === ServerState.STOPPING) {
+  if (serverState === 'stopping') {
     await new Promise(resolve => getContext().once('serveDispose', () => resolve(true)))
   }
-  else if (serverState === ServerState.RUNNING) {
-    serverState = ServerState.STOPPING
+  else if (serverState === 'started') {
+    serverState = 'stopping'
     await emit('serveStop')
-    serverState = ServerState.DISPOSED
+    serverState = 'stopped'
     await emit('serveDispose')
   }
 
@@ -77,13 +64,14 @@ export async function serveStop(exitCode?: number) {
 }
 
 on('serveStop', () => {
-  if (serverState !== ServerState.STOPPING) {
-    // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
-    log.warn(`You should call 'serveStop()' function instead of directly emitting 'serveStop' event! Instead got ${serverState}.`)
+  if (serverState === 'stopping' || serverState === 'stopped')
+    return
 
-    // eslint-disable-next-line no-console
-    console.trace()
-  }
+  // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
+  log.warn(`You should call 'serveStop()' function instead of directly emitting 'serveStop' event! Instead got ${serverState}.`)
+
+  // eslint-disable-next-line no-console
+  console.trace()
 })
 
 /**
@@ -94,13 +82,13 @@ on('serveStop', () => {
 export async function serve(fn?: () => void) {
   log('serve')
 
-  // Only start if we're in IDLE state
-  if (serverState !== ServerState.IDLE) {
+  // Only start if we're in stopped state
+  if (serverState !== 'stopped') {
     log.warn(`Server is already in state: ${serverState}, ignoring serve() call`)
     return
   }
 
-  serverState = ServerState.STARTED
+  serverState = 'starting'
 
   if (fn) {
     log('launch')
@@ -110,17 +98,17 @@ export async function serve(fn?: () => void) {
   await emit('serveInit')
   log('start')
   await emit('serveStart')
-  // Set state to RUNNING after serveStart event is emitted
-  serverState = ServerState.RUNNING
+  // Set state to started after serveStart event is emitted
+  serverState = 'started'
   log('serve')
 }
 
 async function serverCheck() {
-  if (serverState === ServerState.IDLE) {
+  if (serverState === 'stopped') {
     log.info('Zerva has not been started manually, will start now!')
     void serve()
   }
-  else if (serverState === ServerState.RUNNING) {
+  else if (serverState === 'started') {
     log('Reached the end, will finish gracefully.')
     await serveStop()
   }
@@ -145,8 +133,8 @@ Object.keys(signals).forEach((signal) => {
       isPerformingExit = true
       log(`Process received a ${signal} signal`)
 
-      if (serverState === ServerState.RUNNING || serverState === ServerState.STARTED) {
-        serverState = ServerState.STOPPING
+      if (serverState === 'started') {
+        serverState = 'stopping'
         serveStop().then(() => {
           process.exit(0)
         }).catch(() => {
