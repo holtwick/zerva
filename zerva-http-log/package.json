@@ -1,7 +1,7 @@
 {
   "name": "@zerva/http-log",
   "type": "module",
-  "version": "0.77.1",
+  "version": "0.78.0",
   "description": "🌱 Zerva module template",
   "author": {
     "name": "Dirk Holtwick",
