@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import type { ZervaBuildInfo } from '@zerva/core'
 import type { BuildOptions, Plugin } from 'esbuild'
 import type { ChildProcess } from 'node:child_process'
 import type { ZervaConf } from './config'
@@ -220,7 +219,7 @@ export async function runMain(config: ZervaConf) {
 
   const now = new Date()
 
-  const ZERVA: ZervaBuildInfo = {
+  const ZERVA: any = { // ZervaBuildInfo
     version: 1, // versin of this config object
     development: !config.build,
     production: config.build,
