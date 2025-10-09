@@ -1,9 +1,7 @@
 import type { Request, Response } from 'express'
 import type { LoggerInterface } from 'zeed'
 import type { Express, NextFunction, zervaHttpGetHandler, zervaHttpHandlerMetohod, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
-import { isString, Logger, promisify } from 'zeed'
-
-const log: LoggerInterface = Logger('http-request')
+import { isString, promisify } from 'zeed'
 
 export function smartRequestHandler(opt: {
   method: zervaHttpHandlerMetohod
@@ -11,6 +9,7 @@ export function smartRequestHandler(opt: {
   handler: zervaHttpGetHandler
   app: Express
   routes: ZervaHttpRouteDescription[]
+  log: LoggerInterface
 }) {
   let { method, path, handler, app, routes } = opt
 

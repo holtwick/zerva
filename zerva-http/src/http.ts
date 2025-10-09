@@ -238,19 +238,19 @@ export const useHttp = use({
     }
 
     function GET(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
-      return smartRequestHandler({ method: 'get', path, handler, app, routes })
+      return smartRequestHandler({ method: 'get', path, handler, app, routes, log })
     }
 
     function POST(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
-      return smartRequestHandler({ method: 'post', path, handler, app, routes })
+      return smartRequestHandler({ method: 'post', path, handler, app, routes, log })
     }
 
     function PUT(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
-      return smartRequestHandler({ method: 'put', path, handler, app, routes })
+      return smartRequestHandler({ method: 'put', path, handler, app, routes, log })
     }
 
     function DELETE(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
-      return smartRequestHandler({ method: 'delete', path, handler, app, routes })
+      return smartRequestHandler({ method: 'delete', path, handler, app, routes, log })
     }
 
     // Consolidate HTTP API object
