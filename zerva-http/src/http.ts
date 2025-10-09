@@ -258,6 +258,13 @@ export const useHttp = use({
       app,
       http: server,
       routes,
+
+      // Static file serving
+      addStatic,
+      static: addStatic,
+      STATIC: addStatic,
+
+      // Request handlers
       get: GET,
       post: POST,
       put: PUT,
@@ -270,9 +277,6 @@ export const useHttp = use({
       onPOST: POST,
       onPUT: PUT,
       onDELETE: DELETE,
-      addStatic,
-      static: addStatic,
-      STATIC: addStatic,
     }
 
     on('serveInit', async () => {
