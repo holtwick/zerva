@@ -11,7 +11,7 @@ export function smartRequestHandler(opt: {
   routes: ZervaHttpRouteDescription[]
   log: LoggerInterface
 }) {
-  let { method, path, handler, app, routes } = opt
+  let { method, path, handler, app, routes, log } = opt
 
   if (isString(path) && !path.startsWith('/'))
     path = `/${path}`
