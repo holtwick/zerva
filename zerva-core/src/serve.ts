@@ -79,7 +79,7 @@ export async function serveStop(exitCode?: number) {
 on('serveStop', () => {
   if (serverState !== ServerState.STOPPING) {
     // throw new Error('You should call `serveStop` instead of emitting `serveStop`!')
-    log.warn('You should call `serveStop()` function instead of directly emitting `serveStop` event!')
+    log.warn(`You should call 'serveStop()' function instead of directly emitting 'serveStop' event! Instead got ${serverState}.`)
 
     // eslint-disable-next-line no-console
     console.trace()

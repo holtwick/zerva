@@ -3,7 +3,7 @@
 import type { HelmetOptions } from 'helmet'
 import type { AddressInfo } from 'node:net'
 import type { LogConfig } from 'zeed'
-import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
+import type { Express, Server, zervaHttpGetHandler, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
 import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
@@ -12,11 +12,12 @@ import { serveStop, use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
-import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
+import { isLocalHost, valueToBoolean, z } from 'zeed'
 import { getZervaBuildInfo } from '../../zerva-core/src'
 import { compressionMiddleware } from './compression'
+import { smartRequestHandler } from './request'
 import { setupSecurity } from './security'
-import { isRequestProxied } from './utils'
+import { formatStaticPath, isRequestProxied } from './utils'
 
 export * from './status'
 export * from './types'
@@ -230,101 +231,26 @@ export const useHttp = use({
 
     const routes: ZervaHttpRouteDescription[] = []
 
-    function smartRequestHandler(
-      mode: zervaHttpHandlerModes,
-      path: zervaHttpPaths,
-      handlers: zervaHttpGetHandler[],
-    ) {
-      if (isString(path) && !path.startsWith('/'))
-        path = `/${path}`
-
-      const route: ZervaHttpRouteDescription = { path: String(path), method: mode, description: '' }
-      routes.push(route)
-
-      const modeUpper = mode.toUpperCase()
-      log(`register ${modeUpper} ${path}`)
-
-      let suffix: string | undefined
-      if (isString(path))
-        suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-
-      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
-        next()
-
-        try {
-          let result: any
-
-          for (const handler of handlers) {
-            log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
-
-            // Set content type based on suffix
-            if (suffix)
-              res.type(suffix)
-
-            result = handler
-            if (typeof handler === 'function') {
-              const reqX = req as any
-              reqX.req = req
-              result = await promisify(handler(reqX, res, next))
-            }
-          }
-
-          if (result != null) {
-            // Handle [status, body] tuple format
-            if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-              res.status(result[0])
-              result = result[1]
-            }
-
-            if (typeof result === 'number') {
-              res.status(result).send(String(result))
-              return
-            }
-
-            // Auto-detect content type for string results
-            if (typeof result === 'string' && !suffix) {
-              res.set('Content-Type', result.startsWith('<')
-                ? 'text/html; charset=utf-8'
-                : 'text/plain; charset=utf-8')
-            }
-
-            res.send(result)
-            return
-          }
-        }
-        catch (err) {
-          log.warn(`Problems setting status or header automatically for ${path}`, err)
-        }
-
-        res.status(500).send('No response')
-      })
-
-      return {
-        description(description: string) {
-          route.description = description
-        },
-      }
-    }
-
     function addStatic(path: zervaHttpPaths, fsPath: string): void {
       log(`add static ${path} => ${fsPath}`)
       app.use(path, express.static(fsPath))
+      routes.push({ path: String(path), method: 'static', description: formatStaticPath(fsPath) })
     }
 
-    function GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('get', path, handlers)
+    function GET(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'get', path, handler, app, routes })
     }
 
-    function POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('post', path, handlers)
+    function POST(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'post', path, handler, app, routes })
     }
 
-    function PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('put', path, handlers)
+    function PUT(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'put', path, handler, app, routes })
     }
 
-    function DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('delete', path, handlers)
+    function DELETE(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'delete', path, handler, app, routes })
     }
 
     // Consolidate HTTP API object
@@ -443,10 +369,22 @@ export const useHttp = use({
                 const pathCompare = String(a.path).localeCompare(String(b.path))
                 return pathCompare !== 0 ? pathCompare : a.method.localeCompare(b.method)
               })
-              sortedRoutes.forEach((route) => {
-                const method = route.method.toUpperCase().padEnd(6)
-                const desc = route.description ? ` - ${route.description}` : ''
-                console.info(`   ${method} ${route.path}${desc}`)
+
+              // Determine column widths so all three columns align (left-aligned)
+              const methodStrings = sortedRoutes.map(r => r.method.toUpperCase())
+              const methodWidth = Math.max(...methodStrings.map(s => s.length), 0)
+              const pathStrings = sortedRoutes.map(r => String(r.path))
+              const pathWidth = Math.max(...pathStrings.map(s => s.length), 0)
+              const descStrings = sortedRoutes.map(r => r.description ? String(r.description) : '')
+              const descWidth = Math.max(...descStrings.map(s => s.length), 0)
+
+              sortedRoutes.forEach((route, idx) => {
+                const method = methodStrings[idx].padEnd(methodWidth)
+                const pathStr = pathStrings[idx].padEnd(pathWidth)
+                const desc = descStrings[idx] ? descStrings[idx].padEnd(descWidth) : ''
+                // Two spaces between columns; omit description column if empty
+                const descPart = descWidth > 0 ? `  ${desc}` : ''
+                console.info(`   ${method}  ${pathStr}${descPart}`)
               })
             }
             if (configItems.length > 0) {

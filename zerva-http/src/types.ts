@@ -4,7 +4,7 @@ import type { Server } from 'node:http'
 export type { Server }
 export type { Express, NextFunction, Request, RequestHandler, Response }
 
-export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
+export type zervaHttpHandlerMetohod = 'get' | 'post' | 'put' | 'delete'
 
 export type zervaHttpPaths = (string | RegExp)[] | (string | RegExp)
 
