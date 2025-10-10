@@ -1,7 +1,7 @@
 {
   "name": "@zerva/email",
   "type": "module",
-  "version": "0.78.2",
+  "version": "0.79.0",
   "description": "🌱 Zerva send email service",
   "author": {
     "name": "Dirk Holtwick",

@@ -1,7 +1,7 @@
 {
   "name": "@zerva/plausible",
   "type": "module",
-  "version": "0.78.2",
+  "version": "0.79.0",
   "description": "🌱 Zerva module template",
   "author": {
     "name": "Dirk Holtwick",
