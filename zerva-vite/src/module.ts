@@ -1,22 +1,24 @@
 import type { InlineConfig } from 'vite'
 import type { LogConfig } from 'zeed'
-import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
-import { escapeRegExp, toHumanReadableFilePath, toPath, z } from 'zeed'
+import { escapeRegExp, isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 import '@zerva/http'
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
-  root: z.string().default(process.cwd()),
-  www: z.string().default('./dist_www'),
+  root: z.string().default(process.cwd()).describe('Path to Vite project root (development mode)'),
+  www: z.string().default('./dist_www').describe('Path to built web files (production mode)'),
   mode: z.string().default((process.env.ZERVA_DEVELOPMENT ? 'development' : 'production')),
   // hmr: z.boolean().default(true),
-  cacheAssets: z.boolean().default(true),
-  cacheExtensions: z.string().default('png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite'),
+  cacheAssets: z.boolean().default(true).describe('Cache static assets in the browser for 1 year with immutable header'),
+  cacheExtensions: z.string().default('png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite').describe('File extensions to cache when cacheAssets is true'),
+  injectHead: z.string().optional().describe('HTML to inject before </head>. Only in production mode.'),
+  injectBody: z.string().optional().describe('HTML to inject before </body>. Only in production mode.'),
 })
 
 /**
@@ -41,18 +43,17 @@ export const useVite = use({
     const wwwPath = toPath(www)
 
     if (ZERVA_DEVELOPMENT) {
-      if (!existsSync(rootPath))
+      if (!isFolder(rootPath))
         log.error(`vite project does not exist at ${rootPath}`)
     }
     else {
-      if (!existsSync(wwwPath))
+      if (!isFolder(wwwPath))
         log.error(`web files do not exist at ${wwwPath}`)
     }
 
     on('httpWillStart', async ({ STATIC, app }) => {
       if (ZERVA_DEVELOPMENT) {
-        // eslint-disable-next-line no-console
-        console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(rootPath)}`)
+        log.info(`Vite serving from ${toHumanReadableFilePath(rootPath)}`)
         // log.info(`serving through vite from ${rootPath}`)
 
         // Lazy load, because it is only used in dev mode and confuses
@@ -87,43 +88,95 @@ export const useVite = use({
         })
       }
       else {
-        // eslint-disable-next-line no-console
-        console.info(`Zerva: Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
+        log.info(`Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
         // log.info(`serving static files at ${wwwPath}}`)
-        STATIC('', wwwPath)
+        // STATIC('', wwwPath)
 
-        const multiInputCache: Record<string, string> = {}
-
+        const cacheIndexHtmlContent: Record<string, string> = {}
+        const cacheFilePath: Record<string, string> = {}
         // Cache static assets
-        if (cacheAssets) {
-          app.use((req, res, next) => {
-            const path = req.path
-            if (path.includes('/assets/') || cacheableExtensionsRegex.test(req.path)) {
-              res.setHeader('Cache-Control', 'max-age=31536000, immutable')
-            }
-            next()
-          })
-        }
 
         // Map dynamic routes to index.html
-        app?.get(/.*/, (req: any, res: any) => {
-          let path: string | undefined = multiInputCache[req.path]
-          if (!path) {
-            const parts = req.path.split('/').slice(1)
-            while (parts.length > 0) {
-              const testPath = resolve(wwwPath, ...parts, 'index.html')
-              if (existsSync(testPath)) {
-                path = testPath
-                break
-              }
-              parts.pop()
-            }
-            if (!path)
-              path = resolve(wwwPath, 'index.html')
+        app?.get(/.*/, async (req: any, res: any) => {
+          const path = String(req.path)
 
-            multiInputCache[req.path] = path
+          // log.debug(`GET ${path}`)
+
+          // In cache, serve from cache
+          let content = cacheIndexHtmlContent[path]
+          if (content != null) {
+            // log(`... from cache`)
+            res.type('html').send(content)
+            return
           }
-          res.sendFile(path)
+
+          // Try to find static file
+          let filePath: string | undefined = cacheFilePath[path]
+          if (filePath == null) {
+            filePath = resolve(wwwPath, path.slice(1))
+            if (await isFile(filePath)) {
+              cacheFilePath[path] = filePath
+            }
+            else {
+              filePath = undefined
+            }
+          }
+
+          // Serve static file if found
+          if (filePath != null) {
+            // Set long cache headers for static assets
+            if (cacheAssets && (path.includes('/assets/') || cacheableExtensionsRegex.test(req.path))) {
+              res.setHeader('Cache-Control', 'max-age=31536000, immutable')
+            }
+            res.sendFile(filePath)
+            // log(`... static file`)
+            return
+          }
+
+          // Find index.html
+          const parts = path.split('/').slice(1)
+          let indexFilePath: string | undefined
+          while (parts.length > 0) {
+            const testPath = resolve(wwwPath, ...parts, 'index.html')
+            if (await isFile(testPath)) {
+              indexFilePath = testPath
+              break
+            }
+            parts.pop()
+          }
+
+          if (!indexFilePath)
+            indexFilePath = resolve(wwwPath, 'index.html')
+
+          // Load file
+          try {
+            content = await readFile(indexFilePath, 'utf-8')
+          }
+          catch (err) {
+            log.error(`Error reading ${indexFilePath}:`, err)
+            res.status(404).send('Not found')
+            return
+          }
+
+          // Inject HTML if needed
+          if (config.injectHead) {
+            content = content.replace(
+              '</head>',
+              `  ${config.injectHead}\n</head>`,
+            )
+          }
+          if (config.injectBody) {
+            content = content.replace(
+              '</body>',
+              `  ${config.injectBody}\n</body>`,
+            )
+          }
+
+          // Cache content for future requests
+          cacheIndexHtmlContent[req.path] = content
+
+          // log(`... index.html`)
+          res.type('html').send(content)
         })
       }
     })

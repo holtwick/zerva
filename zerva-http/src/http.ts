@@ -410,7 +410,7 @@ export const useHttp = use({
               : 'xdg-open'
           const cmd = `${start} ${url}`
 
-          console.info(`Zerva: Open browser with: ${cmd}`)
+          log.info(`Browser will be opened by calling: ${cmd}`)
           import('node:child_process')
             .then(m => m.exec(cmd))
             .catch(err => log.error('Cannot start child process', err))

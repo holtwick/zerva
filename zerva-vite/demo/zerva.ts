@@ -13,7 +13,17 @@ useHttp({
   openBrowser: true,
 })
 
-useVite()
+useVite({
+  root: './demo/www',
+  www: './demo/www',
+  // hmr: true,
+  injectHead: `
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 20px; }
+      h1 { color: #42b983; }
+    </style>
+  `,
+})
 
 onStop(() => {
   log('stop done')
