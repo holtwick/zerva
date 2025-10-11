@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.7.1",
     "@zerva/bin": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",

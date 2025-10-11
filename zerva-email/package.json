@@ -57,7 +57,7 @@
     "zeed": "^1.0.19"
   },
   "devDependencies": {
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.7.1",
     "tsup": "^8.5.0"
   }
 }
