@@ -1,4 +1,3 @@
-import type { NextFunction } from '@zerva/http'
 import type { InlineConfig } from 'vite'
 import type { LogConfig } from 'zeed'
 import { readFile } from 'node:fs/promises'
@@ -6,7 +5,6 @@ import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
 import { escapeRegExp, isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
-
 import { zervaMultiPageAppIndexRouting } from './multi'
 
 const configSchema = z.object({
@@ -51,7 +49,7 @@ export const useVite = use({
         log.error(`web files do not exist at ${wwwPath}`)
     }
 
-    on('httpWillStart', async ({ STATIC, app }) => {
+    on('httpWillStart', async ({ app }) => {
       if (ZERVA_DEVELOPMENT) {
         log.info(`Vite serving from ${toHumanReadableFilePath(rootPath)}`)
         // log.info(`serving through vite from ${rootPath}`)
@@ -97,7 +95,7 @@ export const useVite = use({
         // Cache static assets
 
         // Map dynamic routes to index.html
-        app?.get(/.*/, async (req: any, res: any, next: NextFunction) => {
+        app?.get(/.*/, async (req: any, res: any, next: any) => {
           const path = String(req.path)
 
           log.debug(`GET ${path}`)
@@ -132,6 +130,9 @@ export const useVite = use({
             log(`... static file`)
             return
           }
+
+          // Give other handlers a chance
+          next()
 
           // Find index.html
           const parts = path.split('/').slice(1)

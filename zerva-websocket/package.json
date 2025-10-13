@@ -61,11 +61,11 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "ws": "^8.18.3",
-    "zeed": "^1.0.19"
+    "zeed": "^1.0.20"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
-    "@types/node": "^24.7.1",
+    "@types/node": "^24.7.2",
     "@zerva/bin": "workspace:*",
     "playwright": "^1.56.0",
     "tsup": "^8.5.0",
