@@ -1,5 +1,5 @@
 import type { LoggerInterface } from 'zeed'
-import { onStop, serve } from '@zerva/core'
+import { on, onStop, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { Logger } from 'zeed'
 import { useVite } from '../src'
@@ -11,6 +11,10 @@ log('demo')
 useHttp({
   port: 3000,
   openBrowser: true,
+})
+
+on('httpInit', ({ GET }) => {
+  GET('/my.json', ({ hello: 'world' }))
 })
 
 useVite({

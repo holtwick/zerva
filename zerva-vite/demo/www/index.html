@@ -4,9 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hello</title>
+  <script>
+    console.log('Hello World')
+    fetch('/my.json').then(r => r.json()).then(d => {
+      document.getElementById('out').textContent = JSON.stringify(d, null, 2)
+    })
+  </script>  
 </head>
 <body>
   <h1>Hello World</h1>
-  <img src="icon.png" alt="icon">
+  <p>^-- this will only bee green in production</p>
+  <pre id="out"></pre>
+  <img src="icon.png" alt="icon" height="64">
 </body>
 </html>
