@@ -1,7 +1,7 @@
 {
   "name": "@zerva/sqlite",
   "type": "module",
-  "version": "0.79.0",
+  "version": "0.80.0",
   "private": false,
   "packageManager": "pnpm@10.17.0",
   "description": "",
