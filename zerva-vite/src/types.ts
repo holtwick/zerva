@@ -1,5 +1,3 @@
-import '@zerva/http'
-
 export {}
 
 declare global {

@@ -6,6 +6,7 @@ import process from 'node:process'
 import { use } from '@zerva/core'
 import { escapeRegExp, isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
+import '@zerva/http'
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
@@ -87,12 +88,9 @@ export const useVite = use({
       }
       else {
         log.info(`Vite serving from ${toHumanReadableFilePath(wwwPath)}`)
-        // log.info(`serving static files at ${wwwPath}}`)
-        // STATIC('', wwwPath)
 
         const cacheIndexHtmlContent: Record<string, string> = {}
         const cacheFilePath: Record<string, string> = {}
-        // Cache static assets
 
         // Map dynamic routes to index.html
         app?.get(/.*/, async (req: any, res: any, next: any) => {
@@ -103,8 +101,13 @@ export const useVite = use({
           // In cache, serve from cache
           let content = cacheIndexHtmlContent[path]
           if (content != null) {
-            log(`... from cache`)
-            res.type('html').send(content)
+            if (!res.headersSent) {
+              log(`... from cache`)
+              res.type('html').send(content)
+            }
+            else {
+              log.warn(`Headers already sent for ${req.path}, skipping cached index.html response`)
+            }
             return
           }
 
@@ -131,9 +134,6 @@ export const useVite = use({
             return
           }
 
-          // Give other handlers a chance
-          next()
-
           // Find index.html
           const parts = path.split('/').slice(1)
           let indexFilePath: string | undefined
@@ -148,6 +148,12 @@ export const useVite = use({
 
           if (!indexFilePath)
             indexFilePath = resolve(wwwPath, 'index.html')
+
+          // If no index.html exists, give other handlers a chance
+          if (!await isFile(indexFilePath)) {
+            next()
+            return
+          }
 
           // Load file
           try {
@@ -177,6 +183,13 @@ export const useVite = use({
           cacheIndexHtmlContent[req.path] = content
 
           log(`... index.html`)
+
+          // Check if headers were already sent (by another middleware/handler)
+          if (res.headersSent) {
+            log.warn(`Headers already sent for ${req.path}, skipping index.html response`)
+            return
+          }
+
           res.type('html').send(content)
         })
       }
