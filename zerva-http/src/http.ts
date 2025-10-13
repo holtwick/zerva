@@ -123,7 +123,7 @@ export const useHttp = use({
           if (isRequestProxied(req))
             return next()
           res.vary('Accept-Encoding')
-          return staticCompressionMiddleware(req as any, res as any, next as any)
+          return staticCompressionMiddleware(req, res, next)
         })
       }
 
@@ -254,7 +254,7 @@ export const useHttp = use({
     }
 
     // Consolidate HTTP API object
-    const httpApi = {
+    const httpApi: zervaHttpInterface = {
       app,
       http: server,
       routes,
@@ -281,7 +281,7 @@ export const useHttp = use({
 
     on('serveInit', async () => {
       log('serveInit')
-      await emit('httpInit', httpApi as any)
+      await emit('httpInit', httpApi)
     })
 
     on('serveStop', async () => {
@@ -301,7 +301,7 @@ export const useHttp = use({
 
     on('serveStart', async () => {
       log('serveStart')
-      await emit('httpWillStart', httpApi as any)
+      await emit('httpWillStart', httpApi)
       server.listen({ host, port }, () => {
         const { port, family, address } = server.address() as AddressInfo
         const host = isLocalHost(address) ? 'localhost' : address

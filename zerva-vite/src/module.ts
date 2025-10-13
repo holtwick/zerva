@@ -1,3 +1,4 @@
+import type { NextFunction } from '@zerva/http'
 import type { InlineConfig } from 'vite'
 import type { LogConfig } from 'zeed'
 import { readFile } from 'node:fs/promises'
@@ -5,9 +6,8 @@ import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
 import { escapeRegExp, isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
-import { zervaMultiPageAppIndexRouting } from './multi'
 
-import '@zerva/http'
+import { zervaMultiPageAppIndexRouting } from './multi'
 
 const configSchema = z.object({
   log: z.any<LogConfig>().optional(),
@@ -97,15 +97,15 @@ export const useVite = use({
         // Cache static assets
 
         // Map dynamic routes to index.html
-        app?.get(/.*/, async (req: any, res: any) => {
+        app?.get(/.*/, async (req: any, res: any, next: NextFunction) => {
           const path = String(req.path)
 
-          // log.debug(`GET ${path}`)
+          log.debug(`GET ${path}`)
 
           // In cache, serve from cache
           let content = cacheIndexHtmlContent[path]
           if (content != null) {
-            // log(`... from cache`)
+            log(`... from cache`)
             res.type('html').send(content)
             return
           }
@@ -129,7 +129,7 @@ export const useVite = use({
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
             res.sendFile(filePath)
-            // log(`... static file`)
+            log(`... static file`)
             return
           }
 
@@ -175,7 +175,7 @@ export const useVite = use({
           // Cache content for future requests
           cacheIndexHtmlContent[req.path] = content
 
-          // log(`... index.html`)
+          log(`... index.html`)
           res.type('html').send(content)
         })
       }

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import type { LoggerInterface } from 'zeed'
-import type { Express, NextFunction, zervaHttpGetHandler, zervaHttpHandlerMetohod, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
+import type { Express, zervaHttpGetHandler, zervaHttpHandlerMetohod, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
 import { isString, promisify } from 'zeed'
 
 export function smartRequestHandler(opt: {
@@ -26,7 +26,8 @@ export function smartRequestHandler(opt: {
   if (isString(path))
     suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
 
-  app[method](path, async (req: Request, res: Response, next: NextFunction) => {
+  app[method](path, async (req: Request, res: Response) => {
+    // Next is not used any more, these are finite handlers
     // next()
 
     try {
@@ -34,7 +35,7 @@ export function smartRequestHandler(opt: {
 
       log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
 
-      // Set content type based on suffix
+      // Set content type based on suffix, could be changed later
       if (suffix)
         res.type(suffix)
 
@@ -42,7 +43,9 @@ export function smartRequestHandler(opt: {
       if (typeof handler === 'function') {
         const reqX = req as any
         reqX.req = req
-        result = await promisify(handler(reqX, res, next))
+        result = await promisify(handler(reqX, res, () => {
+          log.warn('next() call is ignored in zerva-http handlers')
+        }))
       }
 
       if (result != null) {
