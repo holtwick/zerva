@@ -1,12 +1,13 @@
+/* eslint-disable no-console */
+import { spawn } from 'node:child_process'
+import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
 test.describe('Debug Server Routes', () => {
-  let testServer
+  let testServer: any
 
   test.beforeEach(async () => {
     // Start the test server
-    const { spawn } = require('node:child_process')
-    const path = require('node:path')
 
     testServer = spawn('node', ['e2e/test-server.js'], {
       cwd: path.resolve(__dirname, '..'),
@@ -34,7 +35,7 @@ test.describe('Debug Server Routes', () => {
 
   test('should serve the WebSocket client bundle', async ({ page }) => {
     // Try to fetch the JavaScript bundle directly
-    const response = await page.goto('http://localhost:3000/websocket-client.js')
+    const response = await page.goto('http://localhost:3000/websocket-client.js') as any
 
     console.log('Response status:', response.status())
     console.log('Response headers:', await response.allHeaders())
