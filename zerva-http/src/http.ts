@@ -15,6 +15,7 @@ import rateLimit from 'express-rate-limit'
 import { isLocalHost, valueToBoolean, z } from 'zeed'
 import { getZervaBuildInfo } from '../../zerva-core/src'
 import { compressionMiddleware } from './compression'
+import { logQrcode } from './qrcode'
 import { smartRequestHandler } from './request'
 import { setupSecurity } from './security'
 import { formatStaticPath, isRequestProxied } from './utils'
@@ -396,7 +397,13 @@ export const useHttp = use({
               console.info('⚙️  Configuration:')
               configItems.forEach(item => console.info(`   ${item}`))
             }
-            console.info(`${'═'.repeat(80)}\n`)
+            console.info('═'.repeat(80))
+          }
+
+          logQrcode(server)
+
+          if (!showServerInfo || showMinimal) {
+            console.info('')
           }
         }
 
