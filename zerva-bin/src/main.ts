@@ -247,7 +247,7 @@ const __dirname = (await import("node:path")).dirname(__filename)`
   const buildConfig: BuildOptions = {
     bundle: true,
     platform: 'node',
-    target: 'node18',
+    target: 'node22',
     format: config.esm ? 'esm' : 'cjs',
     entryPoints: [config.entry],
     legalComments: 'none',

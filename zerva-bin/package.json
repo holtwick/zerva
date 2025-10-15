@@ -26,10 +26,10 @@
     "icon.png"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "esbuild src/index.ts --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
+    "build": "esbuild src/index.ts --platform=node --target=node22 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs && chmod +x ./bin.cjs",
     "dbld-bun": "pnpm run build && ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 bun run dist/main.mjs",
     "dbld-deno": "pnpm run build && ./bin.cjs demo/zerva.ts --build --esm -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 deno run --allow-read --allow-write=./ --allow-env dist/main.mjs",
     "dbld-node": "pnpm run build && ./bin.cjs demo/zerva.ts --build -d --loader=.md:text --define=TEST:false && ZEED=* ZEED_COLOR=1 node dist/main.mjs",
@@ -42,7 +42,7 @@
     "prepublishOnly": "pnpm test && pnpm run build",
     "release": "pnpm test && pnpm version patch && pnpm build && pnpm publish --no-git-checks",
     "reset": "rm -rf node_modules pnpm-lock.yaml dist dist_www www",
-    "start": "esbuild src/index.ts  --watch --platform=node --target=node18 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs",
+    "start": "esbuild src/index.ts  --watch --platform=node --target=node22 --bundle --external:esbuild --minify --format=cjs --outfile=bin.cjs",
     "test": "echo todo"
   },
   "dependencies": {
