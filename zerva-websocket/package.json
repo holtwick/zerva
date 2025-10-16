@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.8.0",
     "@zerva/bin": "workspace:*",
     "playwright": "^1.56.0",
     "tsup": "^8.5.0",
