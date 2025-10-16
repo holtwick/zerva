@@ -5,7 +5,7 @@
 import type { Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import os from 'node:os'
-import qr from 'qrcode-terminal'
+import qr from './main'
 
 export function logQrcode(http: Server) {
   const networkUrls = getNetworkUrls(http)
