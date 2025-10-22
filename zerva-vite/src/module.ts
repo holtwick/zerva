@@ -86,12 +86,6 @@ export const useVite = use({
       return path.replace(/\/+/g, '/').replace(/\/\.\//g, '/').replace(/\/\.$/, '/')
     }
 
-    if (!ZERVA_DEVELOPMENT) {
-      on('httpInit', ({ STATIC }) => {
-        STATIC('/assets', toPath(assetsPath))
-      })
-    }
-
     on('httpWillStart', async ({ app }) => {
       if (ZERVA_DEVELOPMENT) {
         log.info(`Vite serving from ${toHumanReadableFilePath(rootPath)}`)
@@ -134,7 +128,7 @@ export const useVite = use({
         const cacheIndexHtmlContent: Record<string, string> = {}
         const cacheFilePath: Record<string, string> = {}
 
-        const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
+        // const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
 
         // Security: Limit cache size to prevent memory exhaustion
         const MAX_CACHE_ENTRIES = 1000
@@ -151,12 +145,12 @@ export const useVite = use({
           cacheEntryCount++
         }
 
-        app?.get(viteStaticPattern, async (req: any, res: any, next: any) => {
-          log('Request received:', req.path)
-
+        app?.get(/.*/, async (req: any, res: any, next: any) => {
           // Security: Normalize path to prevent cache poisoning and path traversal
           const rawPath = String(req.path)
           const path = normalizePath(rawPath)
+
+          log.debug(`GET ${path}`)
 
           // Security: Reject paths with suspicious patterns
           if (path.includes('..') || path.includes('//') || path.includes('\0')) {
@@ -164,8 +158,6 @@ export const useVite = use({
             next()
             return
           }
-
-          log.debug(`GET ${path}`)
 
           // Try to find static file first (before checking HTML cache)
           let filePath: string | undefined = cacheFilePath[path]
