@@ -48,12 +48,39 @@ export function smartRequestHandler(opt: {
       // and avoid attempting to set headers or send content again (which would throw an error)
       if (res.headersSent) {
         try {
+          // Safely serialize handlerResult - avoid exposing sensitive data and prevent circular ref crashes
+          let safeResult: any
+          try {
+            // Only include result type and basic info, not the actual data which might be sensitive
+            if (result === null || result === undefined) {
+              safeResult = result
+            }
+            else if (typeof result === 'string') {
+              safeResult = `[string: ${result.length} chars]`
+            }
+            else if (typeof result === 'number' || typeof result === 'boolean') {
+              safeResult = result
+            }
+            else if (Array.isArray(result)) {
+              safeResult = `[array: ${result.length} items]`
+            }
+            else if (typeof result === 'object') {
+              safeResult = `[object: ${Object.keys(result).length} keys]`
+            }
+            else {
+              safeResult = typeof result
+            }
+          }
+          catch {
+            safeResult = '[unable to serialize]'
+          }
+
           const dumpInfo: any = {
             statusCode: (res as any).statusCode,
             headers: typeof (res as any).getHeaders === 'function'
               ? (res as any).getHeaders()
               : (res as any)._headers ?? (res as any).headers,
-            handlerResult: result,
+            handlerResultType: safeResult,
           }
           log.warn(`${modeUpper} ${path} - Response already sent by handler. Headers dump:`, dumpInfo)
         }
@@ -66,17 +93,37 @@ export function smartRequestHandler(opt: {
       if (result != null) {
         // Handle [status, body] tuple format
         if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-          if (!res.headersSent) {
-            res.status(result[0])
+          const statusCode = result[0]
+
+          // Validate status code is in valid HTTP range
+          if (statusCode < 100 || statusCode > 599 || !Number.isInteger(statusCode)) {
+            log.warn(`${modeUpper} ${path} - Invalid status code ${statusCode}, defaulting to 500`)
+            if (!res.headersSent) {
+              res.status(500)
+            }
+          }
+          else if (!res.headersSent) {
+            res.status(statusCode)
           }
           else {
-            log.warn(`${modeUpper} ${path} - Cannot set status ${result[0]} from tuple, headers already sent`)
+            log.warn(`${modeUpper} ${path} - Cannot set status ${statusCode} from tuple, headers already sent`)
           }
+
           result = result[1]
         }
 
         if (typeof result === 'number') {
-          if (!res.headersSent) {
+          // Validate numeric status code
+          if (result < 100 || result > 599 || !Number.isInteger(result)) {
+            log.warn(`${modeUpper} ${path} - Invalid numeric status ${result}, defaulting to 500`)
+            if (!res.headersSent) {
+              res.status(500).send('Invalid status code')
+            }
+            else {
+              log.warn(`${modeUpper} ${path} - Cannot send numeric result, headers already sent`)
+            }
+          }
+          else if (!res.headersSent) {
             res.status(result).send(String(result))
           }
           else {
@@ -94,8 +141,13 @@ export function smartRequestHandler(opt: {
         }
 
         // Auto-detect content type for string results
+        // Note: Basic XSS protection - proper sanitization should be done by the application
         if (typeof result === 'string' && !suffix && !res.headersSent) {
-          res.set('Content-Type', result.startsWith('<')
+          // More robust HTML detection - check for common HTML patterns
+          const looksLikeHTML = result.trim().startsWith('<')
+            && (result.includes('</') || result.includes('/>'))
+
+          res.set('Content-Type', looksLikeHTML
             ? 'text/html; charset=utf-8'
             : 'text/plain; charset=utf-8')
         }

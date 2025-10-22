@@ -159,10 +159,21 @@ export function compressionMiddleware(options: any = {}) {
         return
       }
 
+      // Validate and sanitize compression options to prevent DoS
+      const safeOpts = {
+        flush: opts.flush,
+        finishFlush: opts.finishFlush,
+        chunkSize: Math.min(opts.chunkSize || 16 * 1024, 128 * 1024), // Max 128KB chunks
+        level: opts.level !== undefined ? Math.max(-1, Math.min(9, opts.level)) : undefined,
+        memLevel: opts.memLevel !== undefined ? Math.max(1, Math.min(9, opts.memLevel)) : undefined,
+        strategy: opts.strategy,
+        windowBits: opts.windowBits !== undefined ? Math.max(8, Math.min(15, opts.windowBits)) : undefined,
+      }
+
       // compression stream
       stream = method === 'gzip'
-        ? zlib.createGzip(opts)
-        : zlib.createDeflate(opts)
+        ? zlib.createGzip(safeOpts)
+        : zlib.createDeflate(safeOpts)
 
       // add buffered listeners to stream
       addListeners(stream, stream.on.bind(stream), listeners)
@@ -174,6 +185,17 @@ export function compressionMiddleware(options: any = {}) {
       stream.on('error', (compressionErr) => {
         // Log error but don't crash - fall back to uncompressed response
         console.error('Compression stream error:', compressionErr)
+
+        // Destroy the stream to free resources
+        try {
+          if (stream && !stream.destroyed) {
+            stream.destroy()
+          }
+        }
+        catch (destroyErr) {
+          console.error('Error destroying compression stream:', destroyErr)
+        }
+
         // Try to end the response gracefully
         if (!res.headersSent) {
           res.removeHeader('Content-Encoding')

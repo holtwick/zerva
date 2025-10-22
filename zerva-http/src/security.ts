@@ -63,12 +63,29 @@ function buildCSP(cspConfig: any) {
       return normalizeCSPDirectives(presets[cspConfig as keyof typeof presets])
     }
     // Custom CSP string - return as directives object
+    // Validate and sanitize to prevent injection
     const directives: any = {}
-    cspConfig.split(';').forEach((directive: string) => {
-      const [key, ...values] = directive.trim().split(/\s+/)
-      if (key) {
+    const parts = cspConfig.split(';')
+
+    // Limit number of directives to prevent DoS
+    if (parts.length > 50) {
+      console.warn('CSP config has too many directives, truncating to 50')
+      parts.length = 50
+    }
+
+    parts.forEach((directive: string) => {
+      const trimmed = directive.trim()
+      if (!trimmed)
+        return
+
+      const [key, ...values] = trimmed.split(/\s+/)
+      if (key && key.length < 100) { // Reasonable key length limit
+        // Convert kebab-case to camelCase
         const camelKey = key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-        directives[camelKey] = values
+        // Validate camelKey is alphanumeric
+        if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(camelKey)) {
+          directives[camelKey] = values.filter(v => v.length < 500) // Limit value length
+        }
       }
     })
     return normalizeCSPDirectives(directives)
@@ -135,7 +152,8 @@ export function setupSecurity(app: Express, config: SecurityConfig, log: any) {
     app.use((req, res, next) => {
       // Only set headers if they haven't been sent yet
       if (res.headersSent) {
-        log.warn(`Security headers skipped for ${req.path} - headers already sent`)
+        const reqPath = req.path || req.url || 'unknown'
+        log.warn(`Security headers skipped for ${reqPath} - headers already sent`)
         next()
         return
       }
