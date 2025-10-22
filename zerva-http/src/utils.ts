@@ -15,8 +15,9 @@ export function formatStaticPath(p: string): string {
     // Resolve real path (follows symlinks). This will throw if the path does not exist.
     absPath = fs.realpathSync(p)
   }
-  catch {
+  catch (err) {
     // Fallback: make a best-effort absolute path relative to cwd (works cross-platform)
+    // Don't expose error details that might leak sensitive path information
     const isAbsolute = p.startsWith('/') || /^[A-Za-z]:[\\/]/.test(p)
     absPath = isAbsolute ? p : `${process.cwd()}/${p}`
   }

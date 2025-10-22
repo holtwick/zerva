@@ -167,9 +167,28 @@ export function compressionMiddleware(options: any = {}) {
       // add buffered listeners to stream
       addListeners(stream, stream.on.bind(stream), listeners)
 
-      // header fields
-      res.setHeader('Content-Encoding', method)
-      res.removeHeader('Content-Length')
+      // Clear listeners array to prevent memory leak
+      listeners = null
+
+      // Handle compression stream errors
+      stream.on('error', (compressionErr) => {
+        // Log error but don't crash - fall back to uncompressed response
+        console.error('Compression stream error:', compressionErr)
+        // Try to end the response gracefully
+        if (!res.headersSent) {
+          res.removeHeader('Content-Encoding')
+          _end.call(res)
+        }
+      })
+
+      // header fields - only set if headers not already sent
+      if (!res.headersSent) {
+        res.setHeader('Content-Encoding', method)
+        res.removeHeader('Content-Length')
+      }
+      else {
+        console.warn(`Compression headers skipped - headers already sent for ${(req as any).path || (req as any).url}`)
+      }
 
       // compression
       stream.on('data', (chunk) => {

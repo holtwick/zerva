@@ -194,6 +194,10 @@ Accepts.prototype.lang
  */
 
 function extToMime(type: string | string[]) {
+  // Validate input to prevent injection or malformed types
+  if (typeof type !== 'string' || type.length === 0)
+    return type
+
   return !type.includes('/')
     ? mime.getType(String(type))
     : type
@@ -208,7 +212,7 @@ function extToMime(type: string | string[]) {
  */
 
 function validMime(type: any) {
-  return typeof type === 'string'
+  return typeof type === 'string' && type.length > 0
 }
 
 export default Accepts

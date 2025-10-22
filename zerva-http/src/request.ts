@@ -35,10 +35,6 @@ export function smartRequestHandler(opt: {
 
       log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
 
-      // Set content type based on suffix, could be changed later
-      if (suffix)
-        res.type(suffix)
-
       result = handler
       if (typeof handler === 'function') {
         const reqX = req as any
@@ -48,26 +44,71 @@ export function smartRequestHandler(opt: {
         }))
       }
 
+      // If the handler already sent the response (headers + content), dump headers for debugging
+      // and avoid attempting to set headers or send content again (which would throw an error)
+      if (res.headersSent) {
+        try {
+          const dumpInfo: any = {
+            statusCode: (res as any).statusCode,
+            headers: typeof (res as any).getHeaders === 'function'
+              ? (res as any).getHeaders()
+              : (res as any)._headers ?? (res as any).headers,
+            handlerResult: result,
+          }
+          log.warn(`${modeUpper} ${path} - Response already sent by handler. Headers dump:`, dumpInfo)
+        }
+        catch (dumpErr) {
+          log.warn(`${modeUpper} ${path} - Response already sent by handler, failed to dump headers`, dumpErr)
+        }
+        return
+      }
+
       if (result != null) {
         // Handle [status, body] tuple format
         if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-          res.status(result[0])
+          if (!res.headersSent) {
+            res.status(result[0])
+          }
+          else {
+            log.warn(`${modeUpper} ${path} - Cannot set status ${result[0]} from tuple, headers already sent`)
+          }
           result = result[1]
         }
 
         if (typeof result === 'number') {
-          res.status(result).send(String(result))
+          if (!res.headersSent) {
+            res.status(result).send(String(result))
+          }
+          else {
+            log.warn(`${modeUpper} ${path} - Cannot send numeric result, headers already sent`)
+          }
           return
         }
 
+        // Set content type based on suffix if not already set
+        if (suffix && !res.headersSent) {
+          res.type(suffix)
+        }
+        else if (suffix && res.headersSent) {
+          log.warn(`${modeUpper} ${path} - Cannot set content-type from suffix, headers already sent`)
+        }
+
         // Auto-detect content type for string results
-        if (typeof result === 'string' && !suffix) {
+        if (typeof result === 'string' && !suffix && !res.headersSent) {
           res.set('Content-Type', result.startsWith('<')
             ? 'text/html; charset=utf-8'
             : 'text/plain; charset=utf-8')
         }
+        else if (typeof result === 'string' && !suffix && res.headersSent) {
+          log.warn(`${modeUpper} ${path} - Cannot auto-detect content-type, headers already sent`)
+        }
 
-        res.send(result)
+        if (!res.headersSent) {
+          res.send(result)
+        }
+        else {
+          log.warn(`${modeUpper} ${path} - Cannot send result, headers already sent. Result type: ${typeof result}`)
+        }
         return
       }
     }
@@ -75,7 +116,12 @@ export function smartRequestHandler(opt: {
       log.warn(`Problems setting status or header automatically for ${path}`, err)
     }
 
-    res.status(500).send('No response')
+    if (!res.headersSent) {
+      res.status(500).send('No response')
+    }
+    else {
+      log.warn(`${modeUpper} ${path} - Cannot send 500 error response, headers already sent`)
+    }
   })
 
   return {

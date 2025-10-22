@@ -133,6 +133,13 @@ export function setupSecurity(app: Express, config: SecurityConfig, log: any) {
   if (securityHeaders) {
     log('Enhanced security headers enabled')
     app.use((req, res, next) => {
+      // Only set headers if they haven't been sent yet
+      if (res.headersSent) {
+        log.warn(`Security headers skipped for ${req.path} - headers already sent`)
+        next()
+        return
+      }
+
       // Strict-Transport-Security (HSTS) - force HTTPS for 1 year
       if (isSSL) {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
