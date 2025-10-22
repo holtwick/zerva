@@ -52,10 +52,10 @@
   "dependencies": {
     "@zerva/core": "workspace:*",
     "mqtt": "^5.14.1",
-    "zeed": "^1.0.20"
+    "zeed": "^1.0.21"
   },
   "devDependencies": {
-    "@types/node": "^24.8.0",
+    "@types/node": "^24.9.1",
     "tsup": "^8.5.0"
   }
 }
