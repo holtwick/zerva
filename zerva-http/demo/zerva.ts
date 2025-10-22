@@ -26,13 +26,16 @@ on('httpInit', ({ onGET, STATIC, app }) => {
   <p>This is a demo of zerva-http.</p>
   <pre>Loading...</pre> 
   <script>
-  fetch('/json').then(r => r.json()).then(r => {
+  fetch('/json2').then(r => r.json()).then(r => {
     console.log('json', r)
     document.querySelector('pre').textContent = JSON.stringify(r, null, 2)
   })
   </script>
 </body>`).description('Simple hello world')
   onGET('/json', { hello: 'world', id: uuid() }).description('Simple json response')
+  onGET('/json2', (req, res) => {
+    res.json({ hello: 'world', id: uuid() })
+  }).description('Simple json response')
   STATIC('/static', process.cwd())
 })
 

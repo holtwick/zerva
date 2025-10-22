@@ -42,6 +42,11 @@ export function smartRequestHandler(opt: {
         result = await promisify(handler(reqX, res, () => {
           log.warn('next() call is ignored in zerva-http handlers')
         }))
+
+        if (result == null && res.headersSent) {
+          log.info(`response already sent by handler for ${path}`)
+          return
+        }
       }
 
       // If the handler already sent the response (headers + content), dump headers for debugging
@@ -161,6 +166,7 @@ export function smartRequestHandler(opt: {
         else {
           log.warn(`${modeUpper} ${path} - Cannot send result, headers already sent. Result type: ${typeof result}`)
         }
+
         return
       }
     }
