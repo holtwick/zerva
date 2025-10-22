@@ -14,7 +14,7 @@ useHttp({
 })
 
 on('httpInit', ({ GET }) => {
-  GET('/', '<a href="/app">Vite app</a>')
+  GET('/', '<a href="/app/">Vite app</a><br><img src="/assets/icon.png" alt="icon" height="64">')
   GET('/my-before.json', ({ hello: 'world before' }))
 })
 

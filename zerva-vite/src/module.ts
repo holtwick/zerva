@@ -15,6 +15,7 @@ const configSchema = z.object({
   mode: z.string().default((process.env.ZERVA_DEVELOPMENT ? 'development' : 'production')),
   subpath: z.string().default('').describe('Subpath prefix for multi-page apps'),
   // hmr: z.boolean().default(true),
+  assetsPath: z.string().default('assets').describe('Path prefix for static assets'),
   cacheAssets: z.boolean().default(true).describe('Cache static assets in the browser for 1 year with immutable header'),
   cacheExtensions: z.string().default('png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite').describe('File extensions to cache when cacheAssets is true'),
   injectHead: z.string().optional().describe('HTML to inject before </head>. Only in production mode.'),
@@ -34,7 +35,15 @@ export const useVite = use({
   setup({ log, config, on }) {
     // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
-    const { root, www, mode, cacheAssets, cacheExtensions, subpath } = config
+    const {
+      root,
+      www,
+      mode,
+      cacheAssets,
+      cacheExtensions,
+      subpath,
+      assetsPath,
+    } = config
 
     // Create regex pattern from cacheExtensions config
     // Security: Use non-greedy match and anchor to prevent ReDoS
@@ -78,6 +87,11 @@ export const useVite = use({
     }
 
     on('httpWillStart', async ({ app }) => {
+      const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
+      const viteStaticAssetsPattern = new RegExp(`^/${regExpEscape(assetsPath.replace(/^\//, '').replace(/\/$/, ''))}/.*$`)
+
+      log('Vite handling', { viteStaticPattern, viteStaticAssetsPattern })
+
       if (ZERVA_DEVELOPMENT) {
         log.info(`Vite serving from ${toHumanReadableFilePath(rootPath)}`)
         // log.info(`serving through vite from ${rootPath}`)
@@ -100,7 +114,7 @@ export const useVite = use({
 
         const vite = await createServer(config)
 
-        app?.use(vite.middlewares)
+        app?.use([viteStaticPattern, viteStaticAssetsPattern], vite.middlewares)
 
         on('httpStop', async () => {
           log('vite close')
@@ -134,12 +148,9 @@ export const useVite = use({
           cacheEntryCount++
         }
 
-        // CRITICAL: Use a more specific route pattern to avoid hijacking other routes
-        // This should be registered LAST so other routes have priority
-        // Pattern: Match common static file paths and HTML routes, but not API routes
-        const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
+        const handler = async (req: any, res: any, next: any) => {
+          log('Request received:', req.path)
 
-        app?.get(viteStaticPattern, async (req: any, res: any, next: any) => {
           // Security: Normalize path to prevent cache poisoning and path traversal
           const rawPath = String(req.path)
           const path = normalizePath(rawPath)
@@ -295,7 +306,10 @@ export const useVite = use({
           }
 
           res.type('html').send(content)
-        })
+        }
+
+        app?.get(viteStaticAssetsPattern, handler)
+        app?.get(viteStaticPattern, handler)
       }
     })
 
