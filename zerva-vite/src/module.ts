@@ -164,20 +164,7 @@ export const useVite = use({
 
           log.debug(`GET ${path}`)
 
-          // In cache, serve from cache
-          let content = cacheIndexHtmlContent[path]
-          if (content != null) {
-            if (!res.headersSent) {
-              log(`... from cache`)
-              res.type('html').send(content)
-            }
-            else {
-              log.warn(`Headers already sent for ${req.path}, skipping cached index.html response`)
-            }
-            return
-          }
-
-          // Try to find static file
+          // Try to find static file first (before checking HTML cache)
           let filePath: string | undefined = cacheFilePath[path]
           if (filePath == null) {
             // Security: Prevent path traversal
@@ -216,7 +203,7 @@ export const useVite = use({
             }
 
             // Set long cache headers for static assets
-            if (cacheAssets && (path.includes('/assets/') || cacheableExtensionsRegex.test(req.path))) {
+            if (cacheAssets && (path.includes('/assets/') || cacheableExtensionsRegex.test(path))) {
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
             res.sendFile(filePath)
@@ -227,6 +214,19 @@ export const useVite = use({
           // Find index.html
           const parts = path.split('/').slice(1).filter(p => p.length > 0)
           let indexFilePath: string | undefined
+
+          // Check HTML cache first (only for non-asset paths)
+          let content = cacheIndexHtmlContent[path]
+          if (content != null) {
+            if (!res.headersSent) {
+              log(`... from cache`)
+              res.type('html').send(content)
+            }
+            else {
+              log.warn(`Headers already sent for ${path}, skipping cached index.html response`)
+            }
+            return
+          }
 
           // Security: Limit traversal depth to prevent DoS
           const maxDepth = Math.min(parts.length, 10)
@@ -294,14 +294,14 @@ export const useVite = use({
             )
           }
 
-          // Cache content for future requests
-          addToCache(cacheIndexHtmlContent, req.path, content)
+          // Cache content for future requests (use normalized path as key)
+          addToCache(cacheIndexHtmlContent, path, content)
 
           log(`... index.html`)
 
           // Check if headers were already sent (by another middleware/handler)
           if (res.headersSent) {
-            log.warn(`Headers already sent for ${req.path}, skipping index.html response`)
+            log.warn(`Headers already sent for ${path}, skipping index.html response`)
             return
           }
 
