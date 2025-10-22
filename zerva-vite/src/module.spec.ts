@@ -78,6 +78,7 @@ describe('useVite', () => {
       expect(result).toEqual({
         name: 'vite',
         config: {
+          assetsPath: 'assets',
           root: rootDir,
           www: wwwDir,
           injectBody: undefined,
