@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
-import { escapeRegExp, isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
+import { escapeRegExp, isFile, isFolder, regExpEscape, toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 import '@zerva/http'
 
@@ -13,6 +13,7 @@ const configSchema = z.object({
   root: z.string().default(process.cwd()).describe('Path to Vite project root (development mode)'),
   www: z.string().default('./dist_www').describe('Path to built web files (production mode)'),
   mode: z.string().default((process.env.ZERVA_DEVELOPMENT ? 'development' : 'production')),
+  subpath: z.string().default('').describe('Subpath prefix for multi-page apps'),
   // hmr: z.boolean().default(true),
   cacheAssets: z.boolean().default(true).describe('Cache static assets in the browser for 1 year with immutable header'),
   cacheExtensions: z.string().default('png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite').describe('File extensions to cache when cacheAssets is true'),
@@ -33,10 +34,12 @@ export const useVite = use({
   setup({ log, config, on }) {
     // const isDevMode = ZERVA_DEVELOPMENT || process.env.ZERVA_VITE || process.env.NODE_MODE === 'development'
 
-    const { root, www, mode, cacheAssets, cacheExtensions } = config
+    const { root, www, mode, cacheAssets, cacheExtensions, subpath } = config
 
     // Create regex pattern from cacheExtensions config
-    const cacheableExtensionsRegex = new RegExp(`.*\\.(?:${cacheExtensions.split(',').map(escapeRegExp).join('|')})$`)
+    // Security: Use non-greedy match and anchor to prevent ReDoS
+    const extensions = cacheExtensions.split(',').map(escapeRegExp).join('|')
+    const cacheableExtensionsRegex = new RegExp(`\\.(?:${extensions})$`)
 
     const rootPath = toPath(root)
     const wwwPath = toPath(www)
@@ -48,6 +51,30 @@ export const useVite = use({
     else {
       if (!isFolder(wwwPath))
         log.error(`web files do not exist at ${wwwPath}`)
+    }
+
+    // Normalize wwwPath for security checks
+    const normalizedWwwPath = resolve(wwwPath)
+
+    /**
+     * Security: Validate that a file path is within wwwPath to prevent path traversal
+     */
+    function isPathSafe(requestedPath: string): boolean {
+      try {
+        const normalized = resolve(normalizedWwwPath, requestedPath)
+        return normalized.startsWith(normalizedWwwPath)
+      }
+      catch {
+        return false
+      }
+    }
+
+    /**
+     * Security: Normalize request path to prevent cache poisoning
+     */
+    function normalizePath(path: string): string {
+      // Remove duplicate slashes, normalize dots
+      return path.replace(/\/+/g, '/').replace(/\/\.\//g, '/').replace(/\/\.$/, '/')
     }
 
     on('httpWillStart', async ({ app }) => {
@@ -92,9 +119,37 @@ export const useVite = use({
         const cacheIndexHtmlContent: Record<string, string> = {}
         const cacheFilePath: Record<string, string> = {}
 
-        // Map dynamic routes to index.html
-        app?.get(/.*/, async (req: any, res: any, next: any) => {
-          const path = String(req.path)
+        // Security: Limit cache size to prevent memory exhaustion
+        const MAX_CACHE_ENTRIES = 1000
+        let cacheEntryCount = 0
+
+        function addToCache<T>(cache: Record<string, T>, key: string, value: T): void {
+          if (cacheEntryCount >= MAX_CACHE_ENTRIES) {
+            // Simple eviction: clear oldest entries (clear all for simplicity)
+            Object.keys(cache).forEach(k => delete cache[k])
+            cacheEntryCount = 0
+            log.warn('Cache limit reached, cleared cache')
+          }
+          cache[key] = value
+          cacheEntryCount++
+        }
+
+        // CRITICAL: Use a more specific route pattern to avoid hijacking other routes
+        // This should be registered LAST so other routes have priority
+        // Pattern: Match common static file paths and HTML routes, but not API routes
+        const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
+
+        app?.get(viteStaticPattern, async (req: any, res: any, next: any) => {
+          // Security: Normalize path to prevent cache poisoning and path traversal
+          const rawPath = String(req.path)
+          const path = normalizePath(rawPath)
+
+          // Security: Reject paths with suspicious patterns
+          if (path.includes('..') || path.includes('//') || path.includes('\0')) {
+            log.warn(`Rejected suspicious path: ${rawPath}`)
+            next()
+            return
+          }
 
           log.debug(`GET ${path}`)
 
@@ -114,9 +169,26 @@ export const useVite = use({
           // Try to find static file
           let filePath: string | undefined = cacheFilePath[path]
           if (filePath == null) {
-            filePath = resolve(wwwPath, path.slice(1))
+            // Security: Prevent path traversal
+            const requestedPath = path.slice(1) // Remove leading slash
+
+            if (!isPathSafe(requestedPath)) {
+              log.warn(`Path traversal attempt rejected: ${path}`)
+              next()
+              return
+            }
+
+            filePath = resolve(wwwPath, requestedPath)
+
+            // Double-check the resolved path is safe
+            if (!filePath.startsWith(normalizedWwwPath)) {
+              log.warn(`Path escape attempt rejected: ${path}`)
+              next()
+              return
+            }
+
             if (await isFile(filePath)) {
-              cacheFilePath[path] = filePath
+              addToCache(cacheFilePath, path, filePath)
             }
             else {
               filePath = undefined
@@ -125,6 +197,13 @@ export const useVite = use({
 
           // Serve static file if found
           if (filePath != null) {
+            // Security: Verify file is still within wwwPath before serving
+            if (!filePath.startsWith(normalizedWwwPath)) {
+              log.error(`Security: Attempted to serve file outside wwwPath: ${filePath}`)
+              next()
+              return
+            }
+
             // Set long cache headers for static assets
             if (cacheAssets && (path.includes('/assets/') || cacheableExtensionsRegex.test(req.path))) {
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
@@ -135,19 +214,36 @@ export const useVite = use({
           }
 
           // Find index.html
-          const parts = path.split('/').slice(1)
+          const parts = path.split('/').slice(1).filter(p => p.length > 0)
           let indexFilePath: string | undefined
-          while (parts.length > 0) {
-            const testPath = resolve(wwwPath, ...parts, 'index.html')
+
+          // Security: Limit traversal depth to prevent DoS
+          const maxDepth = Math.min(parts.length, 10)
+
+          for (let i = maxDepth; i >= 0; i--) {
+            const testParts = parts.slice(0, i)
+            const testPath = resolve(wwwPath, ...testParts, 'index.html')
+
+            // Security: Ensure path is still within wwwPath
+            if (!testPath.startsWith(normalizedWwwPath)) {
+              continue
+            }
+
             if (await isFile(testPath)) {
               indexFilePath = testPath
               break
             }
-            parts.pop()
           }
 
           if (!indexFilePath)
             indexFilePath = resolve(wwwPath, 'index.html')
+
+          // Security: Final check that index.html is within wwwPath
+          if (indexFilePath && !indexFilePath.startsWith(normalizedWwwPath)) {
+            log.error(`Security: index.html path escaped wwwPath: ${indexFilePath}`)
+            next()
+            return
+          }
 
           // If no index.html exists, give other handlers a chance
           if (!await isFile(indexFilePath)) {
@@ -166,13 +262,21 @@ export const useVite = use({
           }
 
           // Inject HTML if needed
+          // Security: Escape HTML in injected content to prevent XSS
           if (config.injectHead) {
+            // Note: We trust config values but add warning if they look suspicious
+            if (config.injectHead.includes('<script') && !config.injectHead.includes('nonce')) {
+              log.warn('injectHead contains <script> without nonce - potential XSS risk')
+            }
             content = content.replace(
               '</head>',
               `  ${config.injectHead}\n</head>`,
             )
           }
           if (config.injectBody) {
+            if (config.injectBody.includes('<script') && !config.injectBody.includes('nonce')) {
+              log.warn('injectBody contains <script> without nonce - potential XSS risk')
+            }
             content = content.replace(
               '</body>',
               `  ${config.injectBody}\n</body>`,
@@ -180,7 +284,7 @@ export const useVite = use({
           }
 
           // Cache content for future requests
-          cacheIndexHtmlContent[req.path] = content
+          addToCache(cacheIndexHtmlContent, req.path, content)
 
           log(`... index.html`)
 

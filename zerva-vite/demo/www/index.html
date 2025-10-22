@@ -6,8 +6,11 @@
   <title>Hello</title>
   <script>
     console.log('Hello World')
-    fetch('/my.json').then(r => r.json()).then(d => {
+    fetch('/my-before.json').then(r => r.json()).then(d => {
       document.getElementById('out').textContent = JSON.stringify(d, null, 2)
+    })
+    fetch('/my-after.json').then(r => r.json()).then(d => {
+      document.getElementById('out-after').textContent = JSON.stringify(d, null, 2)
     })
   </script>  
 </head>
@@ -15,6 +18,7 @@
   <h1>Hello World</h1>
   <p>^-- this will only bee green in production</p>
   <pre id="out"></pre>
+  <pre id="out-after"></pre>
   <img src="icon.png" alt="icon" height="64">
 </body>
 </html>

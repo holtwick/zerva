@@ -14,12 +14,14 @@ useHttp({
 })
 
 on('httpInit', ({ GET }) => {
-  GET('/my.json', ({ hello: 'world' }))
+  GET('/', '<a href="/app">Vite app</a>')
+  GET('/my-before.json', ({ hello: 'world before' }))
 })
 
 useVite({
   root: './demo/www',
   www: './demo/www',
+  subpath: '/app/',
   // hmr: true,
   injectHead: `
     <style>
@@ -27,6 +29,10 @@ useVite({
       h1 { color: #42b983; }
     </style>
   `,
+})
+
+on('httpInit', ({ GET }) => {
+  GET('/my-after.json', ({ hello: 'world after' }))
 })
 
 onStop(() => {

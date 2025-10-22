@@ -80,7 +80,10 @@ describe('useVite', () => {
         config: {
           root: rootDir,
           www: wwwDir,
+          injectBody: undefined,
+          injectHead: undefined,
           mode: 'development',
+          subpath: '',
           cacheAssets: false,
           cacheExtensions: 'png,ico,svg,jpg,pdf,jpeg,mp4,mp3,woff2,ttf,tflite',
           log: undefined,
