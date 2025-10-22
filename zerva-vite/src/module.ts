@@ -86,12 +86,13 @@ export const useVite = use({
       return path.replace(/\/+/g, '/').replace(/\/\.\//g, '/').replace(/\/\.$/, '/')
     }
 
+    if (!ZERVA_DEVELOPMENT) {
+      on('httpInit', ({ STATIC }) => {
+        STATIC('/assets', toPath(assetsPath))
+      })
+    }
+
     on('httpWillStart', async ({ app }) => {
-      const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
-      const viteStaticAssetsPattern = new RegExp(`^/${regExpEscape(assetsPath.replace(/^\//, '').replace(/\/$/, ''))}/.*$`)
-
-      log('Vite handling', { viteStaticPattern, viteStaticAssetsPattern })
-
       if (ZERVA_DEVELOPMENT) {
         log.info(`Vite serving from ${toHumanReadableFilePath(rootPath)}`)
         // log.info(`serving through vite from ${rootPath}`)
@@ -114,7 +115,7 @@ export const useVite = use({
 
         const vite = await createServer(config)
 
-        app?.use([viteStaticPattern, viteStaticAssetsPattern], vite.middlewares)
+        app?.use(vite.middlewares)
 
         on('httpStop', async () => {
           log('vite close')
@@ -133,6 +134,8 @@ export const useVite = use({
         const cacheIndexHtmlContent: Record<string, string> = {}
         const cacheFilePath: Record<string, string> = {}
 
+        const viteStaticPattern = new RegExp(`^/${regExpEscape(subpath.replace(/^\//, '').replace(/\/$/, ''))}.*$`)
+
         // Security: Limit cache size to prevent memory exhaustion
         const MAX_CACHE_ENTRIES = 1000
         let cacheEntryCount = 0
@@ -148,7 +151,7 @@ export const useVite = use({
           cacheEntryCount++
         }
 
-        const handler = async (req: any, res: any, next: any) => {
+        app?.get(viteStaticPattern, async (req: any, res: any, next: any) => {
           log('Request received:', req.path)
 
           // Security: Normalize path to prevent cache poisoning and path traversal
@@ -207,7 +210,7 @@ export const useVite = use({
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
             res.sendFile(filePath)
-            log(`... static file`)
+            log(`... static file at ${filePath}`)
             return
           }
 
@@ -306,10 +309,7 @@ export const useVite = use({
           }
 
           res.type('html').send(content)
-        }
-
-        app?.get(viteStaticAssetsPattern, handler)
-        app?.get(viteStaticPattern, handler)
+        })
       }
     })
 
