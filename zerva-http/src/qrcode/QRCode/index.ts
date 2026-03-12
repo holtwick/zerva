@@ -65,9 +65,9 @@ export default class QRCode {
 
   makeImpl(test: boolean, maskPattern: number) {
     this.moduleCount = this.typeNumber * 4 + 17
-    this.modules = Array.from({ length: this.moduleCount }, () => [])
+    this.modules = Array.from({ length: this.moduleCount }).fill([])
     for (let row = 0; row < this.moduleCount; row++) {
-      this.modules[row] = Array.from({ length: this.moduleCount }, () => null)
+      this.modules[row] = Array.from({ length: this.moduleCount }).fill(null)
       for (let col = 0; col < this.moduleCount; col++) {
         this.modules[row][col] = null
       }
@@ -294,14 +294,14 @@ export default class QRCode {
     let offset = 0
     let maxDcCount = 0
     let maxEcCount = 0
-    const dcdata: any[] = Array.from({ length: rsBlocks.length }, () => [])
-    const ecdata: any[] = Array.from({ length: rsBlocks.length }, () => [])
+    const dcdata: any[] = Array.from({ length: rsBlocks.length }).fill([])
+    const ecdata: any[] = Array.from({ length: rsBlocks.length }).fill([])
     for (let r = 0; r < rsBlocks.length; r++) {
       const dcCount = rsBlocks[r].dataCount
       const ecCount = rsBlocks[r].totalCount - dcCount
       maxDcCount = Math.max(maxDcCount, dcCount)
       maxEcCount = Math.max(maxEcCount, ecCount)
-      dcdata[r] = Array.from({ length: dcCount }, () => 0)
+      dcdata[r] = Array.from({ length: dcCount }).fill(0)
       for (let i = 0; i < dcdata[r].length; i++) {
         dcdata[r][i] = 0xFF & buffer.buffer[i + offset]
       }
@@ -309,7 +309,7 @@ export default class QRCode {
       const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount)
       const rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1)
       const modPoly = rawPoly.mod(rsPoly)
-      ecdata[r] = Array.from({ length: rsPoly.getLength() - 1 }, () => 0)
+      ecdata[r] = Array.from({ length: rsPoly.getLength() - 1 }).fill(0)
       for (let x = 0; x < ecdata[r].length; x++) {
         const modIndex = x + modPoly.getLength() - ecdata[r].length
         ecdata[r][x] = modIndex >= 0 ? modPoly.get(modIndex) : 0
@@ -318,7 +318,7 @@ export default class QRCode {
 
     let totalCodeCount = 0
     for (let y = 0; y < rsBlocks.length; y++) totalCodeCount += rsBlocks[y].totalCount
-    const data = Array.from({ length: totalCodeCount }, () => 0)
+    const data = Array.from({ length: totalCodeCount }).fill(0)
     let index = 0
     for (let z = 0; z < maxDcCount; z++) {
       for (let s = 0; s < rsBlocks.length; s++) {

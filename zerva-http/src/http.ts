@@ -370,7 +370,7 @@ export const useHttp = use({
             if (routes.length > 0) {
               console.info(`📋 Routes:   ${routes.length} endpoint${routes.length !== 1 ? 's' : ''} registered`)
               console.info('─'.repeat(80))
-              const sortedRoutes = [...routes].sort((a, b) => {
+              const sortedRoutes = routes.toSorted((a, b) => {
                 const pathCompare = String(a.path).localeCompare(String(b.path))
                 return pathCompare !== 0 ? pathCompare : a.method.localeCompare(b.method)
               })

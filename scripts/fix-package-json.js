@@ -57,7 +57,7 @@ async function main() {
 
       console.log(`  Package ${pkg.name} browser=${hasBrowserCode} tests=${hasTests}`)
 
-      const tsup = `tsup src/index.ts${hasBrowserCode ? ' src/index.browser.ts ' : ''
+      const tsdown = `tsdown src/index.ts${hasBrowserCode ? ' src/index.browser.ts ' : ''
         }`
 
       pkg = {
@@ -68,19 +68,19 @@ async function main() {
             '.': {
               browser: hasBrowserCode
                 ? './dist/index.browser.js'
-                : './dist/index.js',
-              // node: './dist/index.js',
+                : './dist/index.mjs',
+              // node: './dist/index.mjs',
               require: './dist/index.cjs',
-              default: './dist/index.js',
+              default: './dist/index.mjs',
             },
           },
           main: 'dist/index.cjs',
-          module: 'dist/index.js',
-          typings: 'dist/index.d.ts',
+          module: 'dist/index.mjs',
+          typings: 'dist/index.d.mts',
           files: ['dist'],
           scripts: {
-            'build': 'pnpm run clean && pnpm run build:tsup',
-            'build:tsup': tsup,
+            'build': 'pnpm run clean && pnpm run build:tsdown',
+            'build:tsdown': tsdown,
             'prepublishOnly': hasTests
               ? 'pnpm test && pnpm run build'
               : 'pnpm run build',
@@ -90,7 +90,7 @@ async function main() {
             'test': hasTests
               ? 'ZEED=* vitest --globals --run -r src'
               : 'echo \'NO TESTS AVAILABLE\'',
-            'watch': `${tsup} --watch`,
+            'watch': `${tsdown} --watch`,
             'check': 'vue-tsc --noEmit --skipLibCheck -p ./tsconfig.json',
             'clean': 'rm -rf dist www',
             'reset': 'rm -rf dist www node_modules pnpm-lock.yaml .out*',

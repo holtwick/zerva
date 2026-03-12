@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { use } from '@zerva/core'
-import { isFile, isFolder, regExpEscape, toHumanReadableFilePath, toPath, z } from 'zeed'
+import { isFile, isFolder, toHumanReadableFilePath, toPath, z } from 'zeed'
 import { zervaMultiPageAppIndexRouting } from './multi'
 import '@zerva/http'
 

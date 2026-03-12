@@ -10,7 +10,7 @@ export default class QRPolynomial {
     let offset = 0
     while (offset < num.length && num[offset] === 0) offset++
 
-    this.num = Array.from({ length: num.length - offset + shift }, () => 0)
+    this.num = Array.from({ length: num.length - offset + shift }).fill(0)
     for (let i = 0; i < num.length - offset; i++) {
       this.num[i] = num[i + offset]
     }
@@ -25,7 +25,7 @@ export default class QRPolynomial {
   }
 
   multiply(e: QRPolynomial) {
-    const num: number[] = Array.from({ length: this.getLength() + e.getLength() - 1 }, () => 0)
+    const num: number[] = Array.from({ length: this.getLength() + e.getLength() - 1 }).fill(0)
     for (let i = 0; i < this.getLength(); i++) {
       for (let j = 0; j < e.getLength(); j++) {
         num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)))
@@ -38,7 +38,7 @@ export default class QRPolynomial {
     if (this.getLength() - e.getLength() < 0)
       return this
     const ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0))
-    const num: number[] = Array.from({ length: this.getLength() }, () => 0)
+    const num: number[] = Array.from({ length: this.getLength() }).fill(0)
     for (let i = 0; i < this.getLength(); i++) num[i] = this.get(i)
     for (let x = 0; x < e.getLength(); x++) {
       num[x] ^= QRMath.gexp(QRMath.glog(e.get(x)) + ratio)

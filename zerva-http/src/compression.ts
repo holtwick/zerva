@@ -34,8 +34,7 @@ export function compressionMiddleware(options: any = {}) {
   const filter = opts.filter || shouldCompress
   let threshold = bytes.parse(opts.threshold)
 
-  if (threshold == null)
-    threshold = 1024
+  threshold ??= 1024
 
   return function compression(req: IncomingMessage, res: any, next: () => void) {
     let ended = false

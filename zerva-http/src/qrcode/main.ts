@@ -8,7 +8,9 @@ const QRCode: any = (QRCodeModule as any)?.default ?? QRCodeModule
 const QRErrorCorrectLevel: any = (QRErrorCorrectLevelModule as any)?.default ?? QRErrorCorrectLevelModule
 
 let internalError: any = QRErrorCorrectLevel.L
-export function getErrorLevel() { return internalError }
+export function getErrorLevel() {
+  return internalError
+}
 
 const black = '\x1B[40m  \x1B[0m'
 const white = '\x1B[47m  \x1B[0m'
@@ -23,7 +25,7 @@ function repeat(color: string) {
 }
 
 function fill<T>(length: number, value: T): T[] {
-  return Array.from({ length }, () => value)
+  return Array.from({ length }).fill(value) as any
 }
 
 export function generate(input: string, opts?: { small?: boolean } | ((out: string) => void), cb?: (out: string) => void) {
@@ -106,4 +108,8 @@ export function setErrorLevel(err: string) {
   internalError = QRErrorCorrectLevel[err] || internalError
 }
 
-export default { generate, setErrorLevel, get errorLevel() { return getErrorLevel() } }
+export default {
+  generate, setErrorLevel, get errorLevel() {
+    return getErrorLevel()
+  },
+}
