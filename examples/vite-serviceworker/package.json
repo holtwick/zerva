@@ -1,6 +1,7 @@
 {
   "name": "vite-serviceworker",
   "version": "0.0.0",
+  "private": true,
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",

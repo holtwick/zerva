@@ -2,6 +2,7 @@
   "name": "zerva-example-rpc",
   "type": "module",
   "version": "0.2.4",
+  "private": true,
   "author": {
     "name": "Dirk Holtwick",
     "email": "dirk.holtwick@gmail.com",
