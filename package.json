@@ -8,21 +8,21 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "pnpm -r --filter='@zerva/*' build",
+    "build": "pnpm -r build",
     "bump": "bumpp package.json zerva-*/package.json --commit",
     "check": "vue-tsc --noEmit --skipLibCheck",
-    "clean": "pnpm -r --filter='@zerva/*' run clean",
+    "clean": "pnpm -r run clean",
     "_preinstall": "npx only-allow pnpm",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prune": "pnpm store prune",
     "prepublish": "npx only-allow pnpm",
-    "publish": "pnpm -r --filter='@zerva/*' publish --access public",
+    "publish": "pnpm -r publish --access public",
     "rebuild": "pnpm -r rebuild",
     "release": "pnpm run bump && pnpm run build && pnpm run publish && ./scripts/release.sh",
-    "reset": "pnpm -r --filter='@zerva/*' run reset",
-    "test": "pnpm -r --filter='@zerva/*' test",
-    "test:release": "pnpm -r --filter='@zerva/*' test",
+    "reset": "pnpm -r run reset",
+    "test": "pnpm -r test",
+    "test:release": "pnpm -r test",
     "update": "pnpm -r update -i --latest"
   },
   "devDependencies": {
