@@ -52,12 +52,12 @@ export async function emit<U extends keyof ZContextEvents>(
 
 /** Listener that binds to the current global context */
 export function on<U extends keyof ZContextEvents>(
-  first: Partial<ZContextEvents>
+  first: Partial<ZContextEvents>,
 ): DisposerFunction // Overload!
 
 export function on<U extends keyof ZContextEvents>(
   first: U,
-  listener: ZContextEvents[U]
+  listener: ZContextEvents[U],
 ): DisposerFunction // Overload!
 
 export function on<U extends keyof ZContextEvents>(
@@ -85,7 +85,7 @@ export function on<U extends keyof ZContextEvents>(
 
 export function once<U extends keyof ZContextEvents>(
   first: U,
-  listener: ZContextEvents[U]
+  listener: ZContextEvents[U],
 ): DisposerFunction // Overload!
 
 export function once<U extends keyof ZContextEvents>(

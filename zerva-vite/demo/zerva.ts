@@ -1,5 +1,5 @@
 import type { LoggerInterface } from 'zeed'
-import { onStop, serve } from '@zerva/core'
+import { on, onStop, serve } from '@zerva/core'
 import { useHttp } from '@zerva/http'
 import { Logger } from 'zeed'
 import { useVite } from '../src'
@@ -13,7 +13,27 @@ useHttp({
   openBrowser: true,
 })
 
-useVite()
+on('httpInit', ({ GET }) => {
+  GET('/', '<a href="/app/">Vite app</a><br><img src="/assets/icon.png" alt="icon" height="64">')
+  GET('/my-before.json', ({ hello: 'world before' }))
+})
+
+useVite({
+  root: './demo/www',
+  www: './demo/www',
+  subpath: '/app/',
+  // hmr: true,
+  injectHead: `
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 20px; }
+      h1 { color: #42b983; }
+    </style>
+  `,
+})
+
+on('httpInit', ({ GET }) => {
+  GET('/my-after.json', ({ hello: 'world after' }))
+})
 
 onStop(() => {
   log('stop done')

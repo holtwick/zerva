@@ -1,6 +1,6 @@
-import type { Options } from 'tsup'
+import type { Options } from 'tsdown'
 
-export const tsup: Options = {
+export const tsdown: Options = {
   sourcemap: true,
   clean: true,
   dts: true,
@@ -8,7 +8,6 @@ export const tsup: Options = {
   minify: true,
   splitting: true,
   treeshake: true,
-  bundle: true,
   skipNodeModulesBundle: true,
   // noExternal: [/^(?!(zeed|@zerva\/|better-sqlite3|vite)).*$/gim],
   target: 'es2020',

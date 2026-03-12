@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello</title>
+  <script>
+    console.log('Hello World')
+    fetch('/my-before.json').then(r => r.json()).then(d => {
+      document.getElementById('out').textContent = JSON.stringify(d, null, 2)
+    })
+    fetch('/my-after.json').then(r => r.json()).then(d => {
+      document.getElementById('out-after').textContent = JSON.stringify(d, null, 2)
+    })
+  </script>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <h1>Hello World</h1>
+  <p>^-- this will only bee green in production</p>
+  <pre id="out"></pre>
+  <pre id="out-after"></pre>
+  <img src="/assets/icon.png" alt="icon" height="64">
+</body>
+</html>

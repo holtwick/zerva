@@ -17,12 +17,14 @@ describe('http', () => {
     useHttp({ port })
 
     on('httpInit', (info) => {
-      const { onGET, onPOST, STATIC } = info
+      const { onGET, onPOST, STATIC, app } = info
       // get("/test", ({ req }) => {
       //   req.protocol
       // })
 
-      onGET('/hello', middleware, 'Hello World')
+      app.use(middleware)
+
+      onGET('/hello', 'Hello World')
       onGET('/json', { itIs: 'json', v: 1 })
       onGET('/test2', ({ req }) => {
         // req.protocol = 'xxx'

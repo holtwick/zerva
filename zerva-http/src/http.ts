@@ -3,7 +3,7 @@
 import type { HelmetOptions } from 'helmet'
 import type { AddressInfo } from 'node:net'
 import type { LogConfig } from 'zeed'
-import type { Express, NextFunction, Request, Response, Server, zervaHttpGetHandler, zervaHttpHandlerModes, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
+import type { Express, Server, zervaHttpGetHandler, zervaHttpInterface, zervaHttpPaths, ZervaHttpRouteDescription } from './types'
 import fs from 'node:fs'
 import httpModule from 'node:http'
 import httpsModule from 'node:https'
@@ -12,11 +12,13 @@ import { serveStop, use } from '@zerva/core'
 import corsDefault from 'cors'
 import express from 'express'
 import rateLimit from 'express-rate-limit'
-import { isLocalHost, isString, promisify, valueToBoolean, z } from 'zeed'
+import { isLocalHost, valueToBoolean, z } from 'zeed'
 import { getZervaBuildInfo } from '../../zerva-core/src'
 import { compressionMiddleware } from './compression'
+import { logQrcode } from './qrcode'
+import { smartRequestHandler } from './request'
 import { setupSecurity } from './security'
-import { isRequestProxied } from './utils'
+import { formatStaticPath, isRequestProxied } from './utils'
 
 export * from './status'
 export * from './types'
@@ -122,7 +124,7 @@ export const useHttp = use({
           if (isRequestProxied(req))
             return next()
           res.vary('Accept-Encoding')
-          return staticCompressionMiddleware(req as any, res as any, next as any)
+          return staticCompressionMiddleware(req, res, next)
         })
       }
 
@@ -230,108 +232,40 @@ export const useHttp = use({
 
     const routes: ZervaHttpRouteDescription[] = []
 
-    function smartRequestHandler(
-      mode: zervaHttpHandlerModes,
-      path: zervaHttpPaths,
-      handlers: zervaHttpGetHandler[],
-    ) {
-      if (isString(path) && !path.startsWith('/'))
-        path = `/${path}`
-
-      const route: ZervaHttpRouteDescription = { path: String(path), method: mode, description: '' }
-      routes.push(route)
-
-      const modeUpper = mode.toUpperCase()
-      log(`register ${modeUpper} ${path}`)
-
-      let suffix: string | undefined
-      if (isString(path))
-        suffix = /\.[a-z0-9]+$/.exec(path)?.[0]
-
-      app[mode](path, async (req: Request, res: Response, next: NextFunction) => {
-        next()
-
-        try {
-          let result: any
-
-          for (const handler of handlers) {
-            log(`${modeUpper} ${path}${path !== req.url ? ` -> ${req.url}` : ''}`)
-
-            // Set content type based on suffix
-            if (suffix)
-              res.type(suffix)
-
-            result = handler
-            if (typeof handler === 'function') {
-              const reqX = req as any
-              reqX.req = req
-              result = await promisify(handler(reqX, res, next))
-            }
-          }
-
-          if (result != null) {
-            // Handle [status, body] tuple format
-            if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'number') {
-              res.status(result[0])
-              result = result[1]
-            }
-
-            if (typeof result === 'number') {
-              res.status(result).send(String(result))
-              return
-            }
-
-            // Auto-detect content type for string results
-            if (typeof result === 'string' && !suffix) {
-              res.set('Content-Type', result.startsWith('<')
-                ? 'text/html; charset=utf-8'
-                : 'text/plain; charset=utf-8')
-            }
-
-            res.send(result)
-            return
-          }
-        }
-        catch (err) {
-          log.warn(`Problems setting status or header automatically for ${path}`, err)
-        }
-
-        res.status(500).send('No response')
-      })
-
-      return {
-        description(description: string) {
-          route.description = description
-        },
-      }
-    }
-
     function addStatic(path: zervaHttpPaths, fsPath: string): void {
       log(`add static ${path} => ${fsPath}`)
       app.use(path, express.static(fsPath))
+      routes.push({ path: String(path), method: 'static', description: formatStaticPath(fsPath) })
     }
 
-    function GET(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('get', path, handlers)
+    function GET(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'get', path, handler, app, routes, log })
     }
 
-    function POST(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('post', path, handlers)
+    function POST(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'post', path, handler, app, routes, log })
     }
 
-    function PUT(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('put', path, handlers)
+    function PUT(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'put', path, handler, app, routes, log })
     }
 
-    function DELETE(path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) {
-      return smartRequestHandler('delete', path, handlers)
+    function DELETE(path: zervaHttpPaths, handler: zervaHttpGetHandler) {
+      return smartRequestHandler({ method: 'delete', path, handler, app, routes, log })
     }
 
     // Consolidate HTTP API object
-    const httpApi = {
+    const httpApi: zervaHttpInterface = {
       app,
       http: server,
       routes,
+
+      // Static file serving
+      addStatic,
+      static: addStatic,
+      STATIC: addStatic,
+
+      // Request handlers
       get: GET,
       post: POST,
       put: PUT,
@@ -344,14 +278,11 @@ export const useHttp = use({
       onPOST: POST,
       onPUT: PUT,
       onDELETE: DELETE,
-      addStatic,
-      static: addStatic,
-      STATIC: addStatic,
     }
 
     on('serveInit', async () => {
       log('serveInit')
-      await emit('httpInit', httpApi as any)
+      await emit('httpInit', httpApi)
     })
 
     on('serveStop', async () => {
@@ -371,7 +302,7 @@ export const useHttp = use({
 
     on('serveStart', async () => {
       log('serveStart')
-      await emit('httpWillStart', httpApi as any)
+      await emit('httpWillStart', httpApi)
       server.listen({ host, port }, () => {
         const { port, family, address } = server.address() as AddressInfo
         const host = isLocalHost(address) ? 'localhost' : address
@@ -439,14 +370,26 @@ export const useHttp = use({
             if (routes.length > 0) {
               console.info(`📋 Routes:   ${routes.length} endpoint${routes.length !== 1 ? 's' : ''} registered`)
               console.info('─'.repeat(80))
-              const sortedRoutes = [...routes].sort((a, b) => {
+              const sortedRoutes = routes.toSorted((a, b) => {
                 const pathCompare = String(a.path).localeCompare(String(b.path))
                 return pathCompare !== 0 ? pathCompare : a.method.localeCompare(b.method)
               })
-              sortedRoutes.forEach((route) => {
-                const method = route.method.toUpperCase().padEnd(6)
-                const desc = route.description ? ` - ${route.description}` : ''
-                console.info(`   ${method} ${route.path}${desc}`)
+
+              // Determine column widths so all three columns align (left-aligned)
+              const methodStrings = sortedRoutes.map(r => r.method.toUpperCase())
+              const methodWidth = Math.max(...methodStrings.map(s => s.length), 0)
+              const pathStrings = sortedRoutes.map(r => String(r.path))
+              const pathWidth = Math.max(...pathStrings.map(s => s.length), 0)
+              const descStrings = sortedRoutes.map(r => r.description ? String(r.description) : '')
+              const descWidth = Math.max(...descStrings.map(s => s.length), 0)
+
+              sortedRoutes.forEach((route, idx) => {
+                const method = methodStrings[idx].padEnd(methodWidth)
+                const pathStr = pathStrings[idx].padEnd(pathWidth)
+                const desc = descStrings[idx] ? descStrings[idx].padEnd(descWidth) : ''
+                // Two spaces between columns; omit description column if empty
+                const descPart = descWidth > 0 ? `  ${desc}` : ''
+                console.info(`   ${method}  ${pathStr}${descPart}`)
               })
             }
             if (configItems.length > 0) {
@@ -454,7 +397,13 @@ export const useHttp = use({
               console.info('⚙️  Configuration:')
               configItems.forEach(item => console.info(`   ${item}`))
             }
-            console.info(`${'═'.repeat(80)}\n`)
+            console.info('═'.repeat(80))
+          }
+
+          logQrcode(server)
+
+          if (!showServerInfo || showMinimal) {
+            console.info('')
           }
         }
 
@@ -468,7 +417,7 @@ export const useHttp = use({
               : 'xdg-open'
           const cmd = `${start} ${url}`
 
-          console.info(`Zerva: Open browser with: ${cmd}`)
+          log.info(`Browser will be opened by calling: ${cmd}`)
           import('node:child_process')
             .then(m => m.exec(cmd))
             .catch(err => log.error('Cannot start child process', err))

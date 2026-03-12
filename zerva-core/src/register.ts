@@ -70,9 +70,9 @@ function detectCircularDependencies(
 
   if (visited.has(moduleName)) {
     // Found a cycle - return the chain
-    const visitedArray = Array.from(visited)
+    const visitedArray = [...visited]
     const cycleStart = visitedArray.indexOf(moduleName)
-    return [visitedArray.slice(cycleStart).concat(moduleName)]
+    return [[...visitedArray.slice(cycleStart), ...moduleName]]
   }
 
   visited.add(moduleName)
@@ -217,8 +217,7 @@ export function registerModule<T extends Type<unknown> = Type<any>>(name: string
   let logLevel = moduleOptions?.logLevel
   let logConfig = config?.log ?? moduleOptions?.log ?? true
   if (isString(logConfig)) {
-    if (logLevel == null)
-      logLevel = parseLogLevel(logConfig)
+    logLevel ??= parseLogLevel(logConfig)
     logConfig = true
   }
 

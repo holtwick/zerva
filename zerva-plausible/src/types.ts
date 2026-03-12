@@ -6,7 +6,7 @@ declare global {
       req: any,
       name: string,
       props?: Record<string, string>,
-      url?: string
+      url?: string,
     ) => void
     trackPageView: (req: any, url?: string) => void
   }

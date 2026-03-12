@@ -1,4 +1,5 @@
-import { emit, getContext, getServerState, on, onInit, onStart, onStop, resetServerState, serve, ServerState, serveStop, setContext } from './index'
+import type { ServerState } from './index'
+import { emit, getContext, getServerState, on, onInit, onStart, onStop, serve, serveStop, setContext } from './index'
 
 describe('serve', () => {
   it('should pass all phases', async () => {
@@ -70,11 +71,10 @@ describe('serve', () => {
   describe('serverState lifecycle', () => {
     beforeEach(() => {
       setContext()
-      resetServerState()
     })
 
-    it('should start in IDLE state', () => {
-      expect(getServerState()).toBe(ServerState.IDLE)
+    it('should start in stopped state', () => {
+      expect(getServerState()).toBe('stopped')
     })
 
     it('should transition through states correctly during normal lifecycle', async () => {
@@ -98,43 +98,43 @@ describe('serve', () => {
       })
 
       // Initial state
-      expect(getServerState()).toBe(ServerState.IDLE)
+      expect(getServerState()).toBe('stopped')
 
       // Start server
       await serve()
-      expect(getServerState()).toBe(ServerState.RUNNING)
+      expect(getServerState()).toBe('started')
 
       // Stop server
       await serveStop()
-      expect(getServerState()).toBe(ServerState.DISPOSED)
+      expect(getServerState()).toBe('stopped')
 
       // Check state transitions occurred in the right order
       expect(stateTransitions).toEqual([
-        ServerState.STARTED, // During serveInit (before RUNNING state is set)
-        ServerState.STARTED, // During serveStart (before RUNNING state is set)
-        ServerState.STOPPING, // During serveStop
-        ServerState.DISPOSED, // During serveDispose
+        'starting', // During serveInit
+        'starting', // During serveStart
+        'stopping', // During serveStop
+        'stopped', // During serveDispose
       ])
     })
 
     it('should handle multiple serveStop calls gracefully', async () => {
       await serve()
-      expect(getServerState()).toBe(ServerState.RUNNING)
+      expect(getServerState()).toBe('started')
 
       const disposePromise1 = serveStop()
       const disposePromise2 = serveStop()
 
       await Promise.all([disposePromise1, disposePromise2])
-      expect(getServerState()).toBe(ServerState.DISPOSED)
+      expect(getServerState()).toBe('stopped')
     })
 
-    it('should not allow starting from non-IDLE state', async () => {
+    it('should not allow starting from non-stopped state', async () => {
       await serve()
-      expect(getServerState()).toBe(ServerState.RUNNING)
+      expect(getServerState()).toBe('started')
 
       // Try to serve again - should not change state (warning is logged but we can't easily test it)
       await serve()
-      expect(getServerState()).toBe(ServerState.RUNNING)
+      expect(getServerState()).toBe('started')
     })
 
     it('should warn when directly emitting serveStop instead of calling serveStop()', async () => {
@@ -143,15 +143,15 @@ describe('serve', () => {
       // Directly emit serveStop (wrong way) - should warn but we can't easily test the warning
       await emit('serveStop')
 
-      // The important thing is that the server is still in RUNNING state and wasn't stopped properly
-      expect(getServerState()).toBe(ServerState.RUNNING)
+      // The important thing is that the server is still in started state and wasn't stopped properly
+      expect(getServerState()).toBe('started')
     })
 
     it('should handle serveStop when not running', async () => {
-      // serveStop when IDLE should not throw or change state
-      expect(getServerState()).toBe(ServerState.IDLE)
+      // serveStop when stopped should not throw or change state
+      expect(getServerState()).toBe('started')
       await serveStop()
-      expect(getServerState()).toBe(ServerState.IDLE)
+      expect(getServerState()).toBe('stopped')
     })
 
     it('should execute lifecycle callbacks in correct order', async () => {
@@ -196,9 +196,9 @@ describe('serve', () => {
     })
 
     it('should allow checking if server is in specific states', () => {
-      expect(getServerState()).toBe(ServerState.IDLE)
-      expect(getServerState() === ServerState.IDLE).toBe(true)
-      expect(getServerState() === ServerState.RUNNING).toBe(false)
+      expect(getServerState()).toBe('stopped')
+      expect(getServerState() === 'stopped').toBe(true)
+      expect(getServerState() === 'started').toBe(false)
     })
   })
 })

@@ -4,7 +4,7 @@ import type { Server } from 'node:http'
 export type { Server }
 export type { Express, NextFunction, Request, RequestHandler, Response }
 
-export type zervaHttpHandlerModes = 'get' | 'post' | 'put' | 'delete'
+export type zervaHttpHandlerMetohod = 'get' | 'post' | 'put' | 'delete'
 
 export type zervaHttpPaths = (string | RegExp)[] | (string | RegExp)
 
@@ -44,40 +44,40 @@ export interface zervaHttpInterface {
   routes: ZervaHttpRouteDescription[]
 
   /** GET */
-  get: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  get: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** POST */
-  post: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  post: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** PUT */
-  put: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  put: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** DELETE */
-  delete: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  delete: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** GET */
-  onGET: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  onGET: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** POST */
-  onPOST: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  onPOST: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** PUT */
-  onPUT: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  onPUT: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** DELETE */
-  onDELETE: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  onDELETE: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** GET */
-  GET: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  GET: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** POST */
-  POST: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  POST: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** PUT */
-  PUT: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  PUT: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** DELETE */
-  DELETE: (this: void, path: zervaHttpPaths, ...handlers: zervaHttpGetHandler[]) => ZervaHandlerReturn
+  DELETE: (this: void, path: zervaHttpPaths, handler: zervaHttpGetHandler) => ZervaHandlerReturn
 
   /** @deprecated use STATIC */
   addStatic: (this: void, path: zervaHttpPaths, fsPath: string) => void
