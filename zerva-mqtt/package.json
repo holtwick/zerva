@@ -1,7 +1,7 @@
 {
   "name": "@zerva/mqtt",
   "type": "module",
-  "version": "0.81.1",
+  "version": "0.86.0",
   "description": "🌱 Zerva MQTT",
   "author": {
     "name": "Dirk Holtwick",

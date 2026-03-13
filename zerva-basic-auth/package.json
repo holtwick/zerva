@@ -1,7 +1,7 @@
 {
   "name": "@zerva/basic-auth",
   "type": "module",
-  "version": "0.81.1",
+  "version": "0.86.0",
   "description": "🌱 Zerva useBasicAuth",
   "author": {
     "name": "Dirk Holtwick",
