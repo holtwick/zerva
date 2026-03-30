@@ -20,6 +20,8 @@ import { smartRequestHandler } from './request'
 import { setupSecurity } from './security'
 import { formatStaticPath, isRequestProxied } from './utils'
 
+export { express }
+
 export * from './status'
 export * from './types'
 
