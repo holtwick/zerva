@@ -60,17 +60,17 @@
     "@types/ws": "^8.18.1",
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
-    "ws": "^8.19.0",
-    "zeed": "^1.3.0"
+    "ws": "^8.20.0",
+    "zeed": "^1.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
     "@zerva/bin": "workspace:*",
     "playwright": "^1.58.2",
-    "tsdown": "^0.21.2",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0",
-    "vue-tsc": "^3.2.5"
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2",
+    "vue-tsc": "^3.2.6"
   }
 }

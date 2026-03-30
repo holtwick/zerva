@@ -54,12 +54,12 @@
     "@zerva/core": "workspace:*",
     "@zerva/http": "workspace:*",
     "morgan": "^1.10.1",
-    "zeed": "^1.3.0"
+    "zeed": "^1.3.1"
   },
   "devDependencies": {
     "@zerva/bin": "workspace:*",
-    "tsdown": "^0.21.2",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.0"
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
   }
 }
