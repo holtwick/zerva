@@ -51,8 +51,9 @@ export const useVite = use({
         log.error(`web files do not exist at ${wwwPath}`)
     }
 
-    // Normalize wwwPath for path validation
+    // Normalize wwwPath for path validation (trailing separator prevents prefix-matching siblings like dist_www_evil)
     const normalizedWwwPath = resolve(wwwPath)
+    const normalizedWwwPathPrefix = normalizedWwwPath + '/'
 
     on('httpWillStart', async ({ app }) => {
       if (ZERVA_DEVELOPMENT) {
@@ -98,22 +99,39 @@ export const useVite = use({
           const requestedPath = path.slice(1) // Remove leading slash
           const filePath = resolve(wwwPath, requestedPath)
 
-          // Ensure path is within wwwPath
-          if (!filePath.startsWith(normalizedWwwPath)) {
+          // Ensure path is within wwwPath (use prefix with separator to prevent matching siblings like dist_www_evil)
+          if (filePath !== normalizedWwwPath && !filePath.startsWith(normalizedWwwPathPrefix)) {
             log.warn(`Path outside wwwPath rejected: ${path}`)
             next()
             return
           }
 
-          // Try to serve static file
-          if (await isFile(filePath)) {
-            // Set long cache for all files except index.html
+          // Try to serve static file directly via sendFile with error callback
+          // This avoids a TOCTOU race between isFile() check and sendFile()
+          if (requestedPath) {
+            // Set cache header before sendFile (sendFile sends headers as part of its response)
             if (cacheAssets && !filePath.endsWith('index.html')) {
               res.setHeader('Cache-Control', 'max-age=31536000, immutable')
             }
-            res.sendFile(filePath)
-            log(`Served: ${filePath}`)
-            return
+
+            const served = await new Promise<boolean>((resolvePromise) => {
+              res.sendFile(filePath, (err: any) => {
+                if (err) {
+                  // Remove cache header since file was not served
+                  if (!res.headersSent) {
+                    res.removeHeader('Cache-Control')
+                  }
+                  resolvePromise(false)
+                }
+                else {
+                  log(`Served: ${filePath}`)
+                  resolvePromise(true)
+                }
+              })
+            })
+
+            if (served)
+              return
           }
 
           // Search for index.html in path hierarchy
@@ -123,7 +141,7 @@ export const useVite = use({
             const testParts = parts.slice(0, i)
             const testPath = resolve(wwwPath, ...testParts, 'index.html')
 
-            if (!testPath.startsWith(normalizedWwwPath))
+            if (testPath !== normalizedWwwPath && !testPath.startsWith(normalizedWwwPathPrefix))
               continue
 
             if (await isFile(testPath)) {
