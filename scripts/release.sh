@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="release/$(npx -c 'echo "$npm_package_version"')"
+VERSION="v$(npx -c 'echo "$npm_package_version"')"
 
 echo "Git flow like release of $VERSION"
 
